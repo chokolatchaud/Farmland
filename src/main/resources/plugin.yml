@@ -1,0 +1,198 @@
+name: Farmland
+main: fr.kevyn.farmland.FarmlandMain
+version: 1.0
+api-version: 1.21.11
+loadbefore: [FastAsyncWorldEdit, WorldEdit]
+depend: [PlaceholderAPI, Multiverse-Core]
+
+commands:
+
+  createregion:
+    description: creer une Region
+    usage: /createregion
+    permission: farmland.moderation
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  listregion:
+    description: voir les Region
+    usage: /listregion
+    permission: farmland.moderation
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  afaire:
+    description: Voir le Market Actuelle + Son Historique
+    usage: /market
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  region:
+    description: Gestion des region
+    usage: /region parametre
+    permission: farmland.moderation
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  car:
+    description: Démarre ou arrête votre voiture
+    usage: /car [start|stop]
+    permission: farmland.moderation
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  banf:
+    description: Permet de bannir les joueurs
+    usage: /banf <player> <raison>
+    aliases: [ban]
+    permission: farmland.moderation
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  unbanf:
+    description: Permet de débannir un joueur
+    usage: /unbanf <player>
+    aliases: [unban]
+    permission: farmland.moderation
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  kickf:
+    description: Permet de kick un joueur
+    usage: /kickf <player> <raison>
+    aliases: [kick]
+    permission: farmland.moderation
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  warnf:
+    description: Permet d'avertir un joueur
+    usage: /warnf <player> <raison>
+    aliases: [warn]
+    permission: farmland.moderation
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  plot:
+    description: Permet de gérer son plot
+    usage: /plot home|trust|untrust|setowner
+    permission: farmland.plotcommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  pay:
+    description: Permet de payer un joueur
+    usage: /pay <player> <montant>
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  money:
+    description: Permet de voir l'argent
+    usage: /money [player]
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  playerserver:
+    description: Affiche les informations d'un joueur dans le serveur
+    usage: /playerserver <player>
+    permission: farmland.playerserver
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  saveplayer:
+    description: Sauvegarde les informations de tous les joueurs
+    usage: /saveplayer
+    permission: farmland.saveplayer
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  msgf:
+    description: Permet d'envoyer un message privé à un joueur
+    usage: /msgf <joueur> <message>
+    aliases: [msg, whisper, tell, w]
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  r:
+    description: Permet de répondre au dernier message privé reçu
+    usage: /r <message>
+    aliases: [reply]
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  reportmsg:
+    description: Permet de signaler un message reçu
+    usage: /reportmsg <joueur>
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  define:
+    description: Permet de definir un lieu pour les habitants
+    usage: /define <nom>
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  undefine:
+    description: Permet de supprimer une structure définie
+    usage: /undefine <nom>
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  market:
+    description: Affiche le marché et ses statistiques
+    usage: /market [view|stats|refresh]
+    aliases: [mkt]
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  rewards:
+    description: Affiche les récompenses et ton solde
+    usage: /rewards [table|balance|top]
+    aliases: [reward, bal]
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  balance:
+    description: Affiche ton solde bancaire
+    usage: /balance [player]
+    aliases: [money, bal]
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+permissions:
+  farmland.worldedit:
+    description: Donne accès complet à WorldEdit
+    default: op
+
+  farmland.worldeditbypass:
+    description: Donne accès à WorldEdit et bypass toutes les restrictions
+    default: op
+
+  farmland.saveplayer:
+    description: Donne accès à la commande /saveplayer
+    default: op
+
+  farmland.playerserver:
+    description: Donne accès à la commande /playerserver
+    default: op
+
+  farmland.gamecommands:
+    description: Donne accès aux commandes de jeu
+    default: true
+
+  farmland.moderation:
+    description: Donne accès aux commandes de modération (banf, unbanf, kickf, warnf)
+    default: op
+
+  farmland.placebloc:
+    description: Permet au joueur de poser et détruire des blocs (avec suivi)
+    default: op
+
+  farmland.placeblocbypass:
+    description: Permet de poser/détruire des blocs sans restrictions
+    default: op
+
+  farmland.plotcommands:
+    description: Permet d'utiliser les commandes de gestion de plot
+    default: true
+
+  farmland.admin:
+    description: Accès aux commandes admin
+    default: op
+
+  farmland.market:
+    description: Accès aux commandes du marché
+    default: true
+
+  farmland.market.admin:
+    description: Accès aux commandes admin du marché (refresh)
+    default: op
