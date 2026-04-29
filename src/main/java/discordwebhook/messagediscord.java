@@ -14,7 +14,7 @@ public class messagediscord {
 	        String webhookUrlModeration = "https://discord.com/api/webhooks/1442135562839654540/QkBt4qYbXirEWu8-wbTQPyQIKKbK8UyUsf8AWoFk4hR9W-zr_3oQ2grdaBKvCfKIqtUb";
 	   
 	        // Sélection du webhook selon le salon
-	        String webhookUrl = webhookUrlStatue;
+	        String webhookUrl = webhookUrlS
 	        if (salon.equalsIgnoreCase("message")) {
 	            webhookUrl = webhookUrlMSG;
 	        } else if (salon.equalsIgnoreCase("statut") || salon.equalsIgnoreCase("status")) {
