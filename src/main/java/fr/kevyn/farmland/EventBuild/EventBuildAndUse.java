@@ -3,7 +3,6 @@ package fr.kevyn.farmland.EventBuild;
 
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
@@ -111,7 +110,7 @@ public class EventBuildAndUse implements Listener {
         
         //on verifie la permission
         if (!player.hasPermission("farmland.placebloc")) {
-            player.sendMessage(ChatColor.RED + "❌ Vous n'avez pas la permission de placer/détruire des blocs.");
+            player.sendMessage("&c" + "❌ Vous n'avez pas la permission de placer/détruire des blocs.");
             return false;
         }
 
@@ -173,7 +172,7 @@ public class EventBuildAndUse implements Listener {
 
         PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
         if (ps == null || ps.getPlotdata() == null) {
-            player.sendMessage(ChatColor.RED + "⚠ Vos données serveur sont introuvables !");
+            player.sendMessage("&c⚠ Vos données serveur sont introuvables !");
             return true;
         }
         String currentWorld = player.getWorld().getName();
@@ -182,15 +181,15 @@ public class EventBuildAndUse implements Listener {
         if (ps.getPlotdata().getAllplotadd().contains(currentWorld)) return false;
         if (ps.getPlotdata().getAllplottrust().contains(currentWorld)) return false;
 
-        player.sendMessage(ChatColor.RED + "⛔ Vous ne pouvez pas modifier ce terrain !");
+        player.sendMessage("&c⛔ Vous ne pouvez pas modifier ce terrain !");
         return true;
     }
 
     public void countBlockPlacement(Player player) {
         PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
         if (ps == null) {
-            player.sendMessage("⚠ Erreur dans le comptage de vos blocs.");
-            messagediscord.sendmessage("Erreur comptage blocs pour " + player.getName(), "statut");
+            player.sendMessage("&c⚠ Erreur dans le comptage de vos blocs.");
+            messagediscord.sendmessage("&cErreur comptage blocs pour " + player.getName(), "statut");
             return;
         }
 
@@ -199,7 +198,7 @@ public class EventBuildAndUse implements Listener {
         if (ps.getBlocpose() >= 150) {
             ps.setBlocpose(ps.getBlocpose() - 150);
             ps.setMoney(ps.getMoney() + 1);
-            player.sendMessage(ChatColor.GREEN + "+1$ pour 150 blocs placés !");
+            player.sendMessage("&a+1$ pour 150 blocs placés !");
         }
     }
 
@@ -216,12 +215,12 @@ public class EventBuildAndUse implements Listener {
                            ps.getPlotdata().getAllplotadd().contains(currentWorld);
 
         if (!isOwner && !isTrusted) {
-            player.sendMessage(ChatColor.RED + "❌ Vous ne pouvez pas utiliser de seau ici.");
+            player.sendMessage("&c❌ Vous ne pouvez pas utiliser de seau ici.");
             return false;
         }
 
         if (ps.getPlotdata().getwaterlava()) {
-            player.sendMessage(ChatColor.RED + "❌ L'eau et la lave sont désactivées dans ce plot !");
+            player.sendMessage("&c❌ L'eau et la lave sont désactivées dans ce plot !");
             return false;
         }
 

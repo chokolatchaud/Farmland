@@ -63,10 +63,10 @@ public class ChatListener implements Listener {
         // Tab list : prefix -> 1 lettre
         // ----------------------------
         String tabPrefix = " "; // par défaut espace
-        if (prefix.contains("Admin")) tabPrefix = ChatColor.RED + "A-";
-        else if (prefix.contains("Mod")) tabPrefix = ChatColor.AQUA + "M-";
-        else if (prefix.contains("Buildeur")) tabPrefix = ChatColor.GREEN + "B-";
-        else if (prefix.contains("Joueur")) tabPrefix = ChatColor.GRAY + "J-";
+        if (prefix.contains("Admin")) tabPrefix = "&4" + "A-";
+        else if (prefix.contains("Mod")) tabPrefix = "&b" + "M-";
+        else if (prefix.contains("Buildeur")) tabPrefix = "&2" + "B-";
+        else if (prefix.contains("Joueur")) tabPrefix = "&8" + "J-";
 
         // Nom complet pour le tab (pseudo entier + préfixe 1 lettre)
         String tabName = tabPrefix + player.getName();

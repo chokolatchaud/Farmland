@@ -33,7 +33,7 @@ public class JoinAndleaveEvent implements Listener {
 
         // ✅ Vérif ban
         if (playerServer != null && playerServer.getBan()) {
-            e.getPlayer().kickPlayer(ChatColor.RED + "Vous êtes banni définitivement !" +
+            e.getPlayer().kickPlayer("&cVous êtes banni définitivement !" +
                     "\nRaison : " + playerServer.getRaison());
             return;
         }
@@ -41,7 +41,7 @@ public class JoinAndleaveEvent implements Listener {
         if (playerServer == null) {
             // ===== NOUVEAU JOUEUR =====
             e.getPlayer().sendMessage("Bienvenue Sur Farmland");
-            Bukkit.getServer().broadcastMessage(ChatColor.GOLD + "Bienvenue à " + ChatColor.MAGIC + e.getPlayer().getName() + ChatColor.GOLD + " Sur FarmLand !!!");
+            Bukkit.getServer().broadcastMessage("&eBienvenue à " + "&6" + e.getPlayer().getName() + "&e" + " Sur FarmLand !!!");
 
             PlotData plotData = new PlotData(
                 e.getPlayer().getUniqueId().toString(),

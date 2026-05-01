@@ -1,0 +1,25 @@
+name: Discord Notification
+
+on:
+  push:
+    branches:
+      - main  # ou master, selon ta branche
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          curl -H "Content-Type: application/json" \
+          -d '{
+            "embeds": [{
+              "title": "🚀 Nouveau commit sur FarmLand",
+              "description": "**Auteur :** ${{ github.actor }}\n**Message :** ${{ github.event.head_commit.message }}\n**Branche :** ${{ github.ref_name }}",
+              "color": 5763719,
+              "url": "${{ github.event.head_commit.url }}"
+            }]
+          }' \
+          $DISCORD_WEBHOOK

@@ -32,10 +32,6 @@ import fr.kevyn.plot.Plot;
 
 public class Plotinventory implements Listener {
 	private final Map<UUID, Integer> playerPages = new HashMap<>();
-
-
-  
-
 	// =========================
     // EVENT INVENTAIRE
     // =========================
