@@ -96,12 +96,12 @@
         </dependency>
 
         <!-- PlaceholderAPI -->
-        <dependency>
-            <groupId>me.clip</groupId>
-            <artifactId>placeholderapi</artifactId>
-            <version>2.11.3</version>
-            <scope>provided</scope>
-        </dependency>
+   <dependency>
+    <groupId>me.clip</groupId>
+    <artifactId>placeholderapi</artifactId>
+    <version>2.11.6</version>
+    <scope>provided</scope>
+</dependency>
 
         <!-- Vault Economy -->
         <dependency>
@@ -137,7 +137,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.13.0</version>
                 <configuration>
                     <release>21</release>
                 </configuration>
