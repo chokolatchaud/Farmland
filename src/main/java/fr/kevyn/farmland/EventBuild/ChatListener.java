@@ -20,6 +20,7 @@ public class ChatListener implements Listener {
 
     public ChatListener() {
         this.luckPerms = LuckPermsProvider.get();
+        //test
     }
 
     @EventHandler
