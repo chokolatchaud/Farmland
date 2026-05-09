@@ -136,7 +136,7 @@ public class MicroPluginManager {
                         
                     });
                     for (Player player : players) {
-                        player.sendMessage("§aVos données ont été sauvegardées avec succès !");
+                        player.sendMessage("§aDiscord Du serveur : https://discord.gg/VH7MJpwpub"); //discord new
                     }
                     plugin.getLogger().info("Sauvegarde réalisée pour " + players.size() + " joueurs");
                 }

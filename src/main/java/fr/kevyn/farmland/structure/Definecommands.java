@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -36,7 +37,7 @@ public class Definecommands implements CommandExecutor {
     		try {
                 // Vérifications de base
                 if (!(sender instanceof Player)) {
-                    sender.sendMessage("§cSeul un joueur peut exécuter cette commande !");
+                    sender.sendMessage(ChatColor.AQUA + "§cSeul un joueur peut exécuter cette commande !");
                     return true;
                 }
 
@@ -138,6 +139,7 @@ public class Definecommands implements CommandExecutor {
     	        regionFile.delete();
     	    }
     	    player.sendMessage("Votre Structure a été supprimée avec succés");
+    	    return true;
     		
     		
     		

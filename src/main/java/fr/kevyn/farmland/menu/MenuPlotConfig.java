@@ -41,7 +41,7 @@ public class MenuPlotConfig {
         
 
         // DOOR - Privé/Public
-        String namePrivatepublic = "";
+        String namePrivatepublic = "Public/Privée";
         if(playerserver.getPlotdata().getPrivateplot()) {
         	namewaterlava = "Plot privé";
         }else {

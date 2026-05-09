@@ -147,7 +147,6 @@ public class Plotinventory implements Listener {
             
             // CYAN WOOL - Temps figé
             if(customType == CustomItemType.TIME_FREEZE) {
-            	player.sendMessage("cleck detecté + Cyan wool");
             	if(ps.getPlotdata().getMeteoActive().equalsIgnoreCase("minecraftActive")) {
                 	ps.getPlotdata().setMeteoActive("minecraftDeactive", Bukkit.getWorld(ps.getPlotdata().getNameWorld()));
                 	player.sendMessage("La meteo se met a bouger");
