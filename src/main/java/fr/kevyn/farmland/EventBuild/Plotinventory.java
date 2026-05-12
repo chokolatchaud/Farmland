@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.game.CustomItemType; // IMPORT DE L'ENUM
 import fr.kevyn.farmland.menu.GameMenu;
 import fr.kevyn.farmland.menu.GameMenuHashMap;
@@ -94,7 +95,7 @@ public class Plotinventory implements Listener {
                 }
 
                 if (ps.getMoney() < cost) {
-                    player.sendMessage(ChatColor.RED + "Tu n'as pas assez d'argent");
+                    player.sendMessage(MessageColor.RED.apply("Tu n'as pas assez d'argent"));
                     return;
                 }
 
@@ -102,7 +103,7 @@ public class Plotinventory implements Listener {
                 ps.setUpgrade(ps.getUpgrade() + 1);
                 ps.getPlotdata().setWorldborder(ps.getPlotdata().getWorldborder() + 5);
 
-                player.sendMessage(ChatColor.GREEN + "Upgrade acheté !");
+                player.sendMessage(MessageColor.GREEN.apply("Upgrade acheté !"));
                 player.closeInventory();
             }
             
@@ -121,11 +122,11 @@ public class Plotinventory implements Listener {
             	
                 if(ps.getPlotdata().getMeteoTime().equalsIgnoreCase("day")) {
                 	ps.getPlotdata().setMeteoTime("night", Bukkit.getWorld(ps.getPlotdata().getNameWorld()));
-                	player.sendMessage("La nuit approche");
+                	player.sendMessage(MessageColor.DARK_BLUE.apply("La nuit approche"));
                 	
                 }else if(ps.getPlotdata().getMeteoTime().equalsIgnoreCase("night")) {
                 	ps.getPlotdata().setMeteoTime("day", Bukkit.getWorld(ps.getPlotdata().getNameWorld()));
-                	player.sendMessage("Le jour approche");
+                	player.sendMessage(MessageColor.YELLOW.apply("Le jour approche"));
                 	
                 }
                
@@ -135,11 +136,11 @@ public class Plotinventory implements Listener {
             if(customType == CustomItemType.RAIN_TOGGLE) {
             	if(ps.getPlotdata().getMeteoRain().equalsIgnoreCase("weatherclear")) {
                 	ps.getPlotdata().setMeteoRain("weatherain", Bukkit.getWorld(ps.getPlotdata().getNameWorld()));
-                	player.sendMessage("La pluie approche");
+                	player.sendMessage(MessageColor.BLUE.apply("La pluie approche"));
                 	
                 }else if(ps.getPlotdata().getMeteoRain().equalsIgnoreCase("weatherain")) {
                 	ps.getPlotdata().setMeteoRain("weatherclear", Bukkit.getWorld(ps.getPlotdata().getNameWorld()));
-                	player.sendMessage("La pluie s'eloigne");
+                	player.sendMessage(MessageColor.BLUE.apply("La pluie s'eloigne"));
     
             	}
             	
@@ -149,11 +150,11 @@ public class Plotinventory implements Listener {
             if(customType == CustomItemType.TIME_FREEZE) {
             	if(ps.getPlotdata().getMeteoActive().equalsIgnoreCase("minecraftActive")) {
                 	ps.getPlotdata().setMeteoActive("minecraftDeactive", Bukkit.getWorld(ps.getPlotdata().getNameWorld()));
-                	player.sendMessage("La meteo se met a bouger");
+                	player.sendMessage(MessageColor.GOLD.apply("La meteo se met a bouger"));
                 	
                 }else if(ps.getPlotdata().getMeteoActive().equalsIgnoreCase("minecraftDeactive")) {
                 	ps.getPlotdata().setMeteoActive("minecraftActive", Bukkit.getWorld(ps.getPlotdata().getNameWorld()));
-                	player.sendMessage("La meteo se fige");
+                	player.sendMessage(MessageColor.GOLD.apply("La meteo se fige"));
     
             	}
             	
@@ -162,14 +163,14 @@ public class Plotinventory implements Listener {
             // WATER BUCKET - Eau/Lave
             if (customType == CustomItemType.WATERLAVASELECTION) {
                 ps.getPlotdata().setwaterlava(!ps.getPlotdata().getwaterlava());
-                player.sendMessage(ChatColor.YELLOW + "Option eau/lave modifiée");
+                player.sendMessage(MessageColor.YELLOW.apply("Option eau/lave modifiée"));
                 player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", ps));
             }
 
             // DOOR - Privé/Public
             if (customType == CustomItemType.DOOR_PRIVACY) {
                 ps.getPlotdata().setPrivateplot(!ps.getPlotdata().getPrivateplot());
-                player.sendMessage(ChatColor.YELLOW + "Visibilité du plot modifiée");
+                player.sendMessage(MessageColor.YELLOW.apply("Visibilité du plot modifiée"));
                 player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", ps));
             }
         }
@@ -205,7 +206,7 @@ public class Plotinventory implements Listener {
 
         	OfflinePlayer owning = meta.getOwningPlayer();
         	if (owning == null) {
-        	    player.sendMessage(ChatColor.RED + "Erreur : propriétaire introuvable !");
+        	    player.sendMessage(MessageColor.RED.apply("Erreur : propriétaire introuvable !"));
         	    return;
         	}
         
@@ -215,19 +216,19 @@ public class Plotinventory implements Listener {
 
                 PlayerServer ps1 = PlayerserverHashMap.getInstance().getplayerHaspMaps(targetUUID);
                 if (ps1 == null || ps1.getPlotdata() == null) {
-                    player.sendMessage(ChatColor.RED + "Erreur : plot introuvable !");
+                    player.sendMessage(MessageColor.RED.apply("Erreur : plot introuvable !"));
                     return;
                 }
 
                 String plotName = ps1.getPlotdata().getPlotProprety();
                 World plotWorld = Plot.getWorldforname(plotName);
                 if (plotWorld == null) {
-                    player.sendMessage(ChatColor.RED + "Erreur : monde du plot introuvable !");
+                    player.sendMessage(MessageColor.RED.apply("Erreur : monde du plot introuvable !"));
                     return;
                 }
                 
                 if(ps1.getPlotdata().getPrivateplot()) {
-                	player.sendMessage(ChatColor.RED + "Ce plot est privée");
+                	player.sendMessage(MessageColor.RED.apply("Ce plot est privée"));
                 	return;
                 	
                 }
@@ -241,7 +242,7 @@ public class Plotinventory implements Listener {
 
                 player.teleport(loc);
                 player.closeInventory();
-                player.sendMessage(ChatColor.GREEN + "Téléportation vers le plot de " + ps1.getName());
+                player.sendMessage(MessageColor.GREEN.apply("Téléportation vers le plot de " + ps1.getName()));
         }
     }
     

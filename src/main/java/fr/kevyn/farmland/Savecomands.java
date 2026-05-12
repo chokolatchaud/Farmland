@@ -1,7 +1,6 @@
 package fr.kevyn.farmland;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,26 +22,26 @@ public class Savecomands implements CommandExecutor {
         
         if (command.getName().equalsIgnoreCase("saveplayer")) {
             if(!sender.hasPermission("farmland.saveplayer")) {
-                sender.sendMessage(ChatColor.RED + "Vous n'avez pas la permission");
+                sender.sendMessage(MessageColor.RED.apply("Vous n'avez pas la permission"));
                 return true;
             }
             
-            sender.sendMessage(ChatColor.YELLOW + "Sauvegarde en cours...");
+            sender.sendMessage(MessageColor.YELLOW.apply("Sauvegarde en cours..."));
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 Filesave.SavePlayerserverFile(plugin);
-                sender.sendMessage(ChatColor.GREEN + "Sauvegarde terminée !");
+                sender.sendMessage(MessageColor.GREEN.apply("Sauvegarde terminée !"));
             });
             
             return true;
             
         } else if(command.getName().equalsIgnoreCase("playerserver")) {
             if(!sender.hasPermission("farmland.playerserver")) {
-                sender.sendMessage(ChatColor.RED + "Vous n'avez pas la permission");
+                sender.sendMessage(MessageColor.RED.apply("Vous n'avez pas la permission"));
                 return true;
             }
             
             if (args.length == 0) {
-                sender.sendMessage(ChatColor.RED + "Usage: /playerserver <joueur|all>");
+                sender.sendMessage(MessageColor.RED.apply("Usage: /playerserver <joueur|all>"));
                 return true;
             }
             
@@ -54,7 +53,7 @@ public class Savecomands implements CommandExecutor {
                 String nameplayer = args[0];
                 PlayerServer playeridentificate = PlayerserverHashMap.getInstance().getplayerHaspMaps(nameplayer.toString());
                 if(playeridentificate == null) {
-                    sender.sendMessage(ChatColor.RED + "Joueur introuvable !");
+                    sender.sendMessage(MessageColor.RED.apply("Joueur introuvable !"));
                     sender.sendMessage("Usage: /playerserver <joueur>");
                 } else {
                     allplayertag(playeridentificate, sender);
@@ -80,7 +79,7 @@ public class Savecomands implements CommandExecutor {
             sender.sendMessage("Plotdata-Meteo: " + playerserver.getPlotdata().getMeteoRain());
             sender.sendMessage("Plotdata-Meteo: " + playerserver.getPlotdata().getMeteoTime());
         } else {
-            sender.sendMessage(ChatColor.RED + "Plotdata: NULL");
+            sender.sendMessage(MessageColor.RED.apply("Plotdata: NULL"));
         }
         
         sender.sendMessage("grade: " + playerserver.getGrade());

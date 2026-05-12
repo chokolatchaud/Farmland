@@ -20,6 +20,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import discordwebhook.messagediscord;
+import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
@@ -33,12 +34,12 @@ public class GameCommands implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!sender.hasPermission("farmland.gamecommands")) {
-            sender.sendMessage(ChatColor.RED + "Vous n'avez pas la permission");
+            sender.sendMessage(MessageColor.RED.apply("Vous n'avez pas la permission"));
             return true;
         }
         
         if (!(sender instanceof Player)) {
-            sender.sendMessage("Seul un joueur peut exécuter cette commande !");
+            sender.sendMessage(MessageColor.RED.apply("Seul un joueur peut exécuter cette commande !"));
             return true;
         }
 
@@ -48,7 +49,7 @@ public class GameCommands implements CommandExecutor {
 
         if (playerSender == null) {
             messagediscord.sendmessage(command.getName() + " : erreur playerSender null","statut");
-            player.sendMessage("Une erreur est survenue. Contactez un administrateur.");
+            player.sendMessage(MessageColor.RED.apply("Une erreur est survenue. Contactez un administrateur."));
             return true;
         }
 
@@ -67,7 +68,7 @@ public class GameCommands implements CommandExecutor {
     // =========================
     private boolean reportmsg(Player player, PlayerServer playerSender, String[] args) {
         if (args.length < 2) {
-            player.sendMessage("§cUsage : /reportmsg <joueur> <message>");
+            player.sendMessage(MessageColor.RED.apply("Usage : /reportmsg <joueur> <message>"));
             return true;
         }
 
@@ -75,7 +76,7 @@ public class GameCommands implements CommandExecutor {
         Player reportedPlayer = Bukkit.getPlayer(reportedName);
         
         if (reportedPlayer == null) {
-            player.sendMessage("§cLe joueur §e" + reportedName + "§c n'est plus en ligne !");
+            player.sendMessage(MessageColor.RED.apply("Le joueur " + reportedName + "n'est plus en ligne !"));
             return true;
         }
 
@@ -88,7 +89,7 @@ public class GameCommands implements CommandExecutor {
             long timeLeft = 60000 - (currentTime - lastReport); // 1 minute
             
             if (timeLeft > 0) {
-                player.sendMessage("§cVous devez attendre " + (timeLeft / 1000) + " secondes avant de reporter à nouveau ce joueur !");
+                player.sendMessage(MessageColor.RED.apply("Vous devez attendre " + (timeLeft / 1000) + " secondes avant de reporter à nouveau ce joueur !"));
                 return true;
             }
         }
@@ -98,8 +99,7 @@ public class GameCommands implements CommandExecutor {
         // ✅ AJOUTÉ : Échappement pour éviter l'injection
         String safeMessage = message.replace("\"", "'").replace("\n", " ").replace("\r", "");
 
-        player.sendMessage("§a✅ Signalement envoyé contre §e" + reportedName + "§a !");
-        player.sendMessage("§7Message signalé : §f" + safeMessage);
+        player.sendMessage(MessageColor.GREEN.apply("✅ Signalement envoyé contre " + reportedName + " !"));
 
         String discordMessage = "🚨 REPORT 🚨 | Joueur signalé : " + reportedName + 
                                 " | Signalé par : " + player.getName() + 
@@ -123,7 +123,7 @@ public class GameCommands implements CommandExecutor {
             UUID lastSenderUUID = lastSender.get(player.getUniqueId());
             
             if (lastSenderUUID == null) {
-                player.sendMessage("§cAucun message auquel répondre !");
+                player.sendMessage(MessageColor.RED.apply("Aucun message auquel répondre !"));
                 return true;
             }
 
@@ -135,7 +135,7 @@ public class GameCommands implements CommandExecutor {
             }
 
             if (args.length == 0) {
-                player.sendMessage("§cUsage : /r <message>");
+                player.sendMessage(MessageColor.RED.apply("Usage : /r <message>"));
                 return true;
             }
 
@@ -143,13 +143,13 @@ public class GameCommands implements CommandExecutor {
 
         } else {
             if (args.length < 2) {
-                player.sendMessage("§cUsage : /msgf <joueur> <message>");
+                player.sendMessage(MessageColor.RED.apply("Usage : /msgf <joueur> <message>"));
                 return true;
             }
 
             targetPlayer = Bukkit.getPlayer(args[0]);
             if (targetPlayer == null || !targetPlayer.isOnline()) {
-                player.sendMessage("§cJoueur introuvable !");
+                player.sendMessage(MessageColor.RED.apply("Joueur introuvable !"));
                 return true;
             }
 
@@ -160,7 +160,7 @@ public class GameCommands implements CommandExecutor {
 
         PlayerServer targetServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(targetPlayer.getUniqueId());
         if (targetServer == null) {
-            player.sendMessage("§cErreur Administrateur");
+            player.sendMessage(MessageColor.RED.apply("Erreur Administrateur"));
             return true;
         }
 
@@ -206,13 +206,13 @@ public class GameCommands implements CommandExecutor {
 
         Player targetPlayer = Bukkit.getPlayer(args[0]);
         if (targetPlayer == null || !targetPlayer.isOnline()) {
-            player.sendMessage("§cJoueur introuvable !");
+            player.sendMessage(MessageColor.RED.apply("Joueur introuvable !"));
             return true;
         }
 
         PlayerServer targetServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(targetPlayer.getUniqueId());
         if (targetServer == null) {
-            player.sendMessage("§cErreur Administrateur");
+            player.sendMessage(MessageColor.RED.apply("Erreur Administrateur"));
             return true;
         }
 
@@ -225,26 +225,26 @@ public class GameCommands implements CommandExecutor {
     // =========================
     private boolean PayCommand(Player player, PlayerServer senderServer, String[] args) {
         if (args.length < 2) {
-            player.sendMessage("§cUsage : /pay <player> <montant>");
+            player.sendMessage(MessageColor.RED.apply("Usage : /pay <player> <montant>"));
             return true;
         }
 
         Player targetPlayer = Bukkit.getPlayer(args[0]);
         if (targetPlayer == null || !targetPlayer.isOnline()) {
-            player.sendMessage("§cJoueur introuvable !");
+            player.sendMessage(MessageColor.RED.apply("Joueur introuvable !"));
             return true;
         }
 
         // ✅ AJOUTÉ : Empêcher de se payer soi-même
         if (targetPlayer.getUniqueId().equals(player.getUniqueId())) {
-            player.sendMessage("§cVous ne pouvez pas vous payer vous-même !");
+            player.sendMessage(MessageColor.RED.apply("Vous ne pouvez pas vous payer vous-même !"));
             return true;
         }
 
         PlayerServer targetServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(targetPlayer.getUniqueId());
         if (targetServer == null) {
             messagediscord.sendmessage("/pay : erreur targetServer null, envoyé par " + senderServer.getName(),"statut");
-            player.sendMessage("§cErreur Administrateur");
+            player.sendMessage(MessageColor.RED.apply("Erreur Administrateur"));
             return true;
         }
 
@@ -252,17 +252,17 @@ public class GameCommands implements CommandExecutor {
         try {
             montant = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            player.sendMessage("§cMontant invalide !");
+            player.sendMessage(MessageColor.RED.apply("Montant invalide !"));
             return true;
         }
 
         if (montant <= 0) {
-            player.sendMessage("§cLe montant doit être supérieur à 0 !");
+            player.sendMessage(MessageColor.RED.apply("Le montant doit être supérieur à 0 !"));
             return true;
         }
 
         if (senderServer.getMoney() < montant) {
-            player.sendMessage("§cVous n'avez pas assez d'argent !");
+            player.sendMessage(MessageColor.RED.apply("§cVous n'avez pas assez d'argent !"));
             return true;
         }
 

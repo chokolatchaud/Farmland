@@ -11,11 +11,15 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import discordwebhook.messagediscord;
+import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.farmland.save.Filesave;
 import fr.kevyn.plot.Plot;
 import fr.kevyn.plot.PlotData;
+import me.clip.placeholderapi.libs.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 
 public class JoinAndleaveEvent implements Listener {
 
@@ -40,8 +44,8 @@ public class JoinAndleaveEvent implements Listener {
 
         if (playerServer == null) {
             // ===== NOUVEAU JOUEUR =====
-            e.getPlayer().sendMessage("Bienvenue Sur Farmland");
-            Bukkit.getServer().broadcastMessage("&eBienvenue à " + "&6" + e.getPlayer().getName() + "&e" + " Sur FarmLand !!!");
+            e.getPlayer().sendMessage(MessageColor.YELLOW.apply("Bienvenue Sur Farmland"));
+            Bukkit.getServer().broadcast(MessageColor.LIGHT_PURPLE.apply("&eBienvenue à " + e.getPlayer().getName() + " Sur FarmLand !!!"));
 
             PlotData plotData = new PlotData(
                 e.getPlayer().getUniqueId().toString(),
@@ -87,7 +91,7 @@ public class JoinAndleaveEvent implements Listener {
                 playerServer.setLastjoin(true);
             }
 
-            e.getPlayer().sendMessage("Données bien synchronisées");
+            e.getPlayer().sendMessage(MessageColor.GRAY.apply("Données bien synchronisées"));
             messagediscord.sendmessage("[" + playerServer.getGrade() + "]: " + playerServer.getName() + " est revenu", "statut");
             LuckpermGrade.updateGrade(e.getPlayer());
             ChatListener.updateTab(e.getPlayer());

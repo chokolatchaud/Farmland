@@ -41,7 +41,7 @@ public class MenuPlotVisit {
 
             if (meta != null) {
                 meta.setOwningPlayer(Bukkit.getOfflinePlayer(ps.getUuid()));
-                meta.setDisplayName(ChatColor.GREEN + ps.getName());
+                meta.setDisplayName(ps.getName());
                 head.setItemMeta(meta);
             }
 
@@ -53,7 +53,7 @@ public class MenuPlotVisit {
             ItemStack prev = CustomItemType.ARROW_PREV.create();
             ItemMeta prevMeta = prev.getItemMeta();
             if (prevMeta != null) {
-                prevMeta.setDisplayName(ChatColor.GOLD + "Page précédente");
+                prevMeta.setDisplayName("Page précédente");
             }
             prev.setItemMeta(prevMeta);
             inv.setItem(45, prev);
@@ -64,7 +64,7 @@ public class MenuPlotVisit {
             ItemStack next = CustomItemType.ARROW_NEXT.create();
             ItemMeta nextMeta = next.getItemMeta();
             if (nextMeta != null) {
-                nextMeta.setDisplayName(ChatColor.GOLD + "Page suivante");
+                nextMeta.setDisplayName("Page suivante");
             }
             next.setItemMeta(nextMeta);
             inv.setItem(53, next);

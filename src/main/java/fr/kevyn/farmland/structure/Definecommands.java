@@ -20,6 +20,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.Region;
 
 import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.farmland.region.GameRegion;
@@ -37,7 +38,7 @@ public class Definecommands implements CommandExecutor {
     		try {
                 // Vérifications de base
                 if (!(sender instanceof Player)) {
-                    sender.sendMessage(ChatColor.AQUA + "§cSeul un joueur peut exécuter cette commande !");
+                    sender.sendMessage("§cSeul un joueur peut exécuter cette commande !");
                     return true;
                 }
 
@@ -126,7 +127,7 @@ public class Definecommands implements CommandExecutor {
     		
     		GameRegion Structureplayer = GameRegionHashMap.getInstance().Playerwhatistregion(player);
     		if(Structureplayer == null) {
-    			player.sendMessage("Veuillez vous mettre dans votre structure");
+    			player.sendMessage(MessageColor.RED.apply("Veuillez vous mettre dans votre structure"));
     		}
     		
     		
@@ -138,7 +139,7 @@ public class Definecommands implements CommandExecutor {
     	    if(regionFile.exists()) {
     	        regionFile.delete();
     	    }
-    	    player.sendMessage("Votre Structure a été supprimée avec succés");
+    	    player.sendMessage(MessageColor.GREEN.apply("Votre Structure a été supprimée avec succés"));
     	    return true;
     		
     		

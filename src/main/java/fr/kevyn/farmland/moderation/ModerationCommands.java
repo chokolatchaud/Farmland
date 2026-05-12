@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import discordwebhook.messagediscord;
 import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.farmland.save.Filesave;
@@ -122,7 +123,7 @@ public class ModerationCommands implements CommandExecutor {
                             10, 60, 10
                     );
                 }
-                player.sendMessage(ChatColor.GOLD + "Le joueur a été averti.");
+                player.sendMessage(MessageColor.GOLD.apply("Le joueur a été averti."));
                 messagediscord.sendmessage("⚠️ **Avertissement** | " + targetPS.getName() + " a reçu un avertissement\n" +
                         "**Raison :** " + reason + "\n" +
                         "**Modérateur :** " + player.getName(), "moderation");

@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 
 import discordwebhook.messagediscord;
 import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.farmland.region.GameRegion;
@@ -110,7 +111,7 @@ public class EventBuildAndUse implements Listener {
         
         //on verifie la permission
         if (!player.hasPermission("farmland.placebloc")) {
-            player.sendMessage("&c" + "❌ Vous n'avez pas la permission de placer/détruire des blocs.");
+            player.sendMessage(MessageColor.RED.apply("❌ Vous n'avez pas la permission de placer/détruire des blocs."));
             return false;
         }
 
@@ -149,17 +150,17 @@ public class EventBuildAndUse implements Listener {
             UUID playerproprietaire = gameregion.getPropriétaire();
             
             if (playerproprietaire == null) {
-            	player.sendMessage("§cCette région n'a pas de propriétaire !");
+            	player.sendMessage(MessageColor.RED.apply("Cette région n'a pas de propriétaire !"));
                 return false;
                 
             }
             if (!player.getUniqueId().equals(playerproprietaire)) {
-            	 player.sendMessage("§cTu n'as pas le droit ici !");
+            	 player.sendMessage(MessageColor.RED.apply("Tu n'as pas le droit ici !"));
                 return false;
                
             }
         } else {
-        	player.sendMessage("§c⛔ Cette région est protégée !");
+        	player.sendMessage(MessageColor.RED.apply("⛔ Cette région est protégée !"));
             return false;
             
         }
@@ -172,7 +173,7 @@ public class EventBuildAndUse implements Listener {
 
         PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
         if (ps == null || ps.getPlotdata() == null) {
-            player.sendMessage("&c⚠ Vos données serveur sont introuvables !");
+            player.sendMessage(MessageColor.RED.apply("⚠ Vos données serveur sont introuvables !"));
             return true;
         }
         String currentWorld = player.getWorld().getName();
@@ -181,15 +182,15 @@ public class EventBuildAndUse implements Listener {
         if (ps.getPlotdata().getAllplotadd().contains(currentWorld)) return false;
         if (ps.getPlotdata().getAllplottrust().contains(currentWorld)) return false;
 
-        player.sendMessage("&c⛔ Vous ne pouvez pas modifier ce terrain !");
+        player.sendMessage(MessageColor.RED.apply("⛔ Vous ne pouvez pas modifier ce terrain !"));
         return true;
     }
 
     public void countBlockPlacement(Player player) {
         PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
         if (ps == null) {
-            player.sendMessage("&c⚠ Erreur dans le comptage de vos blocs.");
-            messagediscord.sendmessage("&cErreur comptage blocs pour " + player.getName(), "statut");
+            player.sendMessage(MessageColor.RED.apply("⚠ Erreur dans le comptage de vos blocs."));
+            messagediscord.sendmessage("Erreur comptage blocs pour " + player.getName(), "statut");
             return;
         }
 
@@ -198,7 +199,7 @@ public class EventBuildAndUse implements Listener {
         if (ps.getBlocpose() >= 150) {
             ps.setBlocpose(ps.getBlocpose() - 150);
             ps.setMoney(ps.getMoney() + 1);
-            player.sendMessage("&a+1$ pour 150 blocs placés !");
+            player.sendMessage(MessageColor.AQUA.apply("+1$ pour 150 blocs placés !"));
         }
     }
 
@@ -215,12 +216,12 @@ public class EventBuildAndUse implements Listener {
                            ps.getPlotdata().getAllplotadd().contains(currentWorld);
 
         if (!isOwner && !isTrusted) {
-            player.sendMessage("&c❌ Vous ne pouvez pas utiliser de seau ici.");
+            player.sendMessage(MessageColor.RED.apply("❌ Vous ne pouvez pas utiliser de seau ici."));
             return false;
         }
 
         if (ps.getPlotdata().getwaterlava()) {
-            player.sendMessage("&c❌ L'eau et la lave sont désactivées dans ce plot !");
+            player.sendMessage(MessageColor.RED.apply("&c❌ L'eau et la lave sont désactivées dans ce plot !"));
             return false;
         }
 

@@ -25,6 +25,7 @@ import com.sk89q.worldedit.session.SessionManager;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 
+import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.plot.PlotData;
@@ -51,7 +52,7 @@ public class WorldEditSecureListener implements Listener {
         if (player.hasPermission("farmland.worldeditbypass")) return;
 
         if (!player.hasPermission("farmland.worldedit")) {
-            player.sendMessage(ChatColor.RED + "tu n'a pas la permission");
+            player.sendMessage(MessageColor.RED.apply("tu n'a pas la permission"));
             event.setCancelled(true);
             return;
         }

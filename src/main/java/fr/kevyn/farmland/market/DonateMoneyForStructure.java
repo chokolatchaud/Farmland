@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.farmland.region.GameRegion;
@@ -41,7 +42,7 @@ public class DonateMoneyForStructure {
 			
 			
 			if(moneystructure > 750) {
-				player.sendMessage("Erreur Sur vos Structure, Veuillez Voir avec Un Membre du Staff");
+				player.sendMessage(MessageColor.RED.apply("Erreur Sur vos Structure, Veuillez Voir avec Un Membre du Staff"));
 				continue;
 			}
 			
@@ -51,7 +52,7 @@ public class DonateMoneyForStructure {
 			}
 			if(player.isOnline()) {
 				ps.setMoney(moneystructure + ps.getMoney());
-				player.sendMessage("§a+" + moneystructure + "$ pour " + structure.getName());
+				player.sendMessage(MessageColor.RED.apply(moneystructure + "$ pour " + structure.getName()));
 			}
 			
 			
