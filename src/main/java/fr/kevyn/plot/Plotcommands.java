@@ -277,8 +277,7 @@ public class Plotcommands implements CommandExecutor {
                 player.sendMessage(MessageColor.RED.apply("Erreur du côté serveur."));
                 return true;
             }
-            if(playerserver.getPlotdata().getNameWorld().equalsIgnoreCase(player.getWorld().getName()) 
-            		|| playerserver.getPlotdata().getAllplottrust().contains(player.getWorld().getName())){
+            if(playerserver.getPlotdata().getNameWorld().equalsIgnoreCase(player.getWorld().getName())){
             	player.openInventory(inventaire0);
                 return true;
             	
