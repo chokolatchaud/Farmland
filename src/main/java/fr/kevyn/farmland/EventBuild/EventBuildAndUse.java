@@ -16,6 +16,7 @@ import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.inventory.ItemStack;
 
 import discordwebhook.messagediscord;
 import fr.kevyn.farmland.FarmlandMain;
@@ -58,7 +59,7 @@ public class EventBuildAndUse implements Listener {
     	Block bloc = event.getBlock();
     	GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
     	
-    	if(!authorizedbuild(player, gameregion, bloc, true)) {
+    	if(!authorizedbuild(player, gameregion, bloc, true,null)) {
     		event.setCancelled(true);
     	}
     	
@@ -69,8 +70,9 @@ public class EventBuildAndUse implements Listener {
     public void onBucketEmpty(PlayerBucketEmptyEvent event) {
     	Player player = event.getPlayer();
     	Block bloc = event.getBlock();
+    	Material bucket = event.getBucket();
     	GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
-    	if(!authorizedbuild(player, gameregion, bloc,false)) {
+    	if(!authorizedbuild(player, gameregion, bloc,false, bucket)) {
     		event.setCancelled(true);
     	}
         
@@ -80,8 +82,9 @@ public class EventBuildAndUse implements Listener {
     public void onBucketFill(PlayerBucketFillEvent event) {
     	Player player = event.getPlayer();
     	Block bloc = event.getBlock();
+    	Material bucket = event.getBucket();
     	GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
-    	if(!authorizedbuild(player, gameregion, bloc,false)) {
+    	if(!authorizedbuild(player, gameregion, bloc,false, bucket)) {
     		event.setCancelled(true);
     	}
         
@@ -91,7 +94,7 @@ public class EventBuildAndUse implements Listener {
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
         if (event.getEntity().getShooter() instanceof Player player) {
         	GameRegion gameregion = GameRegionHashMap.getInstance().Playerwhatistregion(player);
-        	if(!authorizedbuild(player, gameregion, null,false)) {
+        	if(!authorizedbuild(player, gameregion, null,false, null)) {
         		event.setCancelled(true);
         	}
             
@@ -101,7 +104,7 @@ public class EventBuildAndUse implements Listener {
     
     
     
-    public boolean authorizedbuild(Player player, GameRegion region,Block bloc, Boolean countbloc) {
+    public boolean authorizedbuild(Player player, GameRegion region,Block bloc, Boolean countbloc, Material bucket) {
         //on verifie si admin
         if (player.hasPermission("farmland.placeblocbypass")) {
         	if(countbloc) {countBlockPlacement(player);}
@@ -133,7 +136,7 @@ public class EventBuildAndUse implements Listener {
         	return false;
         }
         
-        if(!canUseWaterLava(player, bloc)) {
+        if(!canUseWaterLava(player, bloc, bucket)) {
         	return false;
         }
         
@@ -203,8 +206,11 @@ public class EventBuildAndUse implements Listener {
         }
     }
 
-    public boolean canUseWaterLava(Player player, Block bloc) {
-    	if(bloc.getType() != Material.WATER && bloc.getType() != Material.LAVA) {
+    public boolean canUseWaterLava(Player player, Block bloc, Material Bucket) {
+    	player.sendMessage("lappel de canusewaterlava est effectuée");
+    	
+    	
+    	if(Bucket == null) {
     		return true;
     	}
         PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
