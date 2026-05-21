@@ -277,7 +277,13 @@ public class Plotcommands implements CommandExecutor {
                 player.sendMessage(MessageColor.RED.apply("Erreur du côté serveur."));
                 return true;
             }
-            player.openInventory(inventaire0);
+            if(playerserver.getPlotdata().getNameWorld().equalsIgnoreCase(player.getWorld().getName()) 
+            		|| playerserver.getPlotdata().getAllplottrust().contains(player.getWorld().getName())){
+            	player.openInventory(inventaire0);
+                return true;
+            	
+            }
+            player.sendMessage(MessageColor.RED.apply("Merci d'étre sur votre Plot pour effectuée cette commande"));
             return true;
         }
 
@@ -288,12 +294,22 @@ public class Plotcommands implements CommandExecutor {
                 player.sendMessage(MessageColor.RED.apply("Erreur du côté serveur"));
                 return true;
             }
-            player.openInventory(inventaireconfig);
+            if(playerserver.getPlotdata().getNameWorld().equalsIgnoreCase(player.getWorld().getName())){
+            	player.openInventory(inventaireconfig);
+                return true;
+            	
+            }
+            player.sendMessage(MessageColor.RED.apply("Merci d'étre sur votre Plot pour effectuée cette commande"));
             return true;
         }
 
         // /plot setspawnpoint
         else if (args[0].equalsIgnoreCase("setspawnpoint") || args[0].equalsIgnoreCase("setspawn")) {
+        	if(!playerserver.getPlotdata().getNameWorld().equalsIgnoreCase(player.getWorld().getName()) 
+            		|| !playerserver.getPlotdata().getAllplottrust().contains(player.getWorld().getName())){
+        		player.sendMessage(MessageColor.RED.apply("Merci d'étre sur votre Plot pour effectuée cette commande"));
+                return true;
+            }
             int locatex = player.getLocation().getBlockX();
             int locatey = player.getLocation().getBlockY();
             int locatez = player.getLocation().getBlockZ();

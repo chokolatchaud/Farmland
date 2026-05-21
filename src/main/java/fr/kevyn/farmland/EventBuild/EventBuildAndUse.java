@@ -204,7 +204,7 @@ public class EventBuildAndUse implements Listener {
     }
 
     public boolean canUseWaterLava(Player player, Block bloc) {
-    	if(bloc.getType() != Material.WATER || bloc.getType() != Material.LAVA) {
+    	if(bloc.getType() != Material.WATER && bloc.getType() != Material.LAVA) {
     		return true;
     	}
         PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
@@ -225,7 +225,7 @@ public class EventBuildAndUse implements Listener {
             return false;
         }
 
-        return false;
+        return true;
     }
     
  

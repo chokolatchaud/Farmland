@@ -136,7 +136,7 @@ public class MicroPluginManager {
                         
                     });
                     for (Player player : players) {
-                        player.sendMessage(MessageColor.GOLD.apply("§aDiscord Du serveur : https://discord.gg/VH7MJpwpub")); //discord new
+                        player.sendMessage(MessageColor.GOLD + "Discord Du serveur : https://discord.gg/VH7MJpwpub"); //discord new
                     }
                     plugin.getLogger().info("Sauvegarde réalisée pour " + players.size() + " joueurs");
                 }
