@@ -21,6 +21,7 @@ import fr.kevyn.farmland.region.RegionCommands;
 import fr.kevyn.farmland.save.Filesave;
 import fr.kevyn.farmland.save.RegionSave;
 import fr.kevyn.farmland.structure.Definecommands;
+import fr.kevyn.farmland.structure.StructureCommands;
 import fr.kevyn.farmland.worldeditgestion.WorldEditSecureListener;
 import fr.kevyn.plot.Plotcommands;
 
@@ -42,6 +43,8 @@ public class MicroPluginManager {
         plugin.getCommand("listregion").setExecutor(new RegionCommands());
         plugin.getCommand("region").setExecutor(new RegionCommands());
         //plugin.getCommand("game").setExecutor(new GameManagercommands());
+        plugin.getCommand("liststructure").setExecutor(new StructureCommands()); //a faire
+        plugin.getCommand("viewmoney").setExecutor(new StructureCommands()); //a faire
         plugin.getCommand("define").setExecutor(new Definecommands());
         plugin.getCommand("undefine").setExecutor(new Definecommands());
         plugin.getCommand("market").setExecutor(new Marketcommands());
