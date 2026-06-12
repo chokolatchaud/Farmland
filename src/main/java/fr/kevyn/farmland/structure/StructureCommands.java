@@ -2,20 +2,28 @@ package fr.kevyn.farmland.structure;
 
 import java.util.ArrayList;
 
-import org.bukkit.block.Structure;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.MessageColor;
+import fr.kevyn.farmland.market.DonateMoneyForStructure;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.farmland.region.GameRegion;
 import fr.kevyn.farmland.region.GameRegionHashMap;
 
 public class StructureCommands implements CommandExecutor {
+	FarmlandMain plugin = null;
+	
+	public StructureCommands(FarmlandMain plugin) {
+		this.plugin = plugin;
+		
+	}
+	
 
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
@@ -55,8 +63,9 @@ public class StructureCommands implements CommandExecutor {
 				
 			}
 			if(Structure.getPropriétaire() == playerserversender.getUuid()) {
-				//A Faire
-				
+				int money = DonateMoneyForStructure.moneycalc(Structure, plugin);
+				player.sendMessage(MessageColor.AQUA.apply("Votre Structure génere:"));
+				player.sendMessage(money + "");
 				
 				
 			}else {

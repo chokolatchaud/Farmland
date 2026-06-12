@@ -43,8 +43,8 @@ public class MicroPluginManager {
         plugin.getCommand("listregion").setExecutor(new RegionCommands());
         plugin.getCommand("region").setExecutor(new RegionCommands());
         //plugin.getCommand("game").setExecutor(new GameManagercommands());
-        plugin.getCommand("liststructure").setExecutor(new StructureCommands()); //a faire
-        plugin.getCommand("viewmoney").setExecutor(new StructureCommands()); //a faire
+        plugin.getCommand("liststructure").setExecutor(new StructureCommands(plugin));
+        plugin.getCommand("viewmoney").setExecutor(new StructureCommands(plugin));
         plugin.getCommand("define").setExecutor(new Definecommands());
         plugin.getCommand("undefine").setExecutor(new Definecommands());
         plugin.getCommand("market").setExecutor(new Marketcommands());
