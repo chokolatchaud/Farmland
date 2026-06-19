@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -45,7 +46,10 @@ public class JoinAndleaveEvent implements Listener {
         if (playerServer == null) {
             // ===== NOUVEAU JOUEUR =====
             e.getPlayer().sendMessage(MessageColor.YELLOW.apply("Bienvenue Sur Farmland"));
-            Bukkit.getServer().broadcast(MessageColor.LIGHT_PURPLE.apply("&eBienvenue à " + e.getPlayer().getName() + " Sur FarmLand !!!"));
+            String messageBienvenue = MessageColor.LIGHT_PURPLE.apply("&eBienvenue à " + e.getPlayer().getName() + " Sur FarmLand !!!");
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                p.sendMessage(messageBienvenue);
+            }
 
             PlotData plotData = new PlotData(
                 e.getPlayer().getUniqueId().toString(),
