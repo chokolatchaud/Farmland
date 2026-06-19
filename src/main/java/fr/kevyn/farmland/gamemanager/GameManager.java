@@ -77,6 +77,7 @@ public class GameManager {
 		  Game game = getGameByPlayer(player);
 		  if(game == null) {
 			  player.sendMessage("tu nest pas dans une game");
+			  return;
 		  }
 		  if(game.getStatue() == Statuegame.WAITPLAYER) {
 			  game.removeplayerwait(player);

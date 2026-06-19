@@ -40,7 +40,7 @@ public class EventBuildAndUse implements Listener {
     	Player player = event.getPlayer();
     	Block bloc = event.getBlock();
     	GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
-    	if(!authorizedbuild(player, gameregion, bloc, false)) {
+    	if(!authorizedbuild(player, gameregion, bloc, false, null)) {
     		event.setCancelled(true);
     	}
     }
@@ -105,7 +105,6 @@ public class EventBuildAndUse implements Listener {
     
     
     public boolean authorizedbuild(Player player, GameRegion region,Block bloc, Boolean countbloc, Material bucket) {
-        //on verifie si admin
         if (player.hasPermission("farmland.placeblocbypass")) {
         	if(countbloc) {countBlockPlacement(player);}
     		return true;
@@ -120,7 +119,7 @@ public class EventBuildAndUse implements Listener {
 
         
         //on verfie si le bloc est autorisé
-        if (bloc != null && bloc.getType() == Material.SPAWNER || bloc.getType() == Material.COMMAND_BLOCK) {
+        if (bloc != null && (bloc.getType() == Material.SPAWNER || bloc.getType() == Material.COMMAND_BLOCK)) {
             return false;
         }
         

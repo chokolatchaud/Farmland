@@ -12,6 +12,7 @@ public class FarmlandMain extends JavaPlugin {
     	//recuperation du projet par l'id 2
     	
         System.out.println("----- Plugin activé -----");
+        messagediscord.init(this);
         getServer().getPluginManager().registerEvents(new JoinAndleaveEvent(this), this);
         
         try {

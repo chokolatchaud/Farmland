@@ -1,0 +1,8 @@
+# Configuration Farmland
+# ⚠ Ne JAMAIS mettre de vraies URL de webhook ici, ce fichier est dans le repo Git public !
+# Remplis les vraies valeurs dans plugins/Farmland/config.yml sur ton serveur, pas ici.
+
+discord:
+  webhook-status: ""
+  webhook-message: ""
+  webhook-moderation: ""

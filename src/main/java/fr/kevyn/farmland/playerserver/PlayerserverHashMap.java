@@ -1,14 +1,16 @@
 package fr.kevyn.farmland.playerserver;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerserverHashMap {
     private static final PlayerserverHashMap INSTANCE = new PlayerserverHashMap();
-    private final Map<UUID, PlayerServer> players = new HashMap<>();
+    // ConcurrentHashMap au lieu de HashMap : la sauvegarde tourne en async (runTaskAsynchronously)
+    // pendant qu'un joueur peut se connecter/déconnecter sur le thread principal en même temps
+    private final Map<UUID, PlayerServer> players = new ConcurrentHashMap<>();
     // ✅ AJOUTÉ : Cache par nom pour performance
-    private final Map<String, UUID> nameToUUID = new HashMap<>();
+    private final Map<String, UUID> nameToUUID = new ConcurrentHashMap<>();
     
     public static PlayerserverHashMap getInstance() {
         return INSTANCE;

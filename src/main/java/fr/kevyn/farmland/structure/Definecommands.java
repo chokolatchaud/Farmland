@@ -95,18 +95,11 @@ public class Definecommands implements CommandExecutor {
                 player.sendMessage("§7Scan en cours...");
                 messagediscord.sendmessage("Structure créée : " + nomStructure + " par " + player.getName(), "farmland");
 
-                // Scanner async
-                Bukkit.getScheduler().runTaskAsynchronously(FarmlandMain.getPlugin(FarmlandMain.class), () -> {
-                    int score = scanStructure(gameRegion);
-
-                    // Retour au thread principal
-                    Bukkit.getScheduler().runTask(FarmlandMain.getPlugin(FarmlandMain.class), () -> {
-                        gameRegion.setScore(score);
-                        RegionSave.saveOneRegion(FarmlandMain.getPlugin(FarmlandMain.class), gameRegion);
-
-                        sendScoreMessage(player, score);
-                    });
-                });
+                // Scanner (doit rester sur le thread principal, Bukkit interdit de lire des blocs en async)
+                int score = scanStructure(gameRegion);
+                gameRegion.setScore(score);
+                RegionSave.saveOneRegion(FarmlandMain.getPlugin(FarmlandMain.class), gameRegion);
+                sendScoreMessage(player, score);
 
                 return true;
             } catch (Exception e) {
@@ -128,6 +121,7 @@ public class Definecommands implements CommandExecutor {
     		GameRegion Structureplayer = GameRegionHashMap.getInstance().Playerwhatistregion(player);
     		if(Structureplayer == null) {
     			player.sendMessage(MessageColor.RED.apply("Veuillez vous mettre dans votre structure"));
+    			return true;
     		}
     		
     		

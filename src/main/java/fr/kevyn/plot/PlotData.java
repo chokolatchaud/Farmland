@@ -29,16 +29,16 @@ public class PlotData {
         this.allplotadd = allplotadd;
         this.allplottrust = allplottrust;
         this.NameWorld = NameWorld;
-        this.worldborder = 50;
-        this.boost = 0;
+        this.worldborder = worldborder;
+        this.boost = boost;
         this.waterlava = true;
         this.locationspawnX = 0;
         this.locationspawnY = 0;
         this.locationspawnZ = 0;
         this.privateplot = false;
-        this.meteoActive = "minecraftActive";
-        this.meteoTime = "day";
-        this.meteoRain ="weatherclear";
+        this.meteoActive = meteoActive;
+        this.meteoTime = meteoTime;
+        this.meteoRain = meteoRain;
     }
     
     public String getMeteoActive() {

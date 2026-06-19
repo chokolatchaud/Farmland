@@ -26,8 +26,10 @@ public class MarketCalc {
 			countcoefÉquilibre += CoefStructure.ScoreToCoefÉquilibre(structure.getScore());
 		}
 		
-		
-		
+		//on evite de diviser par 0 si y a pas encore de structure
+		if(GetStructure.getallStructure().size() == 0) {
+			return;
+		}
 		
 		float moyenneCreativité = countcoefCreativité / GetStructure.getallStructure().size();
 		float moyenneArchitecture = countcoefArchitecture / GetStructure.getallStructure().size();
@@ -116,7 +118,7 @@ public class MarketCalc {
         plugin.getLogger().info("Nouveau coef: " + NewMoneyÉquilibre);
         
         
-        Market NewMarket = new Market(NewMoneyCreativité, NewMoneyArchitecture, NewMoneyDensité, NewMoneyFinition, NewMoneyÉquilibre);
+        Market NewMarket = new Market(NewMoneyCreativité, NewMoneyArchitecture, NewMoneyDensité, NewMoneyÉquilibre, NewMoneyFinition);
         MarketSave.saveMarket(plugin,NewMarket);
 	}
 
