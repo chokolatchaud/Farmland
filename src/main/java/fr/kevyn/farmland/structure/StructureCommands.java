@@ -35,7 +35,7 @@ public class StructureCommands implements CommandExecutor {
 		if(command.getName().equalsIgnoreCase("liststructure")) {
 			ArrayList<GameRegion> listplayerstructure = new ArrayList<GameRegion>();
 			for(GameRegion structure : GetStructure.getallStructure()) {
-				if(structure.getPropriétaire() == playerserversender.getUuid()){
+				if(structure.getPropriétaire().toString() == player.getUniqueId().toString()){
 					listplayerstructure.add(structure);
 				}
 				
@@ -62,7 +62,7 @@ public class StructureCommands implements CommandExecutor {
 				player.sendMessage(MessageColor.RED.apply("Veuillez vous Tenir Dans Votre Structure"));
 				
 			}
-			if(Structure.getPropriétaire() == playerserversender.getUuid()) {
+			if(Structure.getPropriétaire().toString() == player.getUniqueId().toString()) {
 				int money = DonateMoneyForStructure.moneycalc(Structure, plugin);
 				player.sendMessage(MessageColor.AQUA.apply("Votre Structure génere:"));
 				player.sendMessage(money + "");
