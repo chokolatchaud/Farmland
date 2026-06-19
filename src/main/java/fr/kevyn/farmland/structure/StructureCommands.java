@@ -35,7 +35,7 @@ public class StructureCommands implements CommandExecutor {
 		if(command.getName().equalsIgnoreCase("liststructure")) {
 			ArrayList<GameRegion> listplayerstructure = new ArrayList<GameRegion>();
 			for(GameRegion structure : GetStructure.getallStructure()) {
-				if(structure.getPropriétaire().toString() == player.getUniqueId().toString()){
+				if(structure.getPropriétaire().equals(player.getUniqueId())){
 					listplayerstructure.add(structure);
 				}
 				
@@ -60,9 +60,9 @@ public class StructureCommands implements CommandExecutor {
 			GameRegion Structure = GameRegionHashMap.getInstance().Playerwhatistregion(player);
 			if(Structure == null) {
 				player.sendMessage(MessageColor.RED.apply("Veuillez vous Tenir Dans Votre Structure"));
-				
+				return true;
 			}
-			if(Structure.getPropriétaire().toString() == player.getUniqueId().toString()) {
+			if(Structure.getPropriétaire().equals(player.getUniqueId())) {
 				int money = DonateMoneyForStructure.moneycalc(Structure, plugin);
 				player.sendMessage(MessageColor.AQUA.apply("Votre Structure génere:"));
 				player.sendMessage(money + "");
@@ -72,10 +72,9 @@ public class StructureCommands implements CommandExecutor {
 				player.sendMessage("vous n'etes pas le proprietaire de cette Structure");
 				
 			}
+			return true;
 			
-			
-			
-			}
+		}
 			
 		
 		return false;

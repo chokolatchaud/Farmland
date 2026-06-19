@@ -10,7 +10,6 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
-import net.kyori.adventure.text.Component;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.cacheddata.CachedMetaData;
@@ -45,7 +44,7 @@ public class ChatListener implements Listener {
 
         // Nouveau format du message
         String format = ChatColor.translateAlternateColorCodes('&',
-                prefix + player.getName() + suffix + " &7: " + event.getMessage());
+                prefix + "%1$s" + suffix + " &7: %2$s");
 
         event.setFormat(format);
     }
@@ -65,7 +64,7 @@ public class ChatListener implements Listener {
         // ----------------------------
         // Tab list : prefix -> 1 lettre
         // ----------------------------
-        Component tabPrefix = MessageColor.WHITE.apply(""); // par défaut espace
+        String tabPrefix = MessageColor.WHITE.apply(""); // par défaut espace
         if (prefix.contains("Admin")) tabPrefix = MessageColor.RED.apply("A-");
         else if (prefix.contains("Mod")) tabPrefix = MessageColor.YELLOW.apply("M-");
         else if (prefix.contains("Buildeur")) tabPrefix = MessageColor.GREEN.apply("B-");
