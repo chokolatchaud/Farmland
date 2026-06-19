@@ -7,6 +7,18 @@ depend: [PlaceholderAPI, Multiverse-Core]
 
 commands:
 
+  liststructure:
+    description: Voir toute nos Structure crée et voir leurs lieu de spawn
+    usage: /liststructure [Structure]
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  viewmoney:
+    description: voir l'argent generer par la Structure ou toute
+    usage: /viewmoney [Structure]
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
   createregion:
     description: creer une Region
     usage: /createregion

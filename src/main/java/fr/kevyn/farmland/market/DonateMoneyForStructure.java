@@ -2,6 +2,7 @@ package fr.kevyn.farmland.market;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.MessageColor;
@@ -24,12 +25,9 @@ public class DonateMoneyForStructure {
 		for(GameRegion structure : GetStructure.getallStructure()) {
 			Player player = Bukkit.getPlayer(structure.getPropriétaire());
 			Market market = MarketSave.loadMarket(plugin);
-			int moneystructure = 
-				Math.round((CoefStructure.ScoreToCoefCréativité(structure.getScore()) / 100f) * market.getMoneyforcoefCréativité()) +
-				Math.round((CoefStructure.ScoreToCoefArchitecture(structure.getScore()) / 100f)* market.getMoneyforcoefArchitecture()) +
-				Math.round((CoefStructure.ScoreToCoefDensité(structure.getScore()) / 100f) * market.getMoneyforcoefDensité()) +
-				Math.round((CoefStructure.ScoreToCoefFinition(structure.getScore()) / 100f)* market.getMoneyforcoefFinition()) +
-				Math.round((CoefStructure.ScoreToCoefÉquilibre(structure.getScore()) / 100f)* market.getMoneyforcoefÉquilibre()) ;
+			
+			int moneystructure = moneycalc(structure, plugin);
+				
 			plugin.getLogger().info("Structure: " + structure.getName());
 			plugin.getLogger().info("Score: " + structure.getScore());
 			plugin.getLogger().info("Market Créativité: " + market.getMoneyforcoefCréativité());
@@ -59,6 +57,19 @@ public class DonateMoneyForStructure {
 			
 			
 		}
+		
+	
+		
+		
+	}
+	public static int moneycalc(GameRegion structure,FarmlandMain plugin) {
+		Market market = MarketSave.loadMarket(plugin);
+		int money = Math.round((CoefStructure.ScoreToCoefCréativité(structure.getScore()) / 100f) * market.getMoneyforcoefCréativité()) +
+		Math.round((CoefStructure.ScoreToCoefArchitecture(structure.getScore()) / 100f)* market.getMoneyforcoefArchitecture()) +
+		Math.round((CoefStructure.ScoreToCoefDensité(structure.getScore()) / 100f) * market.getMoneyforcoefDensité()) +
+		Math.round((CoefStructure.ScoreToCoefFinition(structure.getScore()) / 100f)* market.getMoneyforcoefFinition()) +
+		Math.round((CoefStructure.ScoreToCoefÉquilibre(structure.getScore()) / 100f)* market.getMoneyforcoefÉquilibre()) ;
+		return money;
 		
 		
 	}

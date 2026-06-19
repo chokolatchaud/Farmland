@@ -1,10 +1,8 @@
 name: Discord Notification
-
 on:
   push:
     branches:
       - master
-
 jobs:
   notify:
     runs-on: ubuntu-latest
@@ -12,14 +10,24 @@ jobs:
       - name: Send Discord notification
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          COMMIT_URL: ${{ github.event.head_commit.url }}
+          ACTOR: ${{ github.actor }}
+          BRANCH: ${{ github.ref_name }}
         run: |
+          PAYLOAD=$(jq -n \
+            --arg msg "$COMMIT_MESSAGE" \
+            --arg url "$COMMIT_URL" \
+            --arg actor "$ACTOR" \
+            --arg branch "$BRANCH" \
+            '{
+              embeds: [{
+                title: "🚀 Nouveau commit sur FarmLand",
+                description: ("**Auteur :** " + $actor + "\n**Message :** " + $msg + "\n**Branche :** " + $branch),
+                color: 5763719,
+                url: $url
+              }]
+            }')
           curl -H "Content-Type: application/json" \
-          -d '{
-            "embeds": [{
-              "title": "🚀 Nouveau commit sur FarmLand",
-              "description": "**Auteur :** ${{ github.actor }}\n**Message :** ${{ github.event.head_commit.message }}\n**Branche :** ${{ github.ref_name }}",
-              "color": 5763719,
-              "url": "${{ github.event.head_commit.url }}"
-            }]
-          }' \
-          $DISCORD_WEBHOOK
+               -d "$PAYLOAD" \
+               "$DISCORD_WEBHOOK"
