@@ -119,6 +119,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- OkHttp (WebAPI client vers le site farm-land.fr) -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.12.0</version>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 
     <!-- ===================== BUILD ===================== -->

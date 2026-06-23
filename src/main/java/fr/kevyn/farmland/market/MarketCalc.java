@@ -120,6 +120,16 @@ public class MarketCalc {
         
         Market NewMarket = new Market(NewMoneyCreativité, NewMoneyArchitecture, NewMoneyDensité, NewMoneyÉquilibre, NewMoneyFinition);
         MarketSave.saveMarket(plugin,NewMarket);
+
+        // pousse les prix vers le site farm-land.fr
+        FarmlandMain main = (FarmlandMain) plugin;
+        if (main.getWebApi() != null) {
+            main.getWebApi().pushStructurePrice("Créativité", NewMoneyCreativité, "Marché");
+            main.getWebApi().pushStructurePrice("Architecture", NewMoneyArchitecture, "Marché");
+            main.getWebApi().pushStructurePrice("Densité", NewMoneyDensité, "Marché");
+            main.getWebApi().pushStructurePrice("Équilibre", NewMoneyÉquilibre, "Marché");
+            main.getWebApi().pushStructurePrice("Finition", NewMoneyFinition, "Marché");
+        }
 	}
 
 }

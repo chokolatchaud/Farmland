@@ -105,6 +105,15 @@ public class JoinAndleaveEvent implements Listener {
                 new Plot(e.getPlayer().getUniqueId(), plugin);
             }, PLOT_CREATION_DELAY);
         }
+
+        // pousse le statut du serveur vers farm-land.fr
+        if (plugin.getWebApi() != null) {
+            plugin.getWebApi().pushServerStatus(
+                plugin.getServer().getOnlinePlayers().size(),
+                plugin.getServer().getMaxPlayers(),
+                plugin.getServer().getBukkitVersion()
+            );
+        }
     }
 
     @EventHandler
@@ -117,6 +126,15 @@ public class JoinAndleaveEvent implements Listener {
             });
         }
         playerServer.getPlotdata().setAllplotadd(new ArrayList<String>());
+        
+        // pousse le statut du serveur vers farm-land.fr
+        if (plugin.getWebApi() != null) {
+            plugin.getWebApi().pushServerStatus(
+                plugin.getServer().getOnlinePlayers().size() - 1,
+                plugin.getServer().getMaxPlayers(),
+                plugin.getServer().getBukkitVersion()
+            );
+        }
         
         e.setQuitMessage("");
     }

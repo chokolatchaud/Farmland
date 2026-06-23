@@ -6,3 +6,11 @@ discord:
   webhook-status: ""
   webhook-message: ""
   webhook-moderation: ""
+
+# WebAPI vers farm-land.fr
+# Remplis base_url et api_key dans plugins/Farmland/config.yml sur ton serveur
+webapi:
+  enabled: false
+  base_url: ""
+  api_key: ""
+  push_interval_seconds: 30
