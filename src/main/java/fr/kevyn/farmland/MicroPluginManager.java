@@ -181,6 +181,9 @@ public class MicroPluginManager {
 
             plugin.initWebApi(base, key);
 
+            // push initial du marche au demarrage (WebApi vient d'etre initialisé)
+            MarketCalc.pushMarketToWebApi(plugin);
+
             // push statut serveur toutes les X secondes
             Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
                 plugin.getWebApi().pushServerStatus(

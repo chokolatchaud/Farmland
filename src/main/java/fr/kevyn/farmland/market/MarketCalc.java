@@ -152,4 +152,23 @@ public class MarketCalc {
         }
 	}
 
+	// pousse le dernier marche connu vers le site (appele au demarrage apres init WebAPI)
+	public static void pushMarketToWebApi(Plugin plugin) {
+		FarmlandMain main = (FarmlandMain) plugin;
+		if (main.getWebApi() == null) return;
+
+		Market lastMarket = MarketSave.loadMarket(plugin);
+		if (lastMarket == null) {
+			plugin.getLogger().warning("[WebAPI] Aucun marche sauvegarde, impossible de pousser vers le site");
+			return;
+		}
+
+		main.getWebApi().pushStructurePrice("Creativite",   lastMarket.getMoneyforcoefCréativité(),   "Marche");
+		main.getWebApi().pushStructurePrice("Architecture", lastMarket.getMoneyforcoefArchitecture(), "Marche");
+		main.getWebApi().pushStructurePrice("Densite",      lastMarket.getMoneyforcoefDensité(),      "Marche");
+		main.getWebApi().pushStructurePrice("Equilibre",    lastMarket.getMoneyforcoefÉquilibre(),    "Marche");
+		main.getWebApi().pushStructurePrice("Finition",     lastMarket.getMoneyforcoefFinition(),     "Marche");
+		plugin.getLogger().info("[WebAPI] Marche initial pousse vers farm-land.fr au demarrage");
+	}
+
 }
