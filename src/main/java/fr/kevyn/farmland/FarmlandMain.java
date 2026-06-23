@@ -1,4 +1,5 @@
 package fr.kevyn.farmland;
+
 import org.bukkit.plugin.java.JavaPlugin;
 import discordwebhook.messagediscord;
 import fr.kevyn.farmland.EventBuild.JoinAndleaveEvent;
@@ -13,24 +14,27 @@ public class FarmlandMain extends JavaPlugin {
 
     public WebApiClient getWebApi() { return webApi; }
 
+    // appelé par moduleWebApi dans MicroPluginManager
+    public void initWebApi(String baseUrl, String apiKey) {
+        this.webApi = new WebApiClient(this, baseUrl, apiKey);
+    }
+
     @Override
     public void onEnable() {
-    	//recuperation du projet par l'id 2
-    	
         System.out.println("----- Plugin activé -----");
+        saveDefaultConfig();
         messagediscord.init(this);
         getServer().getPluginManager().registerEvents(new JoinAndleaveEvent(this), this);
-        
+
         try {
             Filesave.LoadPlayerserverFile(this);
-            
         } catch (Exception e) {
             getLogger().severe("ERREUR CRITIQUE lors du chargement des fichiers joueurs !");
             e.printStackTrace();
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        
+
         try {
             RegionSave.loadAllRegions(this);
             MarketCalc.Calcforcoef(this);
@@ -43,23 +47,6 @@ public class FarmlandMain extends JavaPlugin {
         } catch (Exception e) {
             getLogger().severe("ERREUR CRITIQUE lors du chargement des structures !");
             e.printStackTrace();
-        }
-
-        // WebAPI vers farm-land.fr
-        saveDefaultConfig();
-        if (getConfig().getBoolean("webapi.enabled", false)) {
-            String base = getConfig().getString("webapi.base_url", "");
-            String key  = getConfig().getString("webapi.api_key", "");
-            webApi = new WebApiClient(this, base, key);
-            long ticks = getConfig().getLong("webapi.push_interval_seconds", 30L) * 20L;
-            getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
-                webApi.pushServerStatus(
-                    getServer().getOnlinePlayers().size(),
-                    getServer().getMaxPlayers(),
-                    getServer().getBukkitVersion()
-                );
-            }, 20L, ticks);
-            getLogger().info("[WebAPI] connecté à " + base);
         }
 
         messagediscord.sendmessage("Le plugin vient de s'allumer", "status");

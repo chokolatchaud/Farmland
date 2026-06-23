@@ -1,20 +1,20 @@
 package fr.kevyn.farmland.api;
 
 import com.google.gson.Gson;
-import okhttp3.*;
+import fr.kevyn.farmland.libs.okhttp3.*;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class WebApiClient {
 
-    private static final String EP_SERVER    = "/api/server/status";
-    private static final String EP_MARKET    = "/api/market/structures";
-    private static final String EP_LEADER    = "/api/leaderboard";
+    private static final String EP_SERVER = "/api/server/status";
+    private static final String EP_MARKET = "/api/market/structures";
+    private static final String EP_LEADER = "/api/leaderboard";
 
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
@@ -43,7 +43,7 @@ public class WebApiClient {
         ));
     }
 
-    // pousse le prix d'une structure vers le marche du site
+    // pousse le prix d'une structure vers le marche du site (sans accents dans les noms)
     public void pushStructurePrice(String name, double price, String category) {
         post(EP_MARKET, Map.of(
                 "name",     name,
@@ -62,6 +62,7 @@ public class WebApiClient {
     }
 
     // HTTP POST asynchrone (fire-and-forget, jamais de blocage du main thread)
+    // Fix Emergent : force UTF-8 pour eviter les problemes d'accents sur Windows
     private void post(String path, Object bodyObj) {
         if (baseUrl == null || baseUrl.isEmpty() || apiKey == null || apiKey.isEmpty()) {
             return;
@@ -70,7 +71,7 @@ public class WebApiClient {
                 .url(baseUrl + path)
                 .header("X-API-Key", apiKey)
                 .header("Content-Type", "application/json")
-                .post(RequestBody.create(gson.toJson(bodyObj), JSON))
+                .post(RequestBody.create(gson.toJson(bodyObj).getBytes(StandardCharsets.UTF_8), JSON))
                 .build();
 
         http.newCall(req).enqueue(new Callback() {
@@ -81,9 +82,13 @@ public class WebApiClient {
             @Override public void onResponse(Call call, Response response) {
                 try (Response r = response) {
                     if (!r.isSuccessful()) {
+                        // log le corps de la reponse pour diagnostiquer les erreurs
+                        String body = r.body() != null ? r.body().string() : "";
                         plugin.getLogger().warning(
-                                "[WebAPI] " + path + " -> HTTP " + r.code());
+                                "[WebAPI] " + path + " -> HTTP " + r.code() + " | " + body);
                     }
+                } catch (IOException e) {
+                    plugin.getLogger().warning("[WebAPI] erreur lecture reponse : " + e.getMessage());
                 }
             }
         });

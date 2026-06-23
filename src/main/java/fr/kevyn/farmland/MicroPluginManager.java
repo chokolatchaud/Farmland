@@ -169,6 +169,36 @@ public class MicroPluginManager {
     
     
 
+    public static void moduleWebApi(FarmlandMain plugin) {
+        if (!plugin.getConfig().getBoolean("webapi.enabled", false)) {
+            plugin.getLogger().info("[WebAPI] Module désactivé (webapi.enabled=false dans config.yml)");
+            return;
+        }
+        try {
+            String base = plugin.getConfig().getString("webapi.base_url", "");
+            String key  = plugin.getConfig().getString("webapi.api_key", "");
+            long ticks  = plugin.getConfig().getLong("webapi.push_interval_seconds", 30L) * 20L;
+
+            plugin.initWebApi(base, key);
+
+            // push statut serveur toutes les X secondes
+            Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+                plugin.getWebApi().pushServerStatus(
+                    Bukkit.getOnlinePlayers().size(),
+                    Bukkit.getMaxPlayers(),
+                    Bukkit.getBukkitVersion()
+                );
+            }, 20L, ticks);
+
+            plugin.getLogger().info("[WebAPI] Module chargé → " + base);
+            messagediscord.sendmessage("Module WebAPI bien lancé → " + base, "statut");
+        } catch (Exception e) {
+            plugin.getLogger().severe("[WebAPI] Erreur lors du chargement du module WebAPI !");
+            messagediscord.sendmessage("Module WebAPI erreur: " + e.toString(), "statut");
+            e.printStackTrace();
+        }
+    }
+
     public static void loadModules(FarmlandMain plugin) {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             moduleModeration(plugin);
@@ -177,6 +207,7 @@ public class MicroPluginManager {
             moduleSaveCommand(plugin);
             moduleGame(plugin);
             moduleSecureWorldEdit(plugin);
+            moduleWebApi(plugin);
         }, 20L);
     }
 }

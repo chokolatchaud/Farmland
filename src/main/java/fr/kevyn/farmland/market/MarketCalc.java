@@ -26,18 +26,20 @@ public class MarketCalc {
 			countcoefÉquilibre += CoefStructure.ScoreToCoefÉquilibre(structure.getScore());
 		}
 		
-		//on evite de diviser par 0 si y a pas encore de structure
+			//on evite de diviser par 0 si y a pas encore de structure
 		if(GetStructure.getallStructure().size() == 0) {
 			// on pousse quand meme le dernier marche connu vers le site
 			Market lastKnown = MarketSave.loadMarket(plugin);
 			if (lastKnown != null) {
 				FarmlandMain main = (FarmlandMain) plugin;
 				if (main.getWebApi() != null) {
-					main.getWebApi().pushStructurePrice("Créativité", lastKnown.getMoneyforcoefCréativité(), "Marché");
-					main.getWebApi().pushStructurePrice("Architecture", lastKnown.getMoneyforcoefArchitecture(), "Marché");
-					main.getWebApi().pushStructurePrice("Densité", lastKnown.getMoneyforcoefDensité(), "Marché");
-					main.getWebApi().pushStructurePrice("Équilibre", lastKnown.getMoneyforcoefÉquilibre(), "Marché");
-					main.getWebApi().pushStructurePrice("Finition", lastKnown.getMoneyforcoefFinition(), "Marché");
+					// Fix Emergent : noms sans accents pour eviter les problemes d'encoding
+					main.getWebApi().pushStructurePrice("Creativite",   lastKnown.getMoneyforcoefCréativité(),   "Marche");
+					main.getWebApi().pushStructurePrice("Architecture", lastKnown.getMoneyforcoefArchitecture(), "Marche");
+					main.getWebApi().pushStructurePrice("Densite",      lastKnown.getMoneyforcoefDensité(),      "Marche");
+					main.getWebApi().pushStructurePrice("Equilibre",    lastKnown.getMoneyforcoefÉquilibre(),    "Marche");
+					main.getWebApi().pushStructurePrice("Finition",     lastKnown.getMoneyforcoefFinition(),     "Marche");
+					plugin.getLogger().info("[WebAPI] Marche pousse vers farm-land.fr (aucune structure, dernier marche connu)");
 				}
 			}
 			return;
@@ -134,13 +136,19 @@ public class MarketCalc {
         MarketSave.saveMarket(plugin,NewMarket);
 
         // pousse les prix vers le site farm-land.fr
+        // Fix Emergent : noms sans accents pour eviter les problemes d'encoding
         FarmlandMain main = (FarmlandMain) plugin;
         if (main.getWebApi() != null) {
-            main.getWebApi().pushStructurePrice("Créativité", NewMoneyCreativité, "Marché");
-            main.getWebApi().pushStructurePrice("Architecture", NewMoneyArchitecture, "Marché");
-            main.getWebApi().pushStructurePrice("Densité", NewMoneyDensité, "Marché");
-            main.getWebApi().pushStructurePrice("Équilibre", NewMoneyÉquilibre, "Marché");
-            main.getWebApi().pushStructurePrice("Finition", NewMoneyFinition, "Marché");
+            main.getWebApi().pushStructurePrice("Creativite",   NewMoneyCreativité,   "Marche");
+            main.getWebApi().pushStructurePrice("Architecture", NewMoneyArchitecture, "Marche");
+            main.getWebApi().pushStructurePrice("Densite",      NewMoneyDensité,      "Marche");
+            main.getWebApi().pushStructurePrice("Equilibre",    NewMoneyÉquilibre,    "Marche");
+            main.getWebApi().pushStructurePrice("Finition",     NewMoneyFinition,     "Marche");
+            plugin.getLogger().info("[WebAPI] Marche pousse vers farm-land.fr → Creativite:" + NewMoneyCreativité
+                + " | Architecture:" + NewMoneyArchitecture
+                + " | Densite:" + NewMoneyDensité
+                + " | Equilibre:" + NewMoneyÉquilibre
+                + " | Finition:" + NewMoneyFinition);
         }
 	}
 
