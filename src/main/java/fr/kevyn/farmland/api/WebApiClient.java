@@ -1,7 +1,7 @@
 package fr.kevyn.farmland.api;
 
 import com.google.gson.Gson;
-import fr.kevyn.farmland.libs.okhttp3.*;
+import okhttp3.*;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
