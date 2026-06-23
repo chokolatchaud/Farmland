@@ -9,9 +9,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import discordwebhook.messagediscord;
+import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
@@ -25,9 +25,9 @@ import net.kyori.adventure.text.format.TextColor;
 public class JoinAndleaveEvent implements Listener {
 
     private static final long PLOT_CREATION_DELAY = 40L;
-    private JavaPlugin plugin;
+    private FarmlandMain plugin;
 
-    public JoinAndleaveEvent(JavaPlugin plugin) {
+    public JoinAndleaveEvent(FarmlandMain plugin) {
         this.plugin = plugin;
     }
 

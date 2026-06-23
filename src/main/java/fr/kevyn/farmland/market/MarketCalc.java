@@ -28,6 +28,18 @@ public class MarketCalc {
 		
 		//on evite de diviser par 0 si y a pas encore de structure
 		if(GetStructure.getallStructure().size() == 0) {
+			// on pousse quand meme le dernier marche connu vers le site
+			Market lastKnown = MarketSave.loadMarket(plugin);
+			if (lastKnown != null) {
+				FarmlandMain main = (FarmlandMain) plugin;
+				if (main.getWebApi() != null) {
+					main.getWebApi().pushStructurePrice("Créativité", lastKnown.getMoneyforcoefCréativité(), "Marché");
+					main.getWebApi().pushStructurePrice("Architecture", lastKnown.getMoneyforcoefArchitecture(), "Marché");
+					main.getWebApi().pushStructurePrice("Densité", lastKnown.getMoneyforcoefDensité(), "Marché");
+					main.getWebApi().pushStructurePrice("Équilibre", lastKnown.getMoneyforcoefÉquilibre(), "Marché");
+					main.getWebApi().pushStructurePrice("Finition", lastKnown.getMoneyforcoefFinition(), "Marché");
+				}
+			}
 			return;
 		}
 		
