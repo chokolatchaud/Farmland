@@ -32,11 +32,11 @@ public class MarketCalc {
 			Market lastKnown = MarketSave.loadMarket(plugin);
 			if (lastKnown != null) {
 				java.util.Random rand = new java.util.Random();
-				int newCreativite   = Math.max(5, Math.min(90, Math.round(lastKnown.getMoneyforcoefCréativité()   * (0.85f + rand.nextFloat() * 0.30f))));
-				int newArchitecture = Math.max(5, Math.min(90, Math.round(lastKnown.getMoneyforcoefArchitecture() * (0.85f + rand.nextFloat() * 0.30f))));
-				int newDensite      = Math.max(5, Math.min(90, Math.round(lastKnown.getMoneyforcoefDensité()      * (0.85f + rand.nextFloat() * 0.30f))));
-				int newEquilibre    = Math.max(5, Math.min(90, Math.round(lastKnown.getMoneyforcoefÉquilibre()    * (0.85f + rand.nextFloat() * 0.30f))));
-				int newFinition     = Math.max(5, Math.min(90, Math.round(lastKnown.getMoneyforcoefFinition()     * (0.85f + rand.nextFloat() * 0.30f))));
+				int newCreativite   = Math.max(5, Math.min(90, Math.round(lastKnown.getMoneyforcoefCréativité()   * (0.92f + rand.nextFloat() * 0.16f))));
+				int newArchitecture = Math.max(5, Math.min(90, Math.round(lastKnown.getMoneyforcoefArchitecture() * (0.92f + rand.nextFloat() * 0.16f))));
+				int newDensite      = Math.max(5, Math.min(90, Math.round(lastKnown.getMoneyforcoefDensité()      * (0.92f + rand.nextFloat() * 0.16f))));
+				int newEquilibre    = Math.max(5, Math.min(90, Math.round(lastKnown.getMoneyforcoefÉquilibre()    * (0.92f + rand.nextFloat() * 0.16f))));
+				int newFinition     = Math.max(5, Math.min(90, Math.round(lastKnown.getMoneyforcoefFinition()     * (0.92f + rand.nextFloat() * 0.16f))));
 				Market newMarket = new Market(newCreativite, newArchitecture, newDensite, newEquilibre, newFinition);
 				MarketSave.saveMarket(plugin, newMarket);
 				FarmlandMain main = (FarmlandMain) plugin;
