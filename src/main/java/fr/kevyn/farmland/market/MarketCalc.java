@@ -1,6 +1,6 @@
 package fr.kevyn.farmland.market;
 
-
+import org.bukkit.plugin.java.JavaPlugin;
 
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.region.GameRegion;
@@ -153,7 +153,7 @@ public class MarketCalc {
 	}
 
 	// pousse le dernier marche connu vers le site (appele au demarrage apres init WebAPI)
-	public static void pushMarketToWebApi(Plugin plugin) {
+	public static void pushMarketToWebApi(JavaPlugin plugin) {
 		FarmlandMain main = (FarmlandMain) plugin;
 		if (main.getWebApi() == null) return;
 
