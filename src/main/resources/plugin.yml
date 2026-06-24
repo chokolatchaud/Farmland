@@ -146,6 +146,12 @@ commands:
     permission: farmland.gamecommands
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
+  recalcmarket:
+    description: Recalcule le marché manuellement
+    usage: /recalcmarket
+    permission: farmland.moderation
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
   rewards:
     description: Affiche les récompenses et ton solde
     usage: /rewards [table|balance|top]

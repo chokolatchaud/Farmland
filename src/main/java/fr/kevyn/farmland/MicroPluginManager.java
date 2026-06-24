@@ -49,6 +49,7 @@ public class MicroPluginManager {
         plugin.getCommand("define").setExecutor(new Definecommands());
         plugin.getCommand("undefine").setExecutor(new Definecommands());
         plugin.getCommand("market").setExecutor(new Marketcommands());
+        plugin.getCommand("recalcmarket").setExecutor(new Marketcommands());
         GameManager.getInstance().init(plugin);
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
         	MarketCalc.Calcforcoef(plugin);

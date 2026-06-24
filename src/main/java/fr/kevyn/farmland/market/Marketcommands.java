@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.save.MarketSave;
-
+import fr.kevyn.farmland.market.MarketCalc;
 public class Marketcommands implements CommandExecutor {
 
 	@Override
@@ -21,6 +21,17 @@ public class Marketcommands implements CommandExecutor {
 		}
 
 		Player player = (Player) sender;
+
+		// /recalcmarket — réservé à farmland.moderation
+		if (command.getName().equalsIgnoreCase("recalcmarket")) {
+			if (!player.hasPermission("farmland.moderation")) {
+				player.sendMessage("§cVous n'avez pas la permission d'utiliser cette commande !");
+				return true;
+			}
+			MarketCalc.Calcforcoef(FarmlandMain.getPlugin(FarmlandMain.class));
+			player.sendMessage("§aRecalcul du marché effectué !");
+			return true;
+		}
 
 		List<MarketSave.MarketSnapshot> history = MarketSave.getFullHistory(FarmlandMain.getPlugin(FarmlandMain.class));
 

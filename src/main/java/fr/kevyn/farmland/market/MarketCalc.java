@@ -26,8 +26,8 @@ public class MarketCalc {
 			countcoefÉquilibre += CoefStructure.ScoreToCoefÉquilibre(structure.getScore());
 		}
 		
-			//on evite de diviser par 0 si y a pas encore de structure
-		if(GetStructure.getallStructure().size() == 0) {
+			//on evite de diviser par 0 si y a pas encore assez de structures (seuil : 10)
+		if(GetStructure.getallStructure().size() < 10) {
 			// pas de structures : fluctuation aleatoire ±5% pour animer les courbes du site
 			Market lastKnown = MarketSave.loadMarket(plugin);
 			if (lastKnown != null) {
@@ -40,13 +40,14 @@ public class MarketCalc {
 				Market newMarket = new Market(newCreativite, newArchitecture, newDensite, newEquilibre, newFinition);
 				MarketSave.saveMarket(plugin, newMarket);
 				FarmlandMain main = (FarmlandMain) plugin;
+				plugin.getLogger().info("[Marche] Fluctuation ±15% (" + GetStructure.getallStructure().size() + "/10 structures pour marche reel)");
 				if (main.getWebApi() != null) {
 					main.getWebApi().pushStructurePrice("Creativite",   newCreativite,   "Marche");
 					main.getWebApi().pushStructurePrice("Architecture", newArchitecture, "Marche");
 					main.getWebApi().pushStructurePrice("Densite",      newDensite,      "Marche");
 					main.getWebApi().pushStructurePrice("Equilibre",    newEquilibre,    "Marche");
 					main.getWebApi().pushStructurePrice("Finition",     newFinition,     "Marche");
-					plugin.getLogger().info("[WebAPI] Marche fluctue (±5%) → Creativite:" + newCreativite + " | Architecture:" + newArchitecture + " | Densite:" + newDensite + " | Equilibre:" + newEquilibre + " | Finition:" + newFinition);
+					plugin.getLogger().info("[WebAPI] Marche fluctue (±15%) → Creativite:" + newCreativite + " | Architecture:" + newArchitecture + " | Densite:" + newDensite + " | Equilibre:" + newEquilibre + " | Finition:" + newFinition);
 				}
 			}
 			return;
