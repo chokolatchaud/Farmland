@@ -17,11 +17,15 @@ import fr.kevyn.farmland.market.DonateMoneyForStructure;
 import fr.kevyn.farmland.market.MarketCalc;
 import fr.kevyn.farmland.market.Marketcommands;
 import fr.kevyn.farmland.moderation.ModerationCommands;
+import fr.kevyn.farmland.playerserver.PlayerServer;
+import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
+import fr.kevyn.farmland.region.GameRegion;
 import fr.kevyn.farmland.region.RegionCommands;
 import fr.kevyn.farmland.save.Filesave;
 import fr.kevyn.farmland.save.RegionSave;
 import fr.kevyn.farmland.scoreboard.CreativePlotScoreboard;
 import fr.kevyn.farmland.structure.Definecommands;
+import fr.kevyn.farmland.structure.GetStructure;
 import fr.kevyn.farmland.structure.StructureCommands;
 import fr.kevyn.farmland.worldeditgestion.WorldEditSecureListener;
 import fr.kevyn.plot.Plotcommands;
@@ -191,8 +195,23 @@ public class MicroPluginManager {
 
             plugin.initWebApi(base, key);
 
-            // push initial du marche au demarrage (WebApi vient d'etre initialisé)
+            // push initial du marche au demarrage
             MarketCalc.pushMarketToWebApi(plugin);
+
+            // push leaderboard au demarrage + toutes les 15 minutes
+            // tous les joueurs en memoire (pas seulement les connectes)
+            Runnable pushLeaderboard = () -> {
+                for (PlayerServer ps : PlayerserverHashMap.getInstance().getHashMapPlayer().values()) {
+                    int nbStructures = 0;
+                    for (GameRegion r : GetStructure.getallStructure()) {
+                        if (r.getPropriétaire().equals(ps.getUuid())) nbStructures++;
+                    }
+                    plugin.getWebApi().pushPlayerBalance(ps.getName(), ps.getMoney(), nbStructures, ps.getBlocpose());
+                }
+                plugin.getLogger().info("[WebAPI] Leaderboard pousse → " + PlayerserverHashMap.getInstance().getHashMapPlayer().size() + " joueur(s)");
+            };
+
+            Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, pushLeaderboard, 20L, 20L * 60 * 15);
 
             // push statut serveur toutes les X secondes
             Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
