@@ -2,76 +2,59 @@ package fr.kevyn.farmland.market;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.farmland.region.GameRegion;
-import fr.kevyn.farmland.region.GameRegionHashMap;
 import fr.kevyn.farmland.save.MarketSave;
 import fr.kevyn.farmland.structure.CoefStructure;
 import fr.kevyn.farmland.structure.GetStructure;
 
 public class DonateMoneyForStructure {
-	
+
 	public static void AllPlayer(FarmlandMain plugin) {
-		plugin.getLogger().info("Total regions: " + GameRegionHashMap.getInstance().getRegionhashmap().size());
-		for(GameRegion r : GameRegionHashMap.getInstance().getRegionhashmap()) {
-		    plugin.getLogger().info("Region: " + r.getName() + " Type: " + r.gettype());
-		}
-		plugin.getLogger().info("Nombre de structures: " + GetStructure.getallStructure().size());
-		for(GameRegion structure : GetStructure.getallStructure()) {
+		int totalStructures = GetStructure.getallStructure().size();
+		plugin.getLogger().info("[Marche] Distribution des revenus → " + totalStructures + " structure(s)");
+
+		for (GameRegion structure : GetStructure.getallStructure()) {
 			Player player = Bukkit.getPlayer(structure.getPropriétaire());
-			Market market = MarketSave.loadMarket(plugin);
-			
 			int moneystructure = moneycalc(structure, plugin);
-				
-			plugin.getLogger().info("Structure: " + structure.getName());
-			plugin.getLogger().info("Score: " + structure.getScore());
-			plugin.getLogger().info("Market Créativité: " + market.getMoneyforcoefCréativité());
-			plugin.getLogger().info("Money structure: " + moneystructure);
-			
-				
-			if(player == null) {
-				continue;
-			}
-			
-			
-			if(moneystructure > 750) {
+
+			if (player == null) continue;
+
+			if (moneystructure > 500) {
 				player.sendMessage(MessageColor.RED.apply("Erreur Sur vos Structure, Veuillez Voir avec Un Membre du Staff"));
+				plugin.getLogger().warning("[Marche] Revenu anormal pour " + structure.getName() + " : " + moneystructure);
 				continue;
 			}
-			
+
 			PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
-			if(ps == null) {
-				continue;
-			}
-			if(player.isOnline()) {
+			if (ps == null) continue;
+
+			if (player.isOnline()) {
 				ps.setMoney(moneystructure + ps.getMoney());
-				player.sendMessage(MessageColor.RED.apply(moneystructure + "$ pour " + structure.getName()));
+				player.sendMessage(MessageColor.GREEN.apply("+" + moneystructure + " $FB pour " + structure.getName()));
+
+				if (plugin.getWebApi() != null) {
+					int nbStructures = 0;
+					for (GameRegion r : GetStructure.getallStructure()) {
+						if (r.getPropriétaire().equals(player.getUniqueId())) nbStructures++;
+					}
+					plugin.getWebApi().pushPlayerBalance(ps.getName(), ps.getMoney(), nbStructures);
+				}
 			}
-			
-			
-			
-			
 		}
-		
-	
-		
-		
-	}
-	public static int moneycalc(GameRegion structure,FarmlandMain plugin) {
-		Market market = MarketSave.loadMarket(plugin);
-		int money = Math.round((CoefStructure.ScoreToCoefCréativité(structure.getScore()) / 100f) * market.getMoneyforcoefCréativité()) +
-		Math.round((CoefStructure.ScoreToCoefArchitecture(structure.getScore()) / 100f)* market.getMoneyforcoefArchitecture()) +
-		Math.round((CoefStructure.ScoreToCoefDensité(structure.getScore()) / 100f) * market.getMoneyforcoefDensité()) +
-		Math.round((CoefStructure.ScoreToCoefFinition(structure.getScore()) / 100f)* market.getMoneyforcoefFinition()) +
-		Math.round((CoefStructure.ScoreToCoefÉquilibre(structure.getScore()) / 100f)* market.getMoneyforcoefÉquilibre()) ;
-		return money;
-		
-		
 	}
 
+	public static int moneycalc(GameRegion structure, FarmlandMain plugin) {
+		Market market = MarketSave.loadMarket(plugin);
+		return
+			Math.round((CoefStructure.ScoreToCoefCréativité(structure.getScore())   / 100f) * market.getMoneyforcoefCréativité())   +
+			Math.round((CoefStructure.ScoreToCoefArchitecture(structure.getScore()) / 100f) * market.getMoneyforcoefArchitecture()) +
+			Math.round((CoefStructure.ScoreToCoefDensité(structure.getScore())      / 100f) * market.getMoneyforcoefDensité())      +
+			Math.round((CoefStructure.ScoreToCoefFinition(structure.getScore())     / 100f) * market.getMoneyforcoefFinition())     +
+			Math.round((CoefStructure.ScoreToCoefÉquilibre(structure.getScore())    / 100f) * market.getMoneyforcoefÉquilibre());
+	}
 }

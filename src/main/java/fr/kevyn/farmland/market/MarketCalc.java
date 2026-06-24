@@ -28,18 +28,25 @@ public class MarketCalc {
 		
 			//on evite de diviser par 0 si y a pas encore de structure
 		if(GetStructure.getallStructure().size() == 0) {
-			// on pousse quand meme le dernier marche connu vers le site
+			// pas de structures : fluctuation aleatoire ±5% pour animer les courbes du site
 			Market lastKnown = MarketSave.loadMarket(plugin);
 			if (lastKnown != null) {
+				java.util.Random rand = new java.util.Random();
+				int newCreativite   = Math.max(5, Math.min(100, Math.round(lastKnown.getMoneyforcoefCréativité()   * (0.95f + rand.nextFloat() * 0.10f))));
+				int newArchitecture = Math.max(5, Math.min(100, Math.round(lastKnown.getMoneyforcoefArchitecture() * (0.95f + rand.nextFloat() * 0.10f))));
+				int newDensite      = Math.max(5, Math.min(100, Math.round(lastKnown.getMoneyforcoefDensité()      * (0.95f + rand.nextFloat() * 0.10f))));
+				int newEquilibre    = Math.max(5, Math.min(100, Math.round(lastKnown.getMoneyforcoefÉquilibre()    * (0.95f + rand.nextFloat() * 0.10f))));
+				int newFinition     = Math.max(5, Math.min(100, Math.round(lastKnown.getMoneyforcoefFinition()     * (0.95f + rand.nextFloat() * 0.10f))));
+				Market newMarket = new Market(newCreativite, newArchitecture, newDensite, newEquilibre, newFinition);
+				MarketSave.saveMarket(plugin, newMarket);
 				FarmlandMain main = (FarmlandMain) plugin;
 				if (main.getWebApi() != null) {
-					// Fix Emergent : noms sans accents pour eviter les problemes d'encoding
-					main.getWebApi().pushStructurePrice("Creativite",   lastKnown.getMoneyforcoefCréativité(),   "Marche");
-					main.getWebApi().pushStructurePrice("Architecture", lastKnown.getMoneyforcoefArchitecture(), "Marche");
-					main.getWebApi().pushStructurePrice("Densite",      lastKnown.getMoneyforcoefDensité(),      "Marche");
-					main.getWebApi().pushStructurePrice("Equilibre",    lastKnown.getMoneyforcoefÉquilibre(),    "Marche");
-					main.getWebApi().pushStructurePrice("Finition",     lastKnown.getMoneyforcoefFinition(),     "Marche");
-					plugin.getLogger().info("[WebAPI] Marche pousse vers farm-land.fr (aucune structure, dernier marche connu)");
+					main.getWebApi().pushStructurePrice("Creativite",   newCreativite,   "Marche");
+					main.getWebApi().pushStructurePrice("Architecture", newArchitecture, "Marche");
+					main.getWebApi().pushStructurePrice("Densite",      newDensite,      "Marche");
+					main.getWebApi().pushStructurePrice("Equilibre",    newEquilibre,    "Marche");
+					main.getWebApi().pushStructurePrice("Finition",     newFinition,     "Marche");
+					plugin.getLogger().info("[WebAPI] Marche fluctue (±5%) → Creativite:" + newCreativite + " | Architecture:" + newArchitecture + " | Densite:" + newDensite + " | Equilibre:" + newEquilibre + " | Finition:" + newFinition);
 				}
 			}
 			return;
@@ -63,9 +70,11 @@ public class MarketCalc {
 
 		Market lastMarket = MarketSave.loadMarket(plugin);
         if (lastMarket == null) {
-            return;
+        	// premier demarrage : marche initialise a 50 (valeur neutre)
+        	lastMarket = new Market(50, 50, 50, 50, 50);
+        	MarketSave.saveMarket(plugin, lastMarket);
+        	plugin.getLogger().info("[Marche] Premier demarrage : marche initialise a 50 par coef");
         }
-        
 
         int NewMoneyCreativité = Math.round(lastMarket.getMoneyforcoefCréativité() * evolutionCreativité);
         int NewMoneyArchitecture = Math.round(lastMarket.getMoneyforcoefArchitecture() * evolutionArchitecture);
@@ -73,21 +82,21 @@ public class MarketCalc {
         int NewMoneyFinition = Math.round(lastMarket.getMoneyforcoefFinition() * evolutionFinition);
         int NewMoneyÉquilibre = Math.round(lastMarket.getMoneyforcoefÉquilibre() * evolutionÉquilibre);
         
-        if(NewMoneyCreativité >= 150) {
-        	NewMoneyCreativité = 149;
+        if(NewMoneyCreativité >= 100) {
+        	NewMoneyCreativité = 100;
         }
-        if(NewMoneyArchitecture >= 150) {
-        	NewMoneyArchitecture = 149;
+        if(NewMoneyArchitecture >= 100) {
+        	NewMoneyArchitecture = 100;
         }
-        if(NewMoneyFinition >= 150) {
-        	NewMoneyFinition = 149;
+        if(NewMoneyFinition >= 100) {
+        	NewMoneyFinition = 100;
         }
     
-        if(NewMoneyDensité >= 150) {
-        	NewMoneyDensité = 149;
+        if(NewMoneyDensité >= 100) {
+        	NewMoneyDensité = 100;
         }
-        if(NewMoneyÉquilibre >= 150) {
-        	NewMoneyÉquilibre = 149;
+        if(NewMoneyÉquilibre >= 100) {
+        	NewMoneyÉquilibre = 100;
         }
         
         if(NewMoneyCreativité <= 5) {

@@ -20,6 +20,7 @@ import fr.kevyn.farmland.moderation.ModerationCommands;
 import fr.kevyn.farmland.region.RegionCommands;
 import fr.kevyn.farmland.save.Filesave;
 import fr.kevyn.farmland.save.RegionSave;
+import fr.kevyn.farmland.scoreboard.CreativePlotScoreboard;
 import fr.kevyn.farmland.structure.Definecommands;
 import fr.kevyn.farmland.structure.StructureCommands;
 import fr.kevyn.farmland.worldeditgestion.WorldEditSecureListener;
@@ -30,7 +31,7 @@ public class MicroPluginManager {
     public static void moduleGame(FarmlandMain plugin) {
     	
     	int timecalculateMarket = 20 *60 *60 *24 * 1; //1 jour
-    	int timeDonateMoneyStructure = 20 * 60 * 15; //15 minute
+    	int timeDonateMoneyStructure = 20 * 60 * 60; //1 heure
 
         GameCommands gameCommands = new GameCommands();
         //erer
@@ -69,11 +70,19 @@ public class MicroPluginManager {
 
         plugin.getServer().getPluginManager().registerEvents(new ChatListener(), plugin);
 
+        // tab toutes les 10 secondes
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 ChatListener.updateTab(p);
             }
         }, 0L, 200L);
+
+        // scoreboard toutes les 2 secondes
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                CreativePlotScoreboard.setscoreboardplot(p);
+            }
+        }, 0L, 40L);
     }
 
     public static void moduleModeration(FarmlandMain plugin) {
