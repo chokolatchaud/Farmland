@@ -152,6 +152,10 @@ commands:
     permission: farmland.moderation
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
+  linkaccount:
+    description: Lie ton compte farm-land.fr à ton pseudo Minecraft
+    usage: /linkaccount <code>
+
   rewards:
     description: Affiche les récompenses et ton solde
     usage: /rewards [table|balance|top]

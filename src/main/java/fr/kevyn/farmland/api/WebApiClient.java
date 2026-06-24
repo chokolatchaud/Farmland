@@ -61,6 +61,60 @@ public class WebApiClient {
         ));
     }
 
+    // vérifie le compte site d'un joueur via son code /linkaccount
+    // retourne true si la vérification a réussi, false sinon
+    public boolean verifyAccount(String username, String uuid, String code) {
+        if (baseUrl == null || baseUrl.isEmpty() || apiKey == null || apiKey.isEmpty()) {
+            return false;
+        }
+        try {
+            String body = gson.toJson(Map.of("username", username, "uuid", uuid, "code", code));
+            Request req = new Request.Builder()
+                    .url(baseUrl + "/api/auth/verify-account")
+                    .header("X-API-Key", apiKey)
+                    .header("Content-Type", "application/json")
+                    .post(RequestBody.create(body.getBytes(StandardCharsets.UTF_8), JSON))
+                    .build();
+            try (Response response = http.newCall(req).execute()) {
+                if (response.body() != null) {
+                    String responseBody = response.body().string();
+                    // Parse la réponse JSON pour récupérer ok et message
+                    com.google.gson.JsonObject json = new com.google.gson.JsonParser().parse(responseBody).getAsJsonObject();
+                    return json.get("ok").getAsBoolean();
+                }
+            }
+        } catch (Exception e) {
+            plugin.getLogger().warning("[WebAPI] erreur verifyAccount : " + e.getMessage());
+        }
+        return false;
+    }
+
+    // retourne le message de réponse de verifyAccount
+    public String verifyAccountMessage(String username, String uuid, String code) {
+        if (baseUrl == null || baseUrl.isEmpty() || apiKey == null || apiKey.isEmpty()) {
+            return "WebAPI non configurée";
+        }
+        try {
+            String body = gson.toJson(Map.of("username", username, "uuid", uuid, "code", code));
+            Request req = new Request.Builder()
+                    .url(baseUrl + "/api/auth/verify-account")
+                    .header("X-API-Key", apiKey)
+                    .header("Content-Type", "application/json")
+                    .post(RequestBody.create(body.getBytes(StandardCharsets.UTF_8), JSON))
+                    .build();
+            try (Response response = http.newCall(req).execute()) {
+                if (response.body() != null) {
+                    String responseBody = response.body().string();
+                    com.google.gson.JsonObject json = new com.google.gson.JsonParser().parse(responseBody).getAsJsonObject();
+                    return json.get("message").getAsString();
+                }
+            }
+        } catch (Exception e) {
+            plugin.getLogger().warning("[WebAPI] erreur verifyAccountMessage : " + e.getMessage());
+        }
+        return "Erreur de connexion au site";
+    }
+
     // HTTP POST asynchrone (fire-and-forget, jamais de blocage du main thread)
     // Fix Emergent : force UTF-8 pour eviter les problemes d'accents sur Windows
     private void post(String path, Object bodyObj) {

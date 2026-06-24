@@ -190,6 +190,7 @@ public class MicroPluginManager {
             long ticks  = plugin.getConfig().getLong("webapi.push_interval_seconds", 30L) * 20L;
 
             plugin.initWebApi(base, key);
+            plugin.getCommand("linkaccount").setExecutor(new fr.kevyn.farmland.api.LinkAccountCommand(plugin));
 
             // push initial du marche au demarrage (WebApi vient d'etre initialisé)
             MarketCalc.pushMarketToWebApi(plugin);
