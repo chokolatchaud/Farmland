@@ -25,6 +25,22 @@ public class BuyCommands implements CommandExecutor {
     private static final int WE_COST = 15;            // coût en $FB
     private static final long WE_DURATION_MS = 60L * 60 * 1000; // 1 heure en ms
     private static final String WE_PERMISSION = "farmland.worldedit";
+    private static final String[] WE_NATIVE_PERMISSIONS = {
+        "worldedit.region.*",
+        "worldedit.selection.*",
+        "worldedit.wand.*",
+        "worldedit.fill.*",
+        "worldedit.brush.*",
+        "worldedit.drain",
+        "worldedit.fixwater",
+        "worldedit.history.undo.*",
+        "worldedit.analysis.count",
+        "worldedit.biome.list",
+        "worldedit.biome.set",
+        "worldedit.calc",
+        "worldedit.extinguish",
+        "fawe.worldeditregion"
+    };
 
     // Map pour stocker les joueurs en attente de confirmation
     private final Map<UUID, Long> pendingConfirm = new HashMap<>();
@@ -112,11 +128,14 @@ public class BuyCommands implements CommandExecutor {
         long newExpiry = currentExpiry + WE_DURATION_MS;
         ps.setWeTimeExpiry(newExpiry);
 
-        // Donner la permission LuckPerms
+        // Donner la permission farmland.worldedit + permissions FAWE natives
         LuckPerms lp = LuckPermsProvider.get();
         User user = lp.getUserManager().getUser(player.getUniqueId());
         if (user != null) {
             user.data().add(Node.builder(WE_PERMISSION).value(true).build());
+            for (String perm : WE_NATIVE_PERMISSIONS) {
+                user.data().add(Node.builder(perm).value(true).build());
+            }
             lp.getUserManager().saveUser(user);
         }
 
@@ -132,6 +151,9 @@ public class BuyCommands implements CommandExecutor {
                 User u = lp.getUserManager().getUser(player.getUniqueId());
                 if (u != null) {
                     u.data().remove(Node.builder(WE_PERMISSION).value(true).build());
+                    for (String perm : WE_NATIVE_PERMISSIONS) {
+                        u.data().remove(Node.builder(perm).value(true).build());
+                    }
                     lp.getUserManager().saveUser(u);
                 }
                 if (player.isOnline()) {
