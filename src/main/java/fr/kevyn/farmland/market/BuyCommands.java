@@ -20,15 +20,33 @@ import java.util.UUID;
 public class BuyCommands implements CommandExecutor {
 
     private static final int WE_COST = 15;
-    private static final long WE_DURATION_MS = 60L * 60 * 1000; // 1 heure
+    private static final long WE_DURATION_MS = 60L * 60 * 1000;
 
-    // Stocke les attachments actifs par joueur
+    private static final String[] WE_PERMISSIONS = {
+        "farmland.worldedit",
+        "worldedit.region.*", "worldedit.selection.*", "worldedit.wand.*",
+        "worldedit.fill.*", "worldedit.brush.*", "worldedit.drain",
+        "worldedit.fixwater", "worldedit.history.undo.*",
+        "worldedit.analysis.count", "worldedit.biome.list", "worldedit.biome.set",
+        "worldedit.calc", "worldedit.extinguish", "fawe.worldeditregion"
+    };
+
     private static final Map<UUID, PermissionAttachment> attachments = new HashMap<>();
     private final Map<UUID, Long> pendingConfirm = new HashMap<>();
     private final FarmlandMain plugin;
 
     public BuyCommands(FarmlandMain plugin) {
         this.plugin = plugin;
+    }
+
+    // Donne un PermissionAttachment Bukkit
+    public static void giveAttachment(Player player, FarmlandMain plugin) {
+        removeAttachment(player.getUniqueId());
+        PermissionAttachment attachment = player.addAttachment(plugin);
+        for (String perm : WE_PERMISSIONS) {
+            attachment.setPermission(perm, true);
+        }
+        attachments.put(player.getUniqueId(), attachment);
     }
 
     @Override
@@ -96,30 +114,21 @@ public class BuyCommands implements CommandExecutor {
         long newExpiry = currentExpiry + WE_DURATION_MS;
         ps.setWeTimeExpiry(newExpiry);
 
-        // Supprimer l'ancien attachment s'il existe
-        if (attachments.containsKey(player.getUniqueId())) {
-            attachments.get(player.getUniqueId()).remove();
-            attachments.remove(player.getUniqueId());
-        }
+        // 1. PermissionAttachment Bukkit (instantané)
+        giveAttachment(player, plugin);
 
-        // Créer un nouveau PermissionAttachment avec toutes les permissions WorldEdit
-        PermissionAttachment attachment = player.addAttachment(plugin);
-        attachment.setPermission("farmland.worldedit", true);
-        attachment.setPermission("worldedit.region.*", true);
-        attachment.setPermission("worldedit.selection.*", true);
-        attachment.setPermission("worldedit.wand.*", true);
-        attachment.setPermission("worldedit.fill.*", true);
-        attachment.setPermission("worldedit.brush.*", true);
-        attachment.setPermission("worldedit.drain", true);
-        attachment.setPermission("worldedit.fixwater", true);
-        attachment.setPermission("worldedit.history.undo.*", true);
-        attachment.setPermission("worldedit.analysis.count", true);
-        attachment.setPermission("worldedit.biome.list", true);
-        attachment.setPermission("worldedit.biome.set", true);
-        attachment.setPermission("worldedit.calc", true);
-        attachment.setPermission("worldedit.extinguish", true);
-        attachment.setPermission("fawe.worldeditregion", true);
-        attachments.put(player.getUniqueId(), attachment);
+        // 2. LuckPerms async (pour que FAWE reconnaisse les perms)
+        net.luckperms.api.LuckPerms lp = net.luckperms.api.LuckPermsProvider.get();
+        lp.getUserManager().loadUser(player.getUniqueId()).thenAcceptAsync(user -> {
+            if (user != null) {
+                for (String perm : WE_PERMISSIONS) {
+                    user.data().add(net.luckperms.api.node.Node.builder(perm).value(true).build());
+                }
+                lp.getUserManager().saveUser(user).thenRun(() ->
+                    lp.getMessagingService().ifPresent(ms -> ms.pushUserUpdate(user))
+                );
+            }
+        });
 
         player.sendMessage(MessageColor.GREEN.apply("✔ WorldEdit activé pour 1 heure ! (-" + WE_COST + " $FB)"));
         player.sendMessage(MessageColor.GRAY.apply("Solde restant : " + ps.getMoney() + " $FB"));
@@ -129,10 +138,18 @@ public class BuyCommands implements CommandExecutor {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             PlayerServer psNow = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
             if (psNow != null && !psNow.isWeActive()) {
-                if (attachments.containsKey(player.getUniqueId())) {
-                    attachments.get(player.getUniqueId()).remove();
-                    attachments.remove(player.getUniqueId());
-                }
+                removeAttachment(player.getUniqueId());
+                // Retirer aussi les perms LuckPerms
+                lp.getUserManager().loadUser(player.getUniqueId()).thenAcceptAsync(user -> {
+                    if (user != null) {
+                        for (String perm : WE_PERMISSIONS) {
+                            user.data().remove(net.luckperms.api.node.Node.builder(perm).value(true).build());
+                        }
+                        lp.getUserManager().saveUser(user).thenRun(() ->
+                            lp.getMessagingService().ifPresent(ms -> ms.pushUserUpdate(user))
+                        );
+                    }
+                });
                 if (player.isOnline()) {
                     player.sendMessage(MessageColor.RED.apply("Ton WorldEdit a expiré. Tape /buy worldedit pour renouveler."));
                 }
@@ -148,40 +165,42 @@ public class BuyCommands implements CommandExecutor {
         }
     }
 
-    // Appelé à la reconnexion pour restaurer les permissions si WE encore actif
+    // Restaure les permissions à la reconnexion si WE encore actif
     public static void restoreAttachment(Player player, PlayerServer ps, FarmlandMain plugin) {
         if (!ps.isWeActive()) return;
 
-        // Supprimer l'ancien attachment si existe
-        removeAttachment(player.getUniqueId());
+        // PermissionAttachment instantané
+        giveAttachment(player, plugin);
 
-        PermissionAttachment attachment = player.addAttachment(plugin);
-        attachment.setPermission("farmland.worldedit", true);
-        attachment.setPermission("worldedit.region.*", true);
-        attachment.setPermission("worldedit.selection.*", true);
-        attachment.setPermission("worldedit.wand.*", true);
-        attachment.setPermission("worldedit.fill.*", true);
-        attachment.setPermission("worldedit.brush.*", true);
-        attachment.setPermission("worldedit.drain", true);
-        attachment.setPermission("worldedit.fixwater", true);
-        attachment.setPermission("worldedit.history.undo.*", true);
-        attachment.setPermission("worldedit.analysis.count", true);
-        attachment.setPermission("worldedit.biome.list", true);
-        attachment.setPermission("worldedit.biome.set", true);
-        attachment.setPermission("worldedit.calc", true);
-        attachment.setPermission("worldedit.extinguish", true);
-        attachment.setPermission("fawe.worldeditregion", true);
-        attachments.put(player.getUniqueId(), attachment);
+        // LuckPerms async pour FAWE
+        net.luckperms.api.LuckPerms lp = net.luckperms.api.LuckPermsProvider.get();
+        lp.getUserManager().loadUser(player.getUniqueId()).thenAcceptAsync(user -> {
+            if (user != null) {
+                for (String perm : WE_PERMISSIONS) {
+                    user.data().add(net.luckperms.api.node.Node.builder(perm).value(true).build());
+                }
+                lp.getUserManager().saveUser(user).thenRun(() ->
+                    lp.getMessagingService().ifPresent(ms -> ms.pushUserUpdate(user))
+                );
+            }
+        });
 
         player.sendMessage(MessageColor.GREEN.apply("✔ WorldEdit restauré — temps restant : "
             + fr.kevyn.farmland.scoreboard.CreativePlotScoreboard.formatWE(ps)));
 
-        // Planifier l'expiration
         long ticksUntilExpiry = ps.getWeTimeRemaining() / 50L;
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             PlayerServer psNow = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
             if (psNow != null && !psNow.isWeActive()) {
                 removeAttachment(player.getUniqueId());
+                lp.getUserManager().loadUser(player.getUniqueId()).thenAcceptAsync(user -> {
+                    if (user != null) {
+                        for (String perm : WE_PERMISSIONS) {
+                            user.data().remove(net.luckperms.api.node.Node.builder(perm).value(true).build());
+                        }
+                        lp.getUserManager().saveUser(user);
+                    }
+                });
                 if (player.isOnline()) {
                     player.sendMessage(MessageColor.RED.apply("Ton WorldEdit a expiré. Tape /buy worldedit pour renouveler."));
                 }
