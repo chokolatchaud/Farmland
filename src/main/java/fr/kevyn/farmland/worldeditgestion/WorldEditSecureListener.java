@@ -51,10 +51,13 @@ public class WorldEditSecureListener implements Listener {
 
         if (player.hasPermission("farmland.worldeditbypass")) return;
 
-        if (!player.hasPermission("farmland.worldedit")) {
-            player.sendMessage(MessageColor.RED.apply("tu n'a pas la permission"));
-            event.setCancelled(true);
-            return;
+        // Bloquer TOUTES les commandes WorldEdit/FAWE si pas la permission
+        if (msg.startsWith("//") || msg.startsWith("/worldedit") || msg.startsWith("/fawe") || msg.startsWith("/we ")) {
+            if (!player.hasPermission("farmland.worldedit")) {
+                player.sendMessage(MessageColor.RED.apply("❌ Tu n'as pas le WorldEdit ! Tape /buy worldedit (15 $FB / 1h)"));
+                event.setCancelled(true);
+                return;
+            }
         }
 
         if (msg.startsWith("//set") || msg.startsWith("//replace") || msg.startsWith("//fill") ||
