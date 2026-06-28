@@ -100,6 +100,13 @@ public class JoinAndleaveEvent implements Listener {
             LuckpermGrade.updateGrade(e.getPlayer());
             ChatListener.updateTab(e.getPlayer());
 
+            // Restaurer les permissions WorldEdit si encore actif
+            if (playerServer.isWeActive()) {
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    fr.kevyn.farmland.market.BuyCommands.restoreAttachment(e.getPlayer(), playerServer, plugin);
+                }, 5L);
+            }
+
             // ✅ Création du plot uniquement, pas de tp
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 new Plot(e.getPlayer().getUniqueId(), plugin);
@@ -122,9 +129,11 @@ public class JoinAndleaveEvent implements Listener {
         if (playerServer != null) {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 Filesave.saveOnePlayerServerFile(plugin, playerServer);
-              
             });
         }
+        // Nettoyer l'attachment WorldEdit à la déconnexion
+        fr.kevyn.farmland.market.BuyCommands.removeAttachment(e.getPlayer().getUniqueId());
+
         playerServer.getPlotdata().setAllplotadd(new ArrayList<String>());
         
         // pousse le statut du serveur vers farm-land.fr

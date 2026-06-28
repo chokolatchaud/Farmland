@@ -5,16 +5,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachment;
 import org.jetbrains.annotations.NotNull;
 
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
-import net.luckperms.api.LuckPerms;
-import net.luckperms.api.LuckPermsProvider;
-import net.luckperms.api.model.user.User;
-import net.luckperms.api.node.Node;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,27 +19,11 @@ import java.util.UUID;
 
 public class BuyCommands implements CommandExecutor {
 
-    private static final int WE_COST = 15;            // coût en $FB
-    private static final long WE_DURATION_MS = 60L * 60 * 1000; // 1 heure en ms
-    private static final String WE_PERMISSION = "farmland.worldedit";
-    private static final String[] WE_NATIVE_PERMISSIONS = {
-        "worldedit.region.*",
-        "worldedit.selection.*",
-        "worldedit.wand.*",
-        "worldedit.fill.*",
-        "worldedit.brush.*",
-        "worldedit.drain",
-        "worldedit.fixwater",
-        "worldedit.history.undo.*",
-        "worldedit.analysis.count",
-        "worldedit.biome.list",
-        "worldedit.biome.set",
-        "worldedit.calc",
-        "worldedit.extinguish",
-        "fawe.worldeditregion"
-    };
+    private static final int WE_COST = 15;
+    private static final long WE_DURATION_MS = 60L * 60 * 1000; // 1 heure
 
-    // Map pour stocker les joueurs en attente de confirmation
+    // Stocke les attachments actifs par joueur
+    private static final Map<UUID, PermissionAttachment> attachments = new HashMap<>();
     private final Map<UUID, Long> pendingConfirm = new HashMap<>();
     private final FarmlandMain plugin;
 
@@ -64,48 +45,37 @@ public class BuyCommands implements CommandExecutor {
         if (ps == null) return true;
 
         if (!command.getName().equalsIgnoreCase("buy")) return true;
-        if (args.length < 1) {
+        if (args.length < 1 || !args[0].equalsIgnoreCase("worldedit")) {
             player.sendMessage(MessageColor.RED.apply("Usage : /buy worldedit"));
             return true;
         }
 
-        if (!args[0].equalsIgnoreCase("worldedit")) {
-            player.sendMessage(MessageColor.RED.apply("Produit inconnu. Disponible : worldedit"));
-            return true;
-        }
-
-        // Vérification du solde
         if (ps.getMoney() < WE_COST) {
             player.sendMessage(MessageColor.RED.apply("Solde insuffisant ! Il te faut " + WE_COST + " $FB."));
             player.sendMessage(MessageColor.GRAY.apply("Ton solde : " + ps.getMoney() + " $FB"));
             return true;
         }
 
-        // Si déjà en attente de confirmation
+        // Confirmation
         if (pendingConfirm.containsKey(player.getUniqueId())) {
             long asked = pendingConfirm.get(player.getUniqueId());
-            // Expire après 30 secondes
             if (System.currentTimeMillis() - asked > 30_000) {
                 pendingConfirm.remove(player.getUniqueId());
             } else {
-                // Confirmation reçue
                 pendingConfirm.remove(player.getUniqueId());
                 activateWorldEdit(player, ps);
                 return true;
             }
         }
 
-        // Afficher le prix et demander confirmation
-        String tempsActuel = ps.isWeActive() ? MessageColor.GREEN.apply("(déjà actif — le temps sera ajouté)") : "";
+        String tempsActuel = ps.isWeActive() ? " §a(déjà actif — le temps sera ajouté)" : "";
         player.sendMessage(MessageColor.GOLD.apply("=== /buy worldedit ==="));
         player.sendMessage(MessageColor.GRAY.apply("Prix : ") + MessageColor.WHITE.apply(WE_COST + " $FB"));
-        player.sendMessage(MessageColor.GRAY.apply("Durée : ") + MessageColor.WHITE.apply("1 heure"));
-        if (!tempsActuel.isEmpty()) player.sendMessage(tempsActuel);
+        player.sendMessage(MessageColor.GRAY.apply("Durée : ") + MessageColor.WHITE.apply("1 heure" + tempsActuel));
         player.sendMessage(MessageColor.YELLOW.apply("Tape /buy worldedit à nouveau pour confirmer."));
 
         pendingConfirm.put(player.getUniqueId(), System.currentTimeMillis());
 
-        // Annule la confirmation après 30s
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             if (pendingConfirm.containsKey(player.getUniqueId())) {
                 pendingConfirm.remove(player.getUniqueId());
@@ -119,47 +89,101 @@ public class BuyCommands implements CommandExecutor {
     }
 
     private void activateWorldEdit(Player player, PlayerServer ps) {
-        // Débiter le solde
         ps.setMoney(ps.getMoney() - WE_COST);
 
-        // Calculer le nouveau timestamp d'expiration (ajoute au temps restant si déjà actif)
         long now = System.currentTimeMillis();
         long currentExpiry = ps.isWeActive() ? ps.getWeTimeExpiry() : now;
         long newExpiry = currentExpiry + WE_DURATION_MS;
         ps.setWeTimeExpiry(newExpiry);
 
-        // Donner la permission farmland.worldedit + permissions FAWE natives
-        LuckPerms lp = LuckPermsProvider.get();
-        User user = lp.getUserManager().getUser(player.getUniqueId());
-        if (user != null) {
-            user.data().add(Node.builder(WE_PERMISSION).value(true).build());
-            for (String perm : WE_NATIVE_PERMISSIONS) {
-                user.data().add(Node.builder(perm).value(true).build());
-            }
-            lp.getUserManager().saveUser(user);
+        // Supprimer l'ancien attachment s'il existe
+        if (attachments.containsKey(player.getUniqueId())) {
+            attachments.get(player.getUniqueId()).remove();
+            attachments.remove(player.getUniqueId());
         }
+
+        // Créer un nouveau PermissionAttachment avec toutes les permissions WorldEdit
+        PermissionAttachment attachment = player.addAttachment(plugin);
+        attachment.setPermission("farmland.worldedit", true);
+        attachment.setPermission("worldedit.region.*", true);
+        attachment.setPermission("worldedit.selection.*", true);
+        attachment.setPermission("worldedit.wand.*", true);
+        attachment.setPermission("worldedit.fill.*", true);
+        attachment.setPermission("worldedit.brush.*", true);
+        attachment.setPermission("worldedit.drain", true);
+        attachment.setPermission("worldedit.fixwater", true);
+        attachment.setPermission("worldedit.history.undo.*", true);
+        attachment.setPermission("worldedit.analysis.count", true);
+        attachment.setPermission("worldedit.biome.list", true);
+        attachment.setPermission("worldedit.biome.set", true);
+        attachment.setPermission("worldedit.calc", true);
+        attachment.setPermission("worldedit.extinguish", true);
+        attachment.setPermission("fawe.worldeditregion", true);
+        attachments.put(player.getUniqueId(), attachment);
 
         player.sendMessage(MessageColor.GREEN.apply("✔ WorldEdit activé pour 1 heure ! (-" + WE_COST + " $FB)"));
         player.sendMessage(MessageColor.GRAY.apply("Solde restant : " + ps.getMoney() + " $FB"));
 
-        // Tâche qui retire la permission à expiration
+        // Retirer les permissions à expiration
         long ticksUntilExpiry = (newExpiry - now) / 50L;
-        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
-            // Vérifier que la permission n'a pas été renouvelée entre-temps
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
             PlayerServer psNow = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
             if (psNow != null && !psNow.isWeActive()) {
-                User u = lp.getUserManager().getUser(player.getUniqueId());
-                if (u != null) {
-                    u.data().remove(Node.builder(WE_PERMISSION).value(true).build());
-                    for (String perm : WE_NATIVE_PERMISSIONS) {
-                        u.data().remove(Node.builder(perm).value(true).build());
-                    }
-                    lp.getUserManager().saveUser(u);
+                if (attachments.containsKey(player.getUniqueId())) {
+                    attachments.get(player.getUniqueId()).remove();
+                    attachments.remove(player.getUniqueId());
                 }
                 if (player.isOnline()) {
-                    Bukkit.getScheduler().runTask(plugin, () ->
-                        player.sendMessage(MessageColor.RED.apply("Ton WorldEdit a expiré. Tape /buy worldedit pour renouveler."))
-                    );
+                    player.sendMessage(MessageColor.RED.apply("Ton WorldEdit a expiré. Tape /buy worldedit pour renouveler."));
+                }
+            }
+        }, ticksUntilExpiry);
+    }
+
+    // Appelé à la déconnexion pour nettoyer les attachments
+    public static void removeAttachment(UUID uuid) {
+        if (attachments.containsKey(uuid)) {
+            attachments.get(uuid).remove();
+            attachments.remove(uuid);
+        }
+    }
+
+    // Appelé à la reconnexion pour restaurer les permissions si WE encore actif
+    public static void restoreAttachment(Player player, PlayerServer ps, FarmlandMain plugin) {
+        if (!ps.isWeActive()) return;
+
+        // Supprimer l'ancien attachment si existe
+        removeAttachment(player.getUniqueId());
+
+        PermissionAttachment attachment = player.addAttachment(plugin);
+        attachment.setPermission("farmland.worldedit", true);
+        attachment.setPermission("worldedit.region.*", true);
+        attachment.setPermission("worldedit.selection.*", true);
+        attachment.setPermission("worldedit.wand.*", true);
+        attachment.setPermission("worldedit.fill.*", true);
+        attachment.setPermission("worldedit.brush.*", true);
+        attachment.setPermission("worldedit.drain", true);
+        attachment.setPermission("worldedit.fixwater", true);
+        attachment.setPermission("worldedit.history.undo.*", true);
+        attachment.setPermission("worldedit.analysis.count", true);
+        attachment.setPermission("worldedit.biome.list", true);
+        attachment.setPermission("worldedit.biome.set", true);
+        attachment.setPermission("worldedit.calc", true);
+        attachment.setPermission("worldedit.extinguish", true);
+        attachment.setPermission("fawe.worldeditregion", true);
+        attachments.put(player.getUniqueId(), attachment);
+
+        player.sendMessage(MessageColor.GREEN.apply("✔ WorldEdit restauré — temps restant : "
+            + fr.kevyn.farmland.scoreboard.CreativePlotScoreboard.formatWE(ps)));
+
+        // Planifier l'expiration
+        long ticksUntilExpiry = ps.getWeTimeRemaining() / 50L;
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            PlayerServer psNow = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
+            if (psNow != null && !psNow.isWeActive()) {
+                removeAttachment(player.getUniqueId());
+                if (player.isOnline()) {
+                    player.sendMessage(MessageColor.RED.apply("Ton WorldEdit a expiré. Tape /buy worldedit pour renouveler."));
                 }
             }
         }, ticksUntilExpiry);
