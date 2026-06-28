@@ -20,6 +20,7 @@ public class PlayerServer {
     int upgrade;
     int structure;
     int racepoint;
+    long weTimeExpiry; // timestamp ms quand le WorldEdit expire (0 = pas actif)
 
 
     public PlayerServer() {}
@@ -116,6 +117,12 @@ public class PlayerServer {
     public void setRacePoints(int racepoint) {
 		this.racepoint = racepoint;
 	}
+
+    // WorldEdit temporaire
+    public long getWeTimeExpiry() { return weTimeExpiry; }
+    public void setWeTimeExpiry(long weTimeExpiry) { this.weTimeExpiry = weTimeExpiry; }
+    public boolean isWeActive() { return weTimeExpiry > System.currentTimeMillis(); }
+    public long getWeTimeRemaining() { return Math.max(0, weTimeExpiry - System.currentTimeMillis()); }
     public static Player getplayer(PlayerServer playerserver) {
     	Player player = Bukkit.getPlayer(playerserver.getUuid());
     	if(player == null) {

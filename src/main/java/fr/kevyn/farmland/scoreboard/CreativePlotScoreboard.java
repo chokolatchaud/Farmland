@@ -32,7 +32,7 @@ public class CreativePlotScoreboard {
                 ChatColor.GOLD + "" + ChatColor.BOLD + "FARM & BUILD");
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        int line = 8;
+        int line = 9;
         setLine(scoreboard, obj, "line_space1", " ",                                                                                    line--);
         setLine(scoreboard, obj, "line_pseudo", ChatColor.GRAY + " Pseudo : "      + ChatColor.WHITE + ps.getName(),                   line--);
         setLine(scoreboard, obj, "line_grade",  ChatColor.GRAY + " Grade : "       + ChatColor.GREEN + ps.getGrade(),                  line--);
@@ -40,10 +40,31 @@ public class CreativePlotScoreboard {
         setLine(scoreboard, obj, "line_money",  ChatColor.GRAY + " Argent : "      + ChatColor.WHITE + format(ps.getMoney()) + " $FB", line--);
         setLine(scoreboard, obj, "line_struct", ChatColor.GRAY + " Structures : "  + ChatColor.WHITE + structureCount + "/5",          line--);
         setLine(scoreboard, obj, "line_blocs",  ChatColor.GRAY + " Blocs posés : " + ChatColor.WHITE + ps.getBlocpose() + "/150",      line--);
+        setLine(scoreboard, obj, "line_we",     ChatColor.GRAY + " WorldEdit : "   + formatWE(ps),                                    line--);
         setLine(scoreboard, obj, "line_space3", "   ",                                                                                  line--);
         setLine(scoreboard, obj, "line_ip",     ChatColor.YELLOW + " mine.farm-land.fr",                                               line--);
 
         player.setScoreboard(scoreboard);
+    }
+
+    // Formate le temps WorldEdit restant
+    public static String formatWE(fr.kevyn.farmland.playerserver.PlayerServer ps) {
+        if (!ps.isWeActive()) {
+            return ChatColor.RED + "Inactif" + ChatColor.GRAY + " (/buy worldedit)";
+        }
+        long ms = ps.getWeTimeRemaining();
+        long minutes = ms / 60_000;
+        long hours   = minutes / 60;
+        long days    = hours / 24;
+        long months  = days / 30;
+
+        String time;
+        if (months > 0)       time = months + "m";
+        else if (days > 0)    time = days + "d";
+        else if (hours > 0)   time = hours + "h" + (minutes % 60 > 0 ? (minutes % 60) + "min" : "");
+        else                  time = minutes + "min";
+
+        return ChatColor.GREEN + time;
     }
 
     public static String format(int value) {
