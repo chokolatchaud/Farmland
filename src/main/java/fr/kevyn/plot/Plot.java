@@ -23,17 +23,16 @@ public class Plot {
         
         WorldManager multivers = MultiverseCoreApi.get().getWorldManager();
         
-        System.out.println("Construction du plot demandée pour: " + nameplot);
         
         // ✅ AJOUTÉ : Vérification sécurité
         if (Bukkit.getWorld(nameplot) != null) {
-            System.out.println("Le monde est déjà chargé dans Bukkit.");
+            // debug supprimé
             initializeWorld(nameplot);
             return;
         }
         
         if (multivers.isWorld(nameplot)) {
-            System.out.println("Le monde existe dans la config Multiverse. Tentative de chargement...");
+            // debug supprimé
             
             boolean loaded = multivers.loadWorld(nameplot).isSuccess();
 
@@ -43,12 +42,11 @@ public class Plot {
                 }, 40L);
                 return; 
             } else {
-                System.out.println("ERREUR: Chargement impossible. On retire le monde de la config pour tenter une réimportation.");
+                // debug supprimé
                 multivers.removeWorld(nameplot);
             }
         }
 
-        System.out.println("Création/Réimportation du monde: " + nameplot);
         
         boolean created = multivers.createWorld(
             CreateWorldOptions.worldName(nameplot)
@@ -61,7 +59,6 @@ public class Plot {
                 initializeWorld(nameplot);
             }, 80L);
         } else {
-            System.err.println("ERREUR CRITIQUE: Impossible de créer ou réimporter le monde " + nameplot);
         }
     }
     
@@ -69,7 +66,6 @@ public class Plot {
         World world = Bukkit.getWorld(nameplot);
         
         if (world == null) {
-            System.out.println("ERREUR FATALE: Le monde " + nameplot + " est toujours null après attente!");
             return;
         }
         
@@ -81,7 +77,6 @@ public class Plot {
         world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, Boolean.TRUE);
         world.setGameRule(GameRule.DO_WEATHER_CYCLE, Boolean.TRUE);
         
-        System.out.println("Monde initialisé avec succès: " + nameplot);
     }
     
     public World getWorld() {

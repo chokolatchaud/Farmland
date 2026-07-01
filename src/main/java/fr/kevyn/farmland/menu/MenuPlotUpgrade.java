@@ -14,6 +14,9 @@ import fr.kevyn.farmland.game.CustomItemType;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 
 public class MenuPlotUpgrade {
+
+    // Prix des upgrades dans l'ordre
+    private static final int[] UPGRADE_COSTS = {10, 10, 10, 10, 10, 10, 10, 25, 25, 25, 25, 25, 25, 25, 60, 60, 60, 60, 60, 60, 60};
 	
 	public static Inventory createmenuplotUpgrade(String name, int page, PlayerServer playerserver) {
 
@@ -23,8 +26,7 @@ public class MenuPlotUpgrade {
         GameMenu.fillmenu(Material.BLACK_STAINED_GLASS_PANE, inv);
 
         int rankPlayer = playerserver.getUpgrade();
-        int rankPlugin = 1;
-        int moneyCost = 5;
+        int rankPlugin = 0;
 
         List<Integer> slots = Arrays.asList(
                 1,2,3,4,5,6,7,
@@ -32,25 +34,15 @@ public class MenuPlotUpgrade {
                 37,38,39,40,41,42,43
         );
 
-        for (int i = 21; i <= rankPlayer; i += 21) {
-            moneyCost += 15;
-            rankPlugin += 21;
-        }
-
         for (int slot : slots) {
-            if (slot == 19 || slot == 37) {
-                moneyCost += 5;
-            }
+            int cost = rankPlugin < UPGRADE_COSTS.length ? UPGRADE_COSTS[rankPlugin] : 120;
 
-            if (rankPlayer >= rankPlugin) {
-                // UPGRADE ACHETÉ - Icône verte avec check
-            	GameMenu.set_oneitem_menu(CustomItemType.UPGRADE_BOUGHT.create(), "Déjà acheté", slot, inv);
-                rankPlugin++;
+            if (rankPlayer > rankPlugin) {
+                GameMenu.set_oneitem_menu(CustomItemType.UPGRADE_BOUGHT.create(), "Déjà acheté", slot, inv);
             } else {
-                // UPGRADE DISPONIBLE - Icône rouge avec cadenas
-            	GameMenu.set_oneitem_menu(CustomItemType.UPGRADE_LOCKED.create(), "Coût : " + moneyCost, slot, inv);
-                
+                GameMenu.set_oneitem_menu(CustomItemType.UPGRADE_LOCKED.create(), "Coût : " + cost, slot, inv);
             }
+            rankPlugin++;
         }
 
         return inv;

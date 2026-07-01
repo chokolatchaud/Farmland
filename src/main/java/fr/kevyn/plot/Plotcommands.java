@@ -304,9 +304,8 @@ public class Plotcommands implements CommandExecutor {
 
         // /plot setspawnpoint
         else if (args[0].equalsIgnoreCase("setspawnpoint") || args[0].equalsIgnoreCase("setspawn")) {
-        	if(!playerserver.getPlotdata().getNameWorld().equalsIgnoreCase(player.getWorld().getName()) 
-            		|| !playerserver.getPlotdata().getAllplottrust().contains(player.getWorld().getName())){
-        		player.sendMessage(MessageColor.RED.apply("Merci d'étre sur votre Plot pour effectuée cette commande"));
+        	if(!playerserver.getPlotdata().getNameWorld().equalsIgnoreCase(player.getWorld().getName())) {
+        		player.sendMessage(MessageColor.RED.apply("Merci d'être sur votre Plot pour effectuer cette commande"));
                 return true;
             }
             int locatex = player.getLocation().getBlockX();

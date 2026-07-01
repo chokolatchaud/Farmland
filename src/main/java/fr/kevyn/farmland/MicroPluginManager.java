@@ -155,7 +155,11 @@ public class MicroPluginManager {
                         
                     });
                     for (Player player : players) {
-                        player.sendMessage(MessageColor.GOLD + "Discord Du serveur : https://discord.gg/VH7MJpwpub"); //discord new
+                        player.sendMessage(
+                            net.kyori.adventure.text.Component.text("✦ Rejoins le Discord de Farm & Build : ", net.kyori.adventure.text.format.NamedTextColor.GOLD)
+                                .append(net.kyori.adventure.text.Component.text("discord.gg/VH7MJpwpub", net.kyori.adventure.text.format.NamedTextColor.AQUA, net.kyori.adventure.text.format.TextDecoration.UNDERLINED)
+                                    .clickEvent(net.kyori.adventure.text.event.ClickEvent.openUrl("https://discord.gg/VH7MJpwpub")))
+                        );
                     }
                     plugin.getLogger().info("Sauvegarde réalisée pour " + players.size() + " joueurs");
                 }

@@ -72,6 +72,17 @@ public class Definecommands implements CommandExecutor {
                     return true;
                 }
 
+                // Vérifier que le joueur est DANS la sélection
+                com.sk89q.worldedit.math.BlockVector3 playerPos = com.sk89q.worldedit.math.BlockVector3.at(
+                    player.getLocation().getBlockX(),
+                    player.getLocation().getBlockY(),
+                    player.getLocation().getBlockZ()
+                );
+                if (!selection.contains(playerPos)) {
+                    player.sendMessage("§cTu dois te tenir DANS ta structure pour la définir !");
+                    return true;
+                }
+
                 // Vérifier le chevauchement
                 if (isOverlapping(selection, worldActuel)) {
                     player.sendMessage("§cTa sélection chevauche une GameRegion !");
