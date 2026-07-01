@@ -341,24 +341,11 @@ public class Plotinventory implements Listener {
 
         int x = loc.getBlockX();
         int z = loc.getBlockZ();
-        int y = loc.getBlockY();
-        int maxY = world.getMaxHeight() - 2;
 
-        // Cherche vers le haut 2 blocs d'air consécutifs
-        for (int i = y; i < maxY; i++) {
-            if (world.getBlockAt(x, i, z).getType() == org.bukkit.Material.AIR
-                && world.getBlockAt(x, i + 1, z).getType() == org.bukkit.Material.AIR) {
-                return new Location(world, x + 0.5, i, z + 0.5, loc.getYaw(), loc.getPitch());
-            }
-        }
-        // Si rien trouvé en montant, chercher vers le bas
-        for (int i = y; i > world.getMinHeight(); i--) {
-            if (world.getBlockAt(x, i, z).getType() == org.bukkit.Material.AIR
-                && world.getBlockAt(x, i + 1, z).getType() == org.bukkit.Material.AIR) {
-                return new Location(world, x + 0.5, i, z + 0.5, loc.getYaw(), loc.getPitch());
-            }
-        }
-        return loc;
+        // getHighestBlockYAt retourne le Y du bloc solide le plus haut + 1 (air au-dessus)
+        int safeY = world.getHighestBlockYAt(x, z);
+
+        return new Location(world, x + 0.5, safeY + 1, z + 0.5, loc.getYaw(), loc.getPitch());
     }
 
     @EventHandler
