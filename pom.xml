@@ -45,6 +45,12 @@
             <url>https://repo.onarandombox.com/content/groups/public/</url>
         </repository>
 
+        <!-- NuVotifier -->
+        <repository>
+            <id>nuvotifier-repo</id>
+            <url>https://jitpack.io</url>
+        </repository>
+
         <!-- Spigot (Vault) -->
         <repository>
             <id>spigot-repo</id>
@@ -121,7 +127,11 @@
 
         <!-- OkHttp (WebAPI client vers le site farm-land.fr) -->
         <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
+            <groupId>com.github.NuVotifier</groupId>
+            <artifactId>NuVotifier</artifactId>
+            <version>2.7.3</version>
+            <scope>provided</scope>
+        </dependency>
             <artifactId>okhttp</artifactId>
             <version>4.12.0</version>
             <scope>compile</scope>

@@ -233,12 +233,17 @@ public class Plotinventory implements Listener {
                 	
                 }
 
-                Location loc = new Location(
-                        plotWorld,
-                        ps1.getPlotdata().getLocationspawnX(),
-                        ps1.getPlotdata().getLocationspawnY(),
-                        ps1.getPlotdata().getLocationspawnZ()
-                );
+                Location loc;
+                int spawnX = ps1.getPlotdata().getLocationspawnX();
+                int spawnY = ps1.getPlotdata().getLocationspawnY();
+                int spawnZ = ps1.getPlotdata().getLocationspawnZ();
+
+                // Si spawn pas encore défini (0,0,0), utiliser le spawn du monde
+                if (spawnX == 0 && spawnY == 0 && spawnZ == 0) {
+                    loc = plotWorld.getSpawnLocation();
+                } else {
+                    loc = new Location(plotWorld, spawnX, spawnY, spawnZ);
+                }
 
                 player.teleport(loc);
                 player.closeInventory();

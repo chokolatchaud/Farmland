@@ -56,6 +56,14 @@ public class MicroPluginManager {
         plugin.getCommand("recalcmarket").setExecutor(new Marketcommands());
         plugin.getCommand("buy").setExecutor(new fr.kevyn.farmland.market.BuyCommands(plugin));
         plugin.getCommand("tuto").setExecutor(new fr.kevyn.farmland.TutoCommand());
+
+        // Vote - NuVotifier (softdepend)
+        if (Bukkit.getPluginManager().getPlugin("NuVotifier") != null) {
+            plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.vote.VoteListener(plugin), plugin);
+            plugin.getLogger().info("[Vote] Module NuVotifier activé — WorldEdit 30min par vote");
+        } else {
+            plugin.getLogger().warning("[Vote] NuVotifier non trouvé — les votes ne donneront pas de récompense");
+        }
         GameManager.getInstance().init(plugin);
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
         	MarketCalc.Calcforcoef(plugin);

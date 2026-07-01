@@ -107,9 +107,20 @@ public class JoinAndleaveEvent implements Listener {
                 }, 5L);
             }
 
-            // ✅ Création du plot uniquement, pas de tp
+            // ✅ Création du plot + application de la bordure après chargement
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 new Plot(e.getPlayer().getUniqueId(), plugin);
+                // Appliquer la bordure après que le monde soit chargé
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(e.getPlayer().getUniqueId());
+                    if (ps != null && ps.getPlotdata() != null) {
+                        String worldName = ps.getPlotdata().getNameWorld();
+                        org.bukkit.World plotWorld = Bukkit.getWorld(worldName);
+                        if (plotWorld != null) {
+                            plotWorld.getWorldBorder().setSize(ps.getPlotdata().getWorldborder());
+                        }
+                    }
+                }, 20L);
             }, PLOT_CREATION_DELAY);
         }
 

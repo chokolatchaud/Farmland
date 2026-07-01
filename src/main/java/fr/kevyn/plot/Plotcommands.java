@@ -252,10 +252,15 @@ public class Plotcommands implements CommandExecutor {
                     return true;
                 }
                 
-                Location location = new Location(plottarget, 
-                    target.getPlotdata().getLocationspawnX(),
-                    target.getPlotdata().getLocationspawnY(),
-                    target.getPlotdata().getLocationspawnZ());
+                int spawnX = target.getPlotdata().getLocationspawnX();
+                int spawnY = target.getPlotdata().getLocationspawnY();
+                int spawnZ = target.getPlotdata().getLocationspawnZ();
+                Location location;
+                if (spawnX == 0 && spawnY == 0 && spawnZ == 0) {
+                    location = plottarget.getSpawnLocation();
+                } else {
+                    location = new Location(plottarget, spawnX, spawnY, spawnZ);
+                }
                 player.teleport(location);
                 player.sendMessage(MessageColor.GREEN.apply("Téléportation vers le plot de " + target.getName()));
                 return true;
