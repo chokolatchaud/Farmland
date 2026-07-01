@@ -319,12 +319,46 @@ public class Plotinventory implements Listener {
         int spawnX = ps1.getPlotdata().getLocationspawnX();
         int spawnY = ps1.getPlotdata().getLocationspawnY();
         int spawnZ = ps1.getPlotdata().getLocationspawnZ();
-        Location loc = (spawnX == 0 && spawnY == 0 && spawnZ == 0)
-            ? plotWorld.getSpawnLocation()
-            : new Location(plotWorld, spawnX, spawnY, spawnZ);
+
+        Location loc;
+        if (spawnX == 0 && spawnY == 0 && spawnZ == 0) {
+            loc = plotWorld.getSpawnLocation();
+        } else {
+            loc = new Location(plotWorld, spawnX, spawnY, spawnZ);
+        }
+
+        // Si la position est obstruée, monter jusqu'à trouver 2 blocs d'air
+        loc = findSafeLocation(loc);
+
         player.teleport(loc);
         player.closeInventory();
         player.sendMessage(MessageColor.GREEN.apply("Téléportation vers le plot de " + ps1.getName()));
+    }
+
+    private Location findSafeLocation(Location loc) {
+        World world = loc.getWorld();
+        if (world == null) return loc;
+
+        int x = loc.getBlockX();
+        int z = loc.getBlockZ();
+        int y = loc.getBlockY();
+        int maxY = world.getMaxHeight() - 2;
+
+        // Cherche vers le haut 2 blocs d'air consécutifs
+        for (int i = y; i < maxY; i++) {
+            if (world.getBlockAt(x, i, z).getType() == org.bukkit.Material.AIR
+                && world.getBlockAt(x, i + 1, z).getType() == org.bukkit.Material.AIR) {
+                return new Location(world, x + 0.5, i, z + 0.5, loc.getYaw(), loc.getPitch());
+            }
+        }
+        // Si rien trouvé en montant, chercher vers le bas
+        for (int i = y; i > world.getMinHeight(); i--) {
+            if (world.getBlockAt(x, i, z).getType() == org.bukkit.Material.AIR
+                && world.getBlockAt(x, i + 1, z).getType() == org.bukkit.Material.AIR) {
+                return new Location(world, x + 0.5, i, z + 0.5, loc.getYaw(), loc.getPitch());
+            }
+        }
+        return loc;
     }
 
     @EventHandler
