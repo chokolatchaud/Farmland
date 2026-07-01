@@ -54,7 +54,7 @@ public class Filesave {
             if (file.isFile() && file.getName().endsWith(".json")) {
                 try (FileReader reader = new FileReader(file)) {
                     PlayerServer player = gson.fromJson(reader, PlayerServer.class);
-                    PlayerserverHashMap.getInstance().getHashMapPlayer().put(player.getUuid(), player);
+                    PlayerserverHashMap.getInstance().AddplayerHaspMaps(player.getUuid(), player);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
