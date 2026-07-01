@@ -118,7 +118,7 @@ public class MicroPluginManager {
     public static void modulePlot(FarmlandMain plugin) {
         try {
             plugin.getServer().getPluginManager().registerEvents(new EventBuildAndUse(plugin), plugin);
-            plugin.getServer().getPluginManager().registerEvents(new Plotinventory(), plugin);
+            plugin.getServer().getPluginManager().registerEvents(new Plotinventory(plugin), plugin);
             plugin.getCommand("plot").setExecutor(new Plotcommands(plugin));
         } catch (Exception e) {
             plugin.getLogger().severe("Erreur lors du chargement du module Plot !");

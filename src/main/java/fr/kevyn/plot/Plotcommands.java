@@ -64,28 +64,27 @@ public class Plotcommands implements CommandExecutor {
             String worldname = player.getWorld().getName();
             
             if(playercanaddtrust(player, playerserver, worldname, "")) {
-                Player playertarget = Bukkit.getPlayer(args[1]);
-                if(playertarget == null) {
-                    player.sendMessage(MessageColor.RED.apply("Le joueur n'existe pas ou n'est pas connecté"));
+                // Cherche d'abord en ligne, sinon dans le HashMap (hors ligne)
+                PlayerServer playerservertarget = PlayerserverHashMap.getInstance().getplayerHaspMaps(args[1]);
+                
+                if(playerservertarget == null || playerservertarget.getPlotdata() == null) {
+                    player.sendMessage(MessageColor.RED.apply("Le joueur n'existe pas ou n'a jamais rejoint le serveur"));
                     return true;
                 }
                 
-                if(playertarget.getUniqueId().equals(player.getUniqueId())) {
+                if(playerservertarget.getUuid().equals(player.getUniqueId())) {
                     player.sendMessage(MessageColor.RED.apply("Tu ne peux pas t'ajouter toi-même !"));
                     return true;
                 }
                 
-                PlayerServer playerservertarget = PlayerserverHashMap.getInstance().getplayerHaspMaps(playertarget.getUniqueId());
-                
-                if(playerservertarget == null || playerservertarget.getPlotdata() == null) {
-                    player.sendMessage(MessageColor.RED.apply("Le joueur n'existe pas ou n'est pas connecté"));
-                    return true;
-                }
+                Player playertarget = Bukkit.getPlayer(playerservertarget.getUuid());
                 
                 if(isnotaddinplot(playertarget, playerservertarget, worldname) && 
                    isnottrustinplot(playertarget, playerservertarget, worldname)) {
                     playerservertarget.getPlotdata().AddAllplotadd(worldname);
-                    playertarget.sendMessage(MessageColor.GREEN.apply("Tu viens d'être add sur le plot de " + player.getName()));
+                    if (playertarget != null && playertarget.isOnline()) {
+                        playertarget.sendMessage(MessageColor.GREEN.apply("Tu viens d'être add sur le plot de " + player.getName()));
+                    }
                     player.sendMessage(MessageColor.GREEN.apply("Le joueur a été ajouté avec succès !"));
                     return true;
                 } else {
@@ -107,21 +106,16 @@ public class Plotcommands implements CommandExecutor {
             String worldname = player.getWorld().getName();
             
             if(playercanaddtrust(player, playerserver, worldname, "")) {
-                Player playertarget = Bukkit.getPlayer(args[1]);
-                if(playertarget == null) {
-                    player.sendMessage(MessageColor.RED.apply("Le joueur n'existe pas ou n'est pas connecté"));
-                    return true;
-                }
-                PlayerServer playerservertarget = PlayerserverHashMap.getInstance().getplayerHaspMaps(playertarget.getUniqueId());
-                
+                PlayerServer playerservertarget = PlayerserverHashMap.getInstance().getplayerHaspMaps(args[1]);
                 if(playerservertarget == null || playerservertarget.getPlotdata() == null) {
-                    player.sendMessage(MessageColor.RED.apply("Le joueur n'existe pas ou n'est pas connecté"));
+                    player.sendMessage(MessageColor.RED.apply("Le joueur n'existe pas ou n'a jamais rejoint le serveur"));
                     return true;
                 }
-                
+                Player playertarget = Bukkit.getPlayer(playerservertarget.getUuid());
                 if(!isnotaddinplot(playertarget, playerservertarget, worldname)) {
                     playerservertarget.getPlotdata().RemoveAllplotadd(worldname);
-                    playertarget.sendMessage(MessageColor.RED.apply("Tu viens d'être unadd du plot de " + player.getName()));
+                    if (playertarget != null && playertarget.isOnline())
+                        playertarget.sendMessage(MessageColor.RED.apply("Tu viens d'être unadd du plot de " + player.getName()));
                     player.sendMessage(MessageColor.GREEN.apply("Le joueur a été unadd avec succès !"));
                     return true;
                 } else {
@@ -143,32 +137,24 @@ public class Plotcommands implements CommandExecutor {
             String worldname = player.getWorld().getName();
             
             if(playercanaddtrust(player, playerserver, worldname,"trust")) {
-                Player playertarget = Bukkit.getPlayer(args[1]);
-                if(playertarget == null) {
-                    player.sendMessage(MessageColor.RED.apply("Le joueur n'existe pas ou n'est pas connecté"));
+                PlayerServer playerservertarget = PlayerserverHashMap.getInstance().getplayerHaspMaps(args[1]);
+                if(playerservertarget == null || playerservertarget.getPlotdata() == null) {
+                    player.sendMessage(MessageColor.RED.apply("Le joueur n'existe pas ou n'a jamais rejoint le serveur"));
                     return true;
                 }
-                
-                if(playertarget.getUniqueId().equals(player.getUniqueId())) {
+                if(playerservertarget.getUuid().equals(player.getUniqueId())) {
                     player.sendMessage(MessageColor.RED.apply("Tu ne peux pas te trust toi-même !"));
                     return true;
                 }
-                
-                PlayerServer playerservertarget = PlayerserverHashMap.getInstance().getplayerHaspMaps(playertarget.getUniqueId());
-                
-                if(playerservertarget == null || playerservertarget.getPlotdata() == null) {
-                    player.sendMessage(MessageColor.RED.apply("Le joueur n'existe pas ou n'est pas connecté"));
-                    return true;
-                }
-                
+                Player playertarget = Bukkit.getPlayer(playerservertarget.getUuid());
                 if(isnottrustinplot(playertarget, playerservertarget, worldname)) {
                     if(!isnotaddinplot(playertarget, playerservertarget, worldname)) {
                         playerservertarget.getPlotdata().RemoveAllplotadd(worldname);
                         player.sendMessage(MessageColor.YELLOW.apply("Le joueur a été automatiquement retiré de la liste ADD."));
                     }
-                    
                     playerservertarget.getPlotdata().AddAllplottrust(worldname);
-                    playertarget.sendMessage(MessageColor.GREEN.apply("Tu viens d'être trust sur le plot de " + player.getName()));
+                    if (playertarget != null && playertarget.isOnline())
+                        playertarget.sendMessage(MessageColor.GREEN.apply("Tu viens d'être trust sur le plot de " + player.getName()));
                     player.sendMessage(MessageColor.GREEN.apply("Le joueur a été trust avec succès !"));
                     return true;
                 } else {
@@ -190,21 +176,16 @@ public class Plotcommands implements CommandExecutor {
             String worldname = player.getWorld().getName();
             
             if(playercanaddtrust(player, playerserver, worldname, "trust")) {
-                Player playertarget = Bukkit.getPlayer(args[1]);
-                if(playertarget == null) {
-                    player.sendMessage(MessageColor.RED.apply("Le joueur n'existe pas ou n'est pas connecté"));
-                    return true;
-                }
-                PlayerServer playerservertarget = PlayerserverHashMap.getInstance().getplayerHaspMaps(playertarget.getUniqueId());
-                
+                PlayerServer playerservertarget = PlayerserverHashMap.getInstance().getplayerHaspMaps(args[1]);
                 if(playerservertarget == null || playerservertarget.getPlotdata() == null) {
-                    player.sendMessage(ChatColor.RED + "Le joueur n'existe pas ou n'est pas connecté");
+                    player.sendMessage(MessageColor.RED.apply("Le joueur n'existe pas ou n'a jamais rejoint le serveur"));
                     return true;
                 }
-                
+                Player playertarget = Bukkit.getPlayer(playerservertarget.getUuid());
                 if(!isnottrustinplot(playertarget, playerservertarget, worldname)) {
                     playerservertarget.getPlotdata().RemoveAllplottrust(worldname);
-                    playertarget.sendMessage(MessageColor.RED.apply("Tu viens d'être untrust du plot de " + player.getName()));
+                    if (playertarget != null && playertarget.isOnline())
+                        playertarget.sendMessage(MessageColor.RED.apply("Tu viens d'être untrust du plot de " + player.getName()));
                     player.sendMessage(MessageColor.GREEN.apply("Le joueur a été untrust avec succès !"));
                     return true;
                 } else {

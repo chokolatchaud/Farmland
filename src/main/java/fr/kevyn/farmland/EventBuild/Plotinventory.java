@@ -27,12 +27,18 @@ import fr.kevyn.farmland.menu.GameMenuHashMap;
 import fr.kevyn.farmland.menu.MenuPlotConfig;
 import fr.kevyn.farmland.menu.MenuPlotVisit;
 import fr.kevyn.farmland.menu.TypeMenu;
+import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.plot.Plot;
 
 public class Plotinventory implements Listener {
 	private final Map<UUID, Integer> playerPages = new HashMap<>();
+	private final FarmlandMain plugin;
+
+	public Plotinventory(FarmlandMain plugin) {
+		this.plugin = plugin;
+	}
 	// =========================
     // EVENT INVENTAIRE
     // =========================
@@ -223,7 +229,30 @@ public class Plotinventory implements Listener {
                 String plotName = ps1.getPlotdata().getPlotProprety();
                 World plotWorld = Plot.getWorldforname(plotName);
                 if (plotWorld == null) {
-                    player.sendMessage(MessageColor.RED.apply("Erreur : monde du plot introuvable !"));
+                    // Monde pas chargé — on le charge d'abord
+                    player.sendMessage(MessageColor.GRAY.apply("Chargement du plot en cours..."));
+                    new fr.kevyn.plot.Plot(UUID.fromString(plotName), plugin);
+                    // Attendre que le monde soit chargé puis TP
+                    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                        World loadedWorld = Plot.getWorldforname(plotName);
+                        if (loadedWorld == null) {
+                            player.sendMessage(MessageColor.RED.apply("Erreur : impossible de charger le plot !"));
+                            return;
+                        }
+                        if (ps1.getPlotdata().getPrivateplot()) {
+                            player.sendMessage(MessageColor.RED.apply("Ce plot est privé"));
+                            return;
+                        }
+                        int spawnX2 = ps1.getPlotdata().getLocationspawnX();
+                        int spawnY2 = ps1.getPlotdata().getLocationspawnY();
+                        int spawnZ2 = ps1.getPlotdata().getLocationspawnZ();
+                        Location loc2 = (spawnX2 == 0 && spawnY2 == 0 && spawnZ2 == 0)
+                            ? loadedWorld.getSpawnLocation()
+                            : new Location(loadedWorld, spawnX2, spawnY2, spawnZ2);
+                        player.teleport(loc2);
+                        player.closeInventory();
+                        player.sendMessage(MessageColor.GREEN.apply("Téléportation vers le plot de " + ps1.getName()));
+                    }, 60L);
                     return;
                 }
                 

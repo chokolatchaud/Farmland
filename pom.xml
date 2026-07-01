@@ -126,11 +126,13 @@
         </dependency>
 
         <!-- OkHttp (WebAPI client vers le site farm-land.fr) -->
+        <!-- NuVotifier (jar local dans lib/) -->
         <dependency>
-            <groupId>com.github.NuVotifier</groupId>
-            <artifactId>NuVotifier</artifactId>
+            <groupId>com.vexsoftware</groupId>
+            <artifactId>nuvotifier</artifactId>
             <version>2.7.3</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/nuvotifier.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
