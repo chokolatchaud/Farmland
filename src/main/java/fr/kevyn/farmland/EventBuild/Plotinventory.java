@@ -322,17 +322,47 @@ public class Plotinventory implements Listener {
 
         Location loc;
         if (spawnX == 0 && spawnY == 0 && spawnZ == 0) {
-            loc = plotWorld.getSpawnLocation();
+            loc = findSafeLocation(new Location(plotWorld, 0, 64, 0));
         } else {
-            loc = new Location(plotWorld, spawnX, spawnY, spawnZ);
+            // +1 car setspawnpoint sauvegarde le Y des pieds = niveau du sol
+            loc = findSafeLocation(new Location(plotWorld, spawnX + 0.5, spawnY + 1, spawnZ + 0.5));
         }
-
-        // Si la position est obstruée, monter jusqu'à trouver 2 blocs d'air
-        loc = findSafeLocation(loc);
 
         player.teleport(loc);
         player.closeInventory();
         player.sendMessage(MessageColor.GREEN.apply("Téléportation vers le plot de " + ps1.getName()));
+    }
+
+    private Location findSafeLocation(Location loc) {
+        World world = loc.getWorld();
+        if (world == null) return loc;
+
+        int x = loc.getBlockX();
+        int z = loc.getBlockZ();
+
+        // Toujours partir du bloc le plus haut de la colonne
+        int highY = world.getHighestBlockYAt(x, z);
+
+        // Si le monde est vide (highY très bas), on utilise Y=64 comme défaut
+        if (highY < world.getMinHeight() + 5) {
+            highY = 64;
+        }
+
+        int startY = Math.max(loc.getBlockY(), highY);
+        int maxY = world.getMaxHeight() - 2;
+
+        // Cherche depuis startY vers le haut 2 blocs non-solides avec sol en dessous
+        for (int y = startY; y <= maxY; y++) {
+            org.bukkit.block.Block feet  = world.getBlockAt(x, y, z);
+            org.bukkit.block.Block head  = world.getBlockAt(x, y + 1, z);
+            org.bukkit.block.Block ground = world.getBlockAt(x, y - 1, z);
+            if (!feet.getType().isSolid() && !head.getType().isSolid() && ground.getType().isSolid()) {
+                return new Location(world, x + 0.5, y, z + 0.5, loc.getYaw(), loc.getPitch());
+            }
+        }
+
+        // Fallback absolu
+        return new Location(world, x + 0.5, highY + 1, z + 0.5, loc.getYaw(), loc.getPitch());
     }
 
     private Location findSafeLocation(Location loc) {
