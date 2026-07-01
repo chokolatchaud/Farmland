@@ -71,6 +71,41 @@ public class Plotinventory implements Listener {
         ItemStack clicked = event.getCurrentItem();
         if (clicked == null || clicked.getType() == Material.AIR) return;
 
+        // Cas spécial PLOTVISIT : les têtes de joueur ne sont pas des CustomItemType
+        if (gamemenu.getTypemenu() == TypeMenu.PLOTVISIT && clicked.getType() == Material.PLAYER_HEAD) {
+            if (!(clicked.getItemMeta() instanceof SkullMeta)) return;
+            SkullMeta meta = (SkullMeta) clicked.getItemMeta();
+            OfflinePlayer owning = meta.getOwningPlayer();
+            if (owning == null) {
+                player.sendMessage(MessageColor.RED.apply("Erreur : propriétaire introuvable !"));
+                return;
+            }
+            UUID targetUUID = owning.getUniqueId();
+            PlayerServer ps1 = PlayerserverHashMap.getInstance().getplayerHaspMaps(targetUUID);
+            if (ps1 == null || ps1.getPlotdata() == null) {
+                player.sendMessage(MessageColor.RED.apply("Erreur : plot introuvable !"));
+                return;
+            }
+            if (ps1.getPlotdata().getPrivateplot()) {
+                player.sendMessage(MessageColor.RED.apply("Ce plot est privé"));
+                return;
+            }
+            String plotName = ps1.getPlotdata().getPlotProprety();
+            World plotWorld = Plot.getWorldforname(plotName);
+            if (plotWorld == null) {
+                player.sendMessage(MessageColor.GRAY.apply("Chargement du plot en cours..."));
+                new fr.kevyn.plot.Plot(UUID.fromString(plotName), plugin);
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    World loaded = Plot.getWorldforname(plotName);
+                    if (loaded == null) { player.sendMessage(MessageColor.RED.apply("Impossible de charger le plot !")); return; }
+                    teleportToPlot(player, ps1, loaded);
+                }, 60L);
+                return;
+            }
+            teleportToPlot(player, ps1, plotWorld);
+            return;
+        }
+
         // IDENTIFIER L'ITEM CUSTOM CLIQUÉ
         CustomItemType customType = CustomItemType.fromItem(clicked);
         if(customType == null) { return;}
@@ -280,6 +315,18 @@ public class Plotinventory implements Listener {
         }
     }
     
+    private void teleportToPlot(Player player, PlayerServer ps1, World plotWorld) {
+        int spawnX = ps1.getPlotdata().getLocationspawnX();
+        int spawnY = ps1.getPlotdata().getLocationspawnY();
+        int spawnZ = ps1.getPlotdata().getLocationspawnZ();
+        Location loc = (spawnX == 0 && spawnY == 0 && spawnZ == 0)
+            ? plotWorld.getSpawnLocation()
+            : new Location(plotWorld, spawnX, spawnY, spawnZ);
+        player.teleport(loc);
+        player.closeInventory();
+        player.sendMessage(MessageColor.GREEN.apply("Téléportation vers le plot de " + ps1.getName()));
+    }
+
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         GameMenuHashMap.getInstance().getMenulist().removeIf(
