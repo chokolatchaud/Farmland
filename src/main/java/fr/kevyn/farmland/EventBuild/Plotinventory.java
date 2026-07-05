@@ -179,11 +179,17 @@ public class Plotinventory implements Listener {
         int tz = (spawnX == 0 && spawnY == 0 && spawnZ == 0) ? 0 : spawnZ;
         int ty = (spawnX == 0 && spawnY == 0 && spawnZ == 0) ? 64 : spawnY;
 
-        // Charger le chunk avant de calculer
+        plugin.getLogger().info("[DEBUG-TP] Spawn sauvegardé: " + spawnX + "/" + spawnY + "/" + spawnZ);
+        plugin.getLogger().info("[DEBUG-TP] Target: " + tx + "/" + ty + "/" + tz + " monde: " + plotWorld.getName());
+
         plotWorld.loadChunk(tx >> 4, tz >> 4, true);
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            Location safe = findSafeLocation(new Location(plotWorld, tx + 0.5, ty, tz + 0.5));
+            Location start = new Location(plotWorld, tx + 0.5, ty, tz + 0.5);
+            int highY = plotWorld.getHighestBlockYAt(tx, tz);
+            plugin.getLogger().info("[DEBUG-TP] highY=" + highY + " startY=" + ty);
+            Location safe = findSafeLocation(start);
+            plugin.getLogger().info("[DEBUG-TP] Position safe finale: " + safe.getBlockX() + "/" + safe.getBlockY() + "/" + safe.getBlockZ());
             player.teleport(safe);
             player.closeInventory();
             player.sendMessage(MessageColor.GREEN.apply("Téléportation vers le plot de " + ps1.getName()));
