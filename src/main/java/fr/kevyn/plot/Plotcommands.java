@@ -225,25 +225,33 @@ public class Plotcommands implements CommandExecutor {
                     player.sendMessage(MessageColor.RED.apply("Joueur introuvable."));
                     return true;
                 }
-                String plotplayer = target.getPlotdata().PlotProprety;
-                World plottarget = Plot.getWorldforname(plotplayer);
-                
-                if (plottarget == null) {
-                    player.sendMessage(MessageColor.RED.apply("Erreur : monde introuvable"));
+
+                // Vérification plot privé (sauf si c'est son propre plot)
+                if (target.getPlotdata().getPrivateplot() && !target.getUuid().equals(player.getUniqueId())) {
+                    player.sendMessage(MessageColor.RED.apply("Ce plot est privé !"));
                     return true;
                 }
-                
-                int spawnX = target.getPlotdata().getLocationspawnX();
-                int spawnY = target.getPlotdata().getLocationspawnY();
-                int spawnZ = target.getPlotdata().getLocationspawnZ();
-                Location location;
-                if (spawnX == 0 && spawnY == 0 && spawnZ == 0) {
-                    location = plottarget.getSpawnLocation();
-                } else {
-                    location = new Location(plottarget, spawnX, spawnY, spawnZ);
+
+                String plotplayer = target.getPlotdata().PlotProprety;
+                World plottarget = Plot.getWorldforname(plotplayer);
+
+                if (plottarget == null) {
+                    // Charger le monde si pas encore chargé
+                    player.sendMessage(MessageColor.GRAY.apply("Chargement du plot en cours..."));
+                    new Plot(UUID.fromString(plotplayer), plugin);
+                    final PlayerServer finalTarget = target;
+                    Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                        World loaded = Plot.getWorldforname(plotplayer);
+                        if (loaded == null) {
+                            player.sendMessage(MessageColor.RED.apply("Erreur : impossible de charger le plot !"));
+                            return;
+                        }
+                        teleportSafe(player, finalTarget, loaded);
+                    }, 60L);
+                    return true;
                 }
-                player.teleport(location);
-                player.sendMessage(MessageColor.GREEN.apply("Téléportation vers le plot de " + target.getName()));
+
+                teleportSafe(player, target, plottarget);
                 return true;
             }
 
@@ -319,6 +327,33 @@ public class Plotcommands implements CommandExecutor {
             return false;
     }
     
+    private void teleportSafe(Player player, PlayerServer target, World world) {
+        int spawnX = target.getPlotdata().getLocationspawnX();
+        int spawnY = target.getPlotdata().getLocationspawnY();
+        int spawnZ = target.getPlotdata().getLocationspawnZ();
+        int tx = (spawnX == 0 && spawnY == 0 && spawnZ == 0) ? 0 : spawnX;
+        int tz = (spawnX == 0 && spawnY == 0 && spawnZ == 0) ? 0 : spawnZ;
+        int ty = (spawnX == 0 && spawnY == 0 && spawnZ == 0) ? 64 : spawnY;
+        world.loadChunk(tx >> 4, tz >> 4, true);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            int highY = world.getHighestBlockYAt(tx, tz);
+            if (highY < world.getMinHeight() + 5) highY = 64;
+            int startY = Math.max(ty, highY);
+            Location safe = null;
+            for (int y = startY; y <= world.getMaxHeight() - 2; y++) {
+                if (!world.getBlockAt(tx, y, tz).getType().isSolid()
+                    && !world.getBlockAt(tx, y + 1, tz).getType().isSolid()
+                    && world.getBlockAt(tx, y - 1, tz).getType().isSolid()) {
+                    safe = new Location(world, tx + 0.5, y, tz + 0.5);
+                    break;
+                }
+            }
+            if (safe == null) safe = new Location(world, tx + 0.5, highY + 1, tz + 0.5);
+            player.teleport(safe);
+            player.sendMessage(fr.kevyn.farmland.MessageColor.GREEN.apply("Téléportation vers le plot de " + target.getName()));
+        }, 10L);
+    }
+
     public boolean isnotaddinplot(Player player, PlayerServer playerserver, String plotwantaddtrust) {
         ArrayList<String> listadd = playerserver.getPlotdata().getAllplotadd();
         
