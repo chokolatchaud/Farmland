@@ -200,13 +200,12 @@ public class EventBuildAndUse implements Listener {
 
         if (ps.getBlocpose() >= 150) {
             ps.setBlocpose(ps.getBlocpose() - 150);
-            ps.setMoney(ps.getMoney() + 1);
+            ps.setMoney(ps.getMoney() + 3);
             player.sendMessage(MessageColor.AQUA.apply("+1$ pour 150 blocs placés !"));
         }
     }
 
     public boolean canUseWaterLava(Player player, Block bloc, Material Bucket) {
-    	player.sendMessage("lappel de canusewaterlava est effectuée");
     	
     	
     	if(Bucket == null) {

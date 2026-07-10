@@ -1,4 +1,4 @@
-package fr.kevyn.farmland.vote;
+package fr.farmland.vote;
 
 import com.vexsoftware.votifier.model.VotifierEvent;
 import fr.kevyn.farmland.FarmlandMain;
