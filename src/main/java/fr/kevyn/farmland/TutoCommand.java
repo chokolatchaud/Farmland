@@ -25,7 +25,7 @@ public class TutoCommand implements CommandExecutor {
 
         player.sendMessage(Component.text(""));
         player.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", NamedTextColor.GOLD));
-        player.sendMessage(Component.text("  FARM & BUILD — Guide du joueur", NamedTextColor.GOLD, TextDecoration.BOLD));
+        player.sendMessage(Component.text("  FARMLAND — Guide du joueur", NamedTextColor.GOLD, TextDecoration.BOLD));
         player.sendMessage(Component.text("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", NamedTextColor.GOLD));
         player.sendMessage(Component.text(""));
         player.sendMessage(Component.text("  Clique sur le lien ci-dessous", NamedTextColor.GRAY));

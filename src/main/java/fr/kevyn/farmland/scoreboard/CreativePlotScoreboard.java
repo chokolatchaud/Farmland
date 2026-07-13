@@ -29,7 +29,7 @@ public class CreativePlotScoreboard {
         }
 
         Objective obj = scoreboard.registerNewObjective("farmland", "dummy",
-                ChatColor.GOLD + "" + ChatColor.BOLD + "FARM & BUILD");
+                ChatColor.GOLD + "" + ChatColor.BOLD + "FARMLAND");
         obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         int line = 9;
