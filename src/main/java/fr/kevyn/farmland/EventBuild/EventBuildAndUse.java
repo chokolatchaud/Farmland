@@ -197,11 +197,12 @@ public class EventBuildAndUse implements Listener {
         }
 
         ps.setBlocpose(ps.getBlocpose() + 1);
+        ps.setBlocposetotal(ps.getBlocposetotal() + 1);
 
         if (ps.getBlocpose() >= 150) {
             ps.setBlocpose(ps.getBlocpose() - 150);
             ps.setMoney(ps.getMoney() + 3);
-            player.sendMessage(MessageColor.AQUA.apply("+1$ pour 150 blocs placés !"));
+            player.sendMessage(MessageColor.AQUA.apply("+3$ pour 150 blocs placés !"));
         }
     }
 

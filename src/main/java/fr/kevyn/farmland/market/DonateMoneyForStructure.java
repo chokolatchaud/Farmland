@@ -42,7 +42,7 @@ public class DonateMoneyForStructure {
 					for (GameRegion r : GetStructure.getallStructure()) {
 						if (r.getPropriétaire().equals(player.getUniqueId())) nbStructures++;
 					}
-					plugin.getWebApi().pushPlayerBalance(ps.getName(), ps.getMoney(), nbStructures, ps.getBlocpose());
+					plugin.getWebApi().pushPlayerBalance(ps.getName(), ps.getMoney(), nbStructures, ps.getBlocposetotal());
 				}
 			}
 		}

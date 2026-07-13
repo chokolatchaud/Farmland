@@ -56,6 +56,8 @@ public class MicroPluginManager {
         plugin.getCommand("recalcmarket").setExecutor(new Marketcommands());
         plugin.getCommand("buy").setExecutor(new fr.kevyn.farmland.market.BuyCommands(plugin));
         plugin.getCommand("tuto").setExecutor(new fr.kevyn.farmland.TutoCommand());
+        plugin.getCommand("hub").setExecutor(new fr.kevyn.farmland.game.HubCommand(plugin));
+        plugin.getCommand("vote").setExecutor(new fr.kevyn.farmland.vote.VoteCommand(plugin));
 
         // Vote - NuVotifier (softdepend)
         if (Bukkit.getPluginManager().getPlugin("NuVotifier") != null) {
@@ -164,7 +166,7 @@ public class MicroPluginManager {
                     });
                     for (Player player : players) {
                         player.sendMessage(
-                            net.kyori.adventure.text.Component.text("✦ Rejoins le Discord de Farm & Build : ", net.kyori.adventure.text.format.NamedTextColor.GOLD)
+                            net.kyori.adventure.text.Component.text("✦ Rejoins le Discord de Farmland : ", net.kyori.adventure.text.format.NamedTextColor.GOLD)
                                 .append(net.kyori.adventure.text.Component.text("discord.gg/VH7MJpwpub", net.kyori.adventure.text.format.NamedTextColor.AQUA, net.kyori.adventure.text.format.TextDecoration.UNDERLINED)
                                     .clickEvent(net.kyori.adventure.text.event.ClickEvent.openUrl("https://discord.gg/VH7MJpwpub")))
                         );
@@ -220,7 +222,7 @@ public class MicroPluginManager {
                     for (GameRegion r : GetStructure.getallStructure()) {
                         if (r.getPropriétaire().equals(ps.getUuid())) nbStructures++;
                     }
-                    plugin.getWebApi().pushPlayerBalance(ps.getName(), ps.getMoney(), nbStructures, ps.getBlocpose());
+                    plugin.getWebApi().pushPlayerBalance(ps.getName(), ps.getMoney(), nbStructures, ps.getBlocposetotal());
                 }
                 plugin.getLogger().info("[WebAPI] Leaderboard pousse → " + PlayerserverHashMap.getInstance().getHashMapPlayer().size() + " joueur(s)");
             };

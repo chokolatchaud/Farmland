@@ -15,6 +15,7 @@ public class PlayerServer {
     String raison;
     int money;
     int blocpose;
+    int blocposetotal;
     String grade;
     PlotData plotdata;
     int upgrade;
@@ -91,6 +92,12 @@ public class PlayerServer {
     }
     public void setBlocpose(int blocpose) {
         this.blocpose = blocpose;
+    }
+    public int getBlocposetotal() {
+        return blocposetotal;
+    }
+    public void setBlocposetotal(int blocposetotal) {
+        this.blocposetotal = blocposetotal;
     }
     public String getGrade() {
         return grade;

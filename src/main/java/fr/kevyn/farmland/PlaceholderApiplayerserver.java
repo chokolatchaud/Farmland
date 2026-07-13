@@ -43,7 +43,9 @@ public class PlaceholderApiplayerserver extends PlaceholderExpansion {
             case "money":
                 return String.valueOf(ps.getMoney());
             case "blocpose":
-                return ps.getBlocpose() + "/75";
+                return ps.getBlocpose() + "/150";
+            case "blocposetotal":
+                return String.valueOf(ps.getBlocposetotal());
             case "name":
                 return ps.getName();
             case "lastjoin":
