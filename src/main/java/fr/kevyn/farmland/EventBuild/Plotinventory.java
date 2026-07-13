@@ -89,20 +89,33 @@ public class Plotinventory implements Listener {
         // ── PLOTUPGRADE ───────────────────────────────────────────────────────
         if (gamemenu.getTypemenu() == TypeMenu.PLOTUPGRADE) {
             if (customType == CustomItemType.UPGRADE_LOCKED) {
-                ItemMeta meta = clicked.getItemMeta();
-                if (meta == null || !meta.hasDisplayName()) return;
-                String name = ChatColor.stripColor(meta.getDisplayName());
-                if (!name.contains("Coût")) return;
-                int cost;
-                try { cost = Integer.parseInt(name.replace("Coût :", "").trim()); }
-                catch (NumberFormatException e) { return; }
                 PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
                 if (ps == null) { player.kickPlayer("erreur 23"); return; }
-                if (ps.getMoney() < cost) { player.sendMessage(MessageColor.RED.apply("Tu n'as pas assez d'argent")); return; }
+                if (ps.getPlotdata() == null) { player.sendMessage(MessageColor.RED.apply("Erreur : plot introuvable !")); return; }
+
+                int rank = ps.getUpgrade();
+
+                // Déjà tout acheté ?
+                if (rank >= fr.kevyn.farmland.menu.MenuPlotUpgrade.getMaxUpgrades()) {
+                    player.sendMessage(MessageColor.GOLD.apply("Tu as déjà tous les upgrades !"));
+                    return;
+                }
+
+                // Le slot cliqué doit correspondre au PROCHAIN upgrade (rang du joueur)
+                int slotIndex = upgradeSlotIndex(event.getSlot());
+                if (slotIndex != rank) {
+                    player.sendMessage(MessageColor.RED.apply("Achète d'abord les upgrades précédents !"));
+                    return;
+                }
+
+                // Prix récupéré côté serveur, jamais depuis le nom de l'item
+                int cost = fr.kevyn.farmland.menu.MenuPlotUpgrade.getCost(rank);
+                if (ps.getMoney() < cost) { player.sendMessage(MessageColor.RED.apply("Tu n'as pas assez d'argent (" + cost + " $FB)")); return; }
+
                 ps.setMoney(ps.getMoney() - cost);
                 ps.setUpgrade(ps.getUpgrade() + 1);
                 ps.getPlotdata().setWorldborder(ps.getPlotdata().getWorldborder() + 5);
-                player.sendMessage(MessageColor.GREEN.apply("Upgrade acheté !"));
+                player.sendMessage(MessageColor.GREEN.apply("Upgrade acheté ! (-" + cost + " $FB, +5 de bordure)"));
                 player.closeInventory();
             }
         }
@@ -224,5 +237,17 @@ public class Plotinventory implements Listener {
         GameMenuHashMap.getInstance().getMenulist().removeIf(
             menu -> menu.getInventory().equals(event.getInventory())
         );
+    }
+
+    /**
+     * Convertit un slot du menu upgrade en index d'upgrade (0-20).
+     * Slots utilisés : 1-7 (rangs 0-6), 19-25 (rangs 7-13), 37-43 (rangs 14-20).
+     * Retourne -1 si le slot n'est pas un slot d'upgrade.
+     */
+    private int upgradeSlotIndex(int slot) {
+        if (slot >= 1 && slot <= 7)   return slot - 1;
+        if (slot >= 19 && slot <= 25) return slot - 19 + 7;
+        if (slot >= 37 && slot <= 43) return slot - 37 + 14;
+        return -1;
     }
 }

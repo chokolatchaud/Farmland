@@ -17,6 +17,17 @@ public class MenuPlotUpgrade {
 
     // Prix des upgrades dans l'ordre
     private static final int[] UPGRADE_COSTS = {10, 10, 10, 10, 10, 10, 10, 25, 25, 25, 25, 25, 25, 25, 60, 60, 60, 60, 60, 60, 60};
+
+    /** Nombre total d'upgrades disponibles */
+    public static int getMaxUpgrades() {
+        return UPGRADE_COSTS.length;
+    }
+
+    /** Coût réel (côté serveur) de l'upgrade au rang donné */
+    public static int getCost(int rank) {
+        if (rank < 0 || rank >= UPGRADE_COSTS.length) return -1;
+        return UPGRADE_COSTS[rank];
+    }
 	
 	public static Inventory createmenuplotUpgrade(String name, int page, PlayerServer playerserver) {
 
@@ -39,8 +50,11 @@ public class MenuPlotUpgrade {
 
             if (rankPlayer > rankPlugin) {
                 GameMenu.set_oneitem_menu(CustomItemType.UPGRADE_BOUGHT.create(), "Déjà acheté", slot, inv);
+            } else if (rankPlayer == rankPlugin) {
+                // Prochain upgrade : le seul achetable
+                GameMenu.set_oneitem_menu(CustomItemType.UPGRADE_LOCKED.create(), "Coût : " + cost + " $FB (+5 bordure)", slot, inv);
             } else {
-                GameMenu.set_oneitem_menu(CustomItemType.UPGRADE_LOCKED.create(), "Coût : " + cost, slot, inv);
+                GameMenu.set_oneitem_menu(CustomItemType.UPGRADE_LOCKED.create(), "Verrouillé — " + cost + " $FB", slot, inv);
             }
             rankPlugin++;
         }
