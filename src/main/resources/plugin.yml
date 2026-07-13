@@ -32,11 +32,14 @@ commands:
     permission: farmland.moderation
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
-  afaire:
-    description: Voir le Market Actuelle + Son Historique
-    usage: /market
-    permission: farmland.gamecommands
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+  hub:
+    description: Retourne au hub du serveur
+    usage: /hub
+    aliases: [spawn, lobby]
+
+  vote:
+    description: Affiche les sites de vote du serveur
+    usage: /vote
 
   region:
     description: Gestion des region

@@ -14,3 +14,13 @@ webapi:
   base_url: ""
   api_key: ""
   push_interval_seconds: 30
+
+# Monde du hub (commande /hub)
+hub:
+  world: "world"
+
+# Sites de vote affichés par /vote (récompense gérée par NuVotifier)
+vote:
+  sites:
+    - "https://serveur-prive.net/minecraft/farmland"
+    - "https://top-serveurs.net/minecraft/farmland"
