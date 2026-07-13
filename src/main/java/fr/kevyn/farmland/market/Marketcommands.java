@@ -88,7 +88,9 @@ public class Marketcommands implements CommandExecutor {
 				}
 			}
 
-			ligne.append("§7 ║");
+			// Valeur actuelle du coef (dernière entrée de l'historique)
+			int coefActuelValeur = getCoef(history.get(history.size() - 1).market, cat);
+			ligne.append("§7 §f").append(String.format("%3d", coefActuelValeur)).append("$ §7║");
 			player.sendMessage(ligne.toString());
 		}
 
