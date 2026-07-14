@@ -30,6 +30,12 @@ public class MarketCalc {
 		if(GetStructure.getallStructure().size() < 10) {
 			// pas de structures : fluctuation aleatoire ±5% pour animer les courbes du site
 			Market lastKnown = MarketSave.loadMarket(plugin);
+			if (lastKnown == null) {
+				// premier demarrage : le marche doit s'initialiser meme sans structures
+				lastKnown = new Market(50, 50, 50, 50, 50);
+				MarketSave.saveMarket(plugin, lastKnown);
+				plugin.getLogger().info("[Marche] Premier demarrage : marche initialise a 50 par coef");
+			}
 			if (lastKnown != null) {
 				java.util.Random rand = new java.util.Random();
 				int newCreativite   = Math.max(5, Math.min(90, Math.round(lastKnown.getMoneyforcoefCréativité()   * (0.92f + rand.nextFloat() * 0.16f))));
