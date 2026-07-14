@@ -208,13 +208,14 @@ public class MicroPluginManager {
             String base = plugin.getConfig().getString("webapi.base_url", "");
             String key  = plugin.getConfig().getString("webapi.api_key", "");
             long ticks  = plugin.getConfig().getLong("webapi.push_interval_seconds", 30L) * 20L;
+            long leaderboardTicks = plugin.getConfig().getLong("webapi.leaderboard_push_minutes", 15L) * 60L * 20L;
 
             plugin.initWebApi(base, key);
 
             // push initial du marche au demarrage
             MarketCalc.pushMarketToWebApi(plugin);
 
-            // push leaderboard au demarrage + toutes les 15 minutes
+            // push leaderboard au demarrage + toutes les webapi.leaderboard_push_minutes (defaut 15min)
             // tous les joueurs en memoire (pas seulement les connectes)
             Runnable pushLeaderboard = () -> {
                 for (PlayerServer ps : PlayerserverHashMap.getInstance().getHashMapPlayer().values()) {
@@ -227,7 +228,7 @@ public class MicroPluginManager {
                 plugin.getLogger().info("[WebAPI] Leaderboard pousse → " + PlayerserverHashMap.getInstance().getHashMapPlayer().size() + " joueur(s)");
             };
 
-            Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, pushLeaderboard, 20L, 20L * 60 * 15);
+            Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, pushLeaderboard, 20L, leaderboardTicks);
 
             // push statut serveur toutes les X secondes
             Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {

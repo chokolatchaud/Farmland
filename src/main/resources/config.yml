@@ -13,7 +13,10 @@ webapi:
   enabled: false
   base_url: ""
   api_key: ""
+  # intervalle du push statut serveur (joueurs en ligne / max / version)
   push_interval_seconds: 30
+  # intervalle du push leaderboard (argent, structures, blocs posés)
+  leaderboard_push_minutes: 15
 
 # Monde du hub (commande /hub)
 hub:
