@@ -22,18 +22,17 @@ public class DonateMoneyForStructure {
 			Player player = Bukkit.getPlayer(structure.getPropriétaire());
 			int moneystructure = moneycalc(structure, plugin);
 
-			if (player == null) continue;
+			PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(structure.getPropriétaire());
+			if (ps == null) continue;
 
 			if (moneystructure > 500) {
-				player.sendMessage(MessageColor.RED.apply("Erreur Sur vos Structure, Veuillez Voir avec Un Membre du Staff"));
+				if (player != null) player.sendMessage(MessageColor.RED.apply("Erreur Sur vos Structure, Veuillez Voir avec Un Membre du Staff"));
 				plugin.getLogger().warning("[Marche] Revenu anormal pour " + structure.getName() + " : " + moneystructure);
 				continue;
 			}
 
-			PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
-			if (ps == null) continue;
-
-			if (player.isOnline()) {
+			if (player != null && player.isOnline()) {
+				// En ligne : revenu plein
 				ps.setMoney(moneystructure + ps.getMoney());
 				player.sendMessage(MessageColor.GREEN.apply("+" + moneystructure + " $FB pour " + structure.getName()));
 
@@ -44,6 +43,12 @@ public class DonateMoneyForStructure {
 					}
 					plugin.getWebApi().pushPlayerBalance(ps.getName(), ps.getMoney(), nbStructures, ps.getBlocposetotal());
 				}
+			} else {
+				// Hors ligne : penalite de 80% (le joueur ne touche que 20%)
+				// pour eviter que l'economie explose avec les revenus deconnectes
+				int offlineGain = Math.round(moneystructure * 0.20f);
+				ps.setMoney(ps.getMoney() + offlineGain);
+				ps.setMoneyoffline(ps.getMoneyoffline() + offlineGain);
 			}
 		}
 	}
