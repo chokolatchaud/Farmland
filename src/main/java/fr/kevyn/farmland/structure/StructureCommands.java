@@ -50,7 +50,7 @@ public class StructureCommands implements CommandExecutor {
 			}
 			for(GameRegion structure : listplayerstructure) {
 				
-				player.sendMessage("Nom: " + structure.getName() + "Score: " + structure.getScore());
+				player.sendMessage("Nom: " + structure.getName() + " Score: " + structure.getScore());
 				
 			}
 			player.sendMessage("--------------------");
