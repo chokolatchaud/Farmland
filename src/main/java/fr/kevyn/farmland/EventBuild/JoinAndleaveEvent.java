@@ -144,14 +144,13 @@ public class JoinAndleaveEvent implements Listener {
     public void onPlayerQuit(PlayerQuitEvent e) {
         PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(e.getPlayer().getUniqueId());
         if (playerServer != null) {
+            playerServer.getPlotdata().setAllplotadd(new ArrayList<String>());
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 Filesave.saveOnePlayerServerFile(plugin, playerServer);
             });
         }
         // Nettoyer l'attachment WorldEdit à la déconnexion
         fr.kevyn.farmland.market.BuyCommands.removeAttachment(e.getPlayer().getUniqueId());
-
-        playerServer.getPlotdata().setAllplotadd(new ArrayList<String>());
         
         // pousse le statut du serveur vers farm-land.fr
         if (plugin.getWebApi() != null) {

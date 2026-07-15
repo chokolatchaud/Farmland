@@ -41,6 +41,18 @@ commands:
     description: Affiche les sites de vote du serveur
     usage: /vote
 
+  marketadmin:
+    description: Commandes admin du marché (info, set, reset, recalc)
+    usage: /marketadmin
+    permission: farmland.admin
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  psadmin:
+    description: Gestion admin des joueurs (info, money, upgrade, saveall)
+    usage: /psadmin
+    permission: farmland.admin
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
   region:
     description: Gestion des region
     usage: /region parametre
@@ -171,7 +183,7 @@ commands:
   rewards:
     description: Affiche les récompenses et ton solde
     usage: /rewards [table|balance|top]
-    aliases: [reward, bal]
+    aliases: [reward]
     permission: farmland.gamecommands
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 

@@ -58,6 +58,14 @@ public class MicroPluginManager {
         plugin.getCommand("tuto").setExecutor(new fr.kevyn.farmland.TutoCommand());
         plugin.getCommand("hub").setExecutor(new fr.kevyn.farmland.game.HubCommand(plugin));
         plugin.getCommand("vote").setExecutor(new fr.kevyn.farmland.vote.VoteCommand(plugin));
+        plugin.getCommand("marketadmin").setExecutor(new fr.kevyn.farmland.market.MarketAdminCommands(plugin));
+        plugin.getCommand("psadmin").setExecutor(new fr.kevyn.farmland.playerserver.PlayerAdminCommands(plugin));
+
+        // autosave des joueurs toutes les 5 minutes (evite la perte de session si crash)
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+            fr.kevyn.farmland.save.Filesave.SavePlayerserverFile(plugin);
+            plugin.getLogger().info("[Autosave] Joueurs sauvegardes");
+        }, 20L * 60 * 5, 20L * 60 * 5);
 
         // Vote - NuVotifier (softdepend)
         if (Bukkit.getPluginManager().getPlugin("NuVotifier") != null) {
@@ -215,12 +223,20 @@ public class MicroPluginManager {
             // push initial du marche au demarrage
             MarketCalc.pushMarketToWebApi(plugin);
 
+            // push des sites de vote (une seule source de verite : le config.yml du plugin)
+            plugin.getWebApi().pushVoteSites(
+                plugin.getConfig().getStringList("vote.sites"),
+                plugin.getConfig().getString("vote.reward", "+15 $FB")
+            );
+
             // push leaderboard au demarrage + toutes les webapi.leaderboard_push_minutes (defaut 15min)
             // tous les joueurs en memoire (pas seulement les connectes)
             Runnable pushLeaderboard = () -> {
+                // copie de la liste : on itère en async pendant que /define peut la modifier
+                java.util.ArrayList<GameRegion> structures = new java.util.ArrayList<>(GetStructure.getallStructure());
                 for (PlayerServer ps : PlayerserverHashMap.getInstance().getHashMapPlayer().values()) {
                     int nbStructures = 0;
-                    for (GameRegion r : GetStructure.getallStructure()) {
+                    for (GameRegion r : structures) {
                         if (r.getPropriétaire().equals(ps.getUuid())) nbStructures++;
                     }
                     plugin.getWebApi().pushPlayerBalance(ps.getName(), ps.getMoney(), nbStructures, ps.getBlocposetotal());

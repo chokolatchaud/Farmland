@@ -15,6 +15,22 @@ public class WebApiClient {
     private static final String EP_SERVER = "/api/server/status";
     private static final String EP_MARKET = "/api/market/structures";
     private static final String EP_LEADER = "/api/leaderboard";
+    private static final String EP_VOTE   = "/api/vote/sites";
+
+    // pousse la liste complete des sites de vote (depuis le config.yml du plugin)
+    // le nom affiche sur le site = le domaine de l'URL
+    public void pushVoteSites(java.util.List<String> urls, String reward) {
+        java.util.List<Map<String, Object>> sites = new java.util.ArrayList<>();
+        int order = 1;
+        for (String url : urls) {
+            String name = url.replace("https://", "").replace("http://", "");
+            if (name.contains("/")) name = name.substring(0, name.indexOf("/"));
+            sites.add(Map.of("name", name, "url", url, "reward", reward, "order", order));
+            order++;
+        }
+        post(EP_VOTE, sites);
+        plugin.getLogger().info("[WebAPI] " + sites.size() + " site(s) de vote pousses vers le site");
+    }
 
     private static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
 

@@ -27,3 +27,5 @@ vote:
   sites:
     - "https://serveur-prive.net/minecraft/farmland"
     - "https://top-serveurs.net/minecraft/farmland"
+  # texte de récompense affiché sur la page Vote du site
+  reward: "+15 $FB"

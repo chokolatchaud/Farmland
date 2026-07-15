@@ -188,11 +188,17 @@ public class EventBuildAndUse implements Listener {
         return true;
     }
 
+    // joueurs déjà prévenus d'une erreur de comptage (évite le spam à chaque bloc)
+    private static final java.util.Set<java.util.UUID> comptageErreurPrevenu = new java.util.HashSet<>();
+
     public void countBlockPlacement(Player player) {
         PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
         if (ps == null) {
-            player.sendMessage(MessageColor.RED.apply("⚠ Erreur dans le comptage de vos blocs."));
-            messagediscord.sendmessage("Erreur comptage blocs pour " + player.getName(), "statut");
+            if (!comptageErreurPrevenu.contains(player.getUniqueId())) {
+                comptageErreurPrevenu.add(player.getUniqueId());
+                player.sendMessage(MessageColor.RED.apply("⚠ Erreur dans le comptage de vos blocs."));
+                messagediscord.sendmessage("Erreur comptage blocs pour " + player.getName(), "statut");
+            }
             return;
         }
 

@@ -20,7 +20,7 @@ import fr.kevyn.farmland.market.Market;
 public class MarketSave {
 
     private static final String MARKET_HISTORY_FILE = "market_history.json";
-    private static final int MAX_HISTORY = 20;
+    private static final int MAX_HISTORY = 100;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     
