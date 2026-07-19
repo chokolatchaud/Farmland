@@ -29,6 +29,7 @@ public class MarketAdminCommands implements CommandExecutor {
             sender.sendMessage("§6/marketadmin set <coef> <valeur> §7- modifie un coefficient");
             sender.sendMessage("§6/marketadmin reset §7- remet tout à 50");
             sender.sendMessage("§6/marketadmin recalc §7- force un recalcul du marché");
+            sender.sendMessage("§6/marketadmin holo §7- gère les hologrammes du marché");
             return true;
         }
 
@@ -37,10 +38,69 @@ public class MarketAdminCommands implements CommandExecutor {
             case "set": return setCommand(sender, args);
             case "reset": return resetCommand(sender);
             case "recalc": return recalcCommand(sender);
+            case "holo": return holoCommand(sender, args);
             default:
                 sender.sendMessage("§cSous-commande inconnue ! (/marketadmin pour l'aide)");
                 return true;
         }
+    }
+
+    private boolean holoCommand(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage("§6/marketadmin holo set <coef> §7- pose l'hologramme à ta position");
+            sender.sendMessage("§6/marketadmin holo remove <coef> §7- supprime l'hologramme");
+            sender.sendMessage("§6/marketadmin holo list §7- liste les hologrammes posés");
+            sender.sendMessage("§7Coefs : creativite, architecture, densite, equilibre, finition");
+            return true;
+        }
+
+        switch (args[1].toLowerCase()) {
+            case "set": {
+                if (!(sender instanceof org.bukkit.entity.Player)) {
+                    sender.sendMessage("§cSeul un joueur peut poser un hologramme !");
+                    return true;
+                }
+                if (args.length < 3 || !MarketHolograms.isValidCoef(args[2])) {
+                    sender.sendMessage("§cCoef inconnu ! (creativite, architecture, densite, equilibre, finition)");
+                    return true;
+                }
+                org.bukkit.entity.Player player = (org.bukkit.entity.Player) sender;
+                MarketHolograms.setHologram(plugin, args[2], player.getLocation());
+                sender.sendMessage("§aHologramme §e" + args[2].toLowerCase() + "§a posé à ta position !");
+                plugin.getLogger().info("[MarketAdmin] " + sender.getName() + " a pose l'hologramme " + args[2].toLowerCase());
+                return true;
+            }
+            case "remove": {
+                if (args.length < 3 || !MarketHolograms.isValidCoef(args[2])) {
+                    sender.sendMessage("§cCoef inconnu !");
+                    return true;
+                }
+                if (MarketHolograms.removeHologram(plugin, args[2])) {
+                    sender.sendMessage("§aHologramme §e" + args[2].toLowerCase() + "§a supprimé !");
+                } else {
+                    sender.sendMessage("§cAucun hologramme posé pour ce coef !");
+                }
+                return true;
+            }
+            case "list": {
+                if (MarketHolograms.getEmplacements().isEmpty()) {
+                    sender.sendMessage("§7Aucun hologramme posé. (/marketadmin holo set <coef>)");
+                    return true;
+                }
+                sender.sendMessage("§6═══ Hologrammes du marché ═══");
+                for (java.util.Map.Entry<String, MarketHolograms.HoloLoc> e : MarketHolograms.getEmplacements().entrySet()) {
+                    sender.sendMessage("§e" + e.getKey() + " §7→ " + holoPosition(e.getValue()));
+                }
+                return true;
+            }
+            default:
+                sender.sendMessage("§cUsage : /marketadmin holo <set|remove|list>");
+                return true;
+        }
+    }
+
+    private String holoPosition(MarketHolograms.HoloLoc loc) {
+        return "§f" + loc.world + " §7(" + (int) loc.x + ", " + (int) loc.y + ", " + (int) loc.z + ")";
     }
 
     private boolean infoCommand(CommandSender sender) {

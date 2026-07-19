@@ -61,6 +61,10 @@ public class MicroPluginManager {
         plugin.getCommand("marketadmin").setExecutor(new fr.kevyn.farmland.market.MarketAdminCommands(plugin));
         plugin.getCommand("psadmin").setExecutor(new fr.kevyn.farmland.playerserver.PlayerAdminCommands(plugin));
 
+        // hologrammes du marche : chargement + apparition/rafraichissement toutes les 60s
+        fr.kevyn.farmland.market.MarketHolograms.load(plugin);
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> fr.kevyn.farmland.market.MarketHolograms.updateAll(plugin), 100L, 20L * 60);
+
         // autosave des joueurs toutes les 5 minutes (evite la perte de session si crash)
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             fr.kevyn.farmland.save.Filesave.SavePlayerserverFile(plugin);
@@ -68,7 +72,7 @@ public class MicroPluginManager {
         }, 20L * 60 * 5, 20L * 60 * 5);
 
         // Vote - NuVotifier (softdepend)
-        if (Bukkit.getPluginManager().getPlugin("NuVotifier") != null) {
+        if (Bukkit.getPluginManager().getPlugin("Votifier") != null || Bukkit.getPluginManager().getPlugin("NuVotifier") != null) {
             plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.vote.VoteListener(plugin), plugin);
             plugin.getLogger().info("[Vote] Module NuVotifier activé — WorldEdit 30min par vote");
         } else {

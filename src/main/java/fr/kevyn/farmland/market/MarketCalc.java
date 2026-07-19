@@ -34,6 +34,7 @@ public class MarketCalc {
 				// premier demarrage : le marche doit s'initialiser meme sans structures
 				lastKnown = new Market(50, 50, 50, 50, 50);
 				MarketSave.saveMarket(plugin, lastKnown);
+				MarketHolograms.updateAll(plugin); // rafraichit les hologrammes a chaque changement
 				plugin.getLogger().info("[Marche] Premier demarrage : marche initialise a 50 par coef");
 			}
 			if (lastKnown != null) {
@@ -45,6 +46,7 @@ public class MarketCalc {
 				int newFinition     = Math.max(5, Math.min(90, Math.round(lastKnown.getMoneyforcoefFinition()     * (0.92f + rand.nextFloat() * 0.16f))));
 				Market newMarket = new Market(newCreativite, newArchitecture, newDensite, newEquilibre, newFinition);
 				MarketSave.saveMarket(plugin, newMarket);
+				MarketHolograms.updateAll(plugin); // rafraichit les hologrammes a chaque changement
 				FarmlandMain main = (FarmlandMain) plugin;
 				plugin.getLogger().info("[Marche] Fluctuation ±15% (" + GetStructure.getallStructure().size() + "/10 structures pour marche reel)");
 				if (main.getWebApi() != null) {
@@ -80,6 +82,7 @@ public class MarketCalc {
         	// premier demarrage : marche initialise a 50 (valeur neutre)
         	lastMarket = new Market(50, 50, 50, 50, 50);
         	MarketSave.saveMarket(plugin, lastMarket);
+        	MarketHolograms.updateAll(plugin); // rafraichit les hologrammes a chaque changement
         	plugin.getLogger().info("[Marche] Premier demarrage : marche initialise a 50 par coef");
         }
 
@@ -150,6 +153,7 @@ public class MarketCalc {
         
         Market NewMarket = new Market(NewMoneyCreativité, NewMoneyArchitecture, NewMoneyDensité, NewMoneyÉquilibre, NewMoneyFinition);
         MarketSave.saveMarket(plugin,NewMarket);
+        MarketHolograms.updateAll(plugin); // rafraichit les hologrammes a chaque changement
 
         // pousse les prix vers le site farm-land.fr
         // Fix Emergent : noms sans accents pour eviter les problemes d'encoding
