@@ -59,7 +59,7 @@ commands:
     permission: farmland.moderation
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
-  car:
+  joinboat:
     description: Démarre ou arrête votre voiture
     usage: /car [start|stop]
     permission: farmland.moderation

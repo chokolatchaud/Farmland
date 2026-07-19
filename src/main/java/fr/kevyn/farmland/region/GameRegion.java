@@ -198,6 +198,25 @@ public class GameRegion {
 	        });
 	    });
 	}
+	
+	public void setglass(JavaPlugin plugin) {
+	    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+	        // ✅ calcul des blocs en async
+	        List<Location> toRemove = new ArrayList<>();
+	        for (int x = (int)minX; x <= maxX; x++)
+	            for (int y = (int)minY; y <= maxY; y++)
+	                for (int z = (int)minZ; z <= maxZ; z++)
+	                    toRemove.add(new Location(Bukkit.getWorld(worldname), x, y, z));
+	        
+	        // ✅ modification des blocs sur le thread principal
+	        Bukkit.getScheduler().runTask(plugin, () -> {
+	            for (Location loc : toRemove)
+	                loc.getBlock().setType(Material.GLASS);
+	        });
+	    });
+	}
+	
+	
 
 	
 	

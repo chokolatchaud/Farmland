@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.MessageColor;
+import fr.kevyn.farmland.boathub.BoatGamemanager;
 
 /**
  * /hub — téléporte le joueur au hub du serveur.
@@ -26,10 +27,21 @@ public class HubCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    	if(command.getName().equalsIgnoreCase("joinboat")) {
+    		if (!(sender instanceof Player)) {
+                sender.sendMessage("Seul un joueur peut exécuter cette commande !");
+                return true;
+            }
+    		Player player = (Player) sender;
+    		
+    		BoatGamemanager.join(player);
+    		
+    	}
         if (!(sender instanceof Player)) {
             sender.sendMessage("Seul un joueur peut exécuter cette commande !");
             return true;
         }
+        
         Player player = (Player) sender;
 
         String worldName = plugin.getConfig().getString("hub.world", "world");

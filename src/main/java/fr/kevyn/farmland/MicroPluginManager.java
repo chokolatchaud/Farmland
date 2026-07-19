@@ -11,8 +11,6 @@ import fr.kevyn.farmland.EventBuild.EventBuildAndUse;
 import fr.kevyn.farmland.EventBuild.LuckpermGrade;
 import fr.kevyn.farmland.EventBuild.Plotinventory;
 import fr.kevyn.farmland.game.GameCommands;
-import fr.kevyn.farmland.gamemanager.GameManager;
-import fr.kevyn.farmland.gamemanager.GameManagercommands;
 import fr.kevyn.farmland.market.DonateMoneyForStructure;
 import fr.kevyn.farmland.market.MarketCalc;
 import fr.kevyn.farmland.market.Marketcommands;
@@ -38,6 +36,7 @@ public class MicroPluginManager {
     	int timeDonateMoneyStructure = 20 * 60 * 60; //1 heure
 
         GameCommands gameCommands = new GameCommands();
+
         //erer
         plugin.getCommand("pay").setExecutor(gameCommands);
         plugin.getCommand("money").setExecutor(gameCommands);
@@ -57,6 +56,7 @@ public class MicroPluginManager {
         plugin.getCommand("buy").setExecutor(new fr.kevyn.farmland.market.BuyCommands(plugin));
         plugin.getCommand("tuto").setExecutor(new fr.kevyn.farmland.TutoCommand());
         plugin.getCommand("hub").setExecutor(new fr.kevyn.farmland.game.HubCommand(plugin));
+        plugin.getCommand("joinboat").setExecutor(new fr.kevyn.farmland.game.HubCommand(plugin));
         plugin.getCommand("vote").setExecutor(new fr.kevyn.farmland.vote.VoteCommand(plugin));
         plugin.getCommand("marketadmin").setExecutor(new fr.kevyn.farmland.market.MarketAdminCommands(plugin));
         plugin.getCommand("psadmin").setExecutor(new fr.kevyn.farmland.playerserver.PlayerAdminCommands(plugin));
@@ -78,7 +78,6 @@ public class MicroPluginManager {
         } else {
             plugin.getLogger().warning("[Vote] NuVotifier non trouvé — les votes ne donneront pas de récompense");
         }
-        GameManager.getInstance().init(plugin);
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
         	MarketCalc.Calcforcoef(plugin);
         	
