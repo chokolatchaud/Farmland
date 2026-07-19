@@ -5,14 +5,12 @@ import java.util.UUID;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
@@ -46,11 +44,13 @@ public class EventBuildAndUse implements Listener {
     }
 
     @EventHandler
-    public void onSpawnMob(EntitySpawnEvent event) {
-    	if (event.getEntityType() == EntityType.ARMOR_STAND) return;
-        if (event.getEntity() instanceof LivingEntity) {
-            event.setCancelled(true);
+    public void onSpawnMob(CreatureSpawnEvent event) {
+        // seuls les spawns par commande /summon sont autorisés (mannequins, mobs de décor admin)
+        // tout le reste est bloqué : spawn naturel, oeufs, spawners, reproduction...
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.COMMAND) {
+            return;
         }
+        event.setCancelled(true);
     }
 
     @EventHandler
