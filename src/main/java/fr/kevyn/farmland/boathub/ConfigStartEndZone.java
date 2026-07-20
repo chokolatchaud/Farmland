@@ -43,7 +43,6 @@ public class ConfigStartEndZone {
 
 	public ConfigStartEndZone(JavaPlugin plugin) {
 		BoatGameHashMap.addListgameboat(this);
-		finishline.setglass(plugin);
 		starttime(plugin, this);
 		plugin.getLogger().info("[BoatRace][DEBUG] Nouvelle partie creee");
 	}
@@ -88,7 +87,6 @@ public class ConfigStartEndZone {
 	public void killgame(JavaPlugin plugin, ConfigStartEndZone game) {
 		plugin.getLogger().info("[BoatRace][DEBUG] Fin de partie, nettoyage");
 		Bukkit.getScheduler().cancelTasks(plugin);
-		finishline.removeglass(plugin);
 		BoatGameHashMap.removeListgameboat(game);
 	}
 
