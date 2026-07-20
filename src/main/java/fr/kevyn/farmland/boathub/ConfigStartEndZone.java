@@ -27,7 +27,7 @@ public class ConfigStartEndZone {
 	GameRegion Waypoint2 = new GameRegion(74,33,20, 84,40,30, 0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
 	GameRegion Waypoint3 = new GameRegion(103,33,-11, 113,40,-1, 0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
 
-	GameRegion finishline = new GameRegion(80,33,-49, 80,39,-33, 0,0,0,"finishlineboat",false,"world",TypeRegion.Boatrace,null);
+	GameRegion finishline = new GameRegion(77,33,-49, 83,39,-33, 0,0,0,"finishlineboat",false,"world",TypeRegion.Boatrace,null);
 
 	// piste (1 a 4) -> joueur present sur cette piste.
 	// C'EST la seule source de verite pour savoir si une piste est libre :
@@ -39,6 +39,7 @@ public class ConfigStartEndZone {
 
 	int timetolaunch = 30;
 	int timegame = 0;
+	int racestarttime = 0; // valeur de timegame au moment ou la course demarre reellement (exclut le decompte)
 	StatutBoatGame status = StatutBoatGame.waitplayer;
 
 	public ConfigStartEndZone(JavaPlugin plugin) {
@@ -176,6 +177,7 @@ public class ConfigStartEndZone {
 						}
 					}
 					game.setStatus(StatutBoatGame.race);
+					game.racestarttime = game.getTimegame(); // depart reel, exclut les secondes du decompte
 				}
 			}
 
@@ -211,9 +213,19 @@ public class ConfigStartEndZone {
 						System.out.println("[BoatRace][DEBUG] " + player.getName() + " touche la ligne d'arrivee | waypoints valides=" + deja);
 
 						if (deja >= 3) {
-							player.sendMessage("§6§lVICTOIRE ! Tu as terminé la course !");
-							plugin.getLogger().info("[BoatRace][DEBUG] " + player.getName() + " GAGNE la course (piste " + piste + ")");
-							Bukkit.broadcastMessage("§6" + player.getName() + " §ea remporté la course de bateaux !");
+							int tempsCourse = game.getTimegame() - game.racestarttime;
+							boolean record = BoatTimeSave.recordTime(plugin, player.getName(), tempsCourse);
+
+							player.sendMessage("§6§lVICTOIRE ! §fTemps : §b" + tempsCourse + "s");
+							if (record) {
+								player.sendMessage("§d✦ Nouveau record personnel !");
+							}
+							plugin.getLogger().info("[BoatRace][DEBUG] " + player.getName() + " GAGNE la course en " + tempsCourse + "s (piste " + piste + ")");
+							Bukkit.broadcastMessage("§6" + player.getName() + " §ea remporté la course de bateaux en §b" + tempsCourse + "s§e !");
+
+							// rafraichit l'hologramme des meilleurs temps (deja sur le thread principal, la boucle est sync)
+							BoatRaceHologram.update(plugin);
+
 							vainqueurs.add(player); // retire apres la boucle
 						} else {
 							player.sendMessage("§cTu dois passer tous les points de contrôle avant l'arrivée ! (" + deja + "/3)");

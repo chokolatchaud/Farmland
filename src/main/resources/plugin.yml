@@ -53,6 +53,12 @@ commands:
     permission: farmland.admin
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
+  raceadmin:
+    description: Gestion admin de la course de bateaux (holo, reset)
+    usage: /raceadmin
+    permission: farmland.admin
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
   region:
     description: Gestion des region
     usage: /region parametre

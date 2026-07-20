@@ -60,10 +60,15 @@ public class MicroPluginManager {
         plugin.getCommand("vote").setExecutor(new fr.kevyn.farmland.vote.VoteCommand(plugin));
         plugin.getCommand("marketadmin").setExecutor(new fr.kevyn.farmland.market.MarketAdminCommands(plugin));
         plugin.getCommand("psadmin").setExecutor(new fr.kevyn.farmland.playerserver.PlayerAdminCommands(plugin));
+        plugin.getCommand("raceadmin").setExecutor(new fr.kevyn.farmland.boathub.RaceAdminCommands(plugin));
 
         // hologrammes du marche : chargement + apparition/rafraichissement toutes les 60s
         fr.kevyn.farmland.market.MarketHolograms.load(plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, () -> fr.kevyn.farmland.market.MarketHolograms.updateAll(plugin), 100L, 20L * 60);
+
+        // hologramme des meilleurs temps de la course de bateaux (mis a jour a chaque victoire, ici juste au demarrage)
+        fr.kevyn.farmland.boathub.BoatRaceHologram.load(plugin);
+        Bukkit.getScheduler().runTaskLater(plugin, () -> fr.kevyn.farmland.boathub.BoatRaceHologram.update(plugin), 100L);
 
         // autosave des joueurs toutes les 5 minutes (evite la perte de session si crash)
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
