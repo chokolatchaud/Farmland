@@ -3,6 +3,7 @@ package fr.kevyn.farmland.boathub;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -49,7 +50,7 @@ public class ConfigStartEndZone {
 	
 	
 	GameRegion finishline = new GameRegion(80,33,-34,80,39,-48,0,0,0,"finishlineboat",false,"world",TypeRegion.Boatrace,null);
-	HashMap<Player,Integer> playeringame = new HashMap<Player,Integer>();
+	HashMap<Integer, Player> playeringame = new HashMap<Integer, Player>();
 	
 	int timetolaunch = 30;
 	int timegame = 0;
@@ -68,49 +69,96 @@ public class ConfigStartEndZone {
 		return Waypoint1;
 	}
 	
-	public Location getBlocstatueWaypoint1player1() {
+	
+	
+	public Location getBlocstatueWaypoint1piste1() {
 		return blocstatueWaypoint1player1;
 	}
 	
-	public Location getBlocstatueWaypoint1player2() {
-		return blocstatueWaypoint1player1;
+	public Location getBlocstatueWaypoint1piste2() {
+		return blocstatueWaypoint1player2;
 	}
-	public Location getBlocstatueWaypoint1player3() {
-		return blocstatueWaypoint1player1;
-	}
-	
-	public Location getBlocstatueWaypoint1player4() {
-		return blocstatueWaypoint1player1;
+	public Location getBlocstatueWaypoint1piste3() {
+		return blocstatueWaypoint1player3;
 	}
 	
-	public Location getBlocstatueWaypoint2player1() {
-		return blocstatueWaypoint1player1;
+	public Location getBlocstatueWaypoint1piste4() {
+		return blocstatueWaypoint1player4;
 	}
 	
-	public Location getBlocstatueWaypoint2player2() {
-		return blocstatueWaypoint1player1;
-	}
-	public Location getBlocstatueWaypoint2player3() {
-		return blocstatueWaypoint1player1;
+	
+	public Location getBlocstatueWaypoint2piste1() {
+		return blocstatueWaypoint2player1;
 	}
 	
-	public Location getBlocstatueWaypoint2player4() {
+	public Location getBlocstatueWaypoint2piste2() {
+		return blocstatueWaypoint2player2;
+	}
+	public Location getBlocstatueWaypoint2piste3() {
+		return blocstatueWaypoint2player3;
 	}
 	
-	public Location getBlocstatueWaypoint3player1() {
-		return blocstatueWaypoint1player1;
+	public Location getBlocstatueWaypoint2piste4() {
+		return blocstatueWaypoint2player4;
 	}
 	
-	public Location getBlocstatueWaypoint3player2() {
-		return blocstatueWaypoint1player1;
-	}
-	public Location getBlocstatueWaypoint3player3() {
-		return blocstatueWaypoint1player1;
+	public Location getBlocstatueWaypoint3piste1() {
+		return blocstatueWaypoint3player1;
 	}
 	
-	public Location getBlocstatueWaypoint3player4() {
-		return blocstatueWaypoint1player1;
+	public Location getBlocstatueWaypoint3piste2() {
+		return blocstatueWaypoint3player2;
 	}
+	public Location getBlocstatueWaypoint3piste3() {
+		return blocstatueWaypoint3player3;
+	}
+	
+	public Location getBlocstatueWaypoint3piste4() {
+		return blocstatueWaypoint3player4;
+	}
+	
+	public ArrayList<Location> getpiste1(ConfigStartEndZone game) {
+		ArrayList<Location> Locationwaypointpiste1 = new ArrayList<Location>();
+		Locationwaypointpiste1.add(blocstatueWaypoint1player1);
+		Locationwaypointpiste1.add(blocstatueWaypoint2player1);
+		Locationwaypointpiste1.add(blocstatueWaypoint3player1);
+		return Locationwaypointpiste1;
+	}
+	
+	public ArrayList<Location> getpiste2(ConfigStartEndZone game) {
+		ArrayList<Location> Locationwaypointpiste2 = new ArrayList<Location>();
+		Locationwaypointpiste2.add(blocstatueWaypoint1player2);
+		Locationwaypointpiste2.add(blocstatueWaypoint2player2);
+		Locationwaypointpiste2.add(blocstatueWaypoint3player2);
+		return Locationwaypointpiste2;
+	}
+	
+	public ArrayList<Location> getpiste3(ConfigStartEndZone game) {
+		ArrayList<Location> Locationwaypointpiste3 = new ArrayList<Location>();
+		Locationwaypointpiste3.add(blocstatueWaypoint1player3);
+		Locationwaypointpiste3.add(blocstatueWaypoint2player3);
+		Locationwaypointpiste3.add(blocstatueWaypoint3player3);
+		return Locationwaypointpiste3;
+	}
+	
+	public ArrayList<Location> getpiste4(ConfigStartEndZone game) {
+		ArrayList<Location> Locationwaypointpiste4 = new ArrayList<Location>();
+		Locationwaypointpiste4.add(blocstatueWaypoint1player4);
+		Locationwaypointpiste4.add(blocstatueWaypoint2player4);
+		Locationwaypointpiste4.add(blocstatueWaypoint3player4);
+		return Locationwaypointpiste4;
+	}
+	
+	public HashMap<Integer, ArrayList<Location>> allpiste(ConfigStartEndZone game) {
+		HashMap<Integer, ArrayList<Location>> pisteingame = new HashMap<Integer, ArrayList<Location>>();
+		pisteingame.put(1, game.getpiste1(game));
+		pisteingame.put(2, game.getpiste1(game));
+		pisteingame.put(3, game.getpiste1(game));
+		pisteingame.put(4, game.getpiste1(game));
+		return pisteingame;
+		
+	}
+	
 	
 	public GameRegion getWaypoint2() {
 		return Waypoint2;
@@ -166,7 +214,7 @@ public class ConfigStartEndZone {
 		this.timegame++;
 	}
 	
-	public HashMap<Player, Integer> getPlayeringame() {
+	public HashMap<Integer, Player> getPlayeringame() {
 		return playeringame;
 	}
 	
@@ -184,16 +232,16 @@ public class ConfigStartEndZone {
 	}
 	
 	public void addplayeringame(ConfigStartEndZone game,Player player, int i) {
-		HashMap<Player, Integer> playeringame = game.getPlayeringame();
-		playeringame.put(player, i);
+		HashMap<Integer,Player> playeringame = game.getPlayeringame();
+		playeringame.put(i, player);
 		
 		
 		
 	}
 	
-	public void removeplayeringame(ConfigStartEndZone game,Player player) {
-		HashMap<Player, Integer> playeringame = game.getPlayeringame();
-		playeringame.remove(player);
+	public void removeplayeringame(ConfigStartEndZone game,int i) {
+		HashMap<Integer,Player> playeringame = game.getPlayeringame();
+		playeringame.remove(i);
 		
 	}
 	
@@ -231,11 +279,11 @@ public class ConfigStartEndZone {
 	public static void starttime(JavaPlugin plugin,ConfigStartEndZone game){
 		Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
 			game.add1secondeTimegame();
-			HashMap<Player, Integer> playeringame = game.getPlayeringame();
+			HashMap<Integer,Player> playeringame = game.getPlayeringame();
 			if(playeringame.isEmpty()) {
 				game.killgame(plugin, game);
 			}
-			for(Player player : playeringame.keySet()) {
+			for(Player player : playeringame.values()) {
 				if(!player.isInsideVehicle()) {
 					game.getPlayeringame().remove(player);
 				}
@@ -244,7 +292,7 @@ public class ConfigStartEndZone {
 			
 			if(game.getStatus() == StatutBoatGame.waitplayer) {				
 				game.timetolaunch -= 1;
-				for(Player player : playeringame.keySet()) {
+				for(Player player : playeringame.values()) {
 					player.sendMessage("Depart dans " + game.timetolaunch + " secondes");
 					if(game.timetolaunch == 0) {
 						game.setStatus(StatutBoatGame.race);
@@ -254,11 +302,15 @@ public class ConfigStartEndZone {
 			}
 			
 			if(game.getStatus() == StatutBoatGame.race) {
-				for(Integer player : playeringame.values()) {
+				for(Map.Entry<Integer, Player> entry : playeringame.entrySet()) {
+					int piste = entry.getKey();
+			        Player player = entry.getValue();
 				GameRegionHashMap.getInstance().Playerwhatistregion(player);
 				if(GameRegionHashMap.getInstance().Playerwhatistregion(player) != null) {
 					GameRegion waypoint = GameRegionHashMap.getInstance().Playerwhatistregion(player);
 					if(waypoint.gettype() == TypeRegion.BoatraceWaypoint) {
+						int playerinpiste = game.allpiste(game).;
+						
 						
 						
 					}
