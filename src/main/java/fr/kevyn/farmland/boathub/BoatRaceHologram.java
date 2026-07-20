@@ -48,7 +48,7 @@ public class BoatRaceHologram {
             if (emplacement != null) {
                 plugin.getLogger().info("[BoatRace][Holo] Hologramme des temps charge");
             }
-        } catch (IOException e) {
+        } catch (Exception e) {// IOException + JsonSyntaxException si le fichier est corrompu
             plugin.getLogger().warning("[BoatRace][Holo] Impossible de charger " + HOLO_FILE + " : " + e.getMessage());
         }
     }
@@ -57,7 +57,7 @@ public class BoatRaceHologram {
         File file = new File(plugin.getDataFolder(), HOLO_FILE);
         try (FileWriter writer = new FileWriter(file)) {
             gson.toJson(emplacement, writer);
-        } catch (IOException e) {
+        } catch (Exception e) {// IOException + JsonSyntaxException si le fichier est corrompu
             plugin.getLogger().warning("[BoatRace][Holo] Impossible de sauvegarder " + HOLO_FILE + " : " + e.getMessage());
         }
     }

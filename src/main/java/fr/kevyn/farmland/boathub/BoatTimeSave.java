@@ -50,7 +50,7 @@ public class BoatTimeSave {
         try (FileReader reader = new FileReader(file)) {
             List<BoatTimeEntry> list = gson.fromJson(reader, new TypeToken<List<BoatTimeEntry>>(){}.getType());
             return list != null ? list : new ArrayList<>();
-        } catch (IOException e) {
+        } catch (Exception e) {// IOException + JsonSyntaxException si le fichier est corrompu
             plugin.getLogger().warning("[BoatRace] Impossible de charger " + FILE_NAME + " : " + e.getMessage());
             return new ArrayList<>();
         }
@@ -59,7 +59,7 @@ public class BoatTimeSave {
     private static void saveTimes(JavaPlugin plugin, List<BoatTimeEntry> times) {
         try (FileWriter writer = new FileWriter(getFile(plugin))) {
             gson.toJson(times, writer);
-        } catch (IOException e) {
+        } catch (Exception e) {// IOException + JsonSyntaxException si le fichier est corrompu
             plugin.getLogger().warning("[BoatRace] Impossible de sauvegarder " + FILE_NAME + " : " + e.getMessage());
         }
     }

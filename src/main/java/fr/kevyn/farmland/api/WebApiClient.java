@@ -16,6 +16,17 @@ public class WebApiClient {
     private static final String EP_MARKET = "/api/market/structures";
     private static final String EP_LEADER = "/api/leaderboard";
     private static final String EP_VOTE   = "/api/vote/sites";
+    private static final String EP_BOATTIMES = "/api/boatrace/times";
+
+    // pousse le classement complet des meilleurs temps de la course de bateaux
+    public void pushBoatTimes(java.util.List<fr.kevyn.farmland.boathub.BoatTimeSave.BoatTimeEntry> times) {
+        java.util.List<Map<String, Object>> data = new java.util.ArrayList<>();
+        for (fr.kevyn.farmland.boathub.BoatTimeSave.BoatTimeEntry entry : times) {
+            data.add(Map.of("playerName", entry.playerName, "seconds", entry.seconds));
+        }
+        post(EP_BOATTIMES, data);
+        plugin.getLogger().info("[WebAPI] Classement bateaux pousse (" + data.size() + " temps)");
+    }
 
     // pousse la liste complete des sites de vote (depuis le config.yml du plugin)
     // le nom affiche sur le site = le domaine de l'URL

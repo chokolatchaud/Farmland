@@ -60,15 +60,10 @@ public class MicroPluginManager {
         plugin.getCommand("vote").setExecutor(new fr.kevyn.farmland.vote.VoteCommand(plugin));
         plugin.getCommand("marketadmin").setExecutor(new fr.kevyn.farmland.market.MarketAdminCommands(plugin));
         plugin.getCommand("psadmin").setExecutor(new fr.kevyn.farmland.playerserver.PlayerAdminCommands(plugin));
-        plugin.getCommand("raceadmin").setExecutor(new fr.kevyn.farmland.boathub.RaceAdminCommands(plugin));
 
         // hologrammes du marche : chargement + apparition/rafraichissement toutes les 60s
         fr.kevyn.farmland.market.MarketHolograms.load(plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, () -> fr.kevyn.farmland.market.MarketHolograms.updateAll(plugin), 100L, 20L * 60);
-
-        // hologramme des meilleurs temps de la course de bateaux (mis a jour a chaque victoire, ici juste au demarrage)
-        fr.kevyn.farmland.boathub.BoatRaceHologram.load(plugin);
-        Bukkit.getScheduler().runTaskLater(plugin, () -> fr.kevyn.farmland.boathub.BoatRaceHologram.update(plugin), 100L);
 
         // autosave des joueurs toutes les 5 minutes (evite la perte de session si crash)
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
@@ -116,6 +111,18 @@ public class MicroPluginManager {
                 CreativePlotScoreboard.setscoreboardplot(p);
             }
         }, 0L, 40L);
+
+        // module course de bateaux : protege par try-catch pour qu'une erreur ici
+        // ne puisse plus jamais bloquer l'enregistrement des systemes au-dessus
+        // (scoreboard, tab, market, vote...) comme cela avait casse le scoreboard
+        try {
+            plugin.getCommand("raceadmin").setExecutor(new fr.kevyn.farmland.boathub.RaceAdminCommands(plugin));
+            fr.kevyn.farmland.boathub.BoatRaceHologram.load(plugin);
+            Bukkit.getScheduler().runTaskLater(plugin, () -> fr.kevyn.farmland.boathub.BoatRaceHologram.update(plugin), 100L);
+        } catch (Exception e) {
+            plugin.getLogger().severe("[BoatRace] Erreur au chargement du module course de bateaux : " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public static void moduleModeration(FarmlandMain plugin) {
