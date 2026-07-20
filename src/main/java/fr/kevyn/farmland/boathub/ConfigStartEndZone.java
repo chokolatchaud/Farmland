@@ -28,11 +28,11 @@ public class ConfigStartEndZone {
 	Location blocstatuszonespawn3 = new Location(world, 83, 32, -42);
 	Location blocstatuszonespawn4 = new Location(world, 83, 32, -45);
 
-	GameRegion Waypoint1 = new GameRegion(49,39,-4,35,33,-4,0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
-	GameRegion Waypoint2 = new GameRegion(49,39,-4,35,33,-4,0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
-	GameRegion Waypoint3 = new GameRegion(49,39,-4,35,33,-4,0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
+	GameRegion Waypoint1 = new GameRegion(34,33,-4, 34,40,-4, 0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
+	GameRegion Waypoint2 = new GameRegion(79,33,25, 79,39,41, 0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
+	GameRegion Waypoint3 = new GameRegion(109,33,-6, 124,40,-6, 0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
 
-	GameRegion finishline = new GameRegion(80,33,-34,80,39,-48,0,0,0,"finishlineboat",false,"world",TypeRegion.Boatrace,null);
+	GameRegion finishline = new GameRegion(80,33,-49, 80,39,-33, 0,0,0,"finishlineboat",false,"world",TypeRegion.Boatrace,null);
 
 	// piste (1 a 4) -> joueur present sur cette piste
 	HashMap<Integer, Player> playeringame = new HashMap<Integer, Player>();
@@ -151,7 +151,7 @@ public class ConfigStartEndZone {
 	}
 
 	public static void starttime(JavaPlugin plugin, ConfigStartEndZone game) {
-		Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+		Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 			game.add1secondeTimegame();
 			HashMap<Integer, Player> playeringame = game.getPlayeringame();
 
@@ -178,6 +178,10 @@ public class ConfigStartEndZone {
 				System.out.println("[BoatRace][DEBUG] Compte a rebours : " + game.timetolaunch);
 				for (Player player : playeringame.values()) {
 					player.sendMessage("§eDepart dans " + game.timetolaunch + " secondes");
+					// on fige le bateau tant que la course n'a pas commence
+					if (player.getVehicle() != null) {
+						player.getVehicle().setVelocity(new org.bukkit.util.Vector(0, 0, 0));
+					}
 				}
 				if (game.timetolaunch <= 0) {
 					plugin.getLogger().info("[BoatRace][DEBUG] Depart de la course !");
