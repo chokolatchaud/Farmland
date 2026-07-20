@@ -22,7 +22,6 @@ public class BoatGamemanager {
 			return;
 		}
 
-		game.finishline.setglass(plugin);
 		plugin.getLogger().info("[BoatRace][DEBUG] " + player.getName() + " a rejoint la partie");
 	}
 	

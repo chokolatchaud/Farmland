@@ -23,23 +23,18 @@ public class ConfigStartEndZone {
 	Location zonespawn3 = new Location(world, 83, 34, -42);
 	Location zonespawn4 = new Location(world, 83, 34, -45);
 
-	Location blocstatuszonespawn1 = new Location(world, 83, 32, -36);
-	Location blocstatuszonespawn2 = new Location(world, 83, 32, -39);
-	Location blocstatuszonespawn3 = new Location(world, 83, 32, -42);
-	Location blocstatuszonespawn4 = new Location(world, 83, 32, -45);
-
-	GameRegion Waypoint1 = new GameRegion(34,33,-4, 34,40,-4, 0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
-	GameRegion Waypoint2 = new GameRegion(79,33,25, 79,39,41, 0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
-	GameRegion Waypoint3 = new GameRegion(109,33,-6, 124,40,-6, 0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
+	GameRegion Waypoint1 = new GameRegion(32,33,-6, 36,40,-2, 0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
+	GameRegion Waypoint2 = new GameRegion(77,33,23, 81,39,43, 0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
+	GameRegion Waypoint3 = new GameRegion(107,33,-8, 126,40,-4, 0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
 
 	GameRegion finishline = new GameRegion(80,33,-49, 80,39,-33, 0,0,0,"finishlineboat",false,"world",TypeRegion.Boatrace,null);
 
-	// piste (1 a 4) -> joueur present sur cette piste
+	// piste (1 a 4) -> joueur present sur cette piste.
+	// C'EST la seule source de verite pour savoir si une piste est libre :
+	// plus aucun bloc dans le monde ne stocke cette info (fini GOLD/DIAMOND).
 	HashMap<Integer, Player> playeringame = new HashMap<Integer, Player>();
 
 	// joueur -> nombre de waypoints valides dans l'ordre (0 = aucun, 3 = tous)
-	// c'est CETTE map qui force le passage etape par etape : on ne valide le
-	// waypoint N que si le joueur est deja a N-1. Independante des pistes.
 	HashMap<Player, Integer> progression = new HashMap<Player, Integer>();
 
 	int timetolaunch = 30;
@@ -63,10 +58,16 @@ public class ConfigStartEndZone {
 	public Location getZonespawn3() { return zonespawn3; }
 	public Location getZonespawn4() { return zonespawn4; }
 
-	public Location getBlocstatuszonespawn1() { return blocstatuszonespawn1; }
-	public Location getBlocstatuszonespawn2() { return blocstatuszonespawn2; }
-	public Location getBlocstatuszonespawn3() { return blocstatuszonespawn3; }
-	public Location getBlocstatuszonespawn4() { return blocstatuszonespawn4; }
+	/** Emplacement de spawn du bateau pour une piste donnee (1 a 4) */
+	public Location getZonespawnByPiste(int piste) {
+		switch (piste) {
+			case 1: return zonespawn1;
+			case 2: return zonespawn2;
+			case 3: return zonespawn3;
+			case 4: return zonespawn4;
+			default: return null;
+		}
+	}
 
 	public World getWorld() { return world; }
 	public int getTimetolaunch() { return timetolaunch; }
@@ -79,16 +80,22 @@ public class ConfigStartEndZone {
 	public StatutBoatGame getStatus() { return status; }
 	public void setStatus(StatutBoatGame status) { this.status = status; }
 
+	/** Est-ce que cette piste est libre ? (uniquement en memoire, aucun bloc lu) */
+	public boolean isPisteLibre(int piste) {
+		return !playeringame.containsKey(piste);
+	}
+
 	public void killgame(JavaPlugin plugin, ConfigStartEndZone game) {
 		plugin.getLogger().info("[BoatRace][DEBUG] Fin de partie, nettoyage");
 		Bukkit.getScheduler().cancelTasks(plugin);
+		finishline.removeglass(plugin);
 		BoatGameHashMap.removeListgameboat(game);
 	}
 
 	public void addplayeringame(ConfigStartEndZone game, Player player, int piste) {
 		game.getPlayeringame().put(piste, player);
 		game.getProgression().put(player, 0); // debute a 0 waypoint valide
-		System.out.println("[BoatRace][DEBUG] " + player.getName() + " rejoint la piste " + piste);
+		System.out.println("[BoatRace][DEBUG] " + player.getName() + " rejoint la piste " + piste + " (en memoire, aucun bloc modifie)");
 	}
 
 	/** Retire un joueur de la partie en cherchant sa piste (on ne la connait pas forcement a l'appel) */
@@ -98,7 +105,7 @@ public class ConfigStartEndZone {
 		while (it.hasNext()) {
 			Map.Entry<Integer, Player> entry = it.next();
 			if (entry.getValue().equals(player)) {
-				System.out.println("[BoatRace][DEBUG] " + player.getName() + " retire de la piste " + entry.getKey());
+				System.out.println("[BoatRace][DEBUG] " + player.getName() + " retire de la piste " + entry.getKey() + " (piste liberee en memoire)");
 				it.remove();
 			}
 		}
@@ -110,26 +117,8 @@ public class ConfigStartEndZone {
 		Player removed = game.getPlayeringame().remove(piste);
 		if (removed != null) {
 			game.getProgression().remove(removed);
-			System.out.println("[BoatRace][DEBUG] piste " + piste + " liberee (" + removed.getName() + ")");
+			System.out.println("[BoatRace][DEBUG] piste " + piste + " liberee en memoire (" + removed.getName() + ")");
 		}
-	}
-
-	public ArrayList<Location> allgetzonespawn(ConfigStartEndZone zonespawn) {
-		ArrayList<Location> allspawn = new ArrayList<Location>();
-		allspawn.add(zonespawn.zonespawn1);
-		allspawn.add(zonespawn.zonespawn2);
-		allspawn.add(zonespawn.zonespawn3);
-		allspawn.add(zonespawn.zonespawn4);
-		return allspawn;
-	}
-
-	public ArrayList<Location> allgetzoneblocstatus(ConfigStartEndZone zonebloc) {
-		ArrayList<Location> allblocstatus = new ArrayList<Location>();
-		allblocstatus.add(zonebloc.blocstatuszonespawn1);
-		allblocstatus.add(zonebloc.blocstatuszonespawn2);
-		allblocstatus.add(zonebloc.blocstatuszonespawn3);
-		allblocstatus.add(zonebloc.blocstatuszonespawn4);
-		return allblocstatus;
 	}
 
 	public ArrayList<GameRegion> allgetWaypoint(ConfigStartEndZone waypoint) {
@@ -178,18 +167,23 @@ public class ConfigStartEndZone {
 				System.out.println("[BoatRace][DEBUG] Compte a rebours : " + game.timetolaunch);
 				for (Player player : playeringame.values()) {
 					player.sendMessage("§eDepart dans " + game.timetolaunch + " secondes");
-					// on fige le bateau tant que la course n'a pas commence
-					if (player.getVehicle() != null) {
-						player.getVehicle().setVelocity(new org.bukkit.util.Vector(0, 0, 0));
-					}
+					// le bateau est immobile depuis son spawn (setMaxSpeed(0)), rien a refaire ici a chaque tick
 				}
 				if (game.timetolaunch <= 0) {
 					plugin.getLogger().info("[BoatRace][DEBUG] Depart de la course !");
+					// on debloque les bateaux UNE SEULE FOIS
+					for (Player player : playeringame.values()) {
+						if (player.getVehicle() instanceof org.bukkit.entity.boat.AcaciaBoat boat) {
+							boat.setMaxSpeed(0.4); // vitesse par defaut d'un bateau
+						}
+					}
 					game.setStatus(StatutBoatGame.race);
 				}
 			}
 
 			if (game.getStatus() == StatutBoatGame.race) {
+				ArrayList<Player> vainqueurs = new ArrayList<>(); // traites APRES la boucle (pas de modif pendant l'iteration)
+
 				for (Map.Entry<Integer, Player> entry : playeringame.entrySet()) {
 					int piste = entry.getKey();
 					Player player = entry.getValue();
@@ -219,14 +213,25 @@ public class ConfigStartEndZone {
 						System.out.println("[BoatRace][DEBUG] " + player.getName() + " touche la ligne d'arrivee | waypoints valides=" + deja);
 
 						if (deja >= 3) {
-							game.setStatus(StatutBoatGame.playerfinish);
 							player.sendMessage("§6§lVICTOIRE ! Tu as terminé la course !");
 							plugin.getLogger().info("[BoatRace][DEBUG] " + player.getName() + " GAGNE la course (piste " + piste + ")");
 							Bukkit.broadcastMessage("§6" + player.getName() + " §ea remporté la course de bateaux !");
+							vainqueurs.add(player); // retire apres la boucle
 						} else {
 							player.sendMessage("§cTu dois passer tous les points de contrôle avant l'arrivée ! (" + deja + "/3)");
 						}
 					}
+				}
+
+				// on retire les vainqueurs maintenant : bateau supprime, slot libere (en memoire), teleporte au spawn1
+				for (Player winner : vainqueurs) {
+					if (winner.getVehicle() != null) {
+						org.bukkit.entity.Entity boat = winner.getVehicle();
+						winner.leaveVehicle();
+						boat.remove();
+					}
+					game.removeplayeringame(game, winner);
+					winner.teleport(game.getZonespawn1());
 				}
 			}
 		}, 20L, 20L);

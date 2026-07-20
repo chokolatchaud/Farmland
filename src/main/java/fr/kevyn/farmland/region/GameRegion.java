@@ -215,6 +215,22 @@ public class GameRegion {
 	        });
 	    });
 	}
+
+	/** Retire le verre pose par setglass() en remettant AIR (a appeler en fin de partie) */
+	public void removeglass(JavaPlugin plugin) {
+	    Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+	        List<Location> toClear = new ArrayList<>();
+	        for (int x = (int)minX; x <= maxX; x++)
+	            for (int y = (int)minY; y <= maxY; y++)
+	                for (int z = (int)minZ; z <= maxZ; z++)
+	                    toClear.add(new Location(Bukkit.getWorld(worldname), x, y, z));
+
+	        Bukkit.getScheduler().runTask(plugin, () -> {
+	            for (Location loc : toClear)
+	                loc.getBlock().setType(Material.AIR);
+	        });
+	    });
+	}
 	
 	
 
