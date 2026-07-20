@@ -23,9 +23,9 @@ public class ConfigStartEndZone {
 	Location zonespawn3 = new Location(world, 83, 34, -42);
 	Location zonespawn4 = new Location(world, 83, 34, -45);
 
-	GameRegion Waypoint1 = new GameRegion(32,33,-6, 36,40,-2, 0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
-	GameRegion Waypoint2 = new GameRegion(77,33,23, 81,39,43, 0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
-	GameRegion Waypoint3 = new GameRegion(107,33,-8, 126,40,-4, 0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
+	GameRegion Waypoint1 = new GameRegion(45,33,-9, 55,40,1, 0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
+	GameRegion Waypoint2 = new GameRegion(74,33,20, 84,40,30, 0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
+	GameRegion Waypoint3 = new GameRegion(103,33,-11, 113,40,-1, 0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
 
 	GameRegion finishline = new GameRegion(80,33,-49, 80,39,-33, 0,0,0,"finishlineboat",false,"world",TypeRegion.Boatrace,null);
 
