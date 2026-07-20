@@ -18,10 +18,11 @@ import fr.kevyn.farmland.region.TypeRegion;
 public class ConfigStartEndZone {
 	World world = Bukkit.getWorld("world");
 
-	Location zonespawn1 = new Location(world, 83, 34, -36);
-	Location zonespawn2 = new Location(world, 83, 34, -39);
-	Location zonespawn3 = new Location(world, 83, 34, -42);
-	Location zonespawn4 = new Location(world, 83, 34, -45);
+	// yaw 90 = ouest (vers X negatif), face au circuit qui part vers les waypoints
+	Location zonespawn1 = new Location(world, 83, 34, -36, 90f, 0f);
+	Location zonespawn2 = new Location(world, 83, 34, -39, 90f, 0f);
+	Location zonespawn3 = new Location(world, 83, 34, -42, 90f, 0f);
+	Location zonespawn4 = new Location(world, 83, 34, -45, 90f, 0f);
 
 	GameRegion Waypoint1 = new GameRegion(45,33,-9, 55,40,1, 0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
 	GameRegion Waypoint2 = new GameRegion(74,33,20, 84,40,30, 0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
