@@ -13,6 +13,7 @@ public enum TypeRegion {
 	//Serveur
 	HUBSERVEUR,
 	Boatrace,
+	BoatraceWaypoint,
 	
 	//Structure
 	STRUCTURE,

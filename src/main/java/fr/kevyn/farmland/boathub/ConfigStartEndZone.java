@@ -1,6 +1,8 @@
 package fr.kevyn.farmland.boathub;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -9,35 +11,55 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import fr.kevyn.farmland.region.GameRegion;
+import fr.kevyn.farmland.region.GameRegionHashMap;
 import fr.kevyn.farmland.region.TypeRegion;
 
 public class ConfigStartEndZone {
 	World world = Bukkit.getWorld("world");
 	
-	Location zonespawn1 = new Location(null, 83, 33, -36);
-	Location zonespawn2 = new Location(null, 83, 33, -39);
-	Location zonespawn3 = new Location(null, 83, 33, -42);
-	Location zonespawn4 = new Location(null, 83, 33, -45);
+	Location zonespawn1 = new Location(world, 83, 34, -36);
+	Location zonespawn2 = new Location(world, 83, 34, -39);
+	Location zonespawn3 = new Location(world, 83, 34, -42);
+	Location zonespawn4 = new Location(world, 83, 34, -45);
 	
 	
-	Location blocstatuszonespawn1 = new Location(null, 83, 32, -36);
-	Location blocstatuszonespawn2 = new Location(null, 83, 32, -36);
-	Location blocstatuszonespawn3 = new Location(null, 83, 32, -36);
-	Location blocstatuszonespawn4 = new Location(null, 83, 32, -36);
+	Location blocstatuszonespawn1 = new Location(world, 83, 32, -36);
+	Location blocstatuszonespawn2 = new Location(world, 83, 32, -39);
+	Location blocstatuszonespawn3 = new Location(world, 83, 32, -42);
+	Location blocstatuszonespawn4 = new Location(world, 83, 32, -45);
+	
+	GameRegion Waypoint1 = new GameRegion(49,39,-4,35,33,-4,0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
+	GameRegion Waypoint2 = new GameRegion(49,39,-4,35,33,-4,0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
+	GameRegion Waypoint3 = new GameRegion(49,39,-4,35,33,-4,0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
+
 	
 	
-	GameRegion finishline = new GameRegion(80,33,-34,80,39,-48,0,0,0,"boat",false,"world",TypeRegion.Boatrace,null);
-	ArrayList<Player> playeringame = new ArrayList<Player>();
+	GameRegion finishline = new GameRegion(80,33,-34,80,39,-48,0,0,0,"finishlineboat",false,"world",TypeRegion.Boatrace,null);
+	HashMap<Player,Integer> playeringame = new HashMap<Player,Integer>();
 	
 	int timetolaunch = 30;
 	int timegame = 0;
+	StatutBoatGame status = StatutBoatGame.waitplayer;
 	
 	
 	
 	public ConfigStartEndZone(JavaPlugin plugin) {
 		BoatGameHashMap.addListgameboat(this);
-		finishline.setglass(plugin);;
+		finishline.setglass(plugin);
+		starttime(plugin, this);
 
+	}
+	
+	public GameRegion getWaypoint1() {
+		return Waypoint1;
+	}
+	
+	public GameRegion getWaypoint2() {
+		return Waypoint2;
+	}
+	
+	public GameRegion getWaypoint3() {
+		return Waypoint3;
 	}
 	
 	public Location getZonespawn1() {
@@ -83,7 +105,38 @@ public class ConfigStartEndZone {
 	}
 	
 	public void add1secondeTimegame() {
-		this.timegame = timegame++;
+		this.timegame++;
+	}
+	
+	public HashMap<Player, Integer> getPlayeringame() {
+		return playeringame;
+	}
+	
+	public StatutBoatGame getStatus() {
+		return status;
+	}
+	public void setStatus(StatutBoatGame status) {
+		this.status = status;
+	}
+	
+	public void killgame(JavaPlugin plugin, ConfigStartEndZone game) {
+		Bukkit.getScheduler().cancelTasks(plugin);
+		BoatGameHashMap.removeListgameboat(game);
+		
+	}
+	
+	public void addplayeringame(ConfigStartEndZone game,Player player, int i) {
+		HashMap<Player, Integer> playeringame = game.getPlayeringame();
+		playeringame.put(player, i);
+		
+		
+		
+	}
+	
+	public void removeplayeringame(ConfigStartEndZone game,Player player) {
+		HashMap<Player, Integer> playeringame = game.getPlayeringame();
+		playeringame.remove(player);
+		
 	}
 	
 	public ArrayList<Location> allgetzonespawn(ConfigStartEndZone zonespawn) {
@@ -96,6 +149,8 @@ public class ConfigStartEndZone {
 		
 	}
 	
+	
+	
 	public ArrayList<Location> allgetzoneblocstatus(ConfigStartEndZone zonebloc) {
 		ArrayList<Location> allblocstatus = new ArrayList<Location>();
 		allblocstatus.add(zonebloc.blocstatuszonespawn1);
@@ -104,6 +159,70 @@ public class ConfigStartEndZone {
 		allblocstatus.add(zonebloc.blocstatuszonespawn4);
 		return allblocstatus;
 		
+	}
+	
+	public ArrayList<GameRegion> allgetWaypoint(ConfigStartEndZone waypoint) {
+		ArrayList<GameRegion> allwaypoint = new ArrayList<GameRegion>();
+		allwaypoint.add(waypoint.Waypoint1);
+		allwaypoint.add(waypoint.Waypoint2);
+		allwaypoint.add(waypoint.Waypoint3);
+		return allwaypoint;
+		
+	}
+	
+	public static void starttime(JavaPlugin plugin,ConfigStartEndZone game){
+		Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+			game.add1secondeTimegame();
+			Collection<Player> playeringame = game.getPlayeringame().keySet();
+			if(playeringame.isEmpty()) {
+				game.killgame(plugin, game);
+			}
+			for(Player player : playeringame) {
+				if(!player.isInsideVehicle()) {
+					
+					
+				}
+			}
+
+			
+			if(game.getStatus() == StatutBoatGame.waitplayer) {				
+				game.timetolaunch -= 1;
+				for(Player player : playeringame) {
+					player.sendMessage("Depart dans " + game.timetolaunch + " secondes");
+					if(game.timetolaunch == 0) {
+						game.setStatus(StatutBoatGame.race);
+					}
+				}
+				
+			}
+			
+			if(game.getStatus() == StatutBoatGame.race) {
+				for(Player player : playeringame) {
+				GameRegionHashMap.getInstance().Playerwhatistregion(player);
+				if(GameRegionHashMap.getInstance().Playerwhatistregion(player) != null) {
+					GameRegion waypoint = GameRegionHashMap.getInstance().Playerwhatistregion(player);
+					if(waypoint.gettype() == TypeRegion.BoatraceWaypoint) {
+						
+						
+					}
+					
+				}
+				
+				
+				
+				}
+				
+				
+				}
+				
+			
+			
+			
+			
+			
+
+        }, 20L, 20L);
+
 	}
 	
 	

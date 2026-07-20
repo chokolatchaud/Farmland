@@ -34,7 +34,8 @@ public class HubCommand implements CommandExecutor {
             }
     		Player player = (Player) sender;
     		
-    		BoatGamemanager.join(player);
+    		BoatGamemanager.join(player,plugin);
+    		return true;
     		
     	}
         if (!(sender instanceof Player)) {
@@ -58,4 +59,6 @@ public class HubCommand implements CommandExecutor {
         player.sendMessage(MessageColor.GREEN.apply("✦ Téléportation au hub !"));
         return true;
     }
+    
+    
 }

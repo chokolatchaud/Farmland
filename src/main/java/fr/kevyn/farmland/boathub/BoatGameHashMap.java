@@ -12,5 +12,11 @@ public class BoatGameHashMap {
 		listgameboat.add(config);
 		
 	}
+	
+	public static void removeListgameboat(ConfigStartEndZone config) {
+		listgameboat.remove(config);
+		
+	}
+	
 
 }
