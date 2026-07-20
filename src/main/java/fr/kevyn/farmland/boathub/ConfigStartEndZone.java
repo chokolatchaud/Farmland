@@ -29,8 +29,22 @@ public class ConfigStartEndZone {
 	Location blocstatuszonespawn4 = new Location(world, 83, 32, -45);
 	
 	GameRegion Waypoint1 = new GameRegion(49,39,-4,35,33,-4,0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
+	Location blocstatueWaypoint1player1 = new Location(world, 83, 32, -36);
+	Location blocstatueWaypoint1player2 = new Location(world, 83, 32, -36);
+	Location blocstatueWaypoint1player3 = new Location(world, 83, 32, -36);
+	Location blocstatueWaypoint1player4 = new Location(world, 83, 32, -36);
+
 	GameRegion Waypoint2 = new GameRegion(49,39,-4,35,33,-4,0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
+	Location blocstatueWaypoint2player1 = new Location(world, 83, 32, -36);
+	Location blocstatueWaypoint2player2 = new Location(world, 83, 32, -36);
+	Location blocstatueWaypoint2player3 = new Location(world, 83, 32, -36);
+	Location blocstatueWaypoint2player4 = new Location(world, 83, 32, -36);
+	
 	GameRegion Waypoint3 = new GameRegion(49,39,-4,35,33,-4,0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
+	Location blocstatueWaypoint3player1 = new Location(world, 83, 32, -36);
+	Location blocstatueWaypoint3player2 = new Location(world, 83, 32, -36);
+	Location blocstatueWaypoint3player3 = new Location(world, 83, 32, -36);
+	Location blocstatueWaypoint3player4 = new Location(world, 83, 32, -36);
 
 	
 	
@@ -52,6 +66,50 @@ public class ConfigStartEndZone {
 	
 	public GameRegion getWaypoint1() {
 		return Waypoint1;
+	}
+	
+	public Location getBlocstatueWaypoint1player1() {
+		return blocstatueWaypoint1player1;
+	}
+	
+	public Location getBlocstatueWaypoint1player2() {
+		return blocstatueWaypoint1player1;
+	}
+	public Location getBlocstatueWaypoint1player3() {
+		return blocstatueWaypoint1player1;
+	}
+	
+	public Location getBlocstatueWaypoint1player4() {
+		return blocstatueWaypoint1player1;
+	}
+	
+	public Location getBlocstatueWaypoint2player1() {
+		return blocstatueWaypoint1player1;
+	}
+	
+	public Location getBlocstatueWaypoint2player2() {
+		return blocstatueWaypoint1player1;
+	}
+	public Location getBlocstatueWaypoint2player3() {
+		return blocstatueWaypoint1player1;
+	}
+	
+	public Location getBlocstatueWaypoint2player4() {
+	}
+	
+	public Location getBlocstatueWaypoint3player1() {
+		return blocstatueWaypoint1player1;
+	}
+	
+	public Location getBlocstatueWaypoint3player2() {
+		return blocstatueWaypoint1player1;
+	}
+	public Location getBlocstatueWaypoint3player3() {
+		return blocstatueWaypoint1player1;
+	}
+	
+	public Location getBlocstatueWaypoint3player4() {
+		return blocstatueWaypoint1player1;
 	}
 	
 	public GameRegion getWaypoint2() {
@@ -173,21 +231,20 @@ public class ConfigStartEndZone {
 	public static void starttime(JavaPlugin plugin,ConfigStartEndZone game){
 		Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
 			game.add1secondeTimegame();
-			Collection<Player> playeringame = game.getPlayeringame().keySet();
+			HashMap<Player, Integer> playeringame = game.getPlayeringame();
 			if(playeringame.isEmpty()) {
 				game.killgame(plugin, game);
 			}
-			for(Player player : playeringame) {
+			for(Player player : playeringame.keySet()) {
 				if(!player.isInsideVehicle()) {
-					
-					
+					game.getPlayeringame().remove(player);
 				}
 			}
 
 			
 			if(game.getStatus() == StatutBoatGame.waitplayer) {				
 				game.timetolaunch -= 1;
-				for(Player player : playeringame) {
+				for(Player player : playeringame.keySet()) {
 					player.sendMessage("Depart dans " + game.timetolaunch + " secondes");
 					if(game.timetolaunch == 0) {
 						game.setStatus(StatutBoatGame.race);
@@ -197,7 +254,7 @@ public class ConfigStartEndZone {
 			}
 			
 			if(game.getStatus() == StatutBoatGame.race) {
-				for(Player player : playeringame) {
+				for(Integer player : playeringame.values()) {
 				GameRegionHashMap.getInstance().Playerwhatistregion(player);
 				if(GameRegionHashMap.getInstance().Playerwhatistregion(player) != null) {
 					GameRegion waypoint = GameRegionHashMap.getInstance().Playerwhatistregion(player);
