@@ -23,12 +23,12 @@ public class ConfigStartEndZone {
 	Location zonespawn3 = new Location(world, 83, 34, -42, 90f, 0f);
 	Location zonespawn4 = new Location(world, 83, 34, -45, 90f, 0f);
 
-	static final GameRegion Waypoint1 = new GameRegion(35,33,-3, 49,36,-5, 0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
-	static final GameRegion Waypoint2 = new GameRegion(80,33,26, 78,36,40, 0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
-	static final GameRegion Waypoint3 = new GameRegion(123,33,-8, 119,37,-6, 0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
+	static final GameRegion Waypoint1 = new GameRegion(35,33,-5, 49,36,-3, 0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
+	static final GameRegion Waypoint2 = new GameRegion(78,33,26, 80,36,40, 0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
+	static final GameRegion Waypoint3 = new GameRegion(119,33,-8, 123,37,-6, 0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
 
 
-	static final GameRegion finishline = new GameRegion(88,38,-47, 86,33,-33, 0,0,0,"finishlineboat",false,"world",TypeRegion.Boatrace,null);
+	static final GameRegion finishline = new GameRegion(86,33,-47, 88,38,-33, 0,0,0,"finishlineboat",false,"world",TypeRegion.Boatrace,null);
 
 
 	HashMap<Integer, Player> playeringame = new HashMap<Integer, Player>();
