@@ -25,7 +25,7 @@ public class ConfigStartEndZone {
 
 	static final GameRegion Waypoint1 = new GameRegion(35,33,-5, 49,36,-3, 0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
 	static final GameRegion Waypoint2 = new GameRegion(78,33,26, 80,36,40, 0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
-	static final GameRegion Waypoint3 = new GameRegion(119,33,-8, 123,37,-6, 0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
+	static final GameRegion Waypoint3 = new GameRegion(111,33,-8, 123,38,-6, 0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
 
 
 	static final GameRegion finishline = new GameRegion(86,33,-47, 88,38,-33, 0,0,0,"finishlineboat",false,"world",TypeRegion.Boatrace,null);
