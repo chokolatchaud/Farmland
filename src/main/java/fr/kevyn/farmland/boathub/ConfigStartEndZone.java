@@ -18,41 +18,28 @@ import fr.kevyn.farmland.region.TypeRegion;
 public class ConfigStartEndZone {
 	World world = Bukkit.getWorld("world");
 
-	// yaw 90 = ouest (vers X negatif), face au circuit qui part vers les waypoints
 	Location zonespawn1 = new Location(world, 83, 34, -36, 90f, 0f);
 	Location zonespawn2 = new Location(world, 83, 34, -39, 90f, 0f);
 	Location zonespawn3 = new Location(world, 83, 34, -42, 90f, 0f);
 	Location zonespawn4 = new Location(world, 83, 34, -45, 90f, 0f);
 
-	// STATIC : crees et enregistres UNE SEULE FOIS pour tout le plugin.
-	// Avant, ces GameRegion etaient des champs d'instance : chaque nouvelle course
-	// (chaque nouveau ConfigStartEndZone) en recreait 4 nouveaux et les empilait
-	// pour toujours dans GameRegionHashMap (jamais nettoyes), qui grossissait
-	// sans fin et ralentissait TOUTES les verifications de zone du serveur.
-	static final GameRegion Waypoint1 = new GameRegion(45,33,-9, 55,40,1, 0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
-	static final GameRegion Waypoint2 = new GameRegion(74,33,20, 84,40,30, 0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
-	static final GameRegion Waypoint3 = new GameRegion(103,33,-11, 113,40,-1, 0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
+	static final GameRegion Waypoint1 = new GameRegion(35,33,-3, 49,36,-5, 0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
+	static final GameRegion Waypoint2 = new GameRegion(80,33,26, 78,36,40, 0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
+	static final GameRegion Waypoint3 = new GameRegion(123,33,-8, 119,37,-6, 0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
 
-	// eloignee des spawns (x=83) pour ne plus les chevaucher : avant maxX=83
-	// faisait que les joueurs etaient DEJA dans la zone d'arrivee a leur spawn,
-	// d'ou le message "passe tous les waypoints" recu des le depart.
-	static final GameRegion finishline = new GameRegion(70,33,-49, 76,39,-33, 0,0,0,"finishlineboat",false,"world",TypeRegion.Boatrace,null);
 
-	// piste (1 a 4) -> joueur present sur cette piste.
-	// C'EST la seule source de verite pour savoir si une piste est libre :
-	// plus aucun bloc dans le monde ne stocke cette info (fini GOLD/DIAMOND).
+	static final GameRegion finishline = new GameRegion(88,38,-47, 86,33,-33, 0,0,0,"finishlineboat",false,"world",TypeRegion.Boatrace,null);
+
+
 	HashMap<Integer, Player> playeringame = new HashMap<Integer, Player>();
 
-	// joueur -> nombre de waypoints valides dans l'ordre (0 = aucun, 3 = tous)
 	HashMap<Player, Integer> progression = new HashMap<Player, Integer>();
 
 	int timetolaunch = 30;
 	int timegame = 0;
-	int racestarttime = 0; // valeur de timegame au moment ou la course demarre reellement (exclut le decompte)
+	int racestarttime = 0; 
 	StatutBoatGame status = StatutBoatGame.waitplayer;
 
-	// references des taches planifiees, pour pouvoir les annuler UNE PAR UNE
-	// (jamais Bukkit.getScheduler().cancelTasks(plugin) qui annulerait TOUT le plugin : scoreboard, tab, market...)
 	org.bukkit.scheduler.BukkitTask mainTask;
 	org.bukkit.scheduler.BukkitTask raceDetectionTask;
 
@@ -94,15 +81,13 @@ public class ConfigStartEndZone {
 	public StatutBoatGame getStatus() { return status; }
 	public void setStatus(StatutBoatGame status) { this.status = status; }
 
-	/** Est-ce que cette piste est libre ? (uniquement en memoire, aucun bloc lu) */
 	public boolean isPisteLibre(int piste) {
 		return !playeringame.containsKey(piste);
 	}
 
 	public void killgame(JavaPlugin plugin, ConfigStartEndZone game) {
 		plugin.getLogger().info("[BoatRace][DEBUG] Fin de partie, nettoyage");
-		// on annule UNIQUEMENT les taches de cette partie, jamais cancelTasks(plugin)
-		// qui annulerait TOUT le plugin (scoreboard, tab, market, autosave...)
+
 		if (game.mainTask != null) game.mainTask.cancel();
 		if (game.raceDetectionTask != null) game.raceDetectionTask.cancel();
 		BoatGameHashMap.removeListgameboat(game);
@@ -110,11 +95,11 @@ public class ConfigStartEndZone {
 
 	public void addplayeringame(ConfigStartEndZone game, Player player, int piste) {
 		game.getPlayeringame().put(piste, player);
-		game.getProgression().put(player, 0); // debute a 0 waypoint valide
+		game.getProgression().put(player, 0); 
 		System.out.println("[BoatRace][DEBUG] " + player.getName() + " rejoint la piste " + piste + " (en memoire, aucun bloc modifie)");
 	}
 
-	/** Retire un joueur de la partie en cherchant sa piste (on ne la connait pas forcement a l'appel) */
+
 	public void removeplayeringame(ConfigStartEndZone game, Player player) {
 		HashMap<Integer, Player> map = game.getPlayeringame();
 		Iterator<Map.Entry<Integer, Player>> it = map.entrySet().iterator();
@@ -128,7 +113,7 @@ public class ConfigStartEndZone {
 		game.getProgression().remove(player);
 	}
 
-	/** Retire un joueur directement par numero de piste (utilise quand on connait deja la piste) */
+
 	public void removeplayeringame(ConfigStartEndZone game, int piste) {
 		Player removed = game.getPlayeringame().remove(piste);
 		if (removed != null) {
@@ -145,7 +130,6 @@ public class ConfigStartEndZone {
 		return allwaypoint;
 	}
 
-	/** Waypoint1 -> 1, Waypoint2 -> 2, Waypoint3 -> 3, sinon -1 (pas un waypoint de course) */
 	public static int getWaypointIndex(GameRegion waypoint) {
 		switch (waypoint.getName()) {
 			case "Waypoint1": return 1;
