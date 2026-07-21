@@ -24,11 +24,19 @@ public class ConfigStartEndZone {
 	Location zonespawn3 = new Location(world, 83, 34, -42, 90f, 0f);
 	Location zonespawn4 = new Location(world, 83, 34, -45, 90f, 0f);
 
-	GameRegion Waypoint1 = new GameRegion(45,33,-9, 55,40,1, 0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
-	GameRegion Waypoint2 = new GameRegion(74,33,20, 84,40,30, 0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
-	GameRegion Waypoint3 = new GameRegion(103,33,-11, 113,40,-1, 0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
+	// STATIC : crees et enregistres UNE SEULE FOIS pour tout le plugin.
+	// Avant, ces GameRegion etaient des champs d'instance : chaque nouvelle course
+	// (chaque nouveau ConfigStartEndZone) en recreait 4 nouveaux et les empilait
+	// pour toujours dans GameRegionHashMap (jamais nettoyes), qui grossissait
+	// sans fin et ralentissait TOUTES les verifications de zone du serveur.
+	static final GameRegion Waypoint1 = new GameRegion(45,33,-9, 55,40,1, 0,0,0,"Waypoint1",false,"world",TypeRegion.BoatraceWaypoint,null);
+	static final GameRegion Waypoint2 = new GameRegion(74,33,20, 84,40,30, 0,0,0,"Waypoint2",false,"world",TypeRegion.BoatraceWaypoint,null);
+	static final GameRegion Waypoint3 = new GameRegion(103,33,-11, 113,40,-1, 0,0,0,"Waypoint3",false,"world",TypeRegion.BoatraceWaypoint,null);
 
-	GameRegion finishline = new GameRegion(77,33,-49, 83,39,-33, 0,0,0,"finishlineboat",false,"world",TypeRegion.Boatrace,null);
+	// eloignee des spawns (x=83) pour ne plus les chevaucher : avant maxX=83
+	// faisait que les joueurs etaient DEJA dans la zone d'arrivee a leur spawn,
+	// d'ou le message "passe tous les waypoints" recu des le depart.
+	static final GameRegion finishline = new GameRegion(70,33,-49, 76,39,-33, 0,0,0,"finishlineboat",false,"world",TypeRegion.Boatrace,null);
 
 	// piste (1 a 4) -> joueur present sur cette piste.
 	// C'EST la seule source de verite pour savoir si une piste est libre :
@@ -42,6 +50,11 @@ public class ConfigStartEndZone {
 	int timegame = 0;
 	int racestarttime = 0; // valeur de timegame au moment ou la course demarre reellement (exclut le decompte)
 	StatutBoatGame status = StatutBoatGame.waitplayer;
+
+	// references des taches planifiees, pour pouvoir les annuler UNE PAR UNE
+	// (jamais Bukkit.getScheduler().cancelTasks(plugin) qui annulerait TOUT le plugin : scoreboard, tab, market...)
+	org.bukkit.scheduler.BukkitTask mainTask;
+	org.bukkit.scheduler.BukkitTask raceDetectionTask;
 
 	public ConfigStartEndZone(JavaPlugin plugin) {
 		BoatGameHashMap.addListgameboat(this);
@@ -88,7 +101,10 @@ public class ConfigStartEndZone {
 
 	public void killgame(JavaPlugin plugin, ConfigStartEndZone game) {
 		plugin.getLogger().info("[BoatRace][DEBUG] Fin de partie, nettoyage");
-		Bukkit.getScheduler().cancelTasks(plugin);
+		// on annule UNIQUEMENT les taches de cette partie, jamais cancelTasks(plugin)
+		// qui annulerait TOUT le plugin (scoreboard, tab, market, autosave...)
+		if (game.mainTask != null) game.mainTask.cancel();
+		if (game.raceDetectionTask != null) game.raceDetectionTask.cancel();
 		BoatGameHashMap.removeListgameboat(game);
 	}
 
@@ -123,9 +139,9 @@ public class ConfigStartEndZone {
 
 	public ArrayList<GameRegion> allgetWaypoint(ConfigStartEndZone waypoint) {
 		ArrayList<GameRegion> allwaypoint = new ArrayList<GameRegion>();
-		allwaypoint.add(waypoint.Waypoint1);
-		allwaypoint.add(waypoint.Waypoint2);
-		allwaypoint.add(waypoint.Waypoint3);
+		allwaypoint.add(Waypoint1);
+		allwaypoint.add(Waypoint2);
+		allwaypoint.add(Waypoint3);
 		return allwaypoint;
 	}
 
@@ -140,7 +156,8 @@ public class ConfigStartEndZone {
 	}
 
 	public static void starttime(JavaPlugin plugin, ConfigStartEndZone game) {
-		Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+		// boucle "minuteur" : 1x/seconde, gere le decompte, le depart et la sortie de bateau
+		game.mainTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 			game.add1secondeTimegame();
 			HashMap<Integer, Player> playeringame = game.getPlayeringame();
 
@@ -181,70 +198,82 @@ public class ConfigStartEndZone {
 					game.racestarttime = game.getTimegame(); // depart reel, exclut les secondes du decompte
 				}
 			}
+		}, 20L, 20L);
 
-			if (game.getStatus() == StatutBoatGame.race) {
-				ArrayList<Player> vainqueurs = new ArrayList<>(); // traites APRES la boucle (pas de modif pendant l'iteration)
+		// boucle "detection" : 5x/seconde, dediee aux waypoints/arrivee.
+		// Un bateau peut traverser une petite zone en moins d'1 seconde : verifier
+		// seulement 1x/s (comme avant) pouvait rater le passage. 5x/s reduit fortement ce risque.
+		game.raceDetectionTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+			if (game.getStatus() != StatutBoatGame.race) return;
 
-				for (Map.Entry<Integer, Player> entry : playeringame.entrySet()) {
-					int piste = entry.getKey();
-					Player player = entry.getValue();
+			HashMap<Integer, Player> playeringame = game.getPlayeringame();
+			ArrayList<Player> vainqueurs = new ArrayList<>(); // traites APRES la boucle (pas de modif pendant l'iteration)
 
-					GameRegion region = GameRegionHashMap.getInstance().Playerwhatistregion(player);
-					if (region == null) continue;
+			for (Map.Entry<Integer, Player> entry : playeringame.entrySet()) {
+				int piste = entry.getKey();
+				Player player = entry.getValue();
 
-					// --- passage d'un waypoint, dans l'ordre uniquement ---
-					if (region.gettype() == TypeRegion.BoatraceWaypoint) {
-						int indexTouche = getWaypointIndex(region);
-						int deja = game.getProgression().getOrDefault(player, 0);
+				GameRegion region = GameRegionHashMap.getInstance().Playerwhatistregion(player);
+				if (region == null) continue;
 
-						System.out.println("[BoatRace][DEBUG] " + player.getName() + " (piste " + piste + ") touche " + region.getName()
-								+ " | deja valide=" + deja + " | attendu=" + (deja + 1));
+				// --- passage d'un waypoint, dans l'ordre uniquement ---
+				if (region.gettype() == TypeRegion.BoatraceWaypoint) {
+					int indexTouche = getWaypointIndex(region);
+					int deja = game.getProgression().getOrDefault(player, 0);
 
-						if (indexTouche == deja + 1) {
-							game.getProgression().put(player, indexTouche);
-							player.sendMessage("§aWaypoint " + indexTouche + "/3 validé !");
-							plugin.getLogger().info("[BoatRace][DEBUG] " + player.getName() + " valide le waypoint " + indexTouche);
-						}
-						// sinon : deja valide, ou pas le bon (joueur a coupe le circuit) -> on ignore
+					if (indexTouche == deja + 1) {
+						game.getProgression().put(player, indexTouche);
+						player.sendMessage("§aWaypoint " + indexTouche + "/3 validé !");
+						plugin.getLogger().info("[BoatRace][DEBUG] " + player.getName() + " valide le waypoint " + indexTouche);
 					}
-
-					// --- ligne d'arrivee : seulement si les 3 waypoints sont valides ---
-					if (region.gettype() == TypeRegion.Boatrace) {
-						int deja = game.getProgression().getOrDefault(player, 0);
-						System.out.println("[BoatRace][DEBUG] " + player.getName() + " touche la ligne d'arrivee | waypoints valides=" + deja);
-
-						if (deja >= 3) {
-							int tempsCourse = game.getTimegame() - game.racestarttime;
-							boolean record = BoatTimeSave.recordTime(plugin, player.getName(), tempsCourse);
-
-							player.sendMessage("§6§lVICTOIRE ! §fTemps : §b" + tempsCourse + "s");
-							if (record) {
-								player.sendMessage("§d✦ Nouveau record personnel !");
-							}
-							plugin.getLogger().info("[BoatRace][DEBUG] " + player.getName() + " GAGNE la course en " + tempsCourse + "s (piste " + piste + ")");
-							Bukkit.broadcastMessage("§6" + player.getName() + " §ea remporté la course de bateaux en §b" + tempsCourse + "s§e !");
-
-							// rafraichit l'hologramme des meilleurs temps (deja sur le thread principal, la boucle est sync)
-							BoatRaceHologram.update(plugin);
-
-							vainqueurs.add(player); // retire apres la boucle
-						} else {
-							player.sendMessage("§cTu dois passer tous les points de contrôle avant l'arrivée ! (" + deja + "/3)");
-						}
-					}
+					// sinon : deja valide, ou pas le bon (joueur a coupe le circuit) -> on ignore
 				}
 
-				// on retire les vainqueurs maintenant : bateau supprime, slot libere (en memoire), teleporte au spawn1
-				for (Player winner : vainqueurs) {
-					if (winner.getVehicle() != null) {
-						org.bukkit.entity.Entity boat = winner.getVehicle();
-						winner.leaveVehicle();
-						boat.remove();
+				// --- ligne d'arrivee : seulement si les 3 waypoints sont valides ---
+				if (region.gettype() == TypeRegion.Boatrace) {
+					int deja = game.getProgression().getOrDefault(player, 0);
+
+					if (deja >= 3) {
+						int tempsCourse = game.getTimegame() - game.racestarttime;
+						boolean record = BoatTimeSave.recordTime(plugin, player.getName(), tempsCourse);
+
+						player.sendMessage("§6§lVICTOIRE ! §fTemps : §b" + tempsCourse + "s");
+						if (record) {
+							player.sendMessage("§d✦ Nouveau record personnel !");
+						}
+						plugin.getLogger().info("[BoatRace][DEBUG] " + player.getName() + " GAGNE la course en " + tempsCourse + "s (piste " + piste + ")");
+						Bukkit.broadcastMessage("§6" + player.getName() + " §ea remporté la course de bateaux en §b" + tempsCourse + "s§e !");
+
+						BoatRaceHologram.update(plugin);
+
+						// pousse le classement complet vers le site (si le module WebAPI est actif)
+						if (plugin instanceof fr.kevyn.farmland.FarmlandMain) {
+							fr.kevyn.farmland.FarmlandMain main = (fr.kevyn.farmland.FarmlandMain) plugin;
+							if (main.getWebApi() != null) {
+								main.getWebApi().pushBoatTimes(BoatTimeSave.getTop(plugin, 10));
+								plugin.getLogger().info("[BoatRace][DEBUG] Classement pousse vers le site");
+							} else {
+								plugin.getLogger().warning("[BoatRace][DEBUG] WebApi non initialise, classement PAS pousse vers le site");
+							}
+						}
+
+						vainqueurs.add(player);
+					} else {
+						// evite le spam : uniquement si le joueur n'est pas dans cette zone depuis le dernier check
+						player.sendMessage("§cTu dois passer tous les points de contrôle avant l'arrivée ! (" + deja + "/3)");
 					}
-					game.removeplayeringame(game, winner);
-					winner.teleport(game.getZonespawn1());
 				}
 			}
-		}, 20L, 20L);
+
+			for (Player winner : vainqueurs) {
+				if (winner.getVehicle() != null) {
+					org.bukkit.entity.Entity boat = winner.getVehicle();
+					winner.leaveVehicle();
+					boat.remove();
+				}
+				game.removeplayeringame(game, winner);
+				winner.teleport(game.getZonespawn1());
+			}
+		}, 20L, 4L);
 	}
 }
