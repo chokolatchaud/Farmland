@@ -118,7 +118,7 @@ public class MicroPluginManager {
         try {
             plugin.getCommand("raceadmin").setExecutor(new fr.kevyn.farmland.boathub.RaceAdminCommands(plugin));
             fr.kevyn.farmland.boathub.BoatRaceHologram.load(plugin);
-            Bukkit.getScheduler().runTaskLater(plugin, () -> fr.kevyn.farmland.boathub.BoatRaceHologram.update(plugin), 100L);
+            Bukkit.getScheduler().runTaskTimer(plugin, () -> fr.kevyn.farmland.boathub.BoatRaceHologram.update(plugin), 100L, 20L * 60);
         } catch (Exception e) {
             plugin.getLogger().severe("[BoatRace] Erreur au chargement du module course de bateaux : " + e.getMessage());
             e.printStackTrace();
