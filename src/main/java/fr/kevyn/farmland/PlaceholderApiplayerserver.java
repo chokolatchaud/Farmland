@@ -2,7 +2,7 @@ package fr.kevyn.farmland;
 
 import java.util.UUID;
 
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 import fr.kevyn.farmland.playerserver.PlayerServer;
@@ -26,18 +26,28 @@ public class PlaceholderApiplayerserver extends PlaceholderExpansion {
         return "1.0";
     }
 
+    @Override
+    public boolean persist() {
+        return true; // reste actif meme sans joueur connecte (necessaire pour DiscordSRV)
+    }
+
     /**
-     * Called when a placeholder with the identifier %farmland_<something>% is requested
+     * onRequest(OfflinePlayer, ...) au lieu de onPlaceholderRequest(Player, ...) :
+     * quand DiscordSRV evalue ce placeholder pour un message venant de Discord,
+     * il n'y a PAS de joueur Bukkit "en ligne" (Player) au sens strict - l'expediteur
+     * ecrit depuis Discord, pas depuis Minecraft. DiscordSRV fournit alors le compte
+     * Minecraft LIE au compte Discord sous forme d'OfflinePlayer (meme hors ligne).
+     * getUniqueId() existe sur les deux, la HashMap fonctionne pareil dans les 2 cas.
      */
     @Override
-    public String onPlaceholderRequest(Player player, String identifier) {
+    public String onRequest(OfflinePlayer player, String identifier) {
 
-        if (player == null) return "0";
+        if (player == null) return "";
 
         UUID uuid = player.getUniqueId();
         PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(uuid);
 
-        if (ps == null) return "0";
+        if (ps == null) return "";
 
         switch (identifier.toLowerCase()) {
             case "money":
@@ -60,4 +70,5 @@ public class PlaceholderApiplayerserver extends PlaceholderExpansion {
                 return null; // retourne null si le placeholder n'est pas géré
         }
     }
-} 
+}
+
