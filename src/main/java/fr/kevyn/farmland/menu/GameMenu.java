@@ -31,7 +31,7 @@ public class GameMenu {
 	
 	public static void fillmenu(Material material, Inventory inv) {
 		ItemStack glass = new ItemStack(material);
-        ItemStack[] fill = new ItemStack[54];
+        ItemStack[] fill = new ItemStack[inv.getSize()];
         Arrays.fill(fill, glass);
         inv.setContents(fill);
 	}
