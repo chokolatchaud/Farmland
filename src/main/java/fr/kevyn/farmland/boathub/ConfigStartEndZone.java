@@ -45,6 +45,7 @@ public class ConfigStartEndZone {
 
 	public ConfigStartEndZone(JavaPlugin plugin) {
 		BoatGameHashMap.addListgameboat(this);
+		fermerBarriere(this); // remet le verre en place pour cette nouvelle course
 		starttime(plugin, this);
 		plugin.getLogger().info("[BoatRace][DEBUG] Nouvelle partie creee");
 	}
@@ -139,6 +140,30 @@ public class ConfigStartEndZone {
 		}
 	}
 
+	// Barriere physique en verre bloquant les bateaux pendant le decompte.
+	// Deux murs, coordonnees exactes des /fill utilises en jeu :
+	//   mur A : x=80, y=34, z de -48 a -34
+	//   mur B : x=85, y=34, z de -48 a -33
+	private static void setBarriere(ConfigStartEndZone game, org.bukkit.Material material) {
+		World world = game.getWorld();
+		for (int z = -48; z <= -34; z++) {
+			world.getBlockAt(80, 34, z).setType(material);
+		}
+		for (int z = -48; z <= -33; z++) {
+			world.getBlockAt(85, 34, z).setType(material);
+		}
+	}
+
+	/** Pose le verre : bloque le passage (fait au demarrage d'une nouvelle course) */
+	public static void fermerBarriere(ConfigStartEndZone game) {
+		setBarriere(game, org.bukkit.Material.BLACK_STAINED_GLASS);
+	}
+
+	/** Retire le verre : laisse passer les bateaux (fait au vrai depart de la course) */
+	public static void ouvrirBarriere(ConfigStartEndZone game) {
+		setBarriere(game, org.bukkit.Material.AIR);
+	}
+
 	public static void starttime(JavaPlugin plugin, ConfigStartEndZone game) {
 		// boucle "minuteur" : 1x/seconde, gere le decompte, le depart et la sortie de bateau
 		game.mainTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
@@ -195,6 +220,7 @@ public class ConfigStartEndZone {
 							boat.setMaxSpeed(0.4); // vitesse par defaut d'un bateau
 						}
 					}
+					ouvrirBarriere(game); // retire la barriere en verre pour laisser passer les bateaux
 					game.setStatus(StatutBoatGame.race);
 					game.racestarttime = game.getTimegame(); // depart reel, exclut les secondes du decompte
 				}
