@@ -43,6 +43,7 @@ public class ConfigStartEndZone {
 	org.bukkit.scheduler.BukkitTask mainTask;
 	org.bukkit.scheduler.BukkitTask raceDetectionTask;
 	org.bukkit.scheduler.BukkitTask freezeTask;
+	org.bukkit.scheduler.BukkitTask hardCorrectionTask;
 
 	public ConfigStartEndZone(JavaPlugin plugin) {
 		BoatGameHashMap.addListgameboat(this);
@@ -92,6 +93,7 @@ public class ConfigStartEndZone {
 		if (game.mainTask != null) game.mainTask.cancel();
 		if (game.raceDetectionTask != null) game.raceDetectionTask.cancel();
 		if (game.freezeTask != null) game.freezeTask.cancel();
+		if (game.hardCorrectionTask != null) game.hardCorrectionTask.cancel();
 		BoatGameHashMap.removeListgameboat(game);
 	}
 
@@ -187,21 +189,42 @@ public class ConfigStartEndZone {
 		}, 20L, 20L);
 
 		// boucle "gel" : tourne CHAQUE tick (20x/seconde), tant que le statut est waitplayer.
-		// Zerroute la velocite du bateau de facon PREVENTIVE (avant que la derive
-		// s'accumule), au lieu de teleporter APRES coup comme avant. Un teleport()
-		// envoie un paquet de correction dur qui se traduit mal pour les clients
-		// plus anciens via ViaBackwards (effet de rebond/glitch tres visible en 1.19
-		// par exemple) ; setVelocity(0,0,0) est un simple etat de mouvement, beaucoup
-		// plus doux a traduire d'une version a l'autre.
+		// Deux mecanismes combines :
+		// 1) setVelocity(0,0,0) a chaque tick : absorbe les vagues/courant naturels,
+		//    sans jamais teleporter (rien de saccade a traduire pour les vieux clients).
+		// 2) Un recalage dur, mais seulement toutes les 10 ticks (0.5s) et seulement
+		//    si un VRAI deplacement (pagayage volontaire) est detecte : setVelocity seul
+		//    ne suffit pas a bloquer le pagayage (le jeu recalcule sa propre velocite
+		//    a partir des touches pressees, ecrasant notre setVelocity(0) aussitot).
+		//    Ce recalage etant rare, l'effet de rebond via ViaBackwards reste minime.
 		game.freezeTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 			if (game.getStatus() != StatutBoatGame.waitplayer) return;
 
-			for (Player player : game.getPlayeringame().values()) {
-				if (player.getVehicle() instanceof org.bukkit.entity.boat.AcaciaBoat boat) {
-					boat.setVelocity(new org.bukkit.util.Vector(0, 0, 0));
-				}
+			for (Map.Entry<Integer, Player> entry : game.getPlayeringame().entrySet()) {
+				Player player = entry.getValue();
+				if (!(player.getVehicle() instanceof org.bukkit.entity.boat.AcaciaBoat boat)) continue;
+
+				boat.setVelocity(new org.bukkit.util.Vector(0, 0, 0));
 			}
 		}, 1L, 1L);
+
+		// recalage dur peu frequent (toutes les 10 ticks = 0.5s) : seulement si le
+		// joueur s'est vraiment deplace (pagayage), pas pour les micro-vagues deja
+		// absorbees par la boucle ci-dessus.
+		game.hardCorrectionTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+			if (game.getStatus() != StatutBoatGame.waitplayer) return;
+
+			for (Map.Entry<Integer, Player> entry : game.getPlayeringame().entrySet()) {
+				int piste = entry.getKey();
+				Player player = entry.getValue();
+				Location anchor = game.getZonespawnByPiste(piste);
+				if (anchor == null || !(player.getVehicle() instanceof org.bukkit.entity.boat.AcaciaBoat boat)) continue;
+
+				if (boat.getLocation().distanceSquared(anchor) > 1.0) { // ~1 bloc de vrai deplacement
+					boat.teleport(anchor);
+				}
+			}
+		}, 10L, 10L);
 
 		// boucle "detection" : 5x/seconde, dediee aux waypoints/arrivee.
 		// Un bateau peut traverser une petite zone en moins d'1 seconde : verifier
