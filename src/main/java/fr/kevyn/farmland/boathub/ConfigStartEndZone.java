@@ -42,6 +42,7 @@ public class ConfigStartEndZone {
 
 	org.bukkit.scheduler.BukkitTask mainTask;
 	org.bukkit.scheduler.BukkitTask raceDetectionTask;
+	org.bukkit.scheduler.BukkitTask freezeTask;
 
 	public ConfigStartEndZone(JavaPlugin plugin) {
 		BoatGameHashMap.addListgameboat(this);
@@ -90,6 +91,7 @@ public class ConfigStartEndZone {
 
 		if (game.mainTask != null) game.mainTask.cancel();
 		if (game.raceDetectionTask != null) game.raceDetectionTask.cancel();
+		if (game.freezeTask != null) game.freezeTask.cancel();
 		BoatGameHashMap.removeListgameboat(game);
 	}
 
@@ -183,6 +185,23 @@ public class ConfigStartEndZone {
 				}
 			}
 		}, 20L, 20L);
+
+		// boucle "gel" : tourne CHAQUE tick (20x/seconde), tant que le statut est waitplayer.
+		// Zerroute la velocite du bateau de facon PREVENTIVE (avant que la derive
+		// s'accumule), au lieu de teleporter APRES coup comme avant. Un teleport()
+		// envoie un paquet de correction dur qui se traduit mal pour les clients
+		// plus anciens via ViaBackwards (effet de rebond/glitch tres visible en 1.19
+		// par exemple) ; setVelocity(0,0,0) est un simple etat de mouvement, beaucoup
+		// plus doux a traduire d'une version a l'autre.
+		game.freezeTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+			if (game.getStatus() != StatutBoatGame.waitplayer) return;
+
+			for (Player player : game.getPlayeringame().values()) {
+				if (player.getVehicle() instanceof org.bukkit.entity.boat.AcaciaBoat boat) {
+					boat.setVelocity(new org.bukkit.util.Vector(0, 0, 0));
+				}
+			}
+		}, 1L, 1L);
 
 		// boucle "detection" : 5x/seconde, dediee aux waypoints/arrivee.
 		// Un bateau peut traverser une petite zone en moins d'1 seconde : verifier
