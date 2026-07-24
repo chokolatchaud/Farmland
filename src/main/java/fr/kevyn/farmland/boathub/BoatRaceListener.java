@@ -25,8 +25,13 @@ public class BoatRaceListener implements Listener {
 
             for (org.bukkit.entity.Entity passenger : event.getVehicle().getPassengers()) {
                 if (passenger instanceof Player player && game.getPlayeringame().containsValue(player)) {
-                    // pas encore la course : on annule tout mouvement (translation ET rotation)
-                    event.getVehicle().teleport(event.getFrom());
+                    // on ne corrige que la VRAIE derive (courant/vagues), pas les micro-mouvements
+                    // naturels de l'eau : sinon on re-teleporte a chaque tick meme pour un
+                    // deplacement infime, ce qui donne un effet de "TP en continu" tres visible
+                    double distance = event.getFrom().distanceSquared(event.getTo());
+                    if (distance > 0.02) { // ~0.14 bloc de tolerance avant correction
+                        event.getVehicle().teleport(event.getFrom());
+                    }
                     return;
                 }
             }

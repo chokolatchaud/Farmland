@@ -16,7 +16,7 @@ public class BoatGamemanager {
 		}
 		ConfigStartEndZone game = BoatGameHashMap.getListgameboat().get(0);
 
-		if (!boatgame.teleportplayertoboat(game, player)) {
+		if (!boatgame.teleportplayertoboat(game, player, plugin)) {
 			player.sendMessage("§cVeuillez attendre la prochaine partie !");
 			plugin.getLogger().info("[BoatRace][DEBUG] " + player.getName() + " n'a pas pu rejoindre (aucune place)");
 			return;
