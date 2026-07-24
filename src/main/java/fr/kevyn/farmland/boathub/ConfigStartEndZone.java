@@ -42,8 +42,6 @@ public class ConfigStartEndZone {
 
 	org.bukkit.scheduler.BukkitTask mainTask;
 	org.bukkit.scheduler.BukkitTask raceDetectionTask;
-	org.bukkit.scheduler.BukkitTask freezeTask;
-	org.bukkit.scheduler.BukkitTask hardCorrectionTask;
 
 	public ConfigStartEndZone(JavaPlugin plugin) {
 		BoatGameHashMap.addListgameboat(this);
@@ -92,8 +90,6 @@ public class ConfigStartEndZone {
 
 		if (game.mainTask != null) game.mainTask.cancel();
 		if (game.raceDetectionTask != null) game.raceDetectionTask.cancel();
-		if (game.freezeTask != null) game.freezeTask.cancel();
-		if (game.hardCorrectionTask != null) game.hardCorrectionTask.cancel();
 		BoatGameHashMap.removeListgameboat(game);
 	}
 
@@ -172,8 +168,25 @@ public class ConfigStartEndZone {
 				System.out.println("[BoatRace][DEBUG] Compte a rebours : " + game.timetolaunch);
 				for (Player player : playeringame.values()) {
 					player.sendMessage("§eDepart dans " + game.timetolaunch + " secondes");
-					// le bateau est immobile depuis son spawn (setMaxSpeed(0)), rien a refaire ici a chaque tick
 				}
+
+				// recalage dur, mais SEULEMENT 2 fois avant le depart (a 3s puis a 1s)
+				// au lieu de corriger en continu pendant les 30 secondes. Le joueur peut
+				// pagayer librement entre-temps (pas ideal mais sans consequence puisque
+				// la course n'a pas commence), et on le replace pile a temps avant le vrai
+				// depart. Beaucoup moins de teleport() au total = beaucoup moins de rebond
+				// visible via ViaBackwards pour les vieux clients.
+				if (game.timetolaunch == 3 || game.timetolaunch == 1) {
+					for (Map.Entry<Integer, Player> entry : playeringame.entrySet()) {
+						int piste = entry.getKey();
+						Player player = entry.getValue();
+						Location anchor = game.getZonespawnByPiste(piste);
+						if (anchor == null || !(player.getVehicle() instanceof org.bukkit.entity.boat.AcaciaBoat boat)) continue;
+						boat.teleport(anchor);
+					}
+					System.out.println("[BoatRace][DEBUG] Recalage des bateaux a T-" + game.timetolaunch + "s");
+				}
+
 				if (game.timetolaunch <= 0) {
 					plugin.getLogger().info("[BoatRace][DEBUG] Depart de la course !");
 					// on debloque les bateaux UNE SEULE FOIS
@@ -187,44 +200,6 @@ public class ConfigStartEndZone {
 				}
 			}
 		}, 20L, 20L);
-
-		// boucle "gel" : tourne CHAQUE tick (20x/seconde), tant que le statut est waitplayer.
-		// Deux mecanismes combines :
-		// 1) setVelocity(0,0,0) a chaque tick : absorbe les vagues/courant naturels,
-		//    sans jamais teleporter (rien de saccade a traduire pour les vieux clients).
-		// 2) Un recalage dur, mais seulement toutes les 10 ticks (0.5s) et seulement
-		//    si un VRAI deplacement (pagayage volontaire) est detecte : setVelocity seul
-		//    ne suffit pas a bloquer le pagayage (le jeu recalcule sa propre velocite
-		//    a partir des touches pressees, ecrasant notre setVelocity(0) aussitot).
-		//    Ce recalage etant rare, l'effet de rebond via ViaBackwards reste minime.
-		game.freezeTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-			if (game.getStatus() != StatutBoatGame.waitplayer) return;
-
-			for (Map.Entry<Integer, Player> entry : game.getPlayeringame().entrySet()) {
-				Player player = entry.getValue();
-				if (!(player.getVehicle() instanceof org.bukkit.entity.boat.AcaciaBoat boat)) continue;
-
-				boat.setVelocity(new org.bukkit.util.Vector(0, 0, 0));
-			}
-		}, 1L, 1L);
-
-		// recalage dur peu frequent (toutes les 10 ticks = 0.5s) : seulement si le
-		// joueur s'est vraiment deplace (pagayage), pas pour les micro-vagues deja
-		// absorbees par la boucle ci-dessus.
-		game.hardCorrectionTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-			if (game.getStatus() != StatutBoatGame.waitplayer) return;
-
-			for (Map.Entry<Integer, Player> entry : game.getPlayeringame().entrySet()) {
-				int piste = entry.getKey();
-				Player player = entry.getValue();
-				Location anchor = game.getZonespawnByPiste(piste);
-				if (anchor == null || !(player.getVehicle() instanceof org.bukkit.entity.boat.AcaciaBoat boat)) continue;
-
-				if (boat.getLocation().distanceSquared(anchor) > 1.0) { // ~1 bloc de vrai deplacement
-					boat.teleport(anchor);
-				}
-			}
-		}, 10L, 10L);
 
 		// boucle "detection" : 5x/seconde, dediee aux waypoints/arrivee.
 		// Un bateau peut traverser une petite zone en moins d'1 seconde : verifier
