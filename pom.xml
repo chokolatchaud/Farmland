@@ -69,13 +69,12 @@
 
     <dependencies>
 
-        <!-- Paper API -->
-        <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.21.11-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
+<dependency>
+    <groupId>io.papermc.paper</groupId>
+    <artifactId>paper-api</artifactId>
+    <version>[26.2.build,)</version>
+    <scope>provided</scope>
+</dependency>
 
         <!-- FastAsyncWorldEdit -->
         <dependency>
@@ -148,13 +147,13 @@
     <build>
         <plugins>
 
-            <!-- Java 21 Compiler -->
+            <!-- Java 25 Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <release>21</release>
+                    <release>25</release>
                 </configuration>
             </plugin>
 

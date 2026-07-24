@@ -3,7 +3,6 @@ package fr.kevyn.farmland.menu;
 import java.util.Arrays;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -15,7 +14,7 @@ import fr.kevyn.farmland.playerserver.PlayerServer;
 public class MenuPlotConfig {
 	
 	public static Inventory createmenuplotconfig(String name, PlayerServer playerserver) {
-        Inventory inv = Bukkit.createInventory(null, 54);
+        Inventory inv = Bukkit.createInventory(null, 27);
         GameMenu plotconfig = new GameMenu(inv, TypeMenu.PLOTCONFIG);
         GameMenu.fillmenu(Material.GREEN_STAINED_GLASS_PANE, inv);
         
@@ -49,6 +48,7 @@ public class MenuPlotConfig {
         	
         }
         GameMenu.set_oneitem_menu(CustomItemType.DOOR_PRIVACY.create(), namePrivatepublic, 14, inv);
+        GameMenu.set_oneitem_menu(CustomItemType.SUGGEST.create(), "A venir", 16, inv);
         return inv;
     }
 

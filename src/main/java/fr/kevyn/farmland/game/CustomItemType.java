@@ -26,7 +26,8 @@ public enum CustomItemType {
     UPGRADE_BOUGHT("custom:upgrade_bought", "Upgrade Bought", Material.LIME_STAINED_GLASS_PANE),
     UPGRADE_LOCKED("custom:upgrade_locked", "Upgrade Locked", Material.RED_STAINED_GLASS_PANE),
     WATERLAVASELECTION("custom:waterlavaselection", "Waterlavaselection", Material.WATER_BUCKET),
-    SUNGLASS("custom:sunglass", "Sunglass", Material.CARVED_PUMPKIN);
+    SUNGLASS("custom:sunglass", "Sunglass", Material.CARVED_PUMPKIN),
+	SUGGEST("", "Suggestion", Material.GREEN_WOOL);
     
     private final String itemModel;
     private final String displayName;
