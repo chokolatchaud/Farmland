@@ -299,7 +299,9 @@ public class ConfigStartEndZone {
 					boat.remove();
 				}
 				game.removeplayeringame(game, winner);
-				winner.teleport(game.getZonespawn1());
+				org.bukkit.Location hub = plugin instanceof fr.kevyn.farmland.FarmlandMain main
+						? fr.kevyn.farmland.game.HubCommand.getHubLocation(main) : null;
+				winner.teleport(hub != null ? hub : game.getZonespawn1());
 			}
 		}, 20L, 4L);
 	}

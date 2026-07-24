@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.boat.AcaciaBoat;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import fr.kevyn.farmland.FarmlandMain;
+
 public class boatgame {
 
 	/** Cherche une piste libre (en memoire, aucun bloc lu) et y place le joueur */
@@ -39,12 +41,21 @@ public class boatgame {
 		System.out.println("[BoatRace][DEBUG] Bateau spawn pour " + player.getName() + " a " + zonespawn);
 	}
 
-	public static void playerleftboat(Player player, Entity boat, ConfigStartEndZone game) {
+	public static void playerleftboat(Player player, Entity boat, ConfigStartEndZone game, JavaPlugin plugin) {
 		// on ne connait pas forcement la piste ici : on cherche par joueur
 		game.removeplayeringame(game, player);
 		boat.remove();
-		player.teleport(game.getZonespawn1());
+		teleportToHubOrDock(player, game, plugin);
 		player.sendMessage("§7Vous avez quitté la partie");
 		System.out.println("[BoatRace][DEBUG] " + player.getName() + " a quitte le bateau (sortie manuelle)");
+	}
+
+	/** Renvoie au hub si configure, sinon repli sur le ponton de depart (jamais laisser le joueur bloque) */
+	private static void teleportToHubOrDock(Player player, ConfigStartEndZone game, JavaPlugin plugin) {
+		org.bukkit.Location hub = null;
+		if (plugin instanceof FarmlandMain main) {
+			hub = fr.kevyn.farmland.game.HubCommand.getHubLocation(main);
+		}
+		player.teleport(hub != null ? hub : game.getZonespawn1());
 	}
 }

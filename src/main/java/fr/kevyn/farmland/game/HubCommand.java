@@ -25,6 +25,21 @@ public class HubCommand implements CommandExecutor {
         this.plugin = plugin;
     }
 
+    /**
+     * Retourne l'emplacement du hub (config.yml -> hub.world), ou null si le
+     * monde configure est introuvable. Reutilise par la course de bateaux pour
+     * renvoyer les joueurs au hub apres une victoire ou une sortie manuelle.
+     */
+    public static Location getHubLocation(FarmlandMain plugin) {
+        String worldName = plugin.getConfig().getString("hub.world", "world");
+        World hubWorld = Bukkit.getWorld(worldName);
+        if (hubWorld == null) {
+            plugin.getLogger().warning("[Hub] Monde '" + worldName + "' introuvable (config: hub.world)");
+            return null;
+        }
+        return hubWorld.getSpawnLocation().clone().add(0.5, 0, 0.5);
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
     	if(command.getName().equalsIgnoreCase("joinboat")) {
@@ -45,16 +60,13 @@ public class HubCommand implements CommandExecutor {
         
         Player player = (Player) sender;
 
-        String worldName = plugin.getConfig().getString("hub.world", "world");
-        World hubWorld = Bukkit.getWorld(worldName);
+        Location spawn = getHubLocation(plugin);
 
-        if (hubWorld == null) {
+        if (spawn == null) {
             player.sendMessage(MessageColor.RED.apply("Le hub est introuvable, préviens un modérateur !"));
-            plugin.getLogger().warning("[Hub] Monde '" + worldName + "' introuvable (config: hub.world)");
             return true;
         }
 
-        Location spawn = hubWorld.getSpawnLocation().clone().add(0.5, 0, 0.5);
         player.teleport(spawn);
         player.sendMessage(MessageColor.GREEN.apply("✦ Téléportation au hub !"));
         return true;
