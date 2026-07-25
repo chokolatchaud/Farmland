@@ -95,20 +95,17 @@ public class Plotinventory implements Listener {
 
                 int rank = ps.getUpgrade();
 
-                // Déjà tout acheté ?
-                if (rank >= fr.kevyn.farmland.menu.MenuPlotUpgrade.getMaxUpgrades()) {
-                    player.sendMessage(MessageColor.GOLD.apply("Tu as déjà tous les upgrades !"));
-                    return;
-                }
-
-                // Le slot cliqué doit correspondre au PROCHAIN upgrade (rang du joueur)
+                // Le systeme est infini : plus de "tu as tout achete", juste un palier suivant
+                // Le slot clique doit correspondre au PROCHAIN upgrade DANS LE PALIER ACTUEL
+                int upgradesPerPage = fr.kevyn.farmland.menu.MenuPlotUpgrade.getMaxUpgrades();
+                int rankInPage = rank % upgradesPerPage;
                 int slotIndex = upgradeSlotIndex(event.getSlot());
-                if (slotIndex != rank) {
+                if (slotIndex != rankInPage) {
                     player.sendMessage(MessageColor.RED.apply("Achète d'abord les upgrades précédents !"));
                     return;
                 }
 
-                // Prix récupéré côté serveur, jamais depuis le nom de l'item
+                // Prix récupéré côté serveur (rang absolu, jamais depuis le nom de l'item)
                 int cost = fr.kevyn.farmland.menu.MenuPlotUpgrade.getCost(rank);
                 if (ps.getMoney() < cost) { player.sendMessage(MessageColor.RED.apply("Tu n'as pas assez d'argent (" + cost + " $FB)")); return; }
 
@@ -116,6 +113,12 @@ public class Plotinventory implements Listener {
                 ps.setUpgrade(ps.getUpgrade() + 1);
                 ps.getPlotdata().setWorldborder(ps.getPlotdata().getWorldborder() + 5);
                 player.sendMessage(MessageColor.GREEN.apply("Upgrade acheté ! (-" + cost + " $FB, +5 de bordure)"));
+
+                // nouveau palier atteint : prevenir le joueur que les prix montent
+                if ((rank + 1) % upgradesPerPage == 0) {
+                    player.sendMessage(MessageColor.GOLD.apply("✦ Nouveau palier ! Les prix des prochains upgrades montent de 20 $FB."));
+                }
+
                 player.closeInventory();
             }
         }
