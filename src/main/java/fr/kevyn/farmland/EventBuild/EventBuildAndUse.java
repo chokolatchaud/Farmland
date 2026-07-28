@@ -5,15 +5,19 @@ import java.util.UUID;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import discordwebhook.messagediscord;
@@ -26,11 +30,48 @@ import fr.kevyn.farmland.region.GameRegionHashMap;
 
 public class EventBuildAndUse implements Listener {
     private FarmlandMain plugin;
-  
+
 
     public EventBuildAndUse(FarmlandMain plugin) {
         this.plugin = plugin;
 
+    }
+
+    @EventHandler
+    public void onBoatPlace(PlayerInteractEvent event) {
+        // on evite de traiter 2 fois (main principale + main secondaire)
+        if (event.getHand() != EquipmentSlot.HAND) return;
+
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+
+        ItemStack item = event.getItem();
+        if (item == null || !isBoat(item.getType())) return;
+
+        Player player = event.getPlayer();
+        Block bloc = event.getClickedBlock();
+        GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
+
+        if (!authorizedbuild(player, gameregion, bloc, false, null)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onArmorStandPlace(PlayerInteractEvent event) {
+        if (event.getHand() != EquipmentSlot.HAND) return;
+
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+
+        ItemStack item = event.getItem();
+        if (item == null || item.getType() != Material.ARMOR_STAND) return;
+
+        Player player = event.getPlayer();
+        Block bloc = event.getClickedBlock();
+        GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
+
+        if (!authorizedbuild(player, gameregion, bloc, false, null)) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -45,9 +86,8 @@ public class EventBuildAndUse implements Listener {
 
     @EventHandler
     public void onSpawnMob(CreatureSpawnEvent event) {
-        // seuls les spawns par commande /summon sont autorisés (mannequins, mobs de décor admin)
-        // tout le reste est bloqué : spawn naturel, oeufs, spawners, reproduction...
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.COMMAND) {
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.COMMAND
+                || event.getEntityType() == EntityType.ARMOR_STAND) {
             return;
         }
         event.setCancelled(true);
@@ -119,7 +159,14 @@ public class EventBuildAndUse implements Listener {
 
         
         //on verfie si le bloc est autorisé
-        if (bloc != null && (bloc.getType() == Material.SPAWNER || bloc.getType() == Material.COMMAND_BLOCK)) {
+        if (bloc != null && (
+                bloc.getType() == Material.SPAWNER
+                || bloc.getType() == Material.COMMAND_BLOCK
+                || bloc.getType() == Material.REPEATING_COMMAND_BLOCK
+                || bloc.getType() == Material.CHAIN_COMMAND_BLOCK
+                || bloc.getType() == Material.COMMAND_BLOCK_MINECART
+                || bloc.getType() == Material.STRUCTURE_BLOCK
+                || bloc.getType() == Material.STRUCTURE_VOID)) {
             return false;
         }
         
@@ -207,8 +254,8 @@ public class EventBuildAndUse implements Listener {
 
         if (ps.getBlocpose() >= 150) {
             ps.setBlocpose(ps.getBlocpose() - 150);
-            ps.setMoney(ps.getMoney() + 3);
-            player.sendMessage(MessageColor.AQUA.apply("+3$ pour 150 blocs placés !"));
+            ps.setMoney(ps.getMoney() + 25);
+            player.sendMessage(MessageColor.AQUA.apply("+25FB pour 150 blocs placés !"));
         }
     }
 
@@ -239,10 +286,8 @@ public class EventBuildAndUse implements Listener {
         return true;
     }
     
- 
-
-
-
-
+    public boolean isBoat(Material type) {
+        return type.name().endsWith("_BOAT") || type.name().endsWith("_RAFT");
+    }
 
 }

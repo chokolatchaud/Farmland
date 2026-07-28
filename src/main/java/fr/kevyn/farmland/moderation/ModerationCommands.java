@@ -28,12 +28,12 @@ public class ModerationCommands implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
         if (!sender.hasPermission("farmland.moderation")) {
-            sender.sendMessage("&cVous n'avez pas la permission.");
+            sender.sendMessage(MessageColor.RED + "Vous n'avez pas la permission.");
             return true;
         }
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage("Seul un joueur peut faire cette commande.");
+            sender.sendMessage(MessageColor.RED + "Seul un joueur peut faire cette commande.");
             return true;
         }
 
@@ -43,18 +43,18 @@ public class ModerationCommands implements CommandExecutor {
         if (cmd.equals("unbanf")) {
             // /unbanf <joueur>
             if (args.length < 1) {
-                player.sendMessage("&cUsage: /unbanf <joueur>");
+                player.sendMessage(MessageColor.RED + "Usage: /unbanf <joueur>");
                 return true;
             }
 
             PlayerServer targetPS = PlayerserverHashMap.getInstance().getplayerHaspMaps(args[0]);
             if (targetPS == null) {
-                player.sendMessage("&cJoueur inconnu, impossible de le débannir.");
+                player.sendMessage(MessageColor.RED + "Joueur inconnu, impossible de le débannir.");
                 return true;
             }
 
             if (!targetPS.getBan()) {
-                player.sendMessage("&2Le joueur n'est pas banni.");
+                player.sendMessage(MessageColor.RED + "Le joueur n'est pas banni.");
                 return true;
             }
 
@@ -64,23 +64,23 @@ public class ModerationCommands implements CommandExecutor {
 
             Player targetPlayer = Bukkit.getPlayer(targetPS.getUuid());
             if (targetPlayer != null) {
-                targetPlayer.sendMessage("&2Vous avez été débanni !");
+                targetPlayer.sendMessage(MessageColor.GREEN + "Vous avez été débanni !");
             }
 
-            player.sendMessage("&2Le joueur " + targetPS.getName() + "&c a été débanni avec succès.");
+            player.sendMessage(MessageColor.GREEN + "Le joueur " + targetPS.getName() + MessageColor.GREEN + " a été débanni avec succès.");
             messagediscord.sendmessage("🔓 **Débannissement** | " + targetPS.getName() + " a été débanni par " + player.getName(), "moderation");
             return true;
         }
 
         // Pour ban, kick et warn, il faut au moins 2 arguments
         if (args.length < 2) {
-            player.sendMessage("&cUsage: /" + label + " <joueur> <raison>");
+            player.sendMessage(MessageColor.RED + "Usage: /" + label + " <joueur> <raison>");
             return true;
         }
 
         PlayerServer targetPS = PlayerserverHashMap.getInstance().getplayerHaspMaps(args[0]);
         if (targetPS == null) {
-            player.sendMessage("&cJoueur inconnu.");
+            player.sendMessage(MessageColor.RED + "Joueur inconnu.");
             return true;
         }
 
@@ -93,11 +93,11 @@ public class ModerationCommands implements CommandExecutor {
                 targetPS.setRaison(reason);
 
                 if (targetPlayer != null) {
-                    targetPlayer.kickPlayer("&cVous êtes banni !" +
+                    targetPlayer.kickPlayer(MessageColor.RED +"Vous êtes banni !" +
                             "\nRaison : " + reason);
                 }
 
-                player.sendMessage("&cLe joueur a été banni définitivement.");
+                player.sendMessage(MessageColor.RED + "Le joueur a été banni définitivement.");
                 messagediscord.sendmessage("🔨 **Bannissement** | " + targetPS.getName() + " a été banni définitivement\n" +
                         "**Raison :** " + reason + "\n" +
                         "**Modérateur :** " + player.getName(), "moderation");
@@ -107,7 +107,7 @@ public class ModerationCommands implements CommandExecutor {
             case "kickf":
                 if (targetPlayer != null) targetPlayer.kickPlayer(reason);
                 targetPS.setRaison(reason);
-                player.sendMessage("&cLe joueur a été expulsé.");
+                player.sendMessage(MessageColor.RED + "Le joueur a été expulsé.");
                 messagediscord.sendmessage("👢 **Expulsion** | " + targetPS.getName() + " a été expulsé du serveur\n" +
                         "**Raison :** " + reason + "\n" +
                         "**Modérateur :** " + player.getName(), "moderation");
@@ -118,12 +118,12 @@ public class ModerationCommands implements CommandExecutor {
                 if (targetPlayer != null) {
                     targetPlayer.sendMessage("&cAvertissement : " + reason);
                     targetPlayer.sendTitle(
-                            "&cAvertissement !",
-                            "&e"+ reason,
+                    		MessageColor.RED +"Avertissement !",
+                    		MessageColor.BLACK + reason,
                             10, 60, 10
                     );
                 }
-                player.sendMessage(MessageColor.GOLD.apply("Le joueur a été averti."));
+                player.sendMessage(MessageColor.RED + ("Le joueur a été averti."));
                 messagediscord.sendmessage("⚠️ **Avertissement** | " + targetPS.getName() + " a reçu un avertissement\n" +
                         "**Raison :** " + reason + "\n" +
                         "**Modérateur :** " + player.getName(), "moderation");

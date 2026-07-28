@@ -44,13 +44,13 @@ commands:
   marketadmin:
     description: Commandes admin du marché (info, set, reset, recalc)
     usage: /marketadmin
-    permission: farmland.admin
+    permission: farmland.moderation
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
   psadmin:
     description: Gestion admin des joueurs (info, money, upgrade, saveall)
     usage: /psadmin
-    permission: farmland.admin
+    permission: farmland.moderation
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
   raceadmin:

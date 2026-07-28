@@ -29,7 +29,7 @@ public class MenuPlotConfig {
         GameMenu.set_oneitem_menu(CustomItemType.TIME_FREEZE.create(), "Temps qui passe", 1, inv);
      
         // WATER BUCKET - Eau/Lave
-        String namewaterlava = "";
+        String namewaterlava = "erreur";
         if(playerserver.getPlotdata().getwaterlava()) {
         	namewaterlava = "Eau/Lave désactivé";
         }else {
@@ -40,11 +40,11 @@ public class MenuPlotConfig {
         
 
         // DOOR - Privé/Public
-        String namePrivatepublic = "Public/Privée";
+        String namePrivatepublic = "erreur";
         if(playerserver.getPlotdata().getPrivateplot()) {
-        	namewaterlava = "Plot privé";
+        	namePrivatepublic = "Plot privé";
         }else {
-        	namewaterlava = "Plot public";
+        	namePrivatepublic = "Plot public";
         	
         }
         GameMenu.set_oneitem_menu(CustomItemType.DOOR_PRIVACY.create(), namePrivatepublic, 14, inv);

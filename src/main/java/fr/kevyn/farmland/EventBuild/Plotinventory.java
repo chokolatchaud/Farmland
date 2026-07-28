@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameRule;
+import org.bukkit.GameRules;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -17,7 +19,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import fr.kevyn.farmland.FarmlandMain;
@@ -147,11 +148,14 @@ public class Plotinventory implements Listener {
                 }
             }
             if (customType == CustomItemType.TIME_FREEZE) {
+            	World plot = Bukkit.getWorld(ps.getPlotdata().getNameWorld());
                 if (ps.getPlotdata().getMeteoActive().equalsIgnoreCase("minecraftActive")) {
-                    ps.getPlotdata().setMeteoActive("minecraftDeactive", Bukkit.getWorld(ps.getPlotdata().getNameWorld()));
+                    ps.getPlotdata().setMeteoActive("minecraftDeactive", plot);
+                    plot.setGameRule(GameRules.ADVANCE_TIME, true);
                     player.sendMessage(MessageColor.GOLD.apply("La météo se met à bouger"));
                 } else {
-                    ps.getPlotdata().setMeteoActive("minecraftActive", Bukkit.getWorld(ps.getPlotdata().getNameWorld()));
+                    ps.getPlotdata().setMeteoActive("minecraftActive", plot);
+                    plot.setGameRule(GameRules.ADVANCE_TIME, false);
                     player.sendMessage(MessageColor.GOLD.apply("La météo se fige"));
                 }
             }

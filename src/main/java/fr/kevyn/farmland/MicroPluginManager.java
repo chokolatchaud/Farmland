@@ -11,10 +11,14 @@ import fr.kevyn.farmland.EventBuild.EventBuildAndUse;
 import fr.kevyn.farmland.EventBuild.LuckpermGrade;
 import fr.kevyn.farmland.EventBuild.Plotinventory;
 import fr.kevyn.farmland.game.GameCommands;
+import fr.kevyn.farmland.game.HubCommand;
+import fr.kevyn.farmland.market.BuyCommands;
 import fr.kevyn.farmland.market.DonateMoneyForStructure;
+import fr.kevyn.farmland.market.MarketAdminCommands;
 import fr.kevyn.farmland.market.MarketCalc;
 import fr.kevyn.farmland.market.Marketcommands;
 import fr.kevyn.farmland.moderation.ModerationCommands;
+import fr.kevyn.farmland.playerserver.PlayerAdminCommands;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.farmland.region.GameRegion;
@@ -25,6 +29,7 @@ import fr.kevyn.farmland.scoreboard.CreativePlotScoreboard;
 import fr.kevyn.farmland.structure.Definecommands;
 import fr.kevyn.farmland.structure.GetStructure;
 import fr.kevyn.farmland.structure.StructureCommands;
+import fr.kevyn.farmland.vote.VoteCommand;
 import fr.kevyn.farmland.worldeditgestion.WorldEditSecureListener;
 import fr.kevyn.plot.Plotcommands;
 
@@ -53,13 +58,13 @@ public class MicroPluginManager {
         plugin.getCommand("undefine").setExecutor(new Definecommands());
         plugin.getCommand("market").setExecutor(new Marketcommands());
         plugin.getCommand("recalcmarket").setExecutor(new Marketcommands());
-        plugin.getCommand("buy").setExecutor(new fr.kevyn.farmland.market.BuyCommands(plugin));
-        plugin.getCommand("tuto").setExecutor(new fr.kevyn.farmland.TutoCommand());
-        plugin.getCommand("hub").setExecutor(new fr.kevyn.farmland.game.HubCommand(plugin));
-        plugin.getCommand("joinboat").setExecutor(new fr.kevyn.farmland.game.HubCommand(plugin));
-        plugin.getCommand("vote").setExecutor(new fr.kevyn.farmland.vote.VoteCommand(plugin));
-        plugin.getCommand("marketadmin").setExecutor(new fr.kevyn.farmland.market.MarketAdminCommands(plugin));
-        plugin.getCommand("psadmin").setExecutor(new fr.kevyn.farmland.playerserver.PlayerAdminCommands(plugin));
+        plugin.getCommand("buy").setExecutor(new BuyCommands(plugin));
+        plugin.getCommand("tuto").setExecutor(new TutoCommand());
+        plugin.getCommand("hub").setExecutor(new HubCommand(plugin));
+        plugin.getCommand("joinboat").setExecutor(new HubCommand(plugin));
+        plugin.getCommand("vote").setExecutor(new VoteCommand(plugin));
+        plugin.getCommand("marketadmin").setExecutor(new MarketAdminCommands(plugin));
+        plugin.getCommand("psadmin").setExecutor(new PlayerAdminCommands(plugin));
 
         // hologrammes du marche : chargement + apparition/rafraichissement toutes les 60s
         fr.kevyn.farmland.market.MarketHolograms.load(plugin);

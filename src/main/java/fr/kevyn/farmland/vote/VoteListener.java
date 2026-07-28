@@ -66,7 +66,7 @@ public class VoteListener implements Listener {
             return;
         }
 
-        int reward = 15 * votes;
+        int reward = 150 * votes;
         ps.setMoney(ps.getMoney() + reward);
         player.sendMessage(MessageColor.GOLD.apply("✦ Merci pour " + (votes > 1 ? "tes " + votes + " votes" : "ton vote") + " ! Tu reçois +" + reward + " $FB !"));
         player.sendMessage(MessageColor.GRAY.apply("Tape /buy worldedit pour acheter 1h de WorldEdit (15 $FB)"));
