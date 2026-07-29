@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public class BuyCommands implements CommandExecutor {
 
-    private static final int WE_COST = 15;
+    private static final int WE_COST = 45;
     private static final long WE_DURATION_MS = 60L * 60 * 1000;
 
     private static final String[] WE_PERMISSIONS = {

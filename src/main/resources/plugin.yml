@@ -66,9 +66,9 @@ commands:
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
   joinboat:
-    description: Démarre ou arrête votre voiture
-    usage: /car [start|stop]
-    permission: farmland.moderation
+    description: Démarre une course de bateau
+    usage: /joinboat
+    permission: farmland.gamecommands
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
   banf:
