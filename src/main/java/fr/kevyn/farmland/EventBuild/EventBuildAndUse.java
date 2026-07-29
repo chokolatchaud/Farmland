@@ -14,6 +14,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -67,6 +68,20 @@ public class EventBuildAndUse implements Listener {
 
         Player player = event.getPlayer();
         Block bloc = event.getClickedBlock();
+        GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
+
+        if (!authorizedbuild(player, gameregion, bloc, false, null)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onHangingPlace(HangingPlaceEvent event) {
+        // couvre cadres, cadres lumineux, tableaux et noeuds de laisse en un seul handler
+        Player player = event.getPlayer();
+        if (player == null) return; // securite : pose non-joueur (ex: dispenser), rare
+
+        Block bloc = event.getBlock();
         GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
 
         if (!authorizedbuild(player, gameregion, bloc, false, null)) {
