@@ -23,6 +23,6 @@ public class AnnouncementBroadcaster {
         String message = messages.get(random.nextInt(messages.size()));
 
         Bukkit.broadcastMessage("§d§l✦ ANNONCE ✦ §f" + message);
-        messagediscord.sendmessage("📢 " + message, "message");
+
     }
 }

@@ -125,9 +125,6 @@ public class MicroPluginManager {
             }
         }, 0L, 40L);
 
-        // module course de bateaux : protege par try-catch pour qu'une erreur ici
-        // ne puisse plus jamais bloquer l'enregistrement des systemes au-dessus
-        // (scoreboard, tab, market, vote...) comme cela avait casse le scoreboard
         try {
             plugin.getCommand("raceadmin").setExecutor(new fr.kevyn.farmland.boathub.RaceAdminCommands(plugin));
             fr.kevyn.farmland.boathub.BoatRaceHologram.load(plugin);
@@ -269,7 +266,7 @@ public class MicroPluginManager {
             // push des sites de vote (une seule source de verite : le config.yml du plugin)
             plugin.getWebApi().pushVoteSites(
                 plugin.getConfig().getStringList("vote.sites"),
-                plugin.getConfig().getString("vote.reward", "+15 $FB")
+                plugin.getConfig().getString("vote.reward", "World Edit 1 heure")
             );
 
             // push leaderboard au demarrage + toutes les webapi.leaderboard_push_minutes (defaut 15min)
