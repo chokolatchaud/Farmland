@@ -65,6 +65,8 @@ public class MicroPluginManager {
         plugin.getCommand("vote").setExecutor(new VoteCommand(plugin));
         plugin.getCommand("marketadmin").setExecutor(new MarketAdminCommands(plugin));
         plugin.getCommand("psadmin").setExecutor(new PlayerAdminCommands(plugin));
+        plugin.getCommand("plotadmin").setExecutor(new fr.kevyn.plot.PlotAdminCommands(plugin));
+        plugin.getCommand("structuresadmin").setExecutor(new fr.kevyn.farmland.structure.StructuresAdminCommands(plugin));
 
         // hologrammes du marche : chargement + apparition/rafraichissement toutes les 60s
         fr.kevyn.farmland.market.MarketHolograms.load(plugin);
