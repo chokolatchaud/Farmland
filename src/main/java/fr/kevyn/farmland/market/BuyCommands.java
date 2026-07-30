@@ -75,6 +75,28 @@ public class BuyCommands implements CommandExecutor {
                 );
             }
         });
+
+        // 3. Retirer les permissions a expiration (planifie a chaque octroi, remplace le precedent)
+        long ticksUntilExpiry = (newExpiry - now) / 50L;
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            PlayerServer psNow = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
+            if (psNow != null && !psNow.isWeActive()) {
+                removeAttachment(player.getUniqueId());
+                lp.getUserManager().loadUser(player.getUniqueId()).thenAcceptAsync(user -> {
+                    if (user != null) {
+                        for (String perm : WE_PERMISSIONS) {
+                            user.data().remove(net.luckperms.api.node.Node.builder(perm).value(true).build());
+                        }
+                        lp.getUserManager().saveUser(user).thenRun(() ->
+                            lp.getMessagingService().ifPresent(ms -> ms.pushUserUpdate(user))
+                        );
+                    }
+                });
+                if (player.isOnline()) {
+                    player.sendMessage(MessageColor.RED.apply("Ton WorldEdit a expiré. Tape /buy worldedit pour renouveler."));
+                }
+            }
+        }, ticksUntilExpiry);
     }
 
     @Override
@@ -145,29 +167,6 @@ public class BuyCommands implements CommandExecutor {
         grantWorldEditTime(player, ps, plugin, 1);
         player.sendMessage(MessageColor.GREEN.apply("✔ WorldEdit activé pour 1 heure ! (-" + WE_COST + " $FB)"));
         player.sendMessage(MessageColor.GRAY.apply("Solde restant : " + ps.getMoney() + " $FB"));
-
-        // Retirer les permissions à expiration
-        long ticksUntilExpiry = (newExpiry - now) / 50L;
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            PlayerServer psNow = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
-            if (psNow != null && !psNow.isWeActive()) {
-                removeAttachment(player.getUniqueId());
-                // Retirer aussi les perms LuckPerms
-                lp.getUserManager().loadUser(player.getUniqueId()).thenAcceptAsync(user -> {
-                    if (user != null) {
-                        for (String perm : WE_PERMISSIONS) {
-                            user.data().remove(net.luckperms.api.node.Node.builder(perm).value(true).build());
-                        }
-                        lp.getUserManager().saveUser(user).thenRun(() ->
-                            lp.getMessagingService().ifPresent(ms -> ms.pushUserUpdate(user))
-                        );
-                    }
-                });
-                if (player.isOnline()) {
-                    player.sendMessage(MessageColor.RED.apply("Ton WorldEdit a expiré. Tape /buy worldedit pour renouveler."));
-                }
-            }
-        }, ticksUntilExpiry);
     }
 
     // Appelé à la déconnexion pour nettoyer les attachments
