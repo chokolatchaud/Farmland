@@ -35,7 +35,7 @@ public class CosmeticShop {
         }
 
         public ItemStack createItem() {
-            ItemStack item = new ItemStack(Material.PAPER);
+            ItemStack item = new ItemStack(Material.DIAMOND_HELMET);
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName("§6" + name);
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -58,9 +58,9 @@ public class CosmeticShop {
     // deja a tes vrais fichiers du resource pack genere
     public static final List<Cosmetic> COSMETICS = new ArrayList<>(List.of(
             new Cosmetic(1, "Casquette",        300,  "custom:cap"),
-            new Cosmetic(2, "Chapeau Coloré",    400,  "custom:couleurschapeau"),
+            new Cosmetic(2, "Chapeau de paille",    400,  "custom:couleurschapeau"),
             new Cosmetic(3, "Lunettes",          350,  "custom:glasses"),
-            new Cosmetic(4, "Lunettes Noires",   350,  "custom:lunettesnoires"),
+            new Cosmetic(4, "Lunettes Noires",   500,  "custom:lunettesnoires"),
             new Cosmetic(5, "Couronne de Fleurs",500,  "custom:fleurs"),
             new Cosmetic(6, "Pousse",            250,  "custom:sprout")
     ));
