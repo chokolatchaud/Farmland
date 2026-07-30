@@ -35,7 +35,7 @@ public class CosmeticShop {
         }
 
         public ItemStack createItem() {
-            ItemStack item = new ItemStack(Material.DIAMOND_HELMET);
+            ItemStack item = new ItemStack(Material.PAPER);
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName("§6" + name);
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -62,7 +62,8 @@ public class CosmeticShop {
             new Cosmetic(3, "Lunettes",          350,  "custom:glasses"),
             new Cosmetic(4, "Lunettes Noires",   500,  "custom:lunettesnoires"),
             new Cosmetic(5, "Couronne de Fleurs",500,  "custom:fleurs"),
-            new Cosmetic(6, "Pousse",            250,  "custom:sprout")
+            new Cosmetic(6, "Pousse",            250,  "custom:sprout"),
+            new Cosmetic(9, "A venir",            0,  "custom:nul")
     ));
 
     public static Cosmetic getById(int id) {
