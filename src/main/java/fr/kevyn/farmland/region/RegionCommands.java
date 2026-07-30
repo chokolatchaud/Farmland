@@ -87,7 +87,7 @@ public boolean onCommand(CommandSender sender,Command command,String label,
         
     } else if(command.getName().equalsIgnoreCase("region")) {
         if((args.length <= 1)) {
-            player.sendMessage("§cVeuiller mettre un argument");
+            player.sendMessage("§csetproprietaire/setcanbuild/tp pseudo");
             return true;
         }
         
