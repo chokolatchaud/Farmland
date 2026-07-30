@@ -65,6 +65,22 @@ commands:
     permission: farmland.moderation
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
+  tpa:
+    description: Demander a se teleporter vers un joueur
+    usage: /tpa <joueur>
+
+  tpahere:
+    description: Demander a un joueur de venir a soi
+    usage: /tpahere <joueur>
+
+  tpaccept:
+    description: Accepter la derniere demande de teleportation
+    usage: /tpaccept
+
+  tpdeny:
+    description: Refuser la derniere demande de teleportation
+    usage: /tpdeny
+
   raceadmin:
     description: Gestion admin de la course de bateaux (holo, reset)
     usage: /raceadmin

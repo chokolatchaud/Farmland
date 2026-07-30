@@ -68,6 +68,12 @@ public class MicroPluginManager {
         plugin.getCommand("plotadmin").setExecutor(new fr.kevyn.plot.PlotAdminCommands(plugin));
         plugin.getCommand("structuresadmin").setExecutor(new fr.kevyn.farmland.structure.StructuresAdminCommands(plugin));
 
+        fr.kevyn.farmland.tpa.TpaCommand tpaCommand = new fr.kevyn.farmland.tpa.TpaCommand(plugin);
+        plugin.getCommand("tpa").setExecutor(tpaCommand);
+        plugin.getCommand("tpahere").setExecutor(tpaCommand);
+        plugin.getCommand("tpaccept").setExecutor(tpaCommand);
+        plugin.getCommand("tpdeny").setExecutor(tpaCommand);
+
         // hologrammes du marche : chargement + apparition/rafraichissement toutes les 60s
         fr.kevyn.farmland.market.MarketHolograms.load(plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, () -> fr.kevyn.farmland.market.MarketHolograms.updateAll(plugin), 100L, 20L * 60);
