@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public class BuyCommands implements CommandExecutor {
 
-    private static final int WE_COST = 45;
+    private static final int WE_COST = 200;
     private static final long WE_DURATION_MS = 60L * 60 * 1000;
 
     private static final String[] WE_PERMISSIONS = {
@@ -47,6 +47,34 @@ public class BuyCommands implements CommandExecutor {
             attachment.setPermission(perm, true);
         }
         attachments.put(player.getUniqueId(), attachment);
+    }
+
+    /**
+     * Octroie du temps WorldEdit SANS toucher a l'argent du joueur.
+     * Utilise par /buy worldedit (apres deduction du cout) ET par le systeme
+     * de vote (recompense gratuite, plus de $FB pour le vote).
+     */
+    public static void grantWorldEditTime(Player player, PlayerServer ps, FarmlandMain plugin, int hours) {
+        long now = System.currentTimeMillis();
+        long currentExpiry = ps.isWeActive() ? ps.getWeTimeExpiry() : now;
+        long newExpiry = currentExpiry + (WE_DURATION_MS * hours);
+        ps.setWeTimeExpiry(newExpiry);
+
+        // 1. PermissionAttachment Bukkit (instantané)
+        giveAttachment(player, plugin);
+
+        // 2. LuckPerms async (pour que FAWE reconnaisse les perms)
+        net.luckperms.api.LuckPerms lp = net.luckperms.api.LuckPermsProvider.get();
+        lp.getUserManager().loadUser(player.getUniqueId()).thenAcceptAsync(user -> {
+            if (user != null) {
+                for (String perm : WE_PERMISSIONS) {
+                    user.data().add(net.luckperms.api.node.Node.builder(perm).value(true).build());
+                }
+                lp.getUserManager().saveUser(user).thenRun(() ->
+                    lp.getMessagingService().ifPresent(ms -> ms.pushUserUpdate(user))
+                );
+            }
+        });
     }
 
     @Override
@@ -108,28 +136,7 @@ public class BuyCommands implements CommandExecutor {
 
     private void activateWorldEdit(Player player, PlayerServer ps) {
         ps.setMoney(ps.getMoney() - WE_COST);
-
-        long now = System.currentTimeMillis();
-        long currentExpiry = ps.isWeActive() ? ps.getWeTimeExpiry() : now;
-        long newExpiry = currentExpiry + WE_DURATION_MS;
-        ps.setWeTimeExpiry(newExpiry);
-
-        // 1. PermissionAttachment Bukkit (instantané)
-        giveAttachment(player, plugin);
-
-        // 2. LuckPerms async (pour que FAWE reconnaisse les perms)
-        net.luckperms.api.LuckPerms lp = net.luckperms.api.LuckPermsProvider.get();
-        lp.getUserManager().loadUser(player.getUniqueId()).thenAcceptAsync(user -> {
-            if (user != null) {
-                for (String perm : WE_PERMISSIONS) {
-                    user.data().add(net.luckperms.api.node.Node.builder(perm).value(true).build());
-                }
-                lp.getUserManager().saveUser(user).thenRun(() ->
-                    lp.getMessagingService().ifPresent(ms -> ms.pushUserUpdate(user))
-                );
-            }
-        });
-
+        grantWorldEditTime(player, ps, plugin, 1);
         player.sendMessage(MessageColor.GREEN.apply("✔ WorldEdit activé pour 1 heure ! (-" + WE_COST + " $FB)"));
         player.sendMessage(MessageColor.GRAY.apply("Solde restant : " + ps.getMoney() + " $FB"));
 

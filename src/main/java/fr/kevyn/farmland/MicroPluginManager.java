@@ -38,7 +38,7 @@ public class MicroPluginManager {
     public static void moduleGame(FarmlandMain plugin) {
     	
     	int timecalculateMarket = 20 *60 *60 *24 * 1; //1 jour
-    	int timeDonateMoneyStructure = 20 * 60 * 60; //1 heure
+    	int timeDonateMoneyStructure = 20 * 60 * 30; //30 minutes
 
         GameCommands gameCommands = new GameCommands();
 

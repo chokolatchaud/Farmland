@@ -16,7 +16,7 @@ import fr.kevyn.farmland.playerserver.PlayerServer;
 public class MenuPlotUpgrade {
 
     // Prix de base des upgrades dans l'ordre, pour UN palier (21 upgrades)
-    private static final int[] UPGRADE_COSTS = {10, 10, 10, 10, 10, 10, 10, 25, 25, 25, 25, 25, 25, 25, 60, 60, 60, 60, 60, 60, 60};
+    private static final int[] UPGRADE_COSTS = {50, 50, 50, 50, 50, 50, 50, 65, 65, 65, 65, 65, 65, 65, 100, 100, 100, 100, 100, 100, 100};
 
     /** Nombre d'upgrades affiches par palier (le systeme est infini au-dela) */
     private static final int UPGRADES_PER_PAGE = UPGRADE_COSTS.length; // 21

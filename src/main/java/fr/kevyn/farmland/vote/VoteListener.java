@@ -66,14 +66,13 @@ public class VoteListener implements Listener {
             return;
         }
 
-        int reward = 150 * votes;
-        ps.setMoney(ps.getMoney() + reward);
-        player.sendMessage(MessageColor.GOLD.apply("✦ Merci pour " + (votes > 1 ? "tes " + votes + " votes" : "ton vote") + " ! Tu reçois +" + reward + " $FB !"));
-        player.sendMessage(MessageColor.GRAY.apply("Tape /buy worldedit pour acheter 1h de WorldEdit (15 $FB)"));
+        // le vote ne donne plus de $FB : uniquement du temps WorldEdit gratuit (1h par vote)
+        fr.kevyn.farmland.market.BuyCommands.grantWorldEditTime(player, ps, plugin, votes);
+        player.sendMessage(MessageColor.GOLD.apply("✦ Merci pour " + (votes > 1 ? "tes " + votes + " votes" : "ton vote") + " ! Tu reçois " + votes + "h de WorldEdit gratuit !"));
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.sendMessage(MessageColor.YELLOW.apply("✦ " + player.getName() + " a voté pour le serveur ! Merci !"));
         }
-        plugin.getLogger().info("[Vote] " + player.getName() + " → +" + reward + " $FB accordés (" + votes + " vote(s))");
+        plugin.getLogger().info("[Vote] " + player.getName() + " → +" + votes + "h WorldEdit accordées (" + votes + " vote(s))");
     }
 
     private void savePending() {

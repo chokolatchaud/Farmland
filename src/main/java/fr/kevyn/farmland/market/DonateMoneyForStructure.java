@@ -20,16 +20,21 @@ public class DonateMoneyForStructure {
 
 		for (GameRegion structure : GetStructure.getallStructure()) {
 			Player player = Bukkit.getPlayer(structure.getPropriétaire());
-			int moneystructure = moneycalc(structure, plugin);
+			int moneystructureRaw = moneycalc(structure, plugin);
 
 			PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(structure.getPropriétaire());
 			if (ps == null) continue;
 
-			if (moneystructure > 500) {
+			// vrai garde-fou anti-triche (valeur totalement aberrante), plus haut
+			// que le plafond legitime desormais (150-500)
+			if (moneystructureRaw > 2000) {
 				if (player != null) player.sendMessage(MessageColor.RED.apply("Erreur Sur vos Structure, Veuillez Voir avec Un Membre du Staff"));
-				plugin.getLogger().warning("[Marche] Revenu anormal pour " + structure.getName() + " : " + moneystructure);
+				plugin.getLogger().warning("[Marche] Revenu anormal pour " + structure.getName() + " : " + moneystructureRaw);
 				continue;
 			}
+
+			// chaque structure rapporte entre 150 et 500 $FB, quelle que soit sa note/le marche
+			int moneystructure = Math.max(150, Math.min(500, moneystructureRaw));
 
 			if (player != null && player.isOnline()) {
 				// En ligne : revenu plein
