@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 /**
  * Liste des cosmetiques achetables via /buy cosmetic.
- * Base : CARVED_PUMPKIN reskinne par custom model data (resource pack).
+ * Base : Material.PAPER + item_model (namespace "custom:...") genere par
+ * ton resource pack, meme systeme que CustomItemType.java.
  *
- * ⚠️ EXEMPLE A REMPLACER : l'entree ci-dessous a un customModelData=1 et un
- * prix de demonstration. Duplique la ligne pour chacun de tes vrais chapeaux,
- * en mettant le VRAI customModelData de ton resource pack et le prix voulu.
+ * Les 6 modeles ci-dessous existent DEJA dans ton resource pack (genere le
+ * 30/07) : cap, couleurschapeau, glasses, lunettesnoires, fleurs, sprout.
+ * ⚠️ Ajuste juste les NOMS AFFICHES et les PRIX selon tes envies.
  */
 public class CosmeticShop {
 
@@ -21,30 +25,44 @@ public class CosmeticShop {
         public final int id;
         public final String name;
         public final int price;
-        public final int customModelData;
+        public final String itemModel; // ex: "custom:cap"
 
-        public Cosmetic(int id, String name, int price, int customModelData) {
+        public Cosmetic(int id, String name, int price, String itemModel) {
             this.id = id;
             this.name = name;
             this.price = price;
-            this.customModelData = customModelData;
+            this.itemModel = itemModel;
         }
 
         public ItemStack createItem() {
-            ItemStack item = new ItemStack(Material.CARVED_PUMPKIN);
+            ItemStack item = new ItemStack(Material.PAPER);
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName("§6" + name);
-            meta.setCustomModelData(customModelData);
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+
+            // meme technique que CustomItemType.create() : item_model (1.21.4+)
+            // avec repli PersistentDataContainer si l'API n'est pas disponible
+            try {
+                meta.setItemModel(NamespacedKey.fromString(itemModel));
+            } catch (Exception e) {
+                NamespacedKey key = new NamespacedKey("farmland", "item_model");
+                meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, itemModel);
+            }
+
             item.setItemMeta(meta);
             return item;
         }
     }
 
-    // ⚠️ REMPLACE CET EXEMPLE PAR TES VRAIS CHAPEAUX (id unique, nom, prix, customModelData)
+    // ⚠️ Modifie les noms/prix comme tu veux, les item_model correspondent
+    // deja a tes vrais fichiers du resource pack genere
     public static final List<Cosmetic> COSMETICS = new ArrayList<>(List.of(
-            new Cosmetic(1, "Citrouille Dorée", 500, 1)
-            // new Cosmetic(2, "Ton 2eme chapeau", 750, 2),
-            // new Cosmetic(3, "Ton 3eme chapeau", 1000, 3),
+            new Cosmetic(1, "Casquette",        300,  "custom:cap"),
+            new Cosmetic(2, "Chapeau Coloré",    400,  "custom:couleurschapeau"),
+            new Cosmetic(3, "Lunettes",          350,  "custom:glasses"),
+            new Cosmetic(4, "Lunettes Noires",   350,  "custom:lunettesnoires"),
+            new Cosmetic(5, "Couronne de Fleurs",500,  "custom:fleurs"),
+            new Cosmetic(6, "Pousse",            250,  "custom:sprout")
     ));
 
     public static Cosmetic getById(int id) {
