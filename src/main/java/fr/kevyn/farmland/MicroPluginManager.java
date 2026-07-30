@@ -78,6 +78,11 @@ public class MicroPluginManager {
         fr.kevyn.farmland.market.MarketHolograms.load(plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, () -> fr.kevyn.farmland.market.MarketHolograms.updateAll(plugin), 100L, 20L * 60);
 
+        // hologramme du guide : chargement + reessai toutes les 60s si le chunk n'est pas encore charge
+        fr.kevyn.farmland.game.GuideHologram.load(plugin);
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> fr.kevyn.farmland.game.GuideHologram.updateAll(plugin), 100L, 20L * 60);
+        plugin.getCommand("guideholo").setExecutor(new fr.kevyn.farmland.game.GuideHologramCommand(plugin));
+
         // autosave des joueurs toutes les 5 minutes (evite la perte de session si crash)
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             fr.kevyn.farmland.save.Filesave.SavePlayerserverFile(plugin);

@@ -81,6 +81,12 @@ commands:
     description: Refuser la derniere demande de teleportation
     usage: /tpdeny
 
+  guideholo:
+    description: Gestion de l'hologramme du guide (set, remove)
+    usage: /guideholo
+    permission: farmland.moderation
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
   raceadmin:
     description: Gestion admin de la course de bateaux (holo, reset)
     usage: /raceadmin
