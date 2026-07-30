@@ -150,6 +150,7 @@ public class MicroPluginManager {
             plugin.getServer().getPluginManager().registerEvents(new EventBuildAndUse(plugin), plugin);
             plugin.getServer().getPluginManager().registerEvents(new Plotinventory(plugin), plugin);
             plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.boathub.BoatRaceListener(plugin), plugin);
+            plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.afk.AfkListener(), plugin);
             plugin.getCommand("plot").setExecutor(new Plotcommands(plugin));
         } catch (Exception e) {
             plugin.getLogger().severe("Erreur lors du chargement du module Plot !");

@@ -36,7 +36,12 @@ public class DonateMoneyForStructure {
 			// chaque structure rapporte entre 150 et 500 $FB, quelle que soit sa note/le marche
 			int moneystructure = Math.max(150, Math.min(500, moneystructureRaw));
 
-			if (player != null && player.isOnline()) {
+			// un joueur AFK depuis 20 min est traite EXACTEMENT comme un joueur
+			// hors ligne (taux reduit a 20%), meme s'il est techniquement connecte
+			boolean vraimentActif = player != null && player.isOnline()
+					&& !fr.kevyn.farmland.afk.AfkManager.isAfk(player);
+
+			if (vraimentActif) {
 				// En ligne : revenu plein
 				ps.setMoney(moneystructure + ps.getMoney());
 				player.sendMessage(MessageColor.GREEN.apply("+" + moneystructure + " $FB pour " + structure.getName()));

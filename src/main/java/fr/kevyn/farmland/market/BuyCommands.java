@@ -91,8 +91,14 @@ public class BuyCommands implements CommandExecutor {
         if (ps == null) return true;
 
         if (!command.getName().equalsIgnoreCase("buy")) return true;
+
+        if (args.length >= 1 && args[0].equalsIgnoreCase("cosmetic")) {
+            player.openInventory(fr.kevyn.farmland.menu.MenuCosmetics.createmenu(ps));
+            return true;
+        }
+
         if (args.length < 1 || !args[0].equalsIgnoreCase("worldedit")) {
-            player.sendMessage(MessageColor.RED.apply("Usage : /buy worldedit"));
+            player.sendMessage(MessageColor.RED.apply("Usage : /buy worldedit  ou  /buy cosmetic"));
             return true;
         }
 

@@ -118,6 +118,12 @@ public class PlayerServer {
     public int getUpgrade() {
         return upgrade;
     }
+
+    // cosmetiques possedes (IDs) - voir fr.kevyn.farmland.cosmetics.CosmeticShop
+    java.util.Set<Integer> cosmeticsOwned = new java.util.HashSet<>();
+    public java.util.Set<Integer> getCosmeticsOwned() {
+        return cosmeticsOwned;
+    }
     public int getStructure() {
 		return structure;
 	}

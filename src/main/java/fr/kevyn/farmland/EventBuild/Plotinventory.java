@@ -83,6 +83,37 @@ public class Plotinventory implements Listener {
             return;
         }
 
+        // ── COSMETICS : achat/equipement d'un chapeau ─────────────────────────
+        if (gamemenu.getTypemenu() == TypeMenu.COSMETICS) {
+            int slot = event.getSlot();
+            if (slot < 0 || slot >= fr.kevyn.farmland.cosmetics.CosmeticShop.COSMETICS.size()) return;
+
+            fr.kevyn.farmland.cosmetics.CosmeticShop.Cosmetic cosmetic =
+                    fr.kevyn.farmland.cosmetics.CosmeticShop.COSMETICS.get(slot);
+
+            PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
+            if (ps == null) return;
+
+            if (ps.getCosmeticsOwned().contains(cosmetic.id)) {
+                player.getInventory().setHelmet(cosmetic.createItem());
+                player.sendMessage(MessageColor.GREEN.apply("✔ " + cosmetic.name + " équipé !"));
+                player.closeInventory();
+                return;
+            }
+
+            if (ps.getMoney() < cosmetic.price) {
+                player.sendMessage(MessageColor.RED.apply("Tu n'as pas assez d'argent (" + cosmetic.price + " $FB)"));
+                return;
+            }
+
+            ps.setMoney(ps.getMoney() - cosmetic.price);
+            ps.getCosmeticsOwned().add(cosmetic.id);
+            player.getInventory().setHelmet(cosmetic.createItem());
+            player.sendMessage(MessageColor.GREEN.apply("✔ " + cosmetic.name + " acheté et équipé ! (-" + cosmetic.price + " $FB)"));
+            player.closeInventory();
+            return;
+        }
+
         // ── CUSTOM ITEMS ──────────────────────────────────────────────────────
         CustomItemType customType = CustomItemType.fromItem(clicked);
         if (customType == null) return;
