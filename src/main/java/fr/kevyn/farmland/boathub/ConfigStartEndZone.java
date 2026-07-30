@@ -263,6 +263,7 @@ public class ConfigStartEndZone {
 					if (deja >= 3) {
 						int tempsCourse = game.getTimegame() - game.racestarttime;
 						boolean record = BoatTimeSave.recordTime(plugin, player.getName(), tempsCourse);
+						DailyBoatTimeSave.recordDailyTime(plugin, player.getName(), tempsCourse);
 
 						player.sendMessage("§6§lVICTOIRE ! §fTemps : §b" + tempsCourse + "s");
 						if (record) {

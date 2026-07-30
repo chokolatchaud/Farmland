@@ -29,3 +29,13 @@ vote:
     - "https://top-serveurs.net/minecraft/farmland"
   # texte de récompense affiché sur la page Vote du site
   reward: "+15 $FB"
+
+# Annonces aleatoires diffusees toutes les 5 minutes (jeu + Discord)
+annonces:
+  messages:
+    - "Rejoins la course de bateaux avec /joinboat, depuis n'importe ou sur le serveur !"
+    - "Suis le marche en direct sur mine.farm-land.fr"
+    - "Vote pour le serveur avec /vote et gagne du temps WorldEdit gratuit !"
+    - "Le podium quotidien de la course de bateaux rapporte jusqu'a 500 $FB !"
+    - "Personnalise ton look avec /buy cosmetic !"
+    - "Construis, vends, grimpe dans le classement sur mine.farm-land.fr"

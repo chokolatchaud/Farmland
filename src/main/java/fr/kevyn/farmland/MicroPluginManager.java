@@ -153,6 +153,19 @@ public class MicroPluginManager {
             plugin.getServer().getPluginManager().registerEvents(new Plotinventory(plugin), plugin);
             plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.boathub.BoatRaceListener(plugin), plugin);
             plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.afk.AfkListener(), plugin);
+            plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.chat.ChatCalcListener(), plugin);
+
+            // podium quotidien de la course de bateaux : verifie toutes les minutes si le jour a change
+            Bukkit.getScheduler().runTaskTimer(plugin, () ->
+                fr.kevyn.farmland.boathub.DailyBoatReward.checkAndRewardIfNewDay(plugin), 100L, 20L * 60);
+
+            // calcul dans le chat toutes les 5 minutes
+            Bukkit.getScheduler().runTaskTimer(plugin, () ->
+                fr.kevyn.farmland.chat.ChatCalcListener.lancerNouveauCalcul(plugin), 20L * 60 * 5, 20L * 60 * 5);
+
+            // annonce aleatoire toutes les 5 minutes (jeu + Discord)
+            Bukkit.getScheduler().runTaskTimer(plugin, () ->
+                fr.kevyn.farmland.chat.AnnouncementBroadcaster.broadcastRandom(plugin), 20L * 60 * 5, 20L * 60 * 5);
             plugin.getCommand("plot").setExecutor(new Plotcommands(plugin));
         } catch (Exception e) {
             plugin.getLogger().severe("Erreur lors du chargement du module Plot !");
