@@ -20,6 +20,7 @@ import fr.kevyn.farmland.save.Filesave;
  *   /plotadmin upgrade <joueur> <rang>        -> force le rang d'upgrade (ajuste la bordure en cascade)
  *   /plotadmin privacy <joueur> <true|false>  -> force la confidentialite du plot
  *   /plotadmin reload <joueur>                -> recharge/regenere le monde du plot s'il est bloque
+ *   /plotadmin reset <joueur>                 -> remet le TERRAIN du plot a zero (garde bordure/upgrade)
  */
 public class PlotAdminCommands implements CommandExecutor {
 
@@ -38,6 +39,7 @@ public class PlotAdminCommands implements CommandExecutor {
             sender.sendMessage("§6/plotadmin upgrade <joueur> <rang> §7- force le rang d'upgrade");
             sender.sendMessage("§6/plotadmin privacy <joueur> <true|false> §7- force la confidentialite");
             sender.sendMessage("§6/plotadmin reload <joueur> §7- recharge le monde du plot");
+            sender.sendMessage("§6/plotadmin reset <joueur> §7- remet le TERRAIN a zero (garde bordure/upgrade)");
             return true;
         }
 
@@ -48,6 +50,7 @@ public class PlotAdminCommands implements CommandExecutor {
             case "upgrade": return upgradeCommand(sender, args);
             case "privacy": return privacyCommand(sender, args);
             case "reload": return reloadCommand(sender, args);
+            case "reset": return resetCommand(sender, args);
             default:
                 sender.sendMessage("§cSous-commande inconnue ! (/plotadmin pour l'aide)");
                 return true;
@@ -213,6 +216,55 @@ public class PlotAdminCommands implements CommandExecutor {
         new Plot(java.util.UUID.fromString(plotName), plugin);
         sender.sendMessage("§aRechargement du plot de " + ps.getName() + " lancé !");
         plugin.getLogger().info("[PlotAdmin] " + sender.getName() + " a recharge le plot de " + ps.getName());
+        return true;
+    }
+
+    /**
+     * Remet le TERRAIN du plot a zero (monde regenere vierge) tout en
+     * PRESERVANT la progression du joueur (bordure achetee, rang d'upgrade).
+     * Utile pour nettoyer un plot completement sature/grieffe (ex: pile
+     * massive de TNT) sans faire perdre au joueur ce qu'il a paye.
+     *
+     * ⚠️ La ligne "multivers.deleteWorld(...)" utilise l'API Multiverse-Core 5.x
+     * (org.mvplugins.multiverse.core.world.options.DeleteWorldOptions) - le nom
+     * exact du builder n'a pas pu etre verifie par compilation ici. Si Eclipse
+     * signale une erreur sur cette ligne precise, tape "multivers.delete" et
+     * laisse l'autocompletion Eclipse te montrer la vraie signature disponible
+     * dans ta version exacte du jar Multiverse-Core.
+     */
+    private boolean resetCommand(CommandSender sender, String[] args) {
+        if (args.length < 2) {
+            sender.sendMessage("§cUsage : /plotadmin reset <joueur>");
+            return true;
+        }
+        PlayerServer ps = getTarget(sender, args[1]);
+        if (ps == null) return true;
+
+        // on sauvegarde la progression AVANT de toucher au monde
+        int bordureActuelle = ps.getPlotdata().getWorldborder();
+        String plotName = ps.getPlotdata().getPlotProprety();
+
+        sender.sendMessage("§7Reinitialisation du terrain en cours (le monde va etre recree)...");
+
+        org.mvplugins.multiverse.core.MultiverseCoreApi.get().getWorldManager()
+            .deleteWorld(org.mvplugins.multiverse.core.world.options.DeleteWorldOptions.world(plotName));
+
+        // recreation d'un monde vierge, exactement comme a la toute premiere creation du plot
+        new Plot(java.util.UUID.fromString(plotName), plugin);
+
+        // une fois le nouveau monde genere, on reapplique la bordure (pas la valeur par
+        // defaut 50 posee par Plot.initializeWorld, mais celle que le joueur avait deja payee)
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            World world = Plot.getWorldforname(plotName);
+            if (world != null) {
+                world.getWorldBorder().setSize(bordureActuelle);
+                sender.sendMessage("§aTerrain de " + ps.getName() + " reinitialise ! Bordure (" + bordureActuelle + ") et upgrade (rang " + ps.getUpgrade() + ") conserves.");
+                plugin.getLogger().info("[PlotAdmin] " + sender.getName() + " a reset le terrain de " + ps.getName() + " (bordure conservee : " + bordureActuelle + ")");
+            } else {
+                sender.sendMessage("§cLe monde ne s'est pas encore regenere, reessaie /plotadmin border " + ps.getName() + " " + bordureActuelle + " dans quelques secondes si besoin.");
+            }
+        }, 100L);
+
         return true;
     }
 }
