@@ -230,7 +230,7 @@ commands:
   balance:
     description: Affiche ton solde bancaire
     usage: /balance [player]
-    aliases: [money, bal]
+    aliases: [bal]
     permission: farmland.gamecommands
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
