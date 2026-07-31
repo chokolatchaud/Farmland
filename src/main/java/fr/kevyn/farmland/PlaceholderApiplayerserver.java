@@ -31,14 +31,7 @@ public class PlaceholderApiplayerserver extends PlaceholderExpansion {
         return true; // reste actif meme sans joueur connecte (necessaire pour DiscordSRV)
     }
 
-    /**
-     * onRequest(OfflinePlayer, ...) au lieu de onPlaceholderRequest(Player, ...) :
-     * quand DiscordSRV evalue ce placeholder pour un message venant de Discord,
-     * il n'y a PAS de joueur Bukkit "en ligne" (Player) au sens strict - l'expediteur
-     * ecrit depuis Discord, pas depuis Minecraft. DiscordSRV fournit alors le compte
-     * Minecraft LIE au compte Discord sous forme d'OfflinePlayer (meme hors ligne).
-     * getUniqueId() existe sur les deux, la HashMap fonctionne pareil dans les 2 cas.
-     */
+    
     @Override
     public String onRequest(OfflinePlayer player, String identifier) {
 

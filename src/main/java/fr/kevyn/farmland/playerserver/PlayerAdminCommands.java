@@ -9,13 +9,7 @@ import org.bukkit.entity.Player;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.save.Filesave;
 
-/**
- * /psadmin - gestion admin des PlayerServer (permission farmland.admin)
- *   /psadmin info <joueur>                        -> infos complètes du joueur
- *   /psadmin money <joueur> <set|add|remove> <n>  -> gère l'argent
- *   /psadmin upgrade <joueur> set <n>             -> change le rang d'upgrade (ajuste la bordure)
- *   /psadmin saveall                              -> sauvegarde tous les joueurs maintenant
- */
+
 public class PlayerAdminCommands implements CommandExecutor {
 
     private final FarmlandMain plugin;

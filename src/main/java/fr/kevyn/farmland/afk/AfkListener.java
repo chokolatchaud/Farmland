@@ -24,8 +24,6 @@ public class AfkListener implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-        // ne compte que le VRAI mouvement (X/Z), pas juste tourner la camera
-        // (evite qu'un joueur qui regarde juste autour de lui soit compte actif)
         if (event.getFrom().getBlockX() == event.getTo().getBlockX()
                 && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) {
             return;

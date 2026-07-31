@@ -22,7 +22,7 @@ public class PlayerServer {
     int upgrade;
     int structure;
     int racepoint;
-    long weTimeExpiry; // timestamp ms quand le WorldEdit expire (0 = pas actif)
+    long weTimeExpiry;
 
 
     public PlayerServer() {}

@@ -8,10 +8,13 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.boat.AcaciaBoat;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.game.HubCommand;
 import fr.kevyn.farmland.region.GameRegion;
 import fr.kevyn.farmland.region.GameRegionHashMap;
 import fr.kevyn.farmland.region.TypeRegion;
@@ -195,8 +198,6 @@ public class ConfigStartEndZone {
 
 				if (game.timetolaunch <= 0) {
 					plugin.getLogger().info("[BoatRace][DEBUG] Depart de la course !");
-					// on debloque les bateaux UNE SEULE FOIS
-					
 					ouvrirBarriere(game); // retire la barriere en verre pour laisser passer les bateaux
 					game.setStatus(StatutBoatGame.race);
 					game.racestarttime = game.getTimegame(); // depart reel, exclut les secondes du decompte
@@ -204,9 +205,6 @@ public class ConfigStartEndZone {
 			}
 		}, 20L, 20L);
 
-		// boucle "detection" : 5x/seconde, dediee aux waypoints/arrivee.
-		// Un bateau peut traverser une petite zone en moins d'1 seconde : verifier
-		// seulement 1x/s (comme avant) pouvait rater le passage. 5x/s reduit fortement ce risque.
 		game.raceDetectionTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 			if (game.getStatus() != StatutBoatGame.race) return;
 
@@ -230,10 +228,9 @@ public class ConfigStartEndZone {
 						player.sendMessage("§aWaypoint " + indexTouche + "/3 validé !");
 						plugin.getLogger().info("[BoatRace][DEBUG] " + player.getName() + " valide le waypoint " + indexTouche);
 					}
-					// sinon : deja valide, ou pas le bon (joueur a coupe le circuit) -> on ignore
+	
 				}
 
-				// --- ligne d'arrivee : seulement si les 3 waypoints sont valides ---
 				if (region.gettype() == TypeRegion.Boatrace) {
 					int deja = game.getProgression().getOrDefault(player, 0);
 
@@ -252,14 +249,11 @@ public class ConfigStartEndZone {
 						BoatRaceHologram.update(plugin);
 
 						// pousse le classement complet vers le site (si le module WebAPI est actif)
-						if (plugin instanceof fr.kevyn.farmland.FarmlandMain) {
-							fr.kevyn.farmland.FarmlandMain main = (fr.kevyn.farmland.FarmlandMain) plugin;
+						if (plugin instanceof FarmlandMain) {
+							FarmlandMain main = (FarmlandMain) plugin;
 							if (main.getWebApi() != null) {
 								main.getWebApi().pushBoatTimes(BoatTimeSave.getTop(plugin, 10));
-								plugin.getLogger().info("[BoatRace][DEBUG] Classement pousse vers le site");
-							} else {
-								plugin.getLogger().warning("[BoatRace][DEBUG] WebApi non initialise, classement PAS pousse vers le site");
-							}
+							} 
 						}
 
 						vainqueurs.add(player);
@@ -272,13 +266,13 @@ public class ConfigStartEndZone {
 
 			for (Player winner : vainqueurs) {
 				if (winner.getVehicle() != null) {
-					org.bukkit.entity.Entity boat = winner.getVehicle();
+					Entity boat = winner.getVehicle();
 					winner.leaveVehicle();
 					boat.remove();
 				}
 				game.removeplayeringame(game, winner);
-				org.bukkit.Location hub = plugin instanceof fr.kevyn.farmland.FarmlandMain main
-						? fr.kevyn.farmland.game.HubCommand.getHubLocation(main) : null;
+				Location hub = plugin instanceof FarmlandMain main
+						? HubCommand.getHubLocation(main) : null;
 				winner.teleport(hub != null ? hub : game.getZonespawn1());
 			}
 		}, 20L, 4L);

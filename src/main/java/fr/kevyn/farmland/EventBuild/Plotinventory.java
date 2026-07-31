@@ -23,10 +23,12 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.MessageColor;
+import fr.kevyn.farmland.cosmetics.CosmeticShop;
 import fr.kevyn.farmland.game.CustomItemType;
 import fr.kevyn.farmland.menu.GameMenu;
 import fr.kevyn.farmland.menu.GameMenuHashMap;
 import fr.kevyn.farmland.menu.MenuPlotConfig;
+import fr.kevyn.farmland.menu.MenuPlotUpgrade;
 import fr.kevyn.farmland.menu.MenuPlotVisit;
 import fr.kevyn.farmland.menu.TypeMenu;
 import fr.kevyn.farmland.playerserver.PlayerServer;
@@ -71,7 +73,7 @@ public class Plotinventory implements Listener {
             World plotWorld = Plot.getWorldforname(plotName);
             if (plotWorld == null) {
                 player.sendMessage(MessageColor.GRAY.apply("Chargement du plot en cours..."));
-                new fr.kevyn.plot.Plot(UUID.fromString(plotName), plugin);
+                new Plot(UUID.fromString(plotName), plugin);
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     World loaded = Plot.getWorldforname(plotName);
                     if (loaded == null) { player.sendMessage(MessageColor.RED.apply("Impossible de charger le plot !")); return; }
@@ -86,10 +88,10 @@ public class Plotinventory implements Listener {
         // ── COSMETICS : achat/equipement d'un chapeau ─────────────────────────
         if (gamemenu.getTypemenu() == TypeMenu.COSMETICS) {
             int slot = event.getSlot();
-            if (slot < 0 || slot >= fr.kevyn.farmland.cosmetics.CosmeticShop.COSMETICS.size()) return;
+            if (slot < 0 || slot >= CosmeticShop.COSMETICS.size()) return;
 
-            fr.kevyn.farmland.cosmetics.CosmeticShop.Cosmetic cosmetic =
-                    fr.kevyn.farmland.cosmetics.CosmeticShop.COSMETICS.get(slot);
+            CosmeticShop.Cosmetic cosmetic =
+                    CosmeticShop.COSMETICS.get(slot);
 
             PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
             if (ps == null) return;
@@ -138,7 +140,7 @@ public class Plotinventory implements Listener {
                 }
 
                 // Prix récupéré côté serveur (rang absolu, jamais depuis le nom de l'item)
-                int cost = fr.kevyn.farmland.menu.MenuPlotUpgrade.getCost(rank);
+                int cost = MenuPlotUpgrade.getCost(rank);
                 if (ps.getMoney() < cost) { player.sendMessage(MessageColor.RED.apply("Tu n'as pas assez d'argent (" + cost + " $FB)")); return; }
 
                 ps.setMoney(ps.getMoney() - cost);

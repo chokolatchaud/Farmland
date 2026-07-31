@@ -6,11 +6,7 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-/**
- * Detecte l'inactivite d'un joueur (aucun mouvement reel depuis 20 min).
- * Un joueur AFK est traite EXACTEMENT comme un joueur hors ligne pour le
- * calcul des revenus de structures (taux reduit a 20%, voir DonateMoneyForStructure).
- */
+
 public class AfkManager {
 
     private static final long AFK_THRESHOLD_MS = 20L * 60 * 1000; // 20 minutes

@@ -14,20 +14,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-/**
- * Sauvegarde des meilleurs temps de la course de bateaux.
- * Stocke une "file" des N meilleurs temps (tous joueurs confondus),
- * triee du plus rapide au plus lent, dans boat_times.json.
- * Un joueur peut apparaitre plusieurs fois s'il a plusieurs bons temps,
- * mais on ne garde que son MEILLEUR temps personnel dans le classement.
- */
+
+
 public class BoatTimeSave {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String FILE_NAME = "boat_times.json";
     private static final int MAX_ENTRIES = 10; // top 10 conserve
 
-    /** Une entree du classement : joueur + son meilleur temps en secondes */
     public static class BoatTimeEntry {
         public String playerName;
         public int seconds;
@@ -64,10 +58,8 @@ public class BoatTimeSave {
         }
     }
 
-    /**
-     * Enregistre un temps de course. Ne garde que le MEILLEUR temps par joueur.
-     * Retourne true si c'est un nouveau record personnel (temps ameliore ou premiere course).
-     */
+    //Enregistre un temps de course. Ne garde que le MEILLEUR temps par joueur.
+     
     public static boolean recordTime(JavaPlugin plugin, String playerName, int seconds) {
         List<BoatTimeEntry> times = loadTimes(plugin);
 

@@ -18,11 +18,9 @@ public class BoatGamemanager {
 
 		if (!boatgame.teleportplayertoboat(game, player, plugin)) {
 			player.sendMessage("§cVeuillez attendre la prochaine partie !");
-			plugin.getLogger().info("[BoatRace][DEBUG] " + player.getName() + " n'a pas pu rejoindre (aucune place)");
 			return;
 		}
 
-		plugin.getLogger().info("[BoatRace][DEBUG] " + player.getName() + " a rejoint la partie");
 	}
 	
 	

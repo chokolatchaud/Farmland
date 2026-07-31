@@ -13,12 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-/**
- * Classement des meilleurs temps du JOUR uniquement (separe du classement
- * all-time de BoatTimeSave, qui lui n'est jamais reinitialise).
- * Utilise par DailyBoatReward pour distribuer le podium 500/250/100 $FB
- * chaque jour, puis remis a zero pour le jour suivant.
- */
+
 public class DailyBoatTimeSave {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();

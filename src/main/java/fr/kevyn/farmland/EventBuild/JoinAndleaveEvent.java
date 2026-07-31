@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import discordwebhook.messagediscord;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.MessageColor;
+import fr.kevyn.farmland.market.BuyCommands;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.farmland.save.Filesave;
@@ -109,7 +110,7 @@ public class JoinAndleaveEvent implements Listener {
             // Restaurer les permissions WorldEdit si encore actif
             if (playerServer.isWeActive()) {
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    fr.kevyn.farmland.market.BuyCommands.restoreAttachment(e.getPlayer(), playerServer, plugin);
+                    BuyCommands.restoreAttachment(e.getPlayer(), playerServer, plugin);
                 }, 5L);
             }
 
@@ -150,7 +151,7 @@ public class JoinAndleaveEvent implements Listener {
             });
         }
         // Nettoyer l'attachment WorldEdit à la déconnexion
-        fr.kevyn.farmland.market.BuyCommands.removeAttachment(e.getPlayer().getUniqueId());
+        BuyCommands.removeAttachment(e.getPlayer().getUniqueId());
         
         // pousse le statut du serveur vers farm-land.fr
         if (plugin.getWebApi() != null) {

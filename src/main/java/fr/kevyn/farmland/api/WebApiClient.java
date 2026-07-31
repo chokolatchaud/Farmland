@@ -1,11 +1,15 @@
 package fr.kevyn.farmland.api;
 
 import com.google.gson.Gson;
+
+import fr.kevyn.farmland.boathub.BoatTimeSave;
 import okhttp3.*;
 import org.bukkit.plugin.Plugin;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -19,19 +23,19 @@ public class WebApiClient {
     private static final String EP_BOATTIMES = "/api/boatrace/times";
 
     // pousse le classement complet des meilleurs temps de la course de bateaux
-    public void pushBoatTimes(java.util.List<fr.kevyn.farmland.boathub.BoatTimeSave.BoatTimeEntry> times) {
-        java.util.List<Map<String, Object>> data = new java.util.ArrayList<>();
-        for (fr.kevyn.farmland.boathub.BoatTimeSave.BoatTimeEntry entry : times) {
+    public void pushBoatTimes(List<BoatTimeSave.BoatTimeEntry> times) {
+        List<Map<String, Object>> data = new ArrayList<>();
+        for (BoatTimeSave.BoatTimeEntry entry : times) {
             data.add(Map.of("playerName", entry.playerName, "seconds", entry.seconds));
         }
         post(EP_BOATTIMES, data);
         plugin.getLogger().info("[WebAPI] Classement bateaux pousse (" + data.size() + " temps)");
     }
 
-    // pousse la liste complete des sites de vote (depuis le config.yml du plugin)
+    // pousse la liste complete des sites de vote 
     // le nom affiche sur le site = le domaine de l'URL
-    public void pushVoteSites(java.util.List<String> urls, String reward) {
-        java.util.List<Map<String, Object>> sites = new java.util.ArrayList<>();
+    public void pushVoteSites(List<String> urls, String reward) {
+        List<Map<String, Object>> sites = new ArrayList<>();
         int order = 1;
         for (String url : urls) {
             String name = url.replace("https://", "").replace("http://", "");

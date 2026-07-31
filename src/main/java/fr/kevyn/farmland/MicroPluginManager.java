@@ -1,5 +1,6 @@
 package fr.kevyn.farmland;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.bukkit.Bukkit;
@@ -240,7 +241,7 @@ public class MicroPluginManager {
         } catch (Exception e) {
             plugin.getLogger().severe("Erreur lors du chargement du module SaveCommand !");
             messagediscord.sendmessage("Module SaveCommand erreur: " + e.toString(), "statut");
-            e.printStackTrace(); //test
+            e.printStackTrace(); 
         }
     }
 
@@ -262,7 +263,7 @@ public class MicroPluginManager {
 
     public static void moduleWebApi(FarmlandMain plugin) {
         if (!plugin.getConfig().getBoolean("webapi.enabled", false)) {
-            plugin.getLogger().info("[WebAPI] Module désactivé (webapi.enabled=false dans config.yml)");
+            plugin.getLogger().info("[WebAPI] Module désactivé");
             return;
         }
         try {
@@ -282,11 +283,10 @@ public class MicroPluginManager {
                 plugin.getConfig().getString("vote.reward", "World Edit 1 heure")
             );
 
-            // push leaderboard au demarrage + toutes les webapi.leaderboard_push_minutes (defaut 15min)
             // tous les joueurs en memoire (pas seulement les connectes)
             Runnable pushLeaderboard = () -> {
                 // copie de la liste : on itère en async pendant que /define peut la modifier
-                java.util.ArrayList<GameRegion> structures = new java.util.ArrayList<>(GetStructure.getallStructure());
+                ArrayList<GameRegion> structures = new ArrayList<>(GetStructure.getallStructure());
                 for (PlayerServer ps : PlayerserverHashMap.getInstance().getHashMapPlayer().values()) {
                     int nbStructures = 0;
                     for (GameRegion r : structures) {

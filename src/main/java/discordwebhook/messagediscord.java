@@ -23,7 +23,7 @@ public class messagediscord {
 	    		return;
 	    	}
 	    	
-	        // Récupération des URLs de webhook depuis config.yml (a configurer sur le serveur, JAMAIS dans le repo Git)
+	        // Récupération des URLs de webhook depuis config.yml 
 	        String webhookUrlStatue = plugin.getConfig().getString("discord.webhook-status", "");
 	        String webhookUrlMSG = plugin.getConfig().getString("discord.webhook-message", "");
 	        String webhookUrlModeration = plugin.getConfig().getString("discord.webhook-moderation", "");
@@ -52,7 +52,7 @@ public class messagediscord {
 	        connection.setDoOutput(true);
 	        connection.setRequestProperty("Content-Type", "application/json");
 	        
-	        // Échappement correct pour JSON (guillemets + retours à la ligne)
+	        // Échappement correct pour JSON 
 	        String escapedContent = content
 	            .replace("\\", "\\\\")  // Échappe les backslashes
 	            .replace("\"", "\\\"")  // Échappe les guillemets
@@ -69,7 +69,7 @@ public class messagediscord {
 	            os.write(input, 0, input.length);
 	        }
 	        
-	        // Lecture du code de réponse (utile pour debug)
+	        // Lecture du code de réponse 
 	        int responseCode = connection.getResponseCode();
 	        if (responseCode != 204 && responseCode != 200) {
 	            System.out.println("⚠ Erreur envoi Discord : code HTTP " + responseCode);
