@@ -14,6 +14,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.TNTPrimeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -124,6 +125,14 @@ public class EventBuildAndUse implements Listener {
     public void onTntprime(TNTPrimeEvent event) {
     	
     	event.setCancelled(true);
+    }
+    
+    @EventHandler
+    public void onExplode(EntityExplodeEvent event) {
+        if (event.getEntity().getType() == EntityType.TNT) {
+            event.blockList().clear(); // aucun bloc detruit
+            event.setCancelled(true);  // aucun degat
+        }
     }
 
 
