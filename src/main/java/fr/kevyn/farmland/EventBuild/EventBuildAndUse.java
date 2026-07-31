@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.TNTPrimeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
@@ -118,6 +119,11 @@ public class EventBuildAndUse implements Listener {
     		event.setCancelled(true);
     	}
     	
+    }
+    @EventHandler
+    public void onTntprime(TNTPrimeEvent event) {
+    	
+    	event.setCancelled(true);
     }
 
 
