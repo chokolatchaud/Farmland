@@ -6,8 +6,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.mvplugins.multiverse.core.world.MultiverseWorld;
+import org.mvplugins.multiverse.core.world.WorldManager;
 
 import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.game.HubCommand;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.farmland.save.Filesave;
@@ -219,19 +222,7 @@ public class PlotAdminCommands implements CommandExecutor {
         return true;
     }
 
-    /**
-     * Remet le TERRAIN du plot a zero (monde regenere vierge) tout en
-     * PRESERVANT la progression du joueur (bordure achetee, rang d'upgrade).
-     * Utile pour nettoyer un plot completement sature/grieffe (ex: pile
-     * massive de TNT) sans faire perdre au joueur ce qu'il a paye.
-     *
-     * ⚠️ La ligne "multivers.deleteWorld(...)" utilise l'API Multiverse-Core 5.x
-     * (org.mvplugins.multiverse.core.world.options.DeleteWorldOptions) - le nom
-     * exact du builder n'a pas pu etre verifie par compilation ici. Si Eclipse
-     * signale une erreur sur cette ligne precise, tape "multivers.delete" et
-     * laisse l'autocompletion Eclipse te montrer la vraie signature disponible
-     * dans ta version exacte du jar Multiverse-Core.
-     */
+
     private boolean resetCommand(CommandSender sender, String[] args) {
         if (args.length < 2) {
             sender.sendMessage("§cUsage : /plotadmin reset <joueur>");
@@ -243,11 +234,15 @@ public class PlotAdminCommands implements CommandExecutor {
         // on sauvegarde la progression AVANT de toucher au monde
         int bordureActuelle = ps.getPlotdata().getWorldborder();
         String plotName = ps.getPlotdata().getPlotProprety();
-
+        WorldManager worldmanager = org.mvplugins.multiverse.core.MultiverseCoreApi.get().getWorldManager();
+        World world = Bukkit.getWorld(plotName);
+        MultiverseWorld worldmulti = worldmanager.getWorld(plotName).get();
+        for(Player player :world.getPlayers()) {
+        	player.teleport(HubCommand.getHubLocation(plugin));
+        }
         sender.sendMessage("§7Reinitialisation du terrain en cours (le monde va etre recree)...");
-
-        org.mvplugins.multiverse.core.MultiverseCoreApi.get().getWorldManager()
-            .deleteWorld(org.mvplugins.multiverse.core.world.options.DeleteWorldOptions.world(plotName));
+        
+        worldmanager.deleteWorld(org.mvplugins.multiverse.core.world.options.DeleteWorldOptions.world(worldmulti));
 
         // recreation d'un monde vierge, exactement comme a la toute premiere creation du plot
         new Plot(java.util.UUID.fromString(plotName), plugin);
@@ -255,7 +250,6 @@ public class PlotAdminCommands implements CommandExecutor {
         // une fois le nouveau monde genere, on reapplique la bordure (pas la valeur par
         // defaut 50 posee par Plot.initializeWorld, mais celle que le joueur avait deja payee)
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            World world = Plot.getWorldforname(plotName);
             if (world != null) {
                 world.getWorldBorder().setSize(bordureActuelle);
                 sender.sendMessage("§aTerrain de " + ps.getName() + " reinitialise ! Bordure (" + bordureActuelle + ") et upgrade (rang " + ps.getUpgrade() + ") conserves.");
