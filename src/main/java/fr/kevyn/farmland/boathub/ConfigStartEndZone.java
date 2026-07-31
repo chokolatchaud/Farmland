@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.boat.AcaciaBoat;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import fr.kevyn.farmland.region.GameRegion;
@@ -87,7 +88,6 @@ public class ConfigStartEndZone {
 	}
 
 	public void killgame(JavaPlugin plugin, ConfigStartEndZone game) {
-		plugin.getLogger().info("[BoatRace][DEBUG] Fin de partie, nettoyage");
 
 		if (game.mainTask != null) game.mainTask.cancel();
 		if (game.raceDetectionTask != null) game.raceDetectionTask.cancel();
@@ -97,7 +97,6 @@ public class ConfigStartEndZone {
 	public void addplayeringame(ConfigStartEndZone game, Player player, int piste) {
 		game.getPlayeringame().put(piste, player);
 		game.getProgression().put(player, 0); 
-		System.out.println("[BoatRace][DEBUG] " + player.getName() + " rejoint la piste " + piste + " (en memoire, aucun bloc modifie)");
 	}
 
 
@@ -107,7 +106,6 @@ public class ConfigStartEndZone {
 		while (it.hasNext()) {
 			Map.Entry<Integer, Player> entry = it.next();
 			if (entry.getValue().equals(player)) {
-				System.out.println("[BoatRace][DEBUG] " + player.getName() + " retire de la piste " + entry.getKey() + " (piste liberee en memoire)");
 				it.remove();
 			}
 		}
@@ -119,7 +117,6 @@ public class ConfigStartEndZone {
 		Player removed = game.getPlayeringame().remove(piste);
 		if (removed != null) {
 			game.getProgression().remove(removed);
-			System.out.println("[BoatRace][DEBUG] piste " + piste + " liberee en memoire (" + removed.getName() + ")");
 		}
 	}
 
@@ -140,10 +137,6 @@ public class ConfigStartEndZone {
 		}
 	}
 
-	// Barriere physique en verre bloquant les bateaux pendant le decompte.
-	// Deux murs, coordonnees exactes des /fill utilises en jeu :
-	//   mur A : x=80, y=34, z de -48 a -34
-	//   mur B : x=85, y=34, z de -48 a -33
 	private static void setBarriere(ConfigStartEndZone game, org.bukkit.Material material) {
 		World world = game.getWorld();
 		for (int z = -48; z <= -34; z++) {
@@ -165,7 +158,9 @@ public class ConfigStartEndZone {
 	}
 
 	public static void starttime(JavaPlugin plugin, ConfigStartEndZone game) {
-		// boucle "minuteur" : 1x/seconde, gere le decompte, le depart et la sortie de bateau
+		
+		// boucle minuteur : 1x/seconde, gere le decompte, le depart et la sortie de bateau
+		
 		game.mainTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
 			game.add1secondeTimegame();
 			HashMap<Integer, Player> playeringame = game.getPlayeringame();
@@ -195,31 +190,13 @@ public class ConfigStartEndZone {
 					player.sendMessage("§eDepart dans " + game.timetolaunch + " secondes");
 				}
 
-				// recalage dur, mais SEULEMENT 2 fois avant le depart (a 3s puis a 1s)
-				// au lieu de corriger en continu pendant les 30 secondes. Le joueur peut
-				// pagayer librement entre-temps (pas ideal mais sans consequence puisque
-				// la course n'a pas commence), et on le replace pile a temps avant le vrai
-				// depart. Beaucoup moins de teleport() au total = beaucoup moins de rebond
-				// visible via ViaBackwards pour les vieux clients.
-				if (game.timetolaunch == 3 || game.timetolaunch == 1) {
-					for (Map.Entry<Integer, Player> entry : playeringame.entrySet()) {
-						int piste = entry.getKey();
-						Player player = entry.getValue();
-						Location anchor = game.getZonespawnByPiste(piste);
-						if (anchor == null || !(player.getVehicle() instanceof org.bukkit.entity.boat.AcaciaBoat boat)) continue;
-						boat.teleport(anchor);
-					}
-					System.out.println("[BoatRace][DEBUG] Recalage des bateaux a T-" + game.timetolaunch + "s");
-				}
+				
+				
 
 				if (game.timetolaunch <= 0) {
 					plugin.getLogger().info("[BoatRace][DEBUG] Depart de la course !");
 					// on debloque les bateaux UNE SEULE FOIS
-					for (Player player : playeringame.values()) {
-						if (player.getVehicle() instanceof org.bukkit.entity.boat.AcaciaBoat boat) {
-							boat.setMaxSpeed(0.4); // vitesse par defaut d'un bateau
-						}
-					}
+					
 					ouvrirBarriere(game); // retire la barriere en verre pour laisser passer les bateaux
 					game.setStatus(StatutBoatGame.race);
 					game.racestarttime = game.getTimegame(); // depart reel, exclut les secondes du decompte

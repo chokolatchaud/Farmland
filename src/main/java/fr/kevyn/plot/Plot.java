@@ -24,15 +24,14 @@ public class Plot {
         WorldManager multivers = MultiverseCoreApi.get().getWorldManager();
         
         
-        // ✅ AJOUTÉ : Vérification sécurité
+
         if (Bukkit.getWorld(nameplot) != null) {
-            // debug supprimé
             initializeWorld(nameplot);
             return;
         }
         
         if (multivers.isWorld(nameplot)) {
-            // debug supprimé
+
             
             boolean loaded = multivers.loadWorld(nameplot).isSuccess();
 
@@ -42,7 +41,7 @@ public class Plot {
                 }, 40L);
                 return; 
             } else {
-                // debug supprimé
+
                 multivers.removeWorld(nameplot);
             }
         }

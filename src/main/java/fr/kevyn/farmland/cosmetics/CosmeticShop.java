@@ -63,7 +63,7 @@ public class CosmeticShop {
             new Cosmetic(4, "Lunettes Noires",   500,  "custom:lunettesnoires"),
             new Cosmetic(5, "Couronne de Fleurs",500,  "custom:fleurs"),
             new Cosmetic(6, "Pousse",            250,  "custom:sprout"),
-            new Cosmetic(9, "A venir",            0,  "custom:nul")
+            new Cosmetic(9, "A venir",            1000000,  "custom:nul")
     ));
 
     public static Cosmetic getById(int id) {

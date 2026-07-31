@@ -30,7 +30,7 @@ public class ChatListener implements Listener {
         PlayerServer playerserver = PlayerserverHashMap.getInstance().getplayerHaspMaps(playerevent.getUniqueId());
         Player player = PlayerServer.getplayer(playerserver);
         if(!playerevent.equals(player)) {
-        	playerevent.kickPlayer("Erreur 23 Rapprocher vous d'un modérateur");
+        	playerevent.kickPlayer("Erreur 23 Rapprocher vous d'un modérateur/admin");
         }
 
 

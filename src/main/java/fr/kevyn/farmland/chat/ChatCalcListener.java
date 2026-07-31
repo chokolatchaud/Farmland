@@ -22,7 +22,7 @@ public class ChatCalcListener implements Listener {
     private static final Random random = new Random();
 
     private static Integer reponseAttendue = null; // null = aucun calcul en cours
-    private static int recompenseActuelle = 0;
+    private static int recompenseActuelle = 75;
 
     public static void lancerNouveauCalcul(JavaPlugin plugin) {
         int a = random.nextInt(50) + 1;
@@ -42,7 +42,7 @@ public class ChatCalcListener implements Listener {
         }
 
         reponseAttendue = resultat;
-        recompenseActuelle = random.nextInt(16) * 5 + 5; // entre 5 et 80 $FB, multiple de 5
+        
 
         Bukkit.broadcastMessage("§b§l✦ CALCUL ✦ §fCombien font §e" + a + " " + symbole + " " + b + " §f? §7(tape la réponse dans le chat, +" + recompenseActuelle + " $FB au premier !)");
     }

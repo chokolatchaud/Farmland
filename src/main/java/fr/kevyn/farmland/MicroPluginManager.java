@@ -10,12 +10,22 @@ import fr.kevyn.farmland.EventBuild.ChatListener;
 import fr.kevyn.farmland.EventBuild.EventBuildAndUse;
 import fr.kevyn.farmland.EventBuild.LuckpermGrade;
 import fr.kevyn.farmland.EventBuild.Plotinventory;
+import fr.kevyn.farmland.afk.AfkListener;
+import fr.kevyn.farmland.boathub.BoatRaceHologram;
+import fr.kevyn.farmland.boathub.BoatRaceListener;
+import fr.kevyn.farmland.boathub.DailyBoatReward;
+import fr.kevyn.farmland.boathub.RaceAdminCommands;
+import fr.kevyn.farmland.chat.AnnouncementBroadcaster;
+import fr.kevyn.farmland.chat.ChatCalcListener;
 import fr.kevyn.farmland.game.GameCommands;
+import fr.kevyn.farmland.game.GuideHologram;
+import fr.kevyn.farmland.game.GuideHologramCommand;
 import fr.kevyn.farmland.game.HubCommand;
 import fr.kevyn.farmland.market.BuyCommands;
 import fr.kevyn.farmland.market.DonateMoneyForStructure;
 import fr.kevyn.farmland.market.MarketAdminCommands;
 import fr.kevyn.farmland.market.MarketCalc;
+import fr.kevyn.farmland.market.MarketHolograms;
 import fr.kevyn.farmland.market.Marketcommands;
 import fr.kevyn.farmland.moderation.ModerationCommands;
 import fr.kevyn.farmland.playerserver.PlayerAdminCommands;
@@ -29,8 +39,12 @@ import fr.kevyn.farmland.scoreboard.CreativePlotScoreboard;
 import fr.kevyn.farmland.structure.Definecommands;
 import fr.kevyn.farmland.structure.GetStructure;
 import fr.kevyn.farmland.structure.StructureCommands;
+import fr.kevyn.farmland.structure.StructuresAdminCommands;
+import fr.kevyn.farmland.tpa.TpaCommand;
 import fr.kevyn.farmland.vote.VoteCommand;
+import fr.kevyn.farmland.vote.VoteListener;
 import fr.kevyn.farmland.worldeditgestion.WorldEditSecureListener;
+import fr.kevyn.plot.PlotAdminCommands;
 import fr.kevyn.plot.Plotcommands;
 
 public class MicroPluginManager {
@@ -65,33 +79,33 @@ public class MicroPluginManager {
         plugin.getCommand("vote").setExecutor(new VoteCommand(plugin));
         plugin.getCommand("marketadmin").setExecutor(new MarketAdminCommands(plugin));
         plugin.getCommand("psadmin").setExecutor(new PlayerAdminCommands(plugin));
-        plugin.getCommand("plotadmin").setExecutor(new fr.kevyn.plot.PlotAdminCommands(plugin));
-        plugin.getCommand("structuresadmin").setExecutor(new fr.kevyn.farmland.structure.StructuresAdminCommands(plugin));
+        plugin.getCommand("plotadmin").setExecutor(new PlotAdminCommands(plugin));
+        plugin.getCommand("structuresadmin").setExecutor(new StructuresAdminCommands(plugin));
 
-        fr.kevyn.farmland.tpa.TpaCommand tpaCommand = new fr.kevyn.farmland.tpa.TpaCommand(plugin);
+        TpaCommand tpaCommand = new TpaCommand(plugin);
         plugin.getCommand("tpa").setExecutor(tpaCommand);
         plugin.getCommand("tpahere").setExecutor(tpaCommand);
         plugin.getCommand("tpaccept").setExecutor(tpaCommand);
         plugin.getCommand("tpdeny").setExecutor(tpaCommand);
 
         // hologrammes du marche : chargement + apparition/rafraichissement toutes les 60s
-        fr.kevyn.farmland.market.MarketHolograms.load(plugin);
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> fr.kevyn.farmland.market.MarketHolograms.updateAll(plugin), 100L, 20L * 60);
+        MarketHolograms.load(plugin);
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> MarketHolograms.updateAll(plugin), 100L, 20L * 60);
 
         // hologramme du guide : chargement + reessai toutes les 60s si le chunk n'est pas encore charge
-        fr.kevyn.farmland.game.GuideHologram.load(plugin);
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> fr.kevyn.farmland.game.GuideHologram.updateAll(plugin), 100L, 20L * 60);
-        plugin.getCommand("guideholo").setExecutor(new fr.kevyn.farmland.game.GuideHologramCommand(plugin));
+        GuideHologram.load(plugin);
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> GuideHologram.updateAll(plugin), 100L, 20L * 60);
+        plugin.getCommand("guideholo").setExecutor(new GuideHologramCommand(plugin));
 
         // autosave des joueurs toutes les 5 minutes (evite la perte de session si crash)
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            fr.kevyn.farmland.save.Filesave.SavePlayerserverFile(plugin);
+            Filesave.SavePlayerserverFile(plugin);
             plugin.getLogger().info("[Autosave] Joueurs sauvegardes");
         }, 20L * 60 * 5, 20L * 60 * 5);
 
         // Vote - NuVotifier (softdepend)
         if (Bukkit.getPluginManager().getPlugin("Votifier") != null || Bukkit.getPluginManager().getPlugin("NuVotifier") != null) {
-            plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.vote.VoteListener(plugin), plugin);
+            plugin.getServer().getPluginManager().registerEvents(new VoteListener(plugin), plugin);
             plugin.getLogger().info("[Vote] Module NuVotifier activé — WorldEdit 30min par vote");
         } else {
             plugin.getLogger().warning("[Vote] NuVotifier non trouvé — les votes ne donneront pas de récompense");
@@ -105,7 +119,7 @@ public class MicroPluginManager {
         Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
         	DonateMoneyForStructure.AllPlayer(plugin);
 
-            }, timeDonateMoneyStructure, timeDonateMoneyStructure);//15min
+            }, timeDonateMoneyStructure, timeDonateMoneyStructure);//30min
         
         
         
@@ -131,9 +145,9 @@ public class MicroPluginManager {
         }, 0L, 40L);
 
         try {
-            plugin.getCommand("raceadmin").setExecutor(new fr.kevyn.farmland.boathub.RaceAdminCommands(plugin));
-            fr.kevyn.farmland.boathub.BoatRaceHologram.load(plugin);
-            Bukkit.getScheduler().runTaskTimer(plugin, () -> fr.kevyn.farmland.boathub.BoatRaceHologram.update(plugin), 100L, 20L * 60);
+            plugin.getCommand("raceadmin").setExecutor(new RaceAdminCommands(plugin));
+            BoatRaceHologram.load(plugin);
+            Bukkit.getScheduler().runTaskTimer(plugin, () -> BoatRaceHologram.update(plugin), 100L, 20L * 60);
         } catch (Exception e) {
             plugin.getLogger().severe("[BoatRace] Erreur au chargement du module course de bateaux : " + e.getMessage());
             e.printStackTrace();
@@ -159,21 +173,21 @@ public class MicroPluginManager {
         try {
             plugin.getServer().getPluginManager().registerEvents(new EventBuildAndUse(plugin), plugin);
             plugin.getServer().getPluginManager().registerEvents(new Plotinventory(plugin), plugin);
-            plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.boathub.BoatRaceListener(plugin), plugin);
-            plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.afk.AfkListener(), plugin);
-            plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.chat.ChatCalcListener(), plugin);
+            plugin.getServer().getPluginManager().registerEvents(new BoatRaceListener(plugin), plugin);
+            plugin.getServer().getPluginManager().registerEvents(new AfkListener(), plugin);
+            plugin.getServer().getPluginManager().registerEvents(new ChatCalcListener(), plugin);
 
             // podium quotidien de la course de bateaux : verifie toutes les minutes si le jour a change
             Bukkit.getScheduler().runTaskTimer(plugin, () ->
-                fr.kevyn.farmland.boathub.DailyBoatReward.checkAndRewardIfNewDay(plugin), 100L, 20L * 60);
+                DailyBoatReward.checkAndRewardIfNewDay(plugin), 100L, 20L * 60);
 
             // calcul dans le chat toutes les 5 minutes
             Bukkit.getScheduler().runTaskTimer(plugin, () ->
-                fr.kevyn.farmland.chat.ChatCalcListener.lancerNouveauCalcul(plugin), 20L * 60 * 5, 20L * 60 * 5);
+                ChatCalcListener.lancerNouveauCalcul(plugin), 20L * 60 * 5, 20L * 60 * 5);
 
             // annonce aleatoire toutes les 5 minutes (jeu + Discord)
             Bukkit.getScheduler().runTaskTimer(plugin, () ->
-                fr.kevyn.farmland.chat.AnnouncementBroadcaster.broadcastRandom(plugin), 20L * 60 * 5, 20L * 60 * 5);
+                AnnouncementBroadcaster.broadcastRandom(plugin), 20L * 60 * 5, 20L * 60 * 5);
             plugin.getCommand("plot").setExecutor(new Plotcommands(plugin));
         } catch (Exception e) {
             plugin.getLogger().severe("Erreur lors du chargement du module Plot !");
@@ -217,13 +231,7 @@ public class MicroPluginManager {
 
                         
                     });
-                    for (Player player : players) {
-                        player.sendMessage(
-                            net.kyori.adventure.text.Component.text("✦ Rejoins le Discord de Farmland : ", net.kyori.adventure.text.format.NamedTextColor.GOLD)
-                                .append(net.kyori.adventure.text.Component.text("discord.gg/VH7MJpwpub", net.kyori.adventure.text.format.NamedTextColor.AQUA, net.kyori.adventure.text.format.TextDecoration.UNDERLINED)
-                                    .clickEvent(net.kyori.adventure.text.event.ClickEvent.openUrl("https://discord.gg/VH7MJpwpub")))
-                        );
-                    }
+                    
                     plugin.getLogger().info("Sauvegarde réalisée pour " + players.size() + " joueurs");
                 }
             }, 6000L, 6000L);

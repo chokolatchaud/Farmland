@@ -19,7 +19,7 @@ public class MenuPlotConfig {
         GameMenu.fillmenu(Material.GREEN_STAINED_GLASS_PANE, inv);
         
         // CLOCK - Jour/Nuit
-        GameMenu.set_oneitem_menu(CustomItemType.CLOCK_DAYNIGHT.create(), "Météo", 10, inv);
+        GameMenu.set_oneitem_menu(CustomItemType.CLOCK_DAYNIGHT.create(), "Jour/Nuit", 10, inv);
  
         // LAPIS - Pluie
         GameMenu.set_oneitem_menu(CustomItemType.RAIN_TOGGLE.create(), "Pluie", 19, inv);
