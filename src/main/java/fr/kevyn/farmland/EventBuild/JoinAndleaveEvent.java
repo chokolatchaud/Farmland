@@ -100,7 +100,11 @@ public class JoinAndleaveEvent implements Listener {
 
             // Gains des structures pendant l'absence (penalite hors ligne de 80% deja appliquee)
             if (playerServer.getMoneyoffline() > 0) {
+            	if(playerServer.getMoneyoffline() >= 5000) {
+            		playerServer.setMoneyoffline(5000);
+            	}
                 e.getPlayer().sendMessage(MessageColor.GOLD.apply("✦ Tes structures ont rapporté +" + playerServer.getMoneyoffline() + " $FB pendant ton absence ! §7(revenus hors ligne réduits de 80%)"));
+                e.getPlayer().sendMessage(MessageColor.GOLD.apply("✦Plafonné A 5000FB"));
                 playerServer.setMoneyoffline(0);
             }
             messagediscord.sendmessage("[" + playerServer.getGrade() + "]: " + playerServer.getName() + " est revenu", "statut");
