@@ -10,8 +10,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import fr.kevyn.farmland.region.GameRegion;
-import fr.kevyn.farmland.region.GameRegionHashMap;
+import fr.kevyn.farmland.gameregion.GameRegion;
+import fr.kevyn.farmland.gameregion.GameRegionHashMap;
 
 public class RegionSave {
 

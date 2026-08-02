@@ -1,6 +1,5 @@
 package fr.kevyn.farmland;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.bukkit.Bukkit;
@@ -11,7 +10,6 @@ import fr.kevyn.farmland.EventBuild.ChatListener;
 import fr.kevyn.farmland.EventBuild.EventBuildAndUse;
 import fr.kevyn.farmland.EventBuild.LuckpermGrade;
 import fr.kevyn.farmland.EventBuild.Plotinventory;
-import fr.kevyn.farmland.afk.AfkListener;
 import fr.kevyn.farmland.boathub.BoatRaceHologram;
 import fr.kevyn.farmland.boathub.BoatRaceListener;
 import fr.kevyn.farmland.boathub.DailyBoatReward;
@@ -19,28 +17,13 @@ import fr.kevyn.farmland.boathub.RaceAdminCommands;
 import fr.kevyn.farmland.chat.AnnouncementBroadcaster;
 import fr.kevyn.farmland.chat.ChatCalcListener;
 import fr.kevyn.farmland.game.GameCommands;
-import fr.kevyn.farmland.game.GuideHologram;
-import fr.kevyn.farmland.game.GuideHologramCommand;
 import fr.kevyn.farmland.game.HubCommand;
 import fr.kevyn.farmland.market.BuyCommands;
-import fr.kevyn.farmland.market.DonateMoneyForStructure;
-import fr.kevyn.farmland.market.MarketAdminCommands;
-import fr.kevyn.farmland.market.MarketCalc;
 import fr.kevyn.farmland.market.MarketHolograms;
-import fr.kevyn.farmland.market.Marketcommands;
 import fr.kevyn.farmland.moderation.ModerationCommands;
 import fr.kevyn.farmland.playerserver.PlayerAdminCommands;
-import fr.kevyn.farmland.playerserver.PlayerServer;
-import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
-import fr.kevyn.farmland.region.GameRegion;
-import fr.kevyn.farmland.region.RegionCommands;
 import fr.kevyn.farmland.save.Filesave;
-import fr.kevyn.farmland.save.RegionSave;
 import fr.kevyn.farmland.scoreboard.CreativePlotScoreboard;
-import fr.kevyn.farmland.structure.Definecommands;
-import fr.kevyn.farmland.structure.GetStructure;
-import fr.kevyn.farmland.structure.StructureCommands;
-import fr.kevyn.farmland.structure.StructuresAdminCommands;
 import fr.kevyn.farmland.tpa.TpaCommand;
 import fr.kevyn.farmland.vote.VoteCommand;
 import fr.kevyn.farmland.vote.VoteListener;
@@ -63,25 +46,14 @@ public class MicroPluginManager {
         plugin.getCommand("msgf").setExecutor(gameCommands);
         plugin.getCommand("r").setExecutor(gameCommands);
         plugin.getCommand("reportmsg").setExecutor(gameCommands);
-        plugin.getCommand("createregion").setExecutor(new RegionCommands());
-        plugin.getCommand("listregion").setExecutor(new RegionCommands());
-        plugin.getCommand("region").setExecutor(new RegionCommands());
-        //plugin.getCommand("game").setExecutor(new GameManagercommands());
-        plugin.getCommand("liststructure").setExecutor(new StructureCommands(plugin));
-        plugin.getCommand("viewmoney").setExecutor(new StructureCommands(plugin));
-        plugin.getCommand("define").setExecutor(new Definecommands());
-        plugin.getCommand("undefine").setExecutor(new Definecommands());
-        plugin.getCommand("market").setExecutor(new Marketcommands());
-        plugin.getCommand("recalcmarket").setExecutor(new Marketcommands());
+        //plugin.getCommand("game").setExecutor(new GameManagercommands());;
         plugin.getCommand("buy").setExecutor(new BuyCommands(plugin));
-        plugin.getCommand("tuto").setExecutor(new TutoCommand());
         plugin.getCommand("hub").setExecutor(new HubCommand(plugin));
         plugin.getCommand("joinboat").setExecutor(new HubCommand(plugin));
         plugin.getCommand("vote").setExecutor(new VoteCommand(plugin));
-        plugin.getCommand("marketadmin").setExecutor(new MarketAdminCommands(plugin));
         plugin.getCommand("psadmin").setExecutor(new PlayerAdminCommands(plugin));
         plugin.getCommand("plotadmin").setExecutor(new PlotAdminCommands(plugin));
-        plugin.getCommand("structuresadmin").setExecutor(new StructuresAdminCommands(plugin));
+
 
         TpaCommand tpaCommand = new TpaCommand(plugin);
         plugin.getCommand("tpa").setExecutor(tpaCommand);
@@ -93,10 +65,6 @@ public class MicroPluginManager {
         MarketHolograms.load(plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, () -> MarketHolograms.updateAll(plugin), 100L, 20L * 60);
 
-        // hologramme du guide : chargement + reessai toutes les 60s si le chunk n'est pas encore charge
-        GuideHologram.load(plugin);
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> GuideHologram.updateAll(plugin), 100L, 20L * 60);
-        plugin.getCommand("guideholo").setExecutor(new GuideHologramCommand(plugin));
 
         // autosave des joueurs toutes les 5 minutes (evite la perte de session si crash)
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
@@ -111,24 +79,7 @@ public class MicroPluginManager {
         } else {
             plugin.getLogger().warning("[Vote] NuVotifier non trouvé — les votes ne donneront pas de récompense");
         }
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-        	MarketCalc.Calcforcoef(plugin);
-        	
-            
-            }, timecalculateMarket, timecalculateMarket);//1 jours
         
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-        	DonateMoneyForStructure.AllPlayer(plugin);
-
-            }, timeDonateMoneyStructure, timeDonateMoneyStructure);//30min
-        
-        
-        
-        
-
-
-
-
         plugin.getServer().getPluginManager().registerEvents(new ChatListener(), plugin);
 
         // tab toutes les 10 secondes
@@ -175,7 +126,6 @@ public class MicroPluginManager {
             plugin.getServer().getPluginManager().registerEvents(new EventBuildAndUse(plugin), plugin);
             plugin.getServer().getPluginManager().registerEvents(new Plotinventory(plugin), plugin);
             plugin.getServer().getPluginManager().registerEvents(new BoatRaceListener(plugin), plugin);
-            plugin.getServer().getPluginManager().registerEvents(new AfkListener(), plugin);
             plugin.getServer().getPluginManager().registerEvents(new ChatCalcListener(), plugin);
 
             // podium quotidien de la course de bateaux : verifie toutes les minutes si le jour a change
@@ -227,8 +177,7 @@ public class MicroPluginManager {
                 } else {
                     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                         Filesave.SavePlayerserverFile(plugin);
-                        RegionSave.saveAllRegions(plugin);
-                        // -----------------------------------------------------------------------
+                       
 
                         
                     });
@@ -270,34 +219,15 @@ public class MicroPluginManager {
             String base = plugin.getConfig().getString("webapi.base_url", "");
             String key  = plugin.getConfig().getString("webapi.api_key", "");
             long ticks  = plugin.getConfig().getLong("webapi.push_interval_seconds", 30L) * 20L;
-            long leaderboardTicks = plugin.getConfig().getLong("webapi.leaderboard_push_minutes", 15L) * 60L * 20L;
 
             plugin.initWebApi(base, key);
 
-            // push initial du marche au demarrage
-            MarketCalc.pushMarketToWebApi(plugin);
 
             // push des sites de vote (une seule source de verite : le config.yml du plugin)
             plugin.getWebApi().pushVoteSites(
                 plugin.getConfig().getStringList("vote.sites"),
                 plugin.getConfig().getString("vote.reward", "World Edit 1 heure")
             );
-
-            // tous les joueurs en memoire (pas seulement les connectes)
-            Runnable pushLeaderboard = () -> {
-                // copie de la liste : on itère en async pendant que /define peut la modifier
-                ArrayList<GameRegion> structures = new ArrayList<>(GetStructure.getallStructure());
-                for (PlayerServer ps : PlayerserverHashMap.getInstance().getHashMapPlayer().values()) {
-                    int nbStructures = 0;
-                    for (GameRegion r : structures) {
-                        if (r.getPropriétaire().equals(ps.getUuid())) nbStructures++;
-                    }
-                    plugin.getWebApi().pushPlayerBalance(ps.getName(), ps.getMoney(), nbStructures, ps.getBlocposetotal());
-                }
-                plugin.getLogger().info("[WebAPI] Leaderboard pousse → " + PlayerserverHashMap.getInstance().getHashMapPlayer().size() + " joueur(s)");
-            };
-
-            Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, pushLeaderboard, 20L, leaderboardTicks);
 
             // push statut serveur toutes les X secondes
             Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {

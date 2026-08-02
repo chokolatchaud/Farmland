@@ -10,14 +10,13 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.boat.AcaciaBoat;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.game.HubCommand;
-import fr.kevyn.farmland.region.GameRegion;
-import fr.kevyn.farmland.region.GameRegionHashMap;
-import fr.kevyn.farmland.region.TypeRegion;
+import fr.kevyn.farmland.gameregion.GameRegion;
+import fr.kevyn.farmland.gameregion.GameRegionHashMap;
+import fr.kevyn.farmland.gameregion.TypeRegion;
 
 public class ConfigStartEndZone {
 	World world = Bukkit.getWorld("world");

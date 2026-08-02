@@ -20,7 +20,6 @@ public class PlayerServer {
     String grade;
     PlotData plotdata;
     int upgrade;
-    int structure;
     int racepoint;
     long weTimeExpiry;
 
@@ -38,7 +37,6 @@ public class PlayerServer {
         this.plotdata = plotdata;
         this.blocpose = blocpose;
         this.upgrade = upgrade;
-        this.structure = 0;
         this.racepoint = 0;
 
 
@@ -124,12 +122,7 @@ public class PlayerServer {
     public java.util.Set<Integer> getCosmeticsOwned() {
         return cosmeticsOwned;
     }
-    public int getStructure() {
-		return structure;
-	}
-    public void setStructure(int structure) {
-		this.structure = structure;
-	}
+   
     
     public int getRacePoints() {
 		return racepoint;

@@ -26,10 +26,10 @@ import org.bukkit.inventory.ItemStack;
 import discordwebhook.messagediscord;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.MessageColor;
+import fr.kevyn.farmland.gameregion.GameRegion;
+import fr.kevyn.farmland.gameregion.GameRegionHashMap;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
-import fr.kevyn.farmland.region.GameRegion;
-import fr.kevyn.farmland.region.GameRegionHashMap;
 
 public class EventBuildAndUse implements Listener {
     private FarmlandMain plugin;

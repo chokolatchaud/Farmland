@@ -9,8 +9,6 @@ import org.bukkit.scoreboard.Team;
 
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
-import fr.kevyn.farmland.region.GameRegion;
-import fr.kevyn.farmland.structure.GetStructure;
 
 public class CreativePlotScoreboard {
 
@@ -21,12 +19,7 @@ public class CreativePlotScoreboard {
         PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
         if (ps == null) return;
 
-        int structureCount = 0;
-        for (GameRegion region : GetStructure.getallStructure()) {
-            if (region.getPropriétaire().equals(player.getUniqueId())) {
-                structureCount++;
-            }
-        }
+        
 
         Objective obj = scoreboard.registerNewObjective("farmland", "dummy",
                 ChatColor.GOLD + "" + ChatColor.BOLD + "FARMLAND");
@@ -38,7 +31,6 @@ public class CreativePlotScoreboard {
         setLine(scoreboard, obj, "line_grade",  ChatColor.GRAY + " Grade : "       + ChatColor.GREEN + ps.getGrade(),                  line--);
         setLine(scoreboard, obj, "line_space2", "  ",                                                                                   line--);
         setLine(scoreboard, obj, "line_money",  ChatColor.GRAY + " Argent : "      + ChatColor.WHITE + format(ps.getMoney()) + " $FB", line--);
-        setLine(scoreboard, obj, "line_struct", ChatColor.GRAY + " Structures : "  + ChatColor.WHITE + structureCount + "/5",          line--);
         setLine(scoreboard, obj, "line_blocs",  ChatColor.GRAY + " Blocs posés : " + ChatColor.WHITE + ps.getBlocpose() + "/150",      line--);
         setLine(scoreboard, obj, "line_we",     ChatColor.GRAY + " WorldEdit : "   + formatWE(ps),                                    line--);
         setLine(scoreboard, obj, "line_space3", "   ",                                                                                  line--);
