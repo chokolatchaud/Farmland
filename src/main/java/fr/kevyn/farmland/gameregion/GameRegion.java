@@ -1,4 +1,4 @@
-package fr.kevyn.farmland.region;
+package fr.kevyn.farmland.gameregion;
 
 import java.util.ArrayList;
 import java.util.List;

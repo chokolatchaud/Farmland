@@ -8,30 +8,6 @@ softdepend: [Votifier, NuVotifier]
 
 commands:
 
-  liststructure:
-    description: Voir toute nos Structure crée et voir leurs lieu de spawn
-    usage: /liststructure [Structure]
-    permission: farmland.gamecommands
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
-
-  viewmoney:
-    description: voir l'argent generer par la Structure ou toute
-    usage: /viewmoney [Structure]
-    permission: farmland.gamecommands
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
-
-  createregion:
-    description: creer une Region
-    usage: /createregion
-    permission: farmland.moderation
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
-
-  listregion:
-    description: voir les Region
-    usage: /listregion
-    permission: farmland.moderation
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
-
   hub:
     description: Retourne au hub du serveur
     usage: /hub
@@ -40,12 +16,6 @@ commands:
   vote:
     description: Affiche les sites de vote du serveur
     usage: /vote
-
-  marketadmin:
-    description: Commandes admin du marché (info, set, reset, recalc)
-    usage: /marketadmin
-    permission: farmland.moderation
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
   psadmin:
     description: Gestion admin des joueurs (info, money, upgrade, saveall)
@@ -56,12 +26,6 @@ commands:
   plotadmin:
     description: Depannage admin des plots (info, tp, border, upgrade, privacy, reload)
     usage: /plotadmin
-    permission: farmland.moderation
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
-
-  structuresadmin:
-    description: Depannage admin des structures (list, info, score, remove, tp)
-    usage: /structuresadmin
     permission: farmland.moderation
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
@@ -81,22 +45,10 @@ commands:
     description: Refuser la derniere demande de teleportation
     usage: /tpdeny
 
-  guideholo:
-    description: Gestion de l'hologramme du guide (set, remove)
-    usage: /guideholo
-    permission: farmland.moderation
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
-
   raceadmin:
     description: Gestion admin de la course de bateaux (holo, reset)
     usage: /raceadmin
     permission: farmland.admin
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
-
-  region:
-    description: Gestion des region
-    usage: /region parametre
-    permission: farmland.moderation
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
   joinboat:
@@ -183,54 +135,9 @@ commands:
     permission: farmland.gamecommands
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
-  define:
-    description: Permet de definir un lieu pour les habitants
-    usage: /define <nom>
-    permission: farmland.gamecommands
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
-
-  undefine:
-    description: Permet de supprimer une structure définie
-    usage: /undefine <nom>
-    permission: farmland.gamecommands
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
-
-  market:
-    description: Affiche le marché et ses statistiques
-    usage: /market [view|stats|refresh]
-    aliases: [mkt]
-    permission: farmland.gamecommands
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
-
-  recalcmarket:
-    description: Recalcule le marché manuellement
-    usage: /recalcmarket
-    permission: farmland.moderation
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
-
   buy:
     description: Achète des options avec tes $FB
     usage: /buy <worldedit>
-    permission: farmland.gamecommands
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
-
-  tuto:
-    description: Affiche le lien vers le guide du joueur
-    usage: /tuto
-    permission: farmland.gamecommands
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
-
-  rewards:
-    description: Affiche les récompenses et ton solde
-    usage: /rewards [table|balance|top]
-    aliases: [reward]
-    permission: farmland.gamecommands
-    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
-
-  balance:
-    description: Affiche ton solde bancaire
-    usage: /balance [player]
-    aliases: [bal]
     permission: farmland.gamecommands
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
@@ -282,3 +189,7 @@ permissions:
   farmland.market.admin:
     description: Accès aux commandes admin du marché (refresh)
     default: op
+
+
+
+
