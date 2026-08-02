@@ -49,7 +49,7 @@ public class MarketHolograms {
     private static final Map<String, UUID> entites = new HashMap<>();
 
     /** Les coefs valides pour la commande (sans accents) */
-    public static final String[] COEFS = { "creativite", "architecture", "densite", "equilibre", "finition" };
+    public static final String[] COEFS = { "Mineur", "Farmeur", "Agriculteur", "Pecheur", "Tueur" };
 
     // ===== CHARGEMENT / SAUVEGARDE DU FICHIER =====
     public static void load(JavaPlugin plugin) {
@@ -252,22 +252,22 @@ public class MarketHolograms {
 
     private static int getCoefValue(Market market, String coef) {
         switch (coef.toLowerCase()) {
-            case "creativite": return market.getMoneyforcoefCréativité();
-            case "architecture": return market.getMoneyforcoefArchitecture();
-            case "densite": return market.getMoneyforcoefDensité();
-            case "equilibre": return market.getMoneyforcoefÉquilibre();
-            case "finition": return market.getMoneyforcoefFinition();
+            case "Mineur": return market.getMoneyforcoefMineur();
+            case "Farmeur": return market.getMoneyforcoefFarmeur();
+            case "Agriculteur": return market.getMoneyforcoefAgriculteur();
+            case "Pecheur": return market.getMoneyforcoefPecheur();
+            case "Tueur": return market.getMoneyforcoefTueur();
             default: return 0;
         }
     }
 
     private static String getDisplayName(String coef) {
         switch (coef.toLowerCase()) {
-            case "creativite": return "Créativité";
-            case "architecture": return "Architecture";
-            case "densite": return "Densité";
-            case "equilibre": return "Équilibre";
-            case "finition": return "Finition";
+            case "Mineur": return "Mineur";
+            case "Farmeur": return "Farmeur";
+            case "Agriculteur": return "Agriculteur";
+            case "Pecheur": return "Pécheur";
+            case "Tueur": return "Tueur";
             default: return coef;
         }
     }

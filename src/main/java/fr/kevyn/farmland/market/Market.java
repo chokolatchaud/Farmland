@@ -3,17 +3,17 @@ package fr.kevyn.farmland.market;
 
 
 public class Market {
-	int moneyforcoefCréativité;
-	int moneyforcoefArchitecture;
-	int moneyforcoefDensité;
-	int moneyforcoefÉquilibre;
-	int moneyforcoefFinition;
-	public Market(int moneyforcoefCréativité,int moneyforcoefArchitecture,int moneyforcoefDensité,int moneyforcoefÉquilibre,int moneyforcoefFinition) {
-		this.moneyforcoefCréativité = moneyforcoefCréativité;
-		this.moneyforcoefArchitecture = moneyforcoefArchitecture;
-		this.moneyforcoefDensité = moneyforcoefDensité;
-		this.moneyforcoefÉquilibre = moneyforcoefÉquilibre;
-		this.moneyforcoefFinition = moneyforcoefFinition;
+	int moneyforcoefMineur;
+	int moneyforcoefFarmeur;
+	int moneyforcoefAgriculteur;
+	int moneyforcoefPecheur;
+	int moneyforcoefTueur;
+	public Market(int moneyforcoefMineur,int moneyforcoefFarmeur,int moneyforcoefAgriculteur,int moneyforcoefPecheur,int moneyforcoefTueur) {
+		this.moneyforcoefMineur = moneyforcoefMineur;
+		this.moneyforcoefFarmeur = moneyforcoefFarmeur;
+		this.moneyforcoefAgriculteur = moneyforcoefAgriculteur;
+		this.moneyforcoefPecheur = moneyforcoefPecheur;
+		this.moneyforcoefTueur = moneyforcoefTueur;
 		// TODO Auto-generated constructor stub
 	}
 	public int getMoneyforcoefCréativité() {

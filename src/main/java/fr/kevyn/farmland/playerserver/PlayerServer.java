@@ -1,5 +1,7 @@
 package fr.kevyn.farmland.playerserver;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -22,6 +24,8 @@ public class PlayerServer {
     int upgrade;
     int racepoint;
     long weTimeExpiry;
+    Map<String, Integer> ressources = new HashMap<>();
+    
 
 
     public PlayerServer() {}
@@ -38,11 +42,20 @@ public class PlayerServer {
         this.blocpose = blocpose;
         this.upgrade = upgrade;
         this.racepoint = 0;
+        this.ressources = ressources;
+        
 
 
         PlayerserverHashMap.getInstance().AddplayerHaspMaps(uuid, this);
     }
     
+    public int getRessource(String nom) {
+        return ressources.getOrDefault(nom, 0);
+    }
+
+    public void addRessource(String nom, int quantite) {
+        ressources.put(nom, getRessource(nom) + quantite);
+    }
 
     public Boolean getLastjoin() {
         return lastjoin;
