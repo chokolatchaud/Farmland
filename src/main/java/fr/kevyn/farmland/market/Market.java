@@ -16,35 +16,36 @@ public class Market {
 		this.moneyforcoefTueur = moneyforcoefTueur;
 		// TODO Auto-generated constructor stub
 	}
-	public int getMoneyforcoefCréativité() {
-		return moneyforcoefCréativité;
+	public int getMoneyforcoefAgriculteur() {
+		return moneyforcoefAgriculteur;
 	}
-	public void setMoneyforcoefCréativité(int moneyforcoefCréativité) {
-		this.moneyforcoefCréativité = moneyforcoefCréativité;
+	public int getMoneyforcoefFarmeur() {
+		return moneyforcoefFarmeur;
 	}
-	public int getMoneyforcoefArchitecture() {
-		return moneyforcoefArchitecture;
+	public int getMoneyforcoefMineur() {
+		return moneyforcoefMineur;
 	}
-	public void setMoneyforcoefArchitecture(int moneyforcoefArchitecture) {
-		this.moneyforcoefArchitecture = moneyforcoefArchitecture;
+	public int getMoneyforcoefPecheur() {
+		return moneyforcoefPecheur;
 	}
-	public int getMoneyforcoefDensité() {
-		return moneyforcoefDensité;
+	public int getMoneyforcoefTueur() {
+		return moneyforcoefTueur;
 	}
-	public void setMoneyforcoefDensité(int moneyforcoefDensité) {
-		this.moneyforcoefDensité = moneyforcoefDensité;
+	public void setMoneyforcoefAgriculteur(int moneyforcoefAgriculteur) {
+		this.moneyforcoefAgriculteur = moneyforcoefAgriculteur;
 	}
-	public int getMoneyforcoefÉquilibre() {
-		return moneyforcoefÉquilibre;
+	public void setMoneyforcoefFarmeur(int moneyforcoefFarmeur) {
+		this.moneyforcoefFarmeur = moneyforcoefFarmeur;
 	}
-	public void setMoneyforcoefÉquilibre(int moneyforcoefÉquilibre) {
-		this.moneyforcoefÉquilibre = moneyforcoefÉquilibre;
+	public void setMoneyforcoefMineur(int moneyforcoefMineur) {
+		this.moneyforcoefMineur = moneyforcoefMineur;
 	}
-	public int getMoneyforcoefFinition() {
-		return moneyforcoefFinition;
+	public void setMoneyforcoefPecheur(int moneyforcoefPecheur) {
+		this.moneyforcoefPecheur = moneyforcoefPecheur;
 	}
-	public void setMoneyforcoefFinition(int moneyforcoefFinition) {
-		this.moneyforcoefFinition = moneyforcoefFinition;
+	public void setMoneyforcoefTueur(int moneyforcoefTueur) {
+		this.moneyforcoefTueur = moneyforcoefTueur;
 	}
+	
 
 }
