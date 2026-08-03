@@ -4,6 +4,7 @@ public enum TypeMenu {
 	PLOTCONFIG,
 	PLOTVISIT,
 	PLOTUPGRADE,
-	COSMETICS
+	COSMETICS,
+	BAG
 
 }

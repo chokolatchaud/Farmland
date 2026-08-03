@@ -15,25 +15,23 @@ public class MenuBag {
 
 	
 	public static Inventory createmenu(PlayerServer playerserver) {
-        Inventory inv = Bukkit.createInventory(null, 9, "§6Boutique cosmétiques");
-        GameMenu menu = new GameMenu(inv, TypeMenu.COSMETICS);
-
-        int slot = 0;
-        for (CosmeticShop.Cosmetic cosmetic : CosmeticShop.COSMETICS) {
-            ItemStack item = cosmetic.createItem();
-            ItemMeta meta = item.getItemMeta();
-
-            boolean owned = playerserver.getCosmeticsOwned().contains(cosmetic.id);
-            meta.setLore(java.util.List.of(
-                    owned ? "§a✔ Possédé — clique pour équiper" : "§7Prix : §e" + cosmetic.price + " $FB"
-            ));
-            item.setItemMeta(meta);
-
-            inv.setItem(slot, item);
-            slot++;
+        Inventory inv = Bukkit.createInventory(null, 54, "§6Sac");
+        GameMenu menu = new GameMenu(inv, TypeMenu.BAG);
+        GameMenu.fillmenu(Material.BLACK_STAINED_GLASS_PANE, inv);
+        for(Material material : ListFarmItem.getlistfarmitem()) {
+    
+        	ItemStack itemset = new ItemStack(material);
+        	int numberofitem = playerserver.getRessource(material);
+        	String name = (ListFarmItem.ReturnNameofMaterial(material) + " x " + numberofitem);  
+        	int slot = ListFarmItem.ReturnSlotofMaterial(material);
+        	GameMenu.set_oneitem_menu(itemset, name, slot, inv);
         }
-
         return inv;
+        
+
+        
+
+
     }
 
 }
