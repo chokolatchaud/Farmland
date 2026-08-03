@@ -3,7 +3,6 @@ package fr.kevyn.farmland.EventBuild;
 import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,9 +18,6 @@ import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.farmland.save.Filesave;
 import fr.kevyn.plot.Plot;
 import fr.kevyn.plot.PlotData;
-import me.clip.placeholderapi.libs.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
 
 public class JoinAndleaveEvent implements Listener {
 
@@ -98,15 +94,6 @@ public class JoinAndleaveEvent implements Listener {
 
             e.getPlayer().sendMessage(MessageColor.GRAY.apply("Données bien synchronisées"));
 
-            // Gains des structures pendant l'absence (penalite hors ligne de 80% deja appliquee)
-            if (playerServer.getMoneyoffline() > 0) {
-            	if(playerServer.getMoneyoffline() >= 5000) {
-            		playerServer.setMoneyoffline(5000);
-            	}
-                e.getPlayer().sendMessage(MessageColor.GOLD.apply("✦ Tes structures ont rapporté +" + playerServer.getMoneyoffline() + " $FB pendant ton absence ! §7(revenus hors ligne réduits de 80%)"));
-                e.getPlayer().sendMessage(MessageColor.GOLD.apply("✦Plafonné A 5000FB"));
-                playerServer.setMoneyoffline(0);
-            }
             messagediscord.sendmessage("[" + playerServer.getGrade() + "]: " + playerServer.getName() + " est revenu", "statut");
             LuckpermGrade.updateGrade(e.getPlayer());
             ChatListener.updateTab(e.getPlayer());

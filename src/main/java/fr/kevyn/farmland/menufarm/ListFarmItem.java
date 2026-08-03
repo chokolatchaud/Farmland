@@ -5,169 +5,89 @@ import java.util.ArrayList;
 import org.bukkit.Material;
 
 public class ListFarmItem {
-	
+
 	public static ArrayList<Material> getlistfarmitem() {
 		ArrayList<Material> farmingitem = new ArrayList<Material>();
 		farmingitem.add(Material.WHEAT);
 		farmingitem.add(Material.CARROT);
 		farmingitem.add(Material.POTATO);
 		farmingitem.add(Material.PUMPKIN);
-		
+
 		farmingitem.add(Material.COAL);
 		farmingitem.add(Material.IRON_INGOT);
 		farmingitem.add(Material.GOLD_INGOT);
 		farmingitem.add(Material.DIAMOND);
-		
+
 		farmingitem.add(Material.PORKCHOP);
 		farmingitem.add(Material.BEEF);
 		farmingitem.add(Material.CHICKEN);
 		farmingitem.add(Material.MUTTON);
-		
+
 		farmingitem.add(Material.COD);
 		farmingitem.add(Material.SALMON);
 		farmingitem.add(Material.TROPICAL_FISH);
 		farmingitem.add(Material.PUFFERFISH);
-		
+
 		farmingitem.add(Material.ROTTEN_FLESH);
 		farmingitem.add(Material.BONE);
 		farmingitem.add(Material.GUNPOWDER);
 		farmingitem.add(Material.SHULKER_SHELL);
 		return farmingitem;
 	}
-	
+
+	// note : "case Material.WHEAT" est interdit en Java, un switch sur un enum
+	// veut juste le nom nu ("case WHEAT") - Java sait deja que c'est un Material
 	public static String ReturnNameofMaterial(Material material) {
 		switch (material) {
-		case Material.WHEAT: {
-			return "Blé";
-		}case Material.CARROT:{
-			return "Carotte";
-			
-		}case Material.POTATO:{
-			return "Patate";
-			
-		}case Material.PUMPKIN:{
-			return "Citrouille";
-			
-		}case Material.COAL:{
-			return "Charbon";
-			
-		}case Material.IRON_INGOT:{
-			return "Fer";
+			case WHEAT: return "Blé";
+			case CARROT: return "Carotte";
+			case POTATO: return "Patate";
+			case PUMPKIN: return "Citrouille";
+			case COAL: return "Charbon";
+			case IRON_INGOT: return "Fer";
+			case GOLD_INGOT: return "Or";
+			case DIAMOND: return "Diamant";
+			case PORKCHOP: return "Cochon";
+			case BEEF: return "Vache";
+			case CHICKEN: return "Poulet";
+			case MUTTON: return "Mouton";
+			case COD: return "Morue";
+			case SALMON: return "Saumon";
+			case TROPICAL_FISH: return "Guppy";
+			case PUFFERFISH: return "Poisson-Globe";
+			case ROTTEN_FLESH: return "Chair périmée";
+			case BONE: return "Os";
+			case GUNPOWDER: return "Poudre à Canon";
+			case SHULKER_SHELL: return "Coquille";
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + material);
 		}
-		case Material.GOLD_INGOT:{
-			return "Or";
-		}
-		case Material.DIAMOND:{
-			return "Diamant";
-		}
-		case Material.PORKCHOP:{
-			return "Cochon";
-		}
-		case Material.BEEF:{
-			return "Vache";
-		}
-		case Material.CHICKEN:{
-			return "Poulet";
-		}
-		case Material.MUTTON:{
-			return "Mouton";
-		}
-		case Material.COD:{
-			return "Morue";
-		}
-		case Material.SALMON:{
-			return "Saumon";
-		}
-		case Material.TROPICAL_FISH:{
-			return "Guppy";
-		}
-		case Material.PUFFERFISH:{
-			return "Poisson-Globe";
-		}
-		case Material.ROTTEN_FLESH:{
-			return "Chair périmé";
-		}
-		case Material.BONE:{
-			return "Os";
-		}
-		case Material.GUNPOWDER:{
-			return "Poudre à Canon";
-		}
-		case Material.SHULKER_SHELL:{
-			return "Coquille";
-			
-		}
-		
-		public static Integer ReturnSlotofMaterial(Material material) {
-			switch (material) {
-			case Material.WHEAT: {
-				return 9;
-			}case Material.CARROT:{
-				return 17;
-				
-			}case Material.POTATO:{
-				return 25;
-				
-			}case Material.PUMPKIN:{
-				return 33;
-				
-			}case Material.COAL:{
-				return 11;
-				
-			}case Material.IRON_INGOT:{
-				return 19;
-			}
-			case Material.GOLD_INGOT:{
-				return 27;
-			}
-			case Material.DIAMOND:{
-				return 35;
-			}
-			case Material.PORKCHOP:{
-				return 13;
-			}
-			case Material.BEEF:{
-				return 21;
-			}
-			case Material.CHICKEN:{
-				return 29;
-			}
-			case Material.MUTTON:{
-				return 37;
-			}
-			case Material.COD:{
-				return 15;
-			}
-			case Material.SALMON:{
-				return 23;
-			}
-			case Material.TROPICAL_FISH:{
-				return 31;
-			}
-			case Material.PUFFERFISH:{
-				return 39;
-			}
-			case Material.ROTTEN_FLESH:{
-				return 17;
-			}
-			case Material.BONE:{
-				return 25;
-			}
-			case Material.GUNPOWDER:{
-				return 33;
-			}
-			case Material.SHULKER_SHELL:{
-				return 41;
-			}
+	} 
 
-		
-		
-		
-			
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + material);
-		} 
-		
+	public static Integer ReturnSlotofMaterial(Material material) {
+		switch (material) {
+			case WHEAT: return 9;
+			case CARROT: return 17;
+			case POTATO: return 25;
+			case PUMPKIN: return 33;
+			case COAL: return 11;
+			case IRON_INGOT: return 19;
+			case GOLD_INGOT: return 27;
+			case DIAMOND: return 35;
+			case PORKCHOP: return 13;
+			case BEEF: return 21;
+			case CHICKEN: return 29;
+			case MUTTON: return 37;	
+			case COD: return 15;
+			case SALMON: return 23;
+			case TROPICAL_FISH: return 31;
+			case PUFFERFISH: return 39;
+			case ROTTEN_FLESH: return 43;
+			case BONE: return 44;
+			case GUNPOWDER: return 45;
+			case SHULKER_SHELL: return 41;
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + material);
+		}
 	}
-
 }

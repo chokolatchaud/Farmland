@@ -20,6 +20,7 @@ import fr.kevyn.farmland.game.GameCommands;
 import fr.kevyn.farmland.game.HubCommand;
 import fr.kevyn.farmland.market.BuyCommands;
 import fr.kevyn.farmland.market.MarketHolograms;
+import fr.kevyn.farmland.menufarm.BagCommands;
 import fr.kevyn.farmland.moderation.ModerationCommands;
 import fr.kevyn.farmland.playerserver.PlayerAdminCommands;
 import fr.kevyn.farmland.save.Filesave;
@@ -53,6 +54,7 @@ public class MicroPluginManager {
         plugin.getCommand("vote").setExecutor(new VoteCommand(plugin));
         plugin.getCommand("psadmin").setExecutor(new PlayerAdminCommands(plugin));
         plugin.getCommand("plotadmin").setExecutor(new PlotAdminCommands(plugin));
+        plugin.getCommand("bag").setExecutor(new BagCommands());
 
 
         TpaCommand tpaCommand = new TpaCommand(plugin);

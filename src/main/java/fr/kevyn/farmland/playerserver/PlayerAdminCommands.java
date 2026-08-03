@@ -59,7 +59,6 @@ public class PlayerAdminCommands implements CommandExecutor {
         Player online = Bukkit.getPlayerExact(ps.getName());
         sender.sendMessage("§6═══ " + ps.getName() + (online != null ? " §a(en ligne)" : " §7(hors ligne)") + " §6═══");
         sender.sendMessage("§eArgent : §f" + ps.getMoney() + " $FB");
-        sender.sendMessage("§eGains hors ligne en attente : §f" + ps.getMoneyoffline() + " $FB");
         sender.sendMessage("§eUpgrade plot : §f" + ps.getUpgrade());
         sender.sendMessage("§eBlocs posés (total) : §f" + ps.getBlocposetotal());
         sender.sendMessage("§eBordure du plot : §f" + (ps.getPlotdata() != null ? ps.getPlotdata().getWorldborder() : "aucun plot"));

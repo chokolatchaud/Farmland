@@ -99,4 +99,8 @@ public class Plot {
         }
         return null;
     }
+    
+    public UUID getUuid() {
+        return uuid;
+    }
 }

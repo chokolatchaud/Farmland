@@ -153,10 +153,6 @@ public class MarketSave {
             MarketSnapshot snapshot = history.get(i);
             Market m = snapshot.market;
             System.out.println((i + 1) + ". " + snapshot.timestamp);
-            System.out.println("   Créativité: " + m.getMoneyforcoefCréativité() + 
-                             " | Architecture: " + m.getMoneyforcoefArchitecture() +
-                             " | Densité: " + m.getMoneyforcoefDensité());
-            System.out.println();
         }
     }
 

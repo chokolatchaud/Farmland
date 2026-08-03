@@ -20,13 +20,12 @@ public class PlayerServer {
     int money;
     int blocpose;
     int blocposetotal;
-    int moneyoffline;
     String grade;
     PlotData plotdata;
     int upgrade;
-    int racepoint;
     long weTimeExpiry;
     Map<Material, Integer> ressources = new HashMap<>();
+    int cobblestonegeneratorlevel = 1;
     
 
 
@@ -43,13 +42,19 @@ public class PlayerServer {
         this.plotdata = plotdata;
         this.blocpose = blocpose;
         this.upgrade = upgrade;
-        this.racepoint = 0;
         
 
 
         PlayerserverHashMap.getInstance().AddplayerHaspMaps(uuid, this);
     }
     
+    
+    public int getCobblestonegeneratorlevel() {
+		return cobblestonegeneratorlevel;
+	}
+    public void setCobblestonegeneratorlevel(int cobblestonegeneratorlevel) {
+		this.cobblestonegeneratorlevel = cobblestonegeneratorlevel;
+	}
     
     
     public int getRessource(Material material) {
@@ -119,12 +124,7 @@ public class PlayerServer {
     public void setBlocposetotal(int blocposetotal) {
         this.blocposetotal = blocposetotal;
     }
-    public int getMoneyoffline() {
-        return moneyoffline;
-    }
-    public void setMoneyoffline(int moneyoffline) {
-        this.moneyoffline = moneyoffline;
-    }
+
     public String getGrade() {
         return grade;
     }
@@ -143,14 +143,6 @@ public class PlayerServer {
     public java.util.Set<Integer> getCosmeticsOwned() {
         return cosmeticsOwned;
     }
-   
-    
-    public int getRacePoints() {
-		return racepoint;
-	}
-    public void setRacePoints(int racepoint) {
-		this.racepoint = racepoint;
-	}
 
     // WorldEdit temporaire
     public long getWeTimeExpiry() { return weTimeExpiry; }

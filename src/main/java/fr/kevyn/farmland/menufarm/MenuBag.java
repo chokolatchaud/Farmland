@@ -4,9 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import fr.kevyn.farmland.cosmetics.CosmeticShop;
 import fr.kevyn.farmland.menu.GameMenu;
 import fr.kevyn.farmland.menu.TypeMenu;
 import fr.kevyn.farmland.playerserver.PlayerServer;
