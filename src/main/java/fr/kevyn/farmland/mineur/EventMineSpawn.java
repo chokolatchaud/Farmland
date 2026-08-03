@@ -37,7 +37,6 @@ public class EventMineSpawn implements Listener {
 
         Material resultat = tirerResultat(levelcobble);
         if (resultat != null) {
-            ps.addRessource(resultat, 1);
             event.getNewState().setType(convertirEnBlocMinerai(resultat));
         }
     }

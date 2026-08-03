@@ -50,7 +50,9 @@ public class HoueFarmEvent implements Listener {
 	    }else {
 	    	 // plante la graine, un cran au-dessus du bloc clique (la terre labouree)
 		    Block emplacementPlantation = blocClique.getRelative(BlockFace.UP);
-		    emplacementPlantation.setType(seed);
+		    Material blocAPoser = itemVersBlocCulture(seed);
+		    if (blocAPoser == null) return; // securite au cas ou
+		    emplacementPlantation.setType(blocAPoser);
 
 		    // consomme 1 graine dans la main secondaire
 		    mainSecondaire.setAmount(mainSecondaire.getAmount() - 1);
@@ -59,6 +61,16 @@ public class HoueFarmEvent implements Listener {
 	    }
 	    
 	    event.setCancelled(true); // evite que Minecraft fasse sa propre action par-dessus
+	}
+	
+	private Material itemVersBlocCulture(Material itemGraine) {
+	    return switch (itemGraine) {
+	        case WHEAT_SEEDS -> Material.WHEAT;
+	        case CARROT -> Material.CARROT;
+	        case POTATO -> Material.POTATO;
+	        case PUMPKIN_SEEDS -> Material.PUMPKIN_STEM;
+	        default -> null;
+	    };
 	}
 	
 	
