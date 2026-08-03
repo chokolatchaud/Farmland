@@ -8,6 +8,12 @@ softdepend: [Votifier, NuVotifier]
 
 commands:
 
+  houe:
+    description: permet d'obtenir la houe du farm
+    usage: /houe
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
   bag:
     description: permet d'ouvrir son sac
     usage: /bag

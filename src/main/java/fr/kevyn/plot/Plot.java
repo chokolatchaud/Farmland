@@ -19,6 +19,7 @@ public class Plot {
 
     public Plot(UUID uuid, Plugin plugin) {
         this.uuid = uuid;
+        PlotHashmap.getInstance().addPlotHashMap(uuid.toString(), this);
         String nameplot = uuid.toString();
         
         WorldManager multivers = MultiverseCoreApi.get().getWorldManager();
@@ -59,6 +60,7 @@ public class Plot {
             }, 80L);
         } else {
         }
+        
     }
     
     private void initializeWorld(String nameplot) {

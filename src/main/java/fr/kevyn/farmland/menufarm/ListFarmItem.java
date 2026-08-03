@@ -77,7 +77,7 @@ public class ListFarmItem {
 			case PORKCHOP: return 13;
 			case BEEF: return 21;
 			case CHICKEN: return 29;
-			case MUTTON: return 37;	
+			case MUTTON: return 37;
 			case COD: return 15;
 			case SALMON: return 23;
 			case TROPICAL_FISH: return 31;
