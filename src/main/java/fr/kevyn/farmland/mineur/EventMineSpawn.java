@@ -5,21 +5,20 @@ import java.util.Random;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFormEvent;
 
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.plot.Plot;
 
-public class EventMineSpawn {
-
-    private static final Random random = new Random();
-
-    // niveau 1 (a dupliquer/ajuster pour niveau 2, 3... plus tard)
-    float chancetocoal = 0.20f;
-    float chancetoiron = 0.10f;
+public class EventMineSpawn implements Listener {
+	private static final Random random = new Random();
+	// niveau 1 (a dupliquer/ajuster pour niveau 2, 3... plus tard)
+    float chancetocoal = 0.50f;
+    float chancetoiron = 0.40f;
     float chancetogold = 0.05f;
-    float chancetodiamond = 0.025f;
+    float chancetodiamond = 0.05f;
     // le reste (0.825f dans ton cas) = rien de special, reste du cobble normal
 
     @EventHandler
@@ -72,4 +71,5 @@ public class EventMineSpawn {
             default -> Material.COBBLESTONE;
         };
     }
+
 }

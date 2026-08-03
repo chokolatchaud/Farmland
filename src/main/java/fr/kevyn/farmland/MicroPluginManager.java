@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 
 import discordwebhook.messagediscord;
 import fr.kevyn.farmland.EventBuild.ChatListener;
@@ -31,6 +32,7 @@ import fr.kevyn.farmland.vote.VoteListener;
 import fr.kevyn.farmland.worldeditgestion.WorldEditSecureListener;
 import fr.kevyn.plot.PlotAdminCommands;
 import fr.kevyn.plot.Plotcommands;
+import fr.kevyn.farmland.mineur.EventMineSpawn;
 
 public class MicroPluginManager {
 
@@ -248,6 +250,13 @@ public class MicroPluginManager {
             e.printStackTrace();
         }
     }
+    
+    public static void modulemetier(FarmlandMain plugin) {
+    	plugin.getServer().getPluginManager().registerEvents(new EventMineSpawn(), plugin);
+    	plugin.getLogger().info("[Metier] Module Metier activé");
+    	messagediscord.sendmessage("Module Metier bien lancé ","statut");
+        
+    }
 
     public static void loadModules(FarmlandMain plugin) {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
@@ -258,6 +267,7 @@ public class MicroPluginManager {
             moduleGame(plugin);
             moduleSecureWorldEdit(plugin);
             moduleWebApi(plugin);
+            modulemetier(plugin);
         }, 20L);
     }
 }
