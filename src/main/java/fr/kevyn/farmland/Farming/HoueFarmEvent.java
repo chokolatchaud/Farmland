@@ -13,6 +13,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import fr.kevyn.farmland.playerserver.PlayerServer;
+import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
+
 public class HoueFarmEvent implements Listener {
 	Material[] seedlist = {Material.WHEAT_SEEDS,Material.CARROT,Material.POTATO,Material.PUMPKIN_SEEDS};
 	
@@ -24,19 +27,20 @@ public class HoueFarmEvent implements Listener {
 	    if (event.getHand() != EquipmentSlot.HAND) return; // eviter le double declenchement
 
 	    Player player = event.getPlayer();
+	    PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
 	    ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
 	    ItemStack mainSecondaire = player.getInventory().getItemInOffHand();
 
 	    if (!HoueFarmeur.isHoueFarmeur(mainPrincipale)) return;
 
 	    // pas de vrai clic sur un bloc = rien a faire
-	    if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+	    if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+	    	player.openInventory(MenuFarm.createmenuSeeds(ps));
+	    }
 
 	    Block blocClique = event.getClickedBlock();
-	    if (blocClique.getType() != Material.FARMLAND) return; // faut de la terre labouree
+	    if (blocClique.getType() == Material.FARMLAND) return; // faut de la terre labouree
 	    
-	    Material seed = mainSecondaire.getType();
-	    Boolean isseed = false;
 	    for(Material seedaccept : seedlist) {
 	    	if((seed == seedaccept)) {
 	    		isseed = true;
@@ -44,24 +48,11 @@ public class HoueFarmEvent implements Listener {
 	    
 	    	
 	    }
-	    if (!isseed) {
-	        player.sendMessage("§cTiens une graine dans ta main secondaire pour planter !");
-	        return;
-	    }else {
-	    	 // plante la graine, un cran au-dessus du bloc clique (la terre labouree)
-		    Block emplacementPlantation = blocClique.getRelative(BlockFace.UP);
-		    Material blocAPoser = itemVersBlocCulture(seed);
-		    if (blocAPoser == null) return; // securite au cas ou
-		    emplacementPlantation.setType(blocAPoser);
-
-		    // consomme 1 graine dans la main secondaire
-		    mainSecondaire.setAmount(mainSecondaire.getAmount() - 1);
+	   
 
 	    	
 	    }
 	    
-	    event.setCancelled(true); // evite que Minecraft fasse sa propre action par-dessus
-	}
 	
 	private Material itemVersBlocCulture(Material itemGraine) {
 	    return switch (itemGraine) {

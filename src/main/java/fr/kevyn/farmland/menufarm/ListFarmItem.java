@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.bukkit.Material;
 
+import fr.kevyn.farmland.menu.TypeMenu;
+
 public class ListFarmItem {
 
 	public static ArrayList<Material> getlistfarmitem() {
@@ -34,11 +36,26 @@ public class ListFarmItem {
 		farmingitem.add(Material.SHULKER_SHELL);
 		return farmingitem;
 	}
+	
+	public static ArrayList<Material> getlistSeeditem() {
+		ArrayList<Material> farmingSeed = new ArrayList<Material>();
+		farmingSeed.add(Material.WHEAT_SEEDS);
+		farmingSeed.add(Material.CARROT);
+		farmingSeed.add(Material.POTATO);
+		farmingSeed.add(Material.PUMPKIN_SEEDS);
+		return farmingSeed;
+		
+		
+		
+		
+	}
+	
+	
 
-	// note : "case Material.WHEAT" est interdit en Java, un switch sur un enum
-	// veut juste le nom nu ("case WHEAT") - Java sait deja que c'est un Material
-	public static String ReturnNameofMaterial(Material material) {
-		switch (material) {
+	public static String ReturnNameofMaterial(Material material,TypeMenu menu) {
+		if(menu == TypeMenu.BAG) {
+			switch (material) {
+			
 			case WHEAT: return "Blé";
 			case CARROT: return "Carotte";
 			case POTATO: return "Patate";
@@ -59,13 +76,34 @@ public class ListFarmItem {
 			case BONE: return "Os";
 			case GUNPOWDER: return "Poudre à Canon";
 			case SHULKER_SHELL: return "Coquille";
+
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + material);
+			
 		}
-	} 
+		
+		}
+		if(menu == TypeMenu.SEEDS) {
+			switch (material) {
+			
+			case WHEAT_SEEDS: return "Graine Blé";
+			case CARROT: return "Graine Carotte";
+			case POTATO: return "Graine Patate";
+			case PUMPKIN_SEEDS: return "Graine Citrouille";
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + material);
 
-	public static Integer ReturnSlotofMaterial(Material material) {
-		switch (material) {
+
+			
+		}
+	}
+		return null; 
+	} 
+		
+
+	public static Integer ReturnSlotofMaterial(Material material, TypeMenu menu) {
+		if(menu == TypeMenu.BAG) {
+			switch (material) {
 			case WHEAT: return 9;
 			case CARROT: return 17;
 			case POTATO: return 25;
@@ -88,6 +126,25 @@ public class ListFarmItem {
 			case SHULKER_SHELL: return 41;
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + material);
+			
 		}
+			
+
 	}
+		if(menu == TypeMenu.SEEDS) {
+			switch (material) {
+			case WHEAT_SEEDS: return 1;
+			case CARROT: return 2;
+			case POTATO: return 3;
+			case PUMPKIN_SEEDS: return 4;
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + material);
+			
+		}
 }
+		return null;
+	
+}
+	
+}
+	
