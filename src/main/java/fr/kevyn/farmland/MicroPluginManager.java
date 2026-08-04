@@ -266,6 +266,14 @@ public class MicroPluginManager {
     	plugin.getCommand("peche").setExecutor(new FishingCommands());
     	plugin.getServer().getPluginManager().registerEvents(new MenuListenerFarm(), plugin);
     	plugin.getServer().getPluginManager().registerEvents(new EventPeche(), plugin);
+
+    	plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.agriculteur.SpawnerPlaceListener(), plugin);
+    	plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.agriculteur.KillEventAgriculteur(), plugin);
+    	plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.tueur.KillEventTueur(), plugin);
+    	fr.kevyn.farmland.agriculteur.SpawnerTickTask.demarrer(plugin);
+    	plugin.getCommand("epee").setExecutor(new fr.kevyn.farmland.agriculteur.EpeeCommands());
+    	plugin.getCommand("hache").setExecutor(new fr.kevyn.farmland.tueur.HacheCommands());
+
     	plugin.getLogger().info("[Metier] Module Metier activé");
     	messagediscord.sendmessage("Module Metier bien lancé ","statut");
         

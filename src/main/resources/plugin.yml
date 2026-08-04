@@ -12,6 +12,16 @@ commands:
     description: permet d'obtenir la canne a péche de farm
     usage: /peche
     permission: farmland.gamecommands
+
+  epee:
+    description: permet d'obtenir l'epee de l'Agriculteur
+    usage: /epee
+    permission: farmland.gamecommands
+
+  hache:
+    description: permet d'obtenir la hache du Tueur
+    usage: /hache
+    permission: farmland.gamecommands
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
   pioche:

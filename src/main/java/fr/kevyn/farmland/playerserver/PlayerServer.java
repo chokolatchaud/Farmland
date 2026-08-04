@@ -69,6 +69,16 @@ public class PlayerServer {
         ressources.put(material, getRessource(material) - quantite);
     }
 
+    // niveaux d'amelioration Agriculteur/Tueur - separes, mais la formule de
+    // degats est partagee (voir ArmesUtil.calculerDegats)
+    int epeeLevel = 0;
+    public int getEpeeLevel() { return epeeLevel; }
+    public void setEpeeLevel(int epeeLevel) { this.epeeLevel = epeeLevel; }
+
+    int hacheLevel = 0;
+    public int getHacheLevel() { return hacheLevel; }
+    public void setHacheLevel(int hacheLevel) { this.hacheLevel = hacheLevel; }
+
 
     public Boolean getLastjoin() {
         return lastjoin;
