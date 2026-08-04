@@ -145,9 +145,9 @@ public class HarvestFarmEvent implements Listener {
 
 	private Material blocCultureVersRessource(Material blocCulture) {
 		return switch (blocCulture) {
-			case WHEAT_SEEDS -> Material.WHEAT;
-			case CARROT -> Material.CARROTS;
-			case POTATO -> Material.POTATOES;
+			case WHEAT -> Material.WHEAT;
+			case CARROTS -> Material.CARROTS;
+			case POTATOES -> Material.POTATOES;
 			case PUMPKIN_STEM-> Material.PUMPKIN;
 			default -> null;
 		};
