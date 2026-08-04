@@ -13,6 +13,8 @@ import fr.kevyn.farmland.EventBuild.LuckpermGrade;
 import fr.kevyn.farmland.EventBuild.Plotinventory;
 import fr.kevyn.farmland.Farming.FarmCommands;
 import fr.kevyn.farmland.Farming.HoueFarmEvent;
+import fr.kevyn.farmland.Farming.HarvestFarmEvent;
+import fr.kevyn.farmland.Farming.BlockPlantSecureListener;
 import fr.kevyn.farmland.boathub.BoatRaceHologram;
 import fr.kevyn.farmland.boathub.BoatRaceListener;
 import fr.kevyn.farmland.boathub.DailyBoatReward;
@@ -258,6 +260,8 @@ public class MicroPluginManager {
     public static void modulemetier(FarmlandMain plugin) {
     	plugin.getServer().getPluginManager().registerEvents(new EventMineSpawn(), plugin);
     	plugin.getServer().getPluginManager().registerEvents(new HoueFarmEvent(), plugin);
+    	plugin.getServer().getPluginManager().registerEvents(new HarvestFarmEvent(), plugin);
+    	plugin.getServer().getPluginManager().registerEvents(new BlockPlantSecureListener(), plugin);
     	plugin.getCommand("houe").setExecutor(new FarmCommands());
     	plugin.getCommand("shop").setExecutor(new ShopCommand());
     	plugin.getServer().getPluginManager().registerEvents(new MenuListenerFarm(), plugin);

@@ -14,7 +14,7 @@ import fr.kevyn.farmland.playerserver.PlayerServer;
 public class ShopMenu {
 	
 	public static Inventory createmenu(PlayerServer playerserver) {
-        Inventory inv = Bukkit.createInventory(null, 54, "§6Sac");
+        Inventory inv = Bukkit.createInventory(null, 54, "§6Boutique");
         GameMenu menu = new GameMenu(inv, TypeMenu.SHOP);
         GameMenu.fillmenu(Material.BLACK_STAINED_GLASS_PANE, inv);
         for(Material material : getlistshop()) {

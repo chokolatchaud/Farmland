@@ -35,7 +35,8 @@ public class WorldEditSecureListener implements Listener {
     private static final Set<String> BANNED_BLOCKS = new HashSet<>(Arrays.asList(
         "tnt", "bedrock", "barrier", "command_block", "chain_command_block",
         "repeating_command_block", "structure_block", "structure_void", "jigsaw",
-        "spawner", "end_portal", "end_portal_frame", "end_gateway"
+        "spawner", "end_portal", "end_portal_frame", "end_gateway",
+        "wheat", "carrots", "potatoes", "pumpkin_stem"
     ));
 
     public WorldEditSecureListener() {
