@@ -135,7 +135,7 @@ public class HarvestFarmEvent implements Listener {
 
 	private boolean isCulture(Material type) {
 		return switch (type) {
-			case WHEAT, CARROTS, POTATOES, PUMPKIN -> true;
+			case WHEAT, CARROTS, POTATOES, PUMPKIN_SEEDS -> true;
 			default -> false;
 		};
 	}

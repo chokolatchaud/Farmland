@@ -9,11 +9,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
-/**
- * Toutes les X ticks, verifie chaque spawner pose et fait apparaitre un mob
- * INERTE (setAI false) si le plafond n'est pas atteint. Le mob est tague
- * pour que KillEvent sache qu'il vient bien d'un de nos spawners.
- */
+
 public class SpawnerTickTask {
 
 	public static final NamespacedKey CLE_MOB_SPAWNER = new NamespacedKey("farmland", "mob_de_spawner");

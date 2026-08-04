@@ -45,11 +45,11 @@ public class EpeeFarm {
 	public static void appliquerDegats(ItemStack item, double degats) {
 		ItemMeta meta = item.getItemMeta();
 
-		meta.removeAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE);
+		meta.removeAttributeModifier(Attribute.ATTACK_DAMAGE);
 		AttributeModifier modifier = new AttributeModifier(
-			CLE_MODIFIER, degats, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND
+			CLE_MODIFIER, degats, AttributeModifier.Operation.ADD_NUMBER
 		);
-		meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier);
+		meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier);
 
 		item.setItemMeta(meta);
 	}

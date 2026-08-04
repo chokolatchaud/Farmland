@@ -9,12 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-/**
- * Hache du Tueur (mobs hostiles). Meme principe que EpeeFarm - la hache
- * vanilla fait normalement BEAUCOUP plus de degats qu'une epee (7 contre 4
- * en base), on ecrase ca pour demarrer a 1 degat comme l'epee, vu que les
- * deux sont liees par la meme formule (ArmesUtil).
- */
+
 public class HacheFarm {
 
 	private static final NamespacedKey CLE_TAG = new NamespacedKey("farmland", "hache_tueur");
@@ -39,11 +34,11 @@ public class HacheFarm {
 	public static void appliquerDegats(ItemStack item, double degats) {
 		ItemMeta meta = item.getItemMeta();
 
-		meta.removeAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE);
+		meta.removeAttributeModifier(Attribute.ATTACK_DAMAGE);
 		AttributeModifier modifier = new AttributeModifier(
-			CLE_MODIFIER, degats, AttributeModifier.Operation.ADD_NUMBER, EquipmentSlot.HAND
+			CLE_MODIFIER, degats, AttributeModifier.Operation.ADD_NUMBER
 		);
-		meta.addAttributeModifier(Attribute.GENERIC_ATTACK_DAMAGE, modifier);
+		meta.addAttributeModifier(Attribute.ATTACK_DAMAGE, modifier);
 
 		item.setItemMeta(meta);
 	}
