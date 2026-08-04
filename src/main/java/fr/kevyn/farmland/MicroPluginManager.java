@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 
 import discordwebhook.messagediscord;
 import fr.kevyn.farmland.EventBuild.ChatListener;
@@ -12,9 +11,7 @@ import fr.kevyn.farmland.EventBuild.EventBuildAndUse;
 import fr.kevyn.farmland.EventBuild.LuckpermGrade;
 import fr.kevyn.farmland.EventBuild.Plotinventory;
 import fr.kevyn.farmland.Farming.FarmCommands;
-import fr.kevyn.farmland.Farming.HoueFarmEvent;
 import fr.kevyn.farmland.Farming.HarvestFarmEvent;
-import fr.kevyn.farmland.Farming.BlockPlantSecureListener;
 import fr.kevyn.farmland.boathub.BoatRaceHologram;
 import fr.kevyn.farmland.boathub.BoatRaceListener;
 import fr.kevyn.farmland.boathub.DailyBoatReward;
@@ -28,6 +25,7 @@ import fr.kevyn.farmland.market.MarketHolograms;
 import fr.kevyn.farmland.menufarm.BagCommands;
 import fr.kevyn.farmland.menufarm.MenuListenerFarm;
 import fr.kevyn.farmland.menufarm.ShopCommand;
+import fr.kevyn.farmland.mineur.EventMineSpawn;
 import fr.kevyn.farmland.moderation.ModerationCommands;
 import fr.kevyn.farmland.playerserver.PlayerAdminCommands;
 import fr.kevyn.farmland.save.Filesave;
@@ -38,7 +36,6 @@ import fr.kevyn.farmland.vote.VoteListener;
 import fr.kevyn.farmland.worldeditgestion.WorldEditSecureListener;
 import fr.kevyn.plot.PlotAdminCommands;
 import fr.kevyn.plot.Plotcommands;
-import fr.kevyn.farmland.mineur.EventMineSpawn;
 
 public class MicroPluginManager {
 
@@ -259,9 +256,7 @@ public class MicroPluginManager {
     
     public static void modulemetier(FarmlandMain plugin) {
     	plugin.getServer().getPluginManager().registerEvents(new EventMineSpawn(), plugin);
-    	plugin.getServer().getPluginManager().registerEvents(new HoueFarmEvent(), plugin);
     	plugin.getServer().getPluginManager().registerEvents(new HarvestFarmEvent(), plugin);
-    	plugin.getServer().getPluginManager().registerEvents(new BlockPlantSecureListener(), plugin);
     	plugin.getCommand("houe").setExecutor(new FarmCommands());
     	plugin.getCommand("shop").setExecutor(new ShopCommand());
     	plugin.getServer().getPluginManager().registerEvents(new MenuListenerFarm(), plugin);
