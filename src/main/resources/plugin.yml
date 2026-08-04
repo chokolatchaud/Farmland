@@ -7,6 +7,12 @@ depend: [PlaceholderAPI, Multiverse-Core]
 softdepend: [Votifier, NuVotifier]
 
 commands:
+	
+  Shop:
+    description: permet d'ouvrir le shop
+    usage: /shop
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
   houe:
     description: permet d'obtenir la houe du farm

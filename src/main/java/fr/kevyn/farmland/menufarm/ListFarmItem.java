@@ -97,7 +97,23 @@ public class ListFarmItem {
 			
 		}
 	}
+		if(menu == TypeMenu.SHOP) {
+			switch (material) {
+			case WHEAT_SEEDS: return "Graine Blé";
+			case CARROT: return "Graine Carotte";
+			case POTATO: return "Graine Patate";
+			case PUMPKIN_SEEDS: return "Graine Citrouille";
+			
+
+
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + material);
+			
+		}
+
+	}
 		return null; 
+		
 	} 
 		
 
@@ -137,6 +153,17 @@ public class ListFarmItem {
 			case CARROT: return 2;
 			case POTATO: return 3;
 			case PUMPKIN_SEEDS: return 4;
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + material);
+			
+		}
+}
+		if(menu == TypeMenu.SHOP) {
+			switch (material) {
+			case WHEAT_SEEDS: return 1;
+			case CARROT: return 9;
+			case POTATO: return 17;
+			case PUMPKIN_SEEDS: return 25;
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + material);
 			

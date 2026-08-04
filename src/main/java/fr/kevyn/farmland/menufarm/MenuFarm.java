@@ -1,4 +1,4 @@
-package fr.kevyn.farmland.Farming;
+package fr.kevyn.farmland.menufarm;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -7,7 +7,6 @@ import org.bukkit.inventory.ItemStack;
 
 import fr.kevyn.farmland.menu.GameMenu;
 import fr.kevyn.farmland.menu.TypeMenu;
-import fr.kevyn.farmland.menufarm.ListFarmItem;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 
 public class MenuFarm {

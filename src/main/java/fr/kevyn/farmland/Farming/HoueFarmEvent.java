@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import fr.kevyn.farmland.menufarm.MenuFarm;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
@@ -29,28 +30,43 @@ public class HoueFarmEvent implements Listener {
 	    Player player = event.getPlayer();
 	    PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
 	    ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
-	    ItemStack mainSecondaire = player.getInventory().getItemInOffHand();
 
 	    if (!HoueFarmeur.isHoueFarmeur(mainPrincipale)) return;
 
-	    // pas de vrai clic sur un bloc = rien a faire
-	    if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+	    if (event.getAction() == Action.RIGHT_CLICK_AIR) {
 	    	player.openInventory(MenuFarm.createmenuSeeds(ps));
+	    	return;
 	    }
+	    
+	    
 
 	    Block blocClique = event.getClickedBlock();
-	    if (blocClique.getType() == Material.FARMLAND) return; // faut de la terre labouree
-	    
-	    for(Material seedaccept : seedlist) {
-	    	if((seed == seedaccept)) {
-	    		isseed = true;
-	    	}
-	    
+	    if (blocClique.getType() == Material.FARMLAND) {
+	    	Material seedplanteur = HoueFarmeur.getGraineSelectionnee(mainPrincipale);
+	        if (seedplanteur == null) {
+	            player.sendMessage("§cSélectionne d'abord une graine (clic droit dans le vide) !");
+	            return;
+	        }
+
+	        if (ps.getRessource(seedplanteur) <= 0) {
+	            player.sendMessage("§cTu n'as plus de graines de ce type ! Achete-en via le menu.");
+	            return;
+	        }
+	        
+	        Material blocAPoser = itemVersBlocCulture(seedplanteur);
+	        if (blocAPoser == null) return;
+	        Block emplacementPlantation = blocClique.getRelative(BlockFace.UP);
+	        if (emplacementPlantation.getType() != Material.AIR) return;
+	        
+	        emplacementPlantation.setType(blocAPoser);
+	        ps.RemoveRessource(seedplanteur, 1);
+	        
+	        event.setCancelled(true);
+	    	
+	    	
 	    	
 	    }
-	   
 
-	    	
 	    }
 	    
 	

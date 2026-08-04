@@ -24,6 +24,8 @@ import fr.kevyn.farmland.game.HubCommand;
 import fr.kevyn.farmland.market.BuyCommands;
 import fr.kevyn.farmland.market.MarketHolograms;
 import fr.kevyn.farmland.menufarm.BagCommands;
+import fr.kevyn.farmland.menufarm.MenuListenerFarm;
+import fr.kevyn.farmland.menufarm.ShopCommand;
 import fr.kevyn.farmland.moderation.ModerationCommands;
 import fr.kevyn.farmland.playerserver.PlayerAdminCommands;
 import fr.kevyn.farmland.save.Filesave;
@@ -257,6 +259,8 @@ public class MicroPluginManager {
     	plugin.getServer().getPluginManager().registerEvents(new EventMineSpawn(), plugin);
     	plugin.getServer().getPluginManager().registerEvents(new HoueFarmEvent(), plugin);
     	plugin.getCommand("houe").setExecutor(new FarmCommands());
+    	plugin.getCommand("shop").setExecutor(new ShopCommand());
+    	plugin.getServer().getPluginManager().registerEvents(new MenuListenerFarm(), plugin);
     	plugin.getLogger().info("[Metier] Module Metier activé");
     	messagediscord.sendmessage("Module Metier bien lancé ","statut");
         
