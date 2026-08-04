@@ -50,6 +50,16 @@ public class ListFarmItem {
 		
 	}
 	
+	public static ArrayList<Material> listfichingitem() {
+		ArrayList<Material> farmingFishing= new ArrayList<Material>();
+		farmingFishing.add(Material.COD);
+		farmingFishing.add(Material.SALMON);
+		farmingFishing.add(Material.TROPICAL_FISH);
+		farmingFishing.add(Material.PUFFERFISH);
+		return farmingFishing;
+
+	}
+	
 	
 
 	public static String ReturnNameofMaterial(Material material,TypeMenu menu) {

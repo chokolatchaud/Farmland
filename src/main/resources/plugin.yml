@@ -8,7 +8,19 @@ softdepend: [Votifier, NuVotifier]
 
 commands:
 
-  Shop:
+  peche:
+    description: permet d'obtenir la canne a péche de farm
+    usage: /peche
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  pioche:
+    description: permet d'obtenir la pioche de farm
+    usage: /pioche
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  shop:
     description: permet d'ouvrir le shop
     usage: /shop
     permission: farmland.gamecommands

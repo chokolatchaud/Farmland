@@ -8,7 +8,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class HoueFarmeur {
 
-    private static final NamespacedKey CLE_TAG = new NamespacedKey("farmland", "outil_farmeur");
+    private static final NamespacedKey CLE_TAG = new NamespacedKey("farmland", "houe_farmeur");
     private static final NamespacedKey CLE_GRAINE_SELECTIONNEE = new NamespacedKey("farmland", "graine_selectionnee");
 
     public static ItemStack create() {

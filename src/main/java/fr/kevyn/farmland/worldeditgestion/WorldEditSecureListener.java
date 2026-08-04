@@ -36,7 +36,7 @@ public class WorldEditSecureListener implements Listener {
         "tnt", "bedrock", "barrier", "command_block", "chain_command_block",
         "repeating_command_block", "structure_block", "structure_void", "jigsaw",
         "spawner", "end_portal", "end_portal_frame", "end_gateway",
-        "wheat", "carrots", "potatoes", "pumpkin_stem"
+        "wheat", "carrots", "potatoes", "pumpkin_stem","iron_ore","coal_ore","gold_ore","diamond_ore"
     ));
 
     public WorldEditSecureListener() {

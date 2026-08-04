@@ -26,7 +26,10 @@ import fr.kevyn.farmland.menufarm.BagCommands;
 import fr.kevyn.farmland.menufarm.MenuListenerFarm;
 import fr.kevyn.farmland.menufarm.ShopCommand;
 import fr.kevyn.farmland.mineur.EventMineSpawn;
+import fr.kevyn.farmland.mineur.MineCommands;
 import fr.kevyn.farmland.moderation.ModerationCommands;
+import fr.kevyn.farmland.pecheur.EventPeche;
+import fr.kevyn.farmland.pecheur.FishingCommands;
 import fr.kevyn.farmland.playerserver.PlayerAdminCommands;
 import fr.kevyn.farmland.save.Filesave;
 import fr.kevyn.farmland.scoreboard.CreativePlotScoreboard;
@@ -259,7 +262,10 @@ public class MicroPluginManager {
     	plugin.getServer().getPluginManager().registerEvents(new HarvestFarmEvent(), plugin);
     	plugin.getCommand("houe").setExecutor(new FarmCommands());
     	plugin.getCommand("shop").setExecutor(new ShopCommand());
+    	plugin.getCommand("pioche").setExecutor(new MineCommands());
+    	plugin.getCommand("peche").setExecutor(new FishingCommands());
     	plugin.getServer().getPluginManager().registerEvents(new MenuListenerFarm(), plugin);
+    	plugin.getServer().getPluginManager().registerEvents(new EventPeche(), plugin);
     	plugin.getLogger().info("[Metier] Module Metier activé");
     	messagediscord.sendmessage("Module Metier bien lancé ","statut");
         

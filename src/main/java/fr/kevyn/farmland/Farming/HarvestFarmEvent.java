@@ -26,7 +26,7 @@ public class HarvestFarmEvent implements Listener {
 	@EventHandler
 	public void onHarvest(BlockBreakEvent event) {
 		if (event.isCancelled()) {
-			System.out.println("event annulé");
+
 			
 			return; // deja refuse par un autre handler (protection de plot, etc.)
 		}
@@ -34,13 +34,11 @@ public class HarvestFarmEvent implements Listener {
 		Player player = event.getPlayer();
 		ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
 		if (!HoueFarmeur.isHoueFarmeur(mainPrincipale)) {
-			System.out.println("la houe pas dans la bonne main");
 			return;
 		}
 
 		Block block = event.getBlock();
 		if (!(block.getBlockData() instanceof Ageable ageable)) {
-			System.out.println("ageable null");
 			return;
 		}
 
@@ -53,14 +51,13 @@ public class HarvestFarmEvent implements Listener {
 
 		PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
 		if (ps == null) {
-			System.out.println("player server null");
 			return;
 		}
 
 		event.setDropItems(false); // jamais de vrai drop au sol, tout passe par le /bag
-
-		ps.addRessource(ressource, 1);
-		player.sendMessage("§a+1 " + ressource.name() + " ajouté à ton /bag !");
+		int numberdone = 2;
+		ps.addRessource(ressource, numberdone);
+		player.sendMessage("§a+" + numberdone +" " + ressource.name() + " ajouté à ton /bag !");
 	}
 	
 	
@@ -126,7 +123,7 @@ public class HarvestFarmEvent implements Listener {
 	        case WHEAT_SEEDS -> Material.WHEAT;
 	        case CARROT -> Material.CARROTS;
 	        case POTATO -> Material.POTATOES;
-	        case PUMPKIN_STEM -> Material.PUMPKIN_STEM;
+	        case PUMPKIN_SEEDS -> Material.PUMPKIN_STEM;
 	        default -> null;
 	    };
 	}
@@ -146,8 +143,8 @@ public class HarvestFarmEvent implements Listener {
 	private Material blocCultureVersRessource(Material blocCulture) {
 		return switch (blocCulture) {
 			case WHEAT -> Material.WHEAT;
-			case CARROTS -> Material.CARROTS;
-			case POTATOES -> Material.POTATOES;
+			case CARROTS -> Material.CARROT;
+			case POTATOES -> Material.POTATO;
 			case PUMPKIN_STEM-> Material.PUMPKIN;
 			default -> null;
 		};
