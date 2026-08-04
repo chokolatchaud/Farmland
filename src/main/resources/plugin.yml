@@ -7,7 +7,7 @@ depend: [PlaceholderAPI, Multiverse-Core]
 softdepend: [Votifier, NuVotifier]
 
 commands:
-	
+
   Shop:
     description: permet d'ouvrir le shop
     usage: /shop

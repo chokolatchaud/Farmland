@@ -60,7 +60,6 @@ public class HoueFarmEvent implements Listener {
 	        
 	        emplacementPlantation.setType(blocAPoser);
 	        ps.RemoveRessource(seedplanteur, 1);
-	        PositionsLegitimesFarm.ajouter(emplacementPlantation.getLocation());
 
 	        event.setCancelled(true);
 	    	

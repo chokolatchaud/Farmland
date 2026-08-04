@@ -20,13 +20,13 @@ public class BlockPlantSecureListener implements Listener {
 
 		if (isCulture(type)) {
 			event.setCancelled(true);
-			event.getPlayer().sendMessage("§cSeul le Planteur peut faire pousser des cultures !");
+			event.getPlayer().sendMessage("§cSeul le Planteur peut faire pousser ces cultures !");
 		}
 	}
 
 	private boolean isCulture(Material type) {
 		return switch (type) {
-			case WHEAT, CARROT, POTATO, PUMPKIN_STEM -> true;
+			case WHEAT, CARROT, POTATO, PUMPKIN -> true;
 			default -> false;
 		};
 	}

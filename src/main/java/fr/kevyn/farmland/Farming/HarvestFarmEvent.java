@@ -43,16 +43,6 @@ public class HarvestFarmEvent implements Listener {
 		Material ressource = blocCultureVersRessource(block.getType());
 		if (ressource == null) return;
 
-		// LE VRAI VERROU ANTI-TRICHE : cette culture est-elle bien nee d'une
-		// vraie plantation via le Planteur ? Sinon (posee par un joueur normal
-		// ou collee via WorldEdit deja a maturite), pas de recolte du tout.
-		if (!PositionsLegitimesFarm.estLegitime(block.getLocation())) {
-			player.sendMessage("§cCette culture n'a pas ete plantee legitimement !");
-			event.setCancelled(true);
-			return;
-		}
-
-		PositionsLegitimesFarm.retirer(block.getLocation());
 
 		PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
 		if (ps == null) return;
