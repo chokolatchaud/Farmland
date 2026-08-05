@@ -10,7 +10,6 @@ import fr.kevyn.farmland.menufarm.Outils;
 
 public class PecheurFarm {
 	
-	private static final NamespacedKey CLE_TAG = new NamespacedKey("farmland", "pecheur_farmeur");
 
     public static ItemStack create() {
     	ItemStack item = Outils.create(Material.FISHING_ROD, "§aCanne à Péche");

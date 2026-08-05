@@ -24,11 +24,7 @@ public class Outils {
 		        return item.getItemMeta().getPersistentDataContainer().has(CleOutils(item), PersistentDataType.BYTE);
 		    }
 
-		    /**
-		     * Verifie que l'item est LEGITIME et que c'est bien le materiau
-		     * ATTENDU pour ce metier precis - isOutils() seul confirme juste
-		     * "un outil Farmland quelconque", pas "LE bon outil ici".
-		     */
+		 
 		    public static boolean isOutilsAttendu(ItemStack item, Material materielAttendu) {
 		        if (item == null) return false;
 		        return isOutils(item) && item.getType() == materielAttendu;
@@ -58,7 +54,7 @@ public class Outils {
 					return CLE_TAG;
 				}
 				case FISHING_ROD: {
-					NamespacedKey CLE_TAG = new NamespacedKey("farmland", "Canneapeche_pecheur");
+					NamespacedKey CLE_TAG = new NamespacedKey("farmland", "canneapeche_pecheur");
 					return CLE_TAG;
 				}
 
