@@ -24,7 +24,7 @@ public class EventPeche implements Listener {
 			Player player = event.getPlayer();
 			PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
 			ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
-			if (!Outils.isOutils(mainPrincipale)) {
+			if (!Outils.isOutilsAttendu(mainPrincipale, Material.FISHING_ROD)) {
 				player.sendMessage("Veuillez Pechez grace a la canne a péche /peche");
 				event.setCancelled(true);
 				return;

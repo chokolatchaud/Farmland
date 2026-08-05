@@ -23,6 +23,16 @@ public class Outils {
 		        if (item == null || !item.hasItemMeta()) return false;
 		        return item.getItemMeta().getPersistentDataContainer().has(CleOutils(item), PersistentDataType.BYTE);
 		    }
+
+		    /**
+		     * Verifie que l'item est LEGITIME et que c'est bien le materiau
+		     * ATTENDU pour ce metier precis - isOutils() seul confirme juste
+		     * "un outil Farmland quelconque", pas "LE bon outil ici".
+		     */
+		    public static boolean isOutilsAttendu(ItemStack item, Material materielAttendu) {
+		        if (item == null) return false;
+		        return isOutils(item) && item.getType() == materielAttendu;
+		    }
 		    
 		    
 		    public static NamespacedKey CleOutils(ItemStack item) {

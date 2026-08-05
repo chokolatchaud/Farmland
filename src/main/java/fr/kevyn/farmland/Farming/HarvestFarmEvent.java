@@ -35,7 +35,7 @@ public class HarvestFarmEvent implements Listener {
 
 		Player player = event.getPlayer();
 		ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
-		if (!Outils.isOutils(mainPrincipale)) {
+		if (!Outils.isOutilsAttendu(mainPrincipale, Material.NETHERITE_HOE)) {
 			return;
 		}
 
@@ -82,7 +82,7 @@ public class HarvestFarmEvent implements Listener {
 	    PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
 	    ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
 
-	    if (!Outils.isOutils(mainPrincipale)) return;
+	    if (!Outils.isOutilsAttendu(mainPrincipale, Material.NETHERITE_HOE)) return;
 	    if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
 	        if (event.getAction() == Action.RIGHT_CLICK_AIR) {
 	            player.openInventory(AllMenuMetier.createmenuSeeds(ps));

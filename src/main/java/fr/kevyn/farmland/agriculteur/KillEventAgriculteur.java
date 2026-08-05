@@ -34,7 +34,7 @@ public class KillEventAgriculteur implements Listener {
 		if (tueur == null) return;
 
 		ItemStack arme = tueur.getInventory().getItemInMainHand();
-		if (!Outils.isOutils(arme)) return;
+		if (!Outils.isOutilsAttendu(arme, Material.NETHERITE_AXE)) return;
 
 		Material ressource = SlotPriceFarmItem.mobVersRessource(mob.getType());
 		if (ressource == null) return;
@@ -58,7 +58,7 @@ public class KillEventAgriculteur implements Listener {
 	    PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
 	    ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
 
-	    if (!Outils.isOutils(mainPrincipale)) return;
+	    if (!Outils.isOutilsAttendu(mainPrincipale, Material.NETHERITE_AXE)) return;
 	    if (event.getAction() == Action.RIGHT_CLICK_AIR) {
             player.openInventory(AllMenuMetier.createmenuAnimal(ps));
         }

@@ -57,7 +57,7 @@ public class EventMineSpawn implements Listener {
 
 		Player player = event.getPlayer();
 		ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
-		if (!Outils.isOutils(mainPrincipale)) {
+		if (!Outils.isOutilsAttendu(mainPrincipale, Material.NETHERITE_PICKAXE)) {
 			return;
 		}
 
