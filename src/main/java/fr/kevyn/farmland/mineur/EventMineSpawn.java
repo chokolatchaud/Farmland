@@ -15,6 +15,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
 import fr.kevyn.farmland.Farming.HoueFarmeur;
+import fr.kevyn.farmland.menufarm.Outils;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.plot.Plot;
@@ -56,7 +57,7 @@ public class EventMineSpawn implements Listener {
 
 		Player player = event.getPlayer();
 		ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
-		if (!PiocheFarm.isPiochemine(mainPrincipale)) {
+		if (!Outils.isOutils(mainPrincipale)) {
 			return;
 		}
 

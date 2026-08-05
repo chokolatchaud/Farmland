@@ -6,10 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerserverHashMap {
     private static final PlayerserverHashMap INSTANCE = new PlayerserverHashMap();
-    // ConcurrentHashMap au lieu de HashMap : la sauvegarde tourne en async (runTaskAsynchronously)
-    // pendant qu'un joueur peut se connecter/déconnecter sur le thread principal en même temps
+
     private final Map<UUID, PlayerServer> players = new ConcurrentHashMap<>();
-    // ✅ AJOUTÉ : Cache par nom pour performance
     private final Map<String, UUID> nameToUUID = new ConcurrentHashMap<>();
     
     public static PlayerserverHashMap getInstance() {

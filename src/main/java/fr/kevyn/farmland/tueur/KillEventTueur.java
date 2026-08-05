@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 
+import fr.kevyn.farmland.menufarm.Outils;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
@@ -25,7 +26,7 @@ public class KillEventTueur implements Listener {
 		if (tueur == null) return;
 
 		ItemStack arme = tueur.getInventory().getItemInMainHand();
-		if (!epeeFarm.isépéeTueur(arme)) return;
+		if (!Outils.isOutils(arme)) return;
 
 		Material ressource = mobVersRessource(mob.getType());
 		if (ressource == null) return;

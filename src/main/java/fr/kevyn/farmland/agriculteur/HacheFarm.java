@@ -8,27 +8,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import fr.kevyn.farmland.menufarm.Outils;
+
 
 public class HacheFarm {
-
-	private static final NamespacedKey CLE_TAG = new NamespacedKey("farmland", "hache_agriculteur");
 	private static final NamespacedKey CLE_MODIFIER = new NamespacedKey("farmland", "hache_degats");
 
 	public static ItemStack create() {
-		ItemStack item = new ItemStack(Material.NETHERITE_AXE);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName("§eHache de l'Agriculteur");
-		meta.getPersistentDataContainer().set(CLE_TAG, PersistentDataType.BYTE, (byte) 1);
-		item.setItemMeta(meta);
-
-		appliquerDegats(item, 2.0); 
-		return item;
+	    ItemStack item = Outils.create(Material.NETHERITE_AXE, "§eHache de l'Agriculteur");
+	    appliquerDegats(item, 2.0);
+	    return item;
 	}
 
-	public static boolean isHacheAgriculteur(ItemStack item) {
-		if (item == null || !item.hasItemMeta()) return false;
-		return item.getItemMeta().getPersistentDataContainer().has(CLE_TAG, PersistentDataType.BYTE);
-	}
 
 	public static void appliquerDegats(ItemStack item, double degats) {
 		ItemMeta meta = item.getItemMeta();

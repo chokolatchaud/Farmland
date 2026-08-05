@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 
 import fr.kevyn.farmland.menufarm.ListFarmItem;
+import fr.kevyn.farmland.menufarm.Outils;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
@@ -23,7 +24,7 @@ public class EventPeche implements Listener {
 			Player player = event.getPlayer();
 			PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
 			ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
-			if (!PecheurFarm.isFishing(mainPrincipale)) {
+			if (!Outils.isOutils(mainPrincipale)) {
 				player.sendMessage("Veuillez Pechez grace a la canne a péche /peche");
 				event.setCancelled(true);
 				return;

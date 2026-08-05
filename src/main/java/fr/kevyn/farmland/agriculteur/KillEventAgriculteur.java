@@ -14,6 +14,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import fr.kevyn.farmland.menufarm.AllMenuMetier;
+import fr.kevyn.farmland.menufarm.Outils;
 import fr.kevyn.farmland.menufarm.SlotPriceFarmItem;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
@@ -33,7 +34,7 @@ public class KillEventAgriculteur implements Listener {
 		if (tueur == null) return;
 
 		ItemStack arme = tueur.getInventory().getItemInMainHand();
-		if (!HacheFarm.isHacheAgriculteur(arme)) return;
+		if (!Outils.isOutils(arme)) return;
 
 		Material ressource = SlotPriceFarmItem.mobVersRessource(mob.getType());
 		if (ressource == null) return;

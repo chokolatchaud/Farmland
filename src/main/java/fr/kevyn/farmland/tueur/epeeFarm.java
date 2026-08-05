@@ -8,27 +8,19 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import fr.kevyn.farmland.menufarm.Outils;
+
 
 public class epeeFarm {
 
-	private static final NamespacedKey CLE_TAG = new NamespacedKey("farmland", "epee_tueur");
 	private static final NamespacedKey CLE_MODIFIER = new NamespacedKey("farmland", "epee_degats");
 
 	public static ItemStack create() {
-		ItemStack item = new ItemStack(Material.NETHERITE_SWORD);
-		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName("§cépée du Tueur");
-		meta.getPersistentDataContainer().set(CLE_TAG, PersistentDataType.BYTE, (byte) 1);
-		item.setItemMeta(meta);
-
+		ItemStack item = Outils.create(Material.NETHERITE_SWORD, "§cépée du Tueur");
 		appliquerDegats(item, 5.0); // niveau 0 = 1 degat, comme l'epee (armes liees)
 		return item;
 	}
 
-	public static boolean isépéeTueur(ItemStack item) {
-		if (item == null || !item.hasItemMeta()) return false;
-		return item.getItemMeta().getPersistentDataContainer().has(CLE_TAG, PersistentDataType.BYTE);
-	}
 
 	public static void appliquerDegats(ItemStack item, double degats) {
 		ItemMeta meta = item.getItemMeta();

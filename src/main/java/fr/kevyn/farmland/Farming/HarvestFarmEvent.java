@@ -15,6 +15,8 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import fr.kevyn.farmland.menufarm.AllMenuMetier;
+import fr.kevyn.farmland.menufarm.ListFarmItem;
+import fr.kevyn.farmland.menufarm.Outils;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
@@ -33,7 +35,7 @@ public class HarvestFarmEvent implements Listener {
 
 		Player player = event.getPlayer();
 		ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
-		if (!HoueFarmeur.isHoueFarmeur(mainPrincipale)) {
+		if (!Outils.isOutils(mainPrincipale)) {
 			return;
 		}
 
@@ -45,7 +47,7 @@ public class HarvestFarmEvent implements Listener {
 		// verifie que la culture est bien arrivee a MATURITE (age maximal)
 		if (ageable.getAge() < ageable.getMaximumAge()) return;
 
-		Material ressource = blocCultureVersRessource(block.getType());
+		Material ressource = ListFarmItem.blocCultureVersRessource(block.getType());
 		if (ressource == null) return;
 
 
@@ -66,7 +68,7 @@ public class HarvestFarmEvent implements Listener {
 	public void onPlacePlant(BlockPlaceEvent event) {
 		Material type = event.getBlock().getType();
 
-		if (isCulture(type)) {
+		if (ListFarmItem.isCulture(type)) {
 			event.setCancelled(true);
 			event.getPlayer().sendMessage("§cSeul le Planteur peut faire pousser ces cultures !");
 		}
@@ -101,7 +103,7 @@ public class HarvestFarmEvent implements Listener {
 	            return;
 	        }
 	        
-	        Material blocAPoser = itemVersBlocCulture(seedplanteur);
+	        Material blocAPoser = ListFarmItem.itemVersBlocCulture(seedplanteur);
 	        if (blocAPoser == null) return;
 	        Block emplacementPlantation = blocClique.getRelative(BlockFace.UP);
 	        if (emplacementPlantation.getType() != Material.AIR) return;
@@ -118,35 +120,5 @@ public class HarvestFarmEvent implements Listener {
 	    }
 	    
 	
-	private Material itemVersBlocCulture(Material itemGraine) {
-	    return switch (itemGraine) {
-	        case WHEAT_SEEDS -> Material.WHEAT;
-	        case CARROT -> Material.CARROTS;
-	        case POTATO -> Material.POTATOES;
-	        case PUMPKIN_SEEDS -> Material.PUMPKIN_STEM;
-	        default -> null;
-	    };
-	}
 	
-	
-	
-	
-	
-
-	private boolean isCulture(Material type) {
-		return switch (type) {
-			case WHEAT, CARROTS, POTATOES, PUMPKIN_STEM -> true;
-			default -> false;
-		};
-	}
-
-	private Material blocCultureVersRessource(Material blocCulture) {
-		return switch (blocCulture) {
-			case WHEAT -> Material.WHEAT;
-			case CARROTS -> Material.CARROT;
-			case POTATOES -> Material.POTATO;
-			case PUMPKIN_STEM-> Material.PUMPKIN;
-			default -> null;
-		};
-	}
 }

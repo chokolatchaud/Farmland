@@ -81,6 +81,38 @@ public class ListFarmItem {
 
 	}
 	
+	public static Material itemVersBlocCulture(Material itemGraine) {
+	    return switch (itemGraine) {
+	        case WHEAT_SEEDS -> Material.WHEAT;
+	        case CARROT -> Material.CARROTS;
+	        case POTATO -> Material.POTATOES;
+	        case PUMPKIN_SEEDS -> Material.PUMPKIN_STEM;
+	        default -> null;
+	    };
+	}
+	
+	
+	
+	
+	
+
+	public static boolean isCulture(Material type) {
+		return switch (type) {
+			case WHEAT, CARROTS, POTATOES, PUMPKIN_STEM -> true;
+			default -> false;
+		};
+	}
+
+	public static Material blocCultureVersRessource(Material blocCulture) {
+		return switch (blocCulture) {
+			case WHEAT -> Material.WHEAT;
+			case CARROTS -> Material.CARROT;
+			case POTATOES -> Material.POTATO;
+			case PUMPKIN_STEM-> Material.PUMPKIN;
+			default -> null;
+		};
+	}
+	
 	
 }
 	
