@@ -58,7 +58,7 @@ public class KillEventAgriculteur implements Listener {
 	    PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
 	    ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
 
-	    if (!HacheFarm.isHacheAgriculteur(mainPrincipale)) return;
+	    if (!Outils.isOutils(mainPrincipale)) return;
 	    if (event.getAction() == Action.RIGHT_CLICK_AIR) {
             player.openInventory(AllMenuMetier.createmenuAnimal(ps));
         }

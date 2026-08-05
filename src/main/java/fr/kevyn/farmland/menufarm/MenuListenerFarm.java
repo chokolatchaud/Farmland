@@ -36,7 +36,7 @@ public class MenuListenerFarm implements Listener {
         if (ps == null) return;
 
         if (gamemenu.getTypemenu() == TypeMenu.SEEDS) {
-        	if (!HoueFarmeur.isHoueFarmeur(iteminhand)) {
+        	if (!Outils.isOutils(iteminhand)) {
         		player.sendMessage("§cTu dois tenir ta Houe en main principale !");
         		return;
         	}

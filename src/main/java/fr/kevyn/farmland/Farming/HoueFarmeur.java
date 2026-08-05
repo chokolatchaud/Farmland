@@ -12,7 +12,7 @@ public class HoueFarmeur {
 private static final NamespacedKey CLE_GRAINE_SELECTIONNEE = new NamespacedKey("farmland", "graine_selectionnee");
     
 
-    public static ItemStack createhoue() {
+    public static ItemStack create() {
     	ItemStack houe = Outils.create(Material.NETHERITE_HOE, "§aHoue du Farmeur");
     	return houe;
     }

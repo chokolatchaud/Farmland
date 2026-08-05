@@ -82,7 +82,7 @@ public class HarvestFarmEvent implements Listener {
 	    PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
 	    ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
 
-	    if (!HoueFarmeur.isHoueFarmeur(mainPrincipale)) return;
+	    if (!Outils.isOutils(mainPrincipale)) return;
 	    if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
 	        if (event.getAction() == Action.RIGHT_CLICK_AIR) {
 	            player.openInventory(AllMenuMetier.createmenuSeeds(ps));
