@@ -9,17 +9,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
-import fr.kevyn.farmland.agriculteur.SpawnerTickTask;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
-/**
- * Tue un mob HOSTILE (issu d'un de nos spawners) avec la Hache taguee ->
- * ajoute la ressource correspondante au /bag. Meme principe que
- * KillEventAgriculteur, juste pour les mobs hostiles + la Hache.
- */
 public class KillEventTueur implements Listener {
 
 	@EventHandler
@@ -27,13 +20,12 @@ public class KillEventTueur implements Listener {
 		LivingEntity mob = event.getEntity();
 		if (!(mob instanceof Monster)) return;
 
-		if (!mob.getPersistentDataContainer().has(SpawnerTickTask.CLE_MOB_SPAWNER, PersistentDataType.BYTE)) return;
 
 		Player tueur = mob.getKiller();
 		if (tueur == null) return;
 
 		ItemStack arme = tueur.getInventory().getItemInMainHand();
-		if (!HacheFarm.isHacheTueur(arme)) return;
+		if (!epeeFarm.isépéeTueur(arme)) return;
 
 		Material ressource = mobVersRessource(mob.getType());
 		if (ressource == null) return;

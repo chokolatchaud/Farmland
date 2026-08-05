@@ -6,7 +6,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import fr.kevyn.farmland.menu.GameMenu;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
@@ -21,7 +20,7 @@ public class BagCommands implements CommandExecutor {
 		}
 		PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
 		
-		player.openInventory(MenuBag.createmenu(ps));
+		player.openInventory(AllMenuMetier.createmenuBag(ps));
 		return true;
 	}
 

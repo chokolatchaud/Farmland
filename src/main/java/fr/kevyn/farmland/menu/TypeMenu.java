@@ -7,6 +7,7 @@ public enum TypeMenu {
 	COSMETICS,
 	BAG,
 	SEEDS,
-	SHOP
+	SHOP, 
+	PASSIF_MOB
 
 }

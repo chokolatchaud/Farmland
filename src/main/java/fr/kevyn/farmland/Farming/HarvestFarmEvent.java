@@ -14,14 +14,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import fr.kevyn.farmland.menufarm.MenuFarm;
+import fr.kevyn.farmland.menufarm.AllMenuMetier;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
 
 
 public class HarvestFarmEvent implements Listener {
-	Material[] seedlist = {Material.WHEAT_SEEDS,Material.CARROT,Material.POTATO,Material.PUMPKIN_SEEDS};
+	Material[] seedlist = {Material.WHEAT_SEEDS,Material.CARROT,Material.POTATO,Material.PUMPKIN_STEM};
 
 	@EventHandler
 	public void onHarvest(BlockBreakEvent event) {
@@ -83,7 +83,7 @@ public class HarvestFarmEvent implements Listener {
 	    if (!HoueFarmeur.isHoueFarmeur(mainPrincipale)) return;
 	    if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
 	        if (event.getAction() == Action.RIGHT_CLICK_AIR) {
-	            player.openInventory(MenuFarm.createmenuSeeds(ps));
+	            player.openInventory(AllMenuMetier.createmenuSeeds(ps));
 	        }
 	        return;
 	    }
@@ -135,7 +135,7 @@ public class HarvestFarmEvent implements Listener {
 
 	private boolean isCulture(Material type) {
 		return switch (type) {
-			case WHEAT, CARROTS, POTATOES, PUMPKIN_SEEDS -> true;
+			case WHEAT, CARROTS, POTATOES, PUMPKIN_STEM -> true;
 			default -> false;
 		};
 	}

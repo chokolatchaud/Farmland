@@ -16,7 +16,7 @@ public class ShopCommand implements CommandExecutor {
 			@NotNull String @NotNull [] args) {
 		Player player = (Player) sender;
 		PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
-		player.openInventory(ShopMenu.createmenu(ps));
+		player.openInventory(AllMenuMetier.createmenuShop(ps));
 		
 		
 		

@@ -47,9 +47,8 @@ public class MenuListenerFarm implements Listener {
         }
 
         if (gamemenu.getTypemenu() == TypeMenu.SHOP) {
-        	if (ShopMenu.getlistshop().contains(clicked.getType())) {
-        		int prix = ShopMenu.priceformaterial(clicked.getType());
-
+        	if (ListFarmItem.getlistshop().contains(clicked.getType())) {
+        		int prix = SlotPriceFarmItem.priceformaterial(clicked.getType());
         		if (ps.getMoney() < prix) {
         			player.sendMessage("§cTu n'as pas assez d'argent ! (" + prix + " $FB)");
         			return;

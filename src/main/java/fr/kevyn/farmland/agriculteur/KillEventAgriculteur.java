@@ -7,10 +7,14 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
+import fr.kevyn.farmland.menufarm.AllMenuMetier;
+import fr.kevyn.farmland.menufarm.SlotPriceFarmItem;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
@@ -25,16 +29,13 @@ public class KillEventAgriculteur implements Listener {
 		LivingEntity mob = event.getEntity();
 		if (!(mob instanceof Animals)) return;
 
-		// verifie que ce mob vient bien d'un de NOS spawners (pas un mob sauvage)
-		if (!mob.getPersistentDataContainer().has(SpawnerTickTask.CLE_MOB_SPAWNER, PersistentDataType.BYTE)) return;
-
 		Player tueur = mob.getKiller();
 		if (tueur == null) return;
 
 		ItemStack arme = tueur.getInventory().getItemInMainHand();
-		if (!EpeeFarm.isEpeeAgriculteur(arme)) return;
+		if (!HacheFarm.isHacheAgriculteur(arme)) return;
 
-		Material ressource = mobVersRessource(mob.getType());
+		Material ressource = SlotPriceFarmItem.mobVersRessource(mob.getType());
 		if (ressource == null) return;
 
 		PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(tueur.getUniqueId());
@@ -46,14 +47,24 @@ public class KillEventAgriculteur implements Listener {
 		ps.addRessource(ressource, 1);
 		tueur.sendMessage("§a+1 " + ressource.name() + " ajouté à ton /bag !");
 	}
+	
+	
+	@EventHandler
+	public void onClicHache(PlayerInteractEvent event) {
+	    if (event.getHand() != EquipmentSlot.HAND) return; // eviter le double declenchement
 
-	private Material mobVersRessource(EntityType type) {
-		return switch (type) {
-			case PIG -> Material.PORKCHOP;
-			case COW -> Material.BEEF;
-			case CHICKEN -> Material.CHICKEN;
-			case SHEEP -> Material.MUTTON;
-			default -> null;
-		};
+	    Player player = event.getPlayer();
+	    PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
+	    ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
+
+	    if (!HacheFarm.isHacheAgriculteur(mainPrincipale)) return;
+	    if (event.getAction() == Action.RIGHT_CLICK_AIR) {
+            player.openInventory(AllMenuMetier.createmenuAnimal(ps));
+        }
+	    
 	}
+	
+	
+
+
 }

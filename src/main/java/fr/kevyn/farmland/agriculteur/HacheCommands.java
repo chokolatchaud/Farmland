@@ -1,4 +1,4 @@
-package fr.kevyn.farmland.tueur;
+package fr.kevyn.farmland.agriculteur;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * /hache - donne la Hache du Tueur (tue les mobs hostiles issus de tes
+ * /epee - donne l'Épée de l'Agriculteur (tue les mobs passifs issus de tes
  * spawners, les envoie directement dans ton /bag).
  */
 public class HacheCommands implements CommandExecutor {
@@ -21,8 +21,8 @@ public class HacheCommands implements CommandExecutor {
 		Player player = (Player) sender;
 		player.give(HacheFarm.create());
 
-		player.sendMessage("§aTu as reçu ta Hache du Tueur !");
-		player.sendMessage("§7Tue les mobs hostiles de tes spawners pour récupérer leurs ressources dans ton /bag.");
+		player.sendMessage("§aTu as reçu ton Épée de l'Agriculteur !");
+		player.sendMessage("§7Tue les mobs passifs de tes spawners pour récupérer leurs ressources dans ton /bag.");
 		return true;
 	}
 

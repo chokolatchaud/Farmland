@@ -44,11 +44,22 @@ public class ListFarmItem {
 		farmingSeed.add(Material.POTATO);
 		farmingSeed.add(Material.PUMPKIN_SEEDS);
 		return farmingSeed;
-		
-		
-		
-		
+
 	}
+	public static ArrayList<Material> getlistshop() {
+		ArrayList<Material> listmaterialshop = new ArrayList<Material>();
+		//Farming
+		listmaterialshop.add(Material.WHEAT_SEEDS);
+		listmaterialshop.add(Material.CARROT);
+		listmaterialshop.add(Material.POTATO);
+		listmaterialshop.add(Material.PUMPKIN_SEEDS);
+		listmaterialshop.add(Material.PIG_SPAWN_EGG);
+		listmaterialshop.add(Material.COW_SPAWN_EGG);
+		listmaterialshop.add(Material.CHICKEN_SPAWN_EGG);
+		listmaterialshop.add(Material.SHEEP_SPAWN_EGG);
+		return listmaterialshop;
+	}
+	
 	
 	public static ArrayList<Material> listfichingitem() {
 		ArrayList<Material> farmingFishing= new ArrayList<Material>();
@@ -60,128 +71,18 @@ public class ListFarmItem {
 
 	}
 	
+	public static ArrayList<Material> listAgriculteuritem() {
+		ArrayList<Material> farmingAgriculteur= new ArrayList<Material>();
+		farmingAgriculteur.add(Material.PIG_SPAWN_EGG);
+		farmingAgriculteur.add(Material.COW_SPAWN_EGG);
+		farmingAgriculteur.add(Material.CHICKEN_SPAWN_EGG);
+		farmingAgriculteur.add(Material.SHEEP_SPAWN_EGG);
+		return farmingAgriculteur;
+
+	}
 	
-
-	public static String ReturnNameofMaterial(Material material,TypeMenu menu) {
-		if(menu == TypeMenu.BAG) {
-			switch (material) {
-			
-			case WHEAT: return "Blé";
-			case CARROT: return "Carotte";
-			case POTATO: return "Patate";
-			case PUMPKIN: return "Citrouille";
-			case COAL: return "Charbon";
-			case IRON_INGOT: return "Fer";
-			case GOLD_INGOT: return "Or";
-			case DIAMOND: return "Diamant";
-			case PORKCHOP: return "Cochon";
-			case BEEF: return "Vache";
-			case CHICKEN: return "Poulet";
-			case MUTTON: return "Mouton";
-			case COD: return "Morue";
-			case SALMON: return "Saumon";
-			case TROPICAL_FISH: return "Guppy";
-			case PUFFERFISH: return "Poisson-Globe";
-			case ROTTEN_FLESH: return "Chair périmée";
-			case BONE: return "Os";
-			case GUNPOWDER: return "Poudre à Canon";
-			case SHULKER_SHELL: return "Coquille";
-
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + material);
-			
-		}
-		
-		}
-		if(menu == TypeMenu.SEEDS) {
-			switch (material) {
-			
-			case WHEAT_SEEDS: return "Graine Blé";
-			case CARROT: return "Graine Carotte";
-			case POTATO: return "Graine Patate";
-			case PUMPKIN_SEEDS: return "Graine Citrouille";
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + material);
-
-
-			
-		}
-	}
-		if(menu == TypeMenu.SHOP) {
-			switch (material) {
-			case WHEAT_SEEDS: return "Graine Blé";
-			case CARROT: return "Graine Carotte";
-			case POTATO: return "Graine Patate";
-			case PUMPKIN_SEEDS: return "Graine Citrouille";
-			
-
-
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + material);
-			
-		}
-
-	}
-		return null; 
-		
-	} 
-		
-
-	public static Integer ReturnSlotofMaterial(Material material, TypeMenu menu) {
-		if(menu == TypeMenu.BAG) {
-			switch (material) {
-			case WHEAT: return 9;
-			case CARROT: return 17;
-			case POTATO: return 25;
-			case PUMPKIN: return 33;
-			case COAL: return 11;
-			case IRON_INGOT: return 19;
-			case GOLD_INGOT: return 27;
-			case DIAMOND: return 35;
-			case PORKCHOP: return 13;
-			case BEEF: return 21;
-			case CHICKEN: return 29;
-			case MUTTON: return 37;
-			case COD: return 15;
-			case SALMON: return 23;
-			case TROPICAL_FISH: return 31;
-			case PUFFERFISH: return 39;
-			case ROTTEN_FLESH: return 43;
-			case BONE: return 44;
-			case GUNPOWDER: return 45;
-			case SHULKER_SHELL: return 41;
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + material);
-			
-		}
-			
-
-	}
-		if(menu == TypeMenu.SEEDS) {
-			switch (material) {
-			case WHEAT_SEEDS: return 1;
-			case CARROT: return 2;
-			case POTATO: return 3;
-			case PUMPKIN_SEEDS: return 4;
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + material);
-			
-		}
-}
-		if(menu == TypeMenu.SHOP) {
-			switch (material) {
-			case WHEAT_SEEDS: return 1;
-			case CARROT: return 9;
-			case POTATO: return 17;
-			case PUMPKIN_SEEDS: return 25;
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + material);
-			
-		}
-}
-		return null;
 	
 }
 	
-}
+
 	
