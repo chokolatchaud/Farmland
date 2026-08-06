@@ -1,7 +1,6 @@
 package fr.kevyn.farmland;
 
 import org.bukkit.plugin.java.JavaPlugin;
-
 import discordwebhook.messagediscord;
 import fr.kevyn.farmland.EventBuild.JoinAndleaveEvent;
 import fr.kevyn.farmland.api.WebApiClient;

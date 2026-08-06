@@ -3,6 +3,7 @@ package fr.kevyn.plot;
 import java.util.ArrayList;
 
 import org.bukkit.GameRule;
+import org.bukkit.GameRules;
 import org.bukkit.World;
 
 public class PlotData {
@@ -75,10 +76,10 @@ public class PlotData {
     public void setMeteoActive(String meteo, World plotworld) {
         this.meteoActive = meteo;
         if(meteo.equalsIgnoreCase("minecraftActive")) {
-            plotworld.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
+            plotworld.setGameRule(GameRules.ADVANCE_TIME, true);
         }
         else if(meteo.equalsIgnoreCase("minecraftDeactive")){
-            plotworld.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+            plotworld.setGameRule(GameRules.ADVANCE_WEATHER, false);
         }
     }
     

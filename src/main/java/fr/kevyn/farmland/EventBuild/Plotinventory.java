@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.GameRule;
+
 import org.bukkit.GameRules;
 import org.bukkit.Location;
 import org.bukkit.Material;

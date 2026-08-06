@@ -2,6 +2,7 @@ package fr.kevyn.farmland.worldeditgestion;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -144,7 +145,7 @@ public class WorldEditSecureListener implements Listener {
 
                 }
 
-                String blockId = block.getBlockType().getId().toLowerCase();
+                String blockId = block.getBlockType().id().toLowerCase();
 
                 if (blockId.contains("water") || blockId.contains("lava")) {
                     if (!canUseLiquids(player)) {
@@ -220,8 +221,8 @@ public class WorldEditSecureListener implements Listener {
         double minZ = center.getZ() - halfSize;
         double maxZ = center.getZ() + halfSize;
 
-        int x = loc.getBlockX();
-        int z = loc.getBlockZ();
+        int x = loc.x();
+        int z = loc.z();
 
         return (x >= minX && x <= maxX && z >= minZ && z <= maxZ);
     }

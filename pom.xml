@@ -12,15 +12,15 @@
     <description>Plugin Minecraft FarmLand</description>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
+        <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <minecraft.version>1.21.4</minecraft.version>
+        <paper.version>26.2.build.87-stable</paper.version>
     </properties>
 
     <!-- ===================== REPOSITORIES ===================== -->
 
     <repositories>
-
         <!-- PaperMC -->
         <repository>
             <id>papermc-repo</id>
@@ -45,36 +45,29 @@
             <url>https://repo.onarandombox.com/content/groups/public/</url>
         </repository>
 
-        <!-- NuVotifier -->
-        <repository>
-            <id>nuvotifier-repo</id>
-            <url>https://jitpack.io</url>
-        </repository>
-
         <!-- Spigot (Vault) -->
         <repository>
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
 
-        <!-- JitPack -->
+        <!-- JitPack (Vault, NuVotifier, etc.) -->
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-
     </repositories>
 
     <!-- ===================== DEPENDENCIES ===================== -->
 
     <dependencies>
-
-<dependency>
-    <groupId>io.papermc.paper</groupId>
-    <artifactId>paper-api</artifactId>
-    <version>[26.2.build,)</version>
-    <scope>provided</scope>
-</dependency>
+        <!-- Paper API -->
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>${paper.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- FastAsyncWorldEdit -->
         <dependency>
@@ -101,18 +94,26 @@
         </dependency>
 
         <!-- PlaceholderAPI -->
-   <dependency>
-    <groupId>me.clip</groupId>
-    <artifactId>placeholderapi</artifactId>
-    <version>2.11.6</version>
-    <scope>provided</scope>
-</dependency>
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.6</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Vault Economy -->
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
             <artifactId>VaultAPI</artifactId>
             <version>1.7.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- NuVotifier (Récupéré proprement via JitPack) -->
+        <dependency>
+            <groupId>com.github.NuVotifier</groupId>
+            <artifactId>NuVotifier</artifactId>
+            <version>2.7.1</version>
             <scope>provided</scope>
         </dependency>
 
@@ -124,40 +125,30 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- OkHttp (WebAPI client vers le site farm-land.fr) -->
-        <!-- NuVotifier (jar local dans lib/) -->
-        <dependency>
-            <groupId>com.vexsoftware</groupId>
-            <artifactId>nuvotifier</artifactId>
-            <version>2.7.3</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/nuvotifier.jar</systemPath>
-        </dependency>
+        <!-- OkHttp (Client WebAPI - embarqué dans le JAR) -->
         <dependency>
             <groupId>com.squareup.okhttp3</groupId>
             <artifactId>okhttp</artifactId>
             <version>4.12.0</version>
             <scope>compile</scope>
         </dependency>
-
     </dependencies>
 
     <!-- ===================== BUILD ===================== -->
 
     <build>
         <plugins>
-
-            <!-- Java 25 Compiler -->
+            <!-- Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <release>25</release>
+                    <release>${maven.compiler.release}</release>
                 </configuration>
             </plugin>
 
-            <!-- Shade Plugin -->
+            <!-- Shade Plugin (Embarque OkHttp dans le JAR final) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -174,7 +165,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 
