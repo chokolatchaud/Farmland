@@ -14,7 +14,7 @@ import fr.kevyn.farmland.menufarm.Outils;
 public class epeeFarm {
 
 	private static final NamespacedKey CLE_MODIFIER = new NamespacedKey("farmland", "epee_degats");
-	private static final NamespacedKey CLE_OEUF_SELECTIONNEE = new NamespacedKey("farmland", "oeuf_selectionneeTueur");
+	private static final NamespacedKey CLE_OEUF_SELECTIONNEE = new NamespacedKey("farmland", "oeuf_selectionneetueur");
 
 	public static ItemStack create() {
 		ItemStack item = Outils.create(Material.NETHERITE_SWORD, "§cépée du Tueur");

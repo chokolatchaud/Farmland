@@ -58,6 +58,10 @@ public class KillEventTueur implements Listener {
         }
 	    if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 	    	Material oeufspawn =epeeFarm.getOeufSelectionnee(mainPrincipale);
+	    	if (oeufspawn == null) {
+	    	    player.sendMessage("§cSélectionne d'abord un œuf avec un clic droit dans le vide !");
+	    	    return;
+	    	}
 	    	Block blockAdjacent = event.getClickedBlock().getRelative(event.getBlockFace());
 	    	Location spawnmobslocation = blockAdjacent.getLocation().add(0.5, 0, 0.5);
 	    	EntityType spawnmobtype = ListFarmItem.EggVersMobs(oeufspawn);

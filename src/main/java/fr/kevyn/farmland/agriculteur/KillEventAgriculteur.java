@@ -67,8 +67,12 @@ public class KillEventAgriculteur implements Listener {
             player.openInventory(AllMenuMetier.createmenuAnimal(ps));
         }
 	    if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-	    	player.sendMessage("test bien envoyé");
+	    	
 	    	Material oeufspawn =HacheFarm.getOeufSelectionnee(mainPrincipale);
+	    	if (oeufspawn == null) {
+	    	    player.sendMessage("§cSélectionne d'abord un œuf avec un clic droit dans le vide !");
+	    	    return;
+	    	}
 	    	Block blockAdjacent = event.getClickedBlock().getRelative(event.getBlockFace());
 	    	Location spawnmobslocation = blockAdjacent.getLocation().add(0.5, 0, 0.5);
 	    	EntityType spawnmobtype = ListFarmItem.EggVersMobs(oeufspawn);
