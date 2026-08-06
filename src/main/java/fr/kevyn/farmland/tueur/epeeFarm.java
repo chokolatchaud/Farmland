@@ -18,7 +18,7 @@ public class epeeFarm {
 
 	public static ItemStack create() {
 		ItemStack item = Outils.create(Material.NETHERITE_SWORD, "§cépée du Tueur");
-		appliquerDegats(item, 10.0); 
+		appliquerDegats(item, fr.kevyn.farmland.agriculteur.ArmesUtil.calculerDegats(0)); 
 		return item;
 	}
 	

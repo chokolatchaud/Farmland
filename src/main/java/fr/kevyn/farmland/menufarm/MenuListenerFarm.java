@@ -77,7 +77,11 @@ public class MenuListenerFarm implements Listener {
         		}
 
         		ps.setMoney(ps.getMoney() - prix);
-        		ps.addRessource(clicked.getType(), 1);
+        		if (ListFarmItem.isSeedMaterial(clicked.getType())) {
+        			ps.addGraine(clicked.getType(), 1);
+        		} else {
+        			ps.addRessource(clicked.getType(), 1);
+        		}
         		player.sendMessage("§a+1 " + clicked.getType().name() + " acheté ! (-" + prix + " $FB)");
         	}
         }

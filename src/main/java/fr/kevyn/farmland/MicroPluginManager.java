@@ -283,6 +283,13 @@ public class MicroPluginManager {
     	plugin.getCommand("epee").setExecutor(new épeeCommands());
     	plugin.getCommand("hache").setExecutor(new fr.kevyn.farmland.agriculteur.HacheCommands());
 
+    	plugin.getCommand("upgradeepee").setExecutor(new fr.kevyn.farmland.tueur.UpgradeEpeeCommand());
+    	plugin.getCommand("upgradehache").setExecutor(new fr.kevyn.farmland.agriculteur.UpgradeHacheCommand());
+    	plugin.getCommand("upgradepioche").setExecutor(new fr.kevyn.farmland.mineur.UpgradePiocheCommand());
+    	plugin.getCommand("upgradehoue").setExecutor(new fr.kevyn.farmland.Farming.UpgradeHoueCommand());
+    	plugin.getCommand("upgradecanne").setExecutor(new fr.kevyn.farmland.pecheur.UpgradeCanneCommand());
+    	plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.Farming.BlockFertilizeListener(), plugin);
+
     	plugin.getLogger().info("[Metier] Module Metier activé");
     	messagediscord.sendmessage("Module Metier bien lancé ","statut");
         

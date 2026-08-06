@@ -33,8 +33,10 @@ public class EventPeche implements Listener {
 			ArrayList<Material> listfishreward = ListFarmItem.listfichingitem();
 			int index = random.nextInt(listfishreward.size());
 			Material fish = listfishreward.get(index);
-			ps.addRessource(fish, 1);
-			player.sendMessage("Vous avez pecher un " + fish.name() + "x 1");
+			int niveauCanne = Math.max(1, ps.getCanneLevel());
+			int quantite = fr.kevyn.farmland.menufarm.MultiplicateurUtil.tirerMultiplicateur(niveauCanne);
+			ps.addRessource(fish, quantite);
+			player.sendMessage("Vous avez pecher un " + fish.name() + " x " + quantite);
 			event.setCancelled(true);
 
         }

@@ -40,7 +40,12 @@ public class CreateMenuMetier {
 			String aftername = " x " + numberofitem + " §7(§f" + prixNormal + "$ §7→ §e" + prixMarche + "$§7)";
 			return aftername;
 
-		}else if(TypeMenu.SEEDS == typemenu || TypeMenu.PASSIF_MOB == typemenu || TypeMenu.AGGRESSIVE_MOB == typemenu) {
+		}else if(TypeMenu.SEEDS == typemenu) {
+			int numberofitem = playerserver.getGraine(material);
+			String aftername = " x " + numberofitem;
+			return aftername;
+
+		}else if(TypeMenu.PASSIF_MOB == typemenu || TypeMenu.AGGRESSIVE_MOB == typemenu) {
 			int numberofitem = playerserver.getRessource(material);
         	String aftername = " x " + numberofitem;  
         	return aftername;

@@ -73,12 +73,6 @@ public class EventMineSpawn implements Listener {
 
 		event.setDropItems(false); // jamais de vrai drop au sol, tout passe par le /bag
 		int numberdone = 1;
-		if(ps.getCobblestonegeneratorlevel() >= 10) {
-			numberdone = 2;
-		}
-		if(ps.getCobblestonegeneratorlevel() >= 20) {
-			numberdone = 3;
-		}
 		ps.addRessource(ressource, numberdone);
 		player.sendMessage("§a+" + numberdone +" " + ressource.name() + " ajouté à ton /bag !");
 	}
@@ -101,23 +95,30 @@ public class EventMineSpawn implements Listener {
     
 
     private Material tirerResultat(int level) {
-        float tirage = random.nextFloat(); // un nombre entre 0.0 (inclus) et 1.0 (exclu)
+        int niveauBorne = Math.max(0, Math.min(10, level));
+        float bonus = niveauBorne / 10.0f;
 
-        // on empile les tranches : diamant d'abord (le plus rare), puis or, fer, charbon
-        if (tirage < chancetodiamond + level /10) {
+        float chanceDiamantReel = chancetodiamond + (bonus * 0.05f);
+        float chanceOrReel = chancetogold + (bonus * 0.05f);
+        float chanceFerReel = chancetoiron + (bonus * 0.05f);
+        float chanceCharbonReel = chancetocoal + (bonus * 0.05f);
+
+        float tirage = random.nextFloat();
+
+        if (tirage < chanceDiamantReel) {
             return Material.DIAMOND;
         }
-        if (tirage < chancetodiamond + chancetogold /5) {
+        if (tirage < chanceDiamantReel + chanceOrReel) {
             return Material.GOLD_INGOT;
         }
-        if (tirage < chancetodiamond + chancetogold + chancetoiron + level /3) {
+        if (tirage < chanceDiamantReel + chanceOrReel + chanceFerReel) {
             return Material.IRON_INGOT;
         }
-        if (tirage < chancetodiamond + chancetogold + chancetoiron + chancetocoal + level /2) {
+        if (tirage < chanceDiamantReel + chanceOrReel + chanceFerReel + chanceCharbonReel) {
             return Material.COAL;
         }
 
-        return null; // tombe dans les 82.5% restants : rien de special, reste du cobble
+        return null;
     }
     private Material convertirEnBlocMinerai(Material item) {
         return switch (item) {

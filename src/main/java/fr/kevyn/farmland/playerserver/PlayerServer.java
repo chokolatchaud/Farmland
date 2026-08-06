@@ -69,6 +69,34 @@ public class PlayerServer {
         ressources.put(material, getRessource(material) - quantite);
     }
 
+    // ===== GRAINES - stock SEPARE des ressources vendables du /bag =====
+    Map<Material, Integer> graines = new HashMap<>();
+
+    public int getGraine(Material material) {
+        return graines.getOrDefault(material, 0);
+    }
+
+    public void addGraine(Material material, int quantite) {
+        graines.put(material, getGraine(material) + quantite);
+    }
+
+    public void removeGraine(Material material, int quantite) {
+        graines.put(material, getGraine(material) - quantite);
+    }
+
+    // ===== NIVEAUX D'AMELIORATION DES OUTILS - 0 a 10, cout croissant =====
+    int piocheLevel = 0;
+    public int getPiocheLevel() { return piocheLevel; }
+    public void setPiocheLevel(int piocheLevel) { this.piocheLevel = piocheLevel; }
+
+    int houeLevel = 0;
+    public int getHoueLevel() { return houeLevel; }
+    public void setHoueLevel(int houeLevel) { this.houeLevel = houeLevel; }
+
+    int canneLevel = 0;
+    public int getCanneLevel() { return canneLevel; }
+    public void setCanneLevel(int canneLevel) { this.canneLevel = canneLevel; }
+
     // niveaux d'amelioration Agriculteur/Tueur - separes, mais la formule de
     // degats est partagee (voir ArmesUtil.calculerDegats)
     int epeeLevel = 0;

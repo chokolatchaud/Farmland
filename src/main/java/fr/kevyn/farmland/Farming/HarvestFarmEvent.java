@@ -57,7 +57,8 @@ public class HarvestFarmEvent implements Listener {
 		}
 
 		event.setDropItems(false); // jamais de vrai drop au sol, tout passe par le /bag
-		int numberdone = 2;
+		int niveauHoue = Math.max(1, ps.getHoueLevel());
+		int numberdone = fr.kevyn.farmland.menufarm.MultiplicateurUtil.tirerMultiplicateur(niveauHoue);
 		ps.addRessource(ressource, numberdone);
 		player.sendMessage("§a+" + numberdone +" " + ressource.name() + " ajouté à ton /bag !");
 	}
@@ -98,7 +99,7 @@ public class HarvestFarmEvent implements Listener {
 	            return;
 	        }
 
-	        if (ps.getRessource(seedplanteur) <= 0) {
+	        if (ps.getGraine(seedplanteur) <= 0) {
 	            player.sendMessage("§cTu n'as plus de graines de ce type ! Achete-en via le menu.");
 	            return;
 	        }
@@ -109,7 +110,7 @@ public class HarvestFarmEvent implements Listener {
 	        if (emplacementPlantation.getType() != Material.AIR) return;
 	        
 	        emplacementPlantation.setType(blocAPoser);
-	        ps.RemoveRessource(seedplanteur, 1);
+	        ps.removeGraine(seedplanteur, 1);
 
 	        event.setCancelled(true);
 	    	

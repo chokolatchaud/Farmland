@@ -17,7 +17,7 @@ public class HacheFarm {
 
 	public static ItemStack createHache() {
 	    ItemStack item = Outils.create(Material.NETHERITE_AXE, "§eHache de l'Agriculteur");
-	    appliquerDegats(item, 2.0);
+	    appliquerDegats(item, ArmesUtil.calculerDegats(0));
 	    return item;
 	}
 	

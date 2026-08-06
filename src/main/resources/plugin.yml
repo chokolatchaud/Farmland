@@ -24,6 +24,31 @@ commands:
     permission: farmland.gamecommands
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
+  upgradeepee:
+    description: ameliore l'Epee (0 a 10, cout croissant)
+    usage: /upgradeepee
+    permission: farmland.gamecommands
+
+  upgradehache:
+    description: ameliore la Hache (0 a 10, cout croissant)
+    usage: /upgradehache
+    permission: farmland.gamecommands
+
+  upgradepioche:
+    description: ameliore les chances de minerai rare (0 a 10, cout croissant)
+    usage: /upgradepioche
+    permission: farmland.gamecommands
+
+  upgradehoue:
+    description: ameliore les chances de recolte multipliee (0 a 10, cout croissant)
+    usage: /upgradehoue
+    permission: farmland.gamecommands
+
+  upgradecanne:
+    description: ameliore les chances de peche multipliee (0 a 10, cout croissant)
+    usage: /upgradecanne
+    permission: farmland.gamecommands
+
   pioche:
     description: permet d'obtenir la pioche de farm
     usage: /pioche

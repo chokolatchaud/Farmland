@@ -106,6 +106,13 @@ public class ListFarmItem {
 
 	}
 	
+	public static boolean isSeedMaterial(Material material) {
+		return switch (material) {
+			case WHEAT_SEEDS, CARROT, POTATO, PUMPKIN_SEEDS -> true;
+			default -> false;
+		};
+	}
+
 	public static Material itemVersBlocCulture(Material itemGraine) {
 	    return switch (itemGraine) {
 	        case WHEAT_SEEDS -> Material.WHEAT;
