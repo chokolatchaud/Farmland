@@ -261,6 +261,13 @@ public class MicroPluginManager {
     }
     
     public static void modulemetier(FarmlandMain plugin) {
+    	// charge le dernier market sauvegarde, ou demarre a 100 (prix de base) si aucun historique
+    	fr.kevyn.farmland.market.Market marketSauvegarde = fr.kevyn.farmland.save.MarketSave.loadMarket(plugin);
+    	if (marketSauvegarde != null) {
+    		fr.kevyn.farmland.market.MarketHolder.set(marketSauvegarde);
+    	}
+    	fr.kevyn.farmland.market.MarketCalcTask.demarrer(plugin);
+
     	plugin.getServer().getPluginManager().registerEvents(new EventMineSpawn(), plugin);
     	plugin.getServer().getPluginManager().registerEvents(new HarvestFarmEvent(), plugin);
     	plugin.getCommand("houe").setExecutor(new FarmCommands());

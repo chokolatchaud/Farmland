@@ -37,6 +37,26 @@ public class MenuListenerFarm implements Listener {
         PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
         if (ps == null) return;
 
+        if (gamemenu.getTypemenu() == TypeMenu.BAG) {
+        	int quantite = ps.getRessource(clicked.getType());
+        	if (quantite <= 0) {
+        		player.sendMessage("§cTu n'as rien à vendre pour cet item !");
+        		return;
+        	}
+
+        	int prixUnitaire = fr.kevyn.farmland.market.MarketCalc.getPrixActuel(clicked.getType(), fr.kevyn.farmland.market.MarketHolder.get());
+        	int total = prixUnitaire * quantite;
+
+        	ps.RemoveRessource(clicked.getType(), quantite);
+        	ps.setMoney(ps.getMoney() + total);
+
+        	for (int i = 0; i < quantite; i++) {
+        		fr.kevyn.farmland.market.MarketCalc.enregistrerVente(clicked.getType());
+        	}
+
+        	player.sendMessage("§aVendu : " + quantite + "x " + clicked.getType().name() + " pour " + total + " $FB !");
+        }
+
         if (gamemenu.getTypemenu() == TypeMenu.SEEDS) {
         	if (!Outils.isOutilsAttendu(iteminhand, Material.NETHERITE_HOE)) {
         		player.sendMessage("§cTu dois tenir ta Houe en main principale !");
