@@ -13,12 +13,25 @@ import fr.kevyn.farmland.menufarm.Outils;
 
 public class HacheFarm {
 	private static final NamespacedKey CLE_MODIFIER = new NamespacedKey("farmland", "hache_degats");
+	private static final NamespacedKey CLE_OEUF_SELECTIONNEE = new NamespacedKey("farmland", "oeuf_selectionnee");
 
 	public static ItemStack create() {
 	    ItemStack item = Outils.create(Material.NETHERITE_AXE, "§eHache de l'Agriculteur");
 	    appliquerDegats(item, 2.0);
 	    return item;
 	}
+	
+	public static void setOeufSelectionnee(ItemStack hache, Material oeuf) {
+        ItemMeta meta = hache.getItemMeta();
+        meta.getPersistentDataContainer().set(CLE_OEUF_SELECTIONNEE, PersistentDataType.STRING, oeuf.name());
+        hache.setItemMeta(meta);
+    }
+
+    public static Material getOeufSelectionnee(ItemStack houe) {
+        if (houe == null || !houe.hasItemMeta()) return null;
+        String nom = houe.getItemMeta().getPersistentDataContainer().get(CLE_OEUF_SELECTIONNEE, PersistentDataType.STRING);
+        return nom != null ? Material.valueOf(nom) : null;
+    }
 
 
 	public static void appliquerDegats(ItemStack item, double degats) {

@@ -1,7 +1,10 @@
 package fr.kevyn.farmland.agriculteur;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -14,6 +17,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import fr.kevyn.farmland.menufarm.AllMenuMetier;
+import fr.kevyn.farmland.menufarm.ListFarmItem;
 import fr.kevyn.farmland.menufarm.Outils;
 import fr.kevyn.farmland.menufarm.SlotPriceFarmItem;
 import fr.kevyn.farmland.playerserver.PlayerServer;
@@ -61,6 +65,17 @@ public class KillEventAgriculteur implements Listener {
 	    if (!Outils.isOutilsAttendu(mainPrincipale, Material.NETHERITE_AXE)) return;
 	    if (event.getAction() == Action.RIGHT_CLICK_AIR) {
             player.openInventory(AllMenuMetier.createmenuAnimal(ps));
+        }
+	    if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+	    	player.sendMessage("test bien envoyé");
+	    	Material oeufspawn =HacheFarm.getOeufSelectionnee(mainPrincipale);
+	    	Block blockAdjacent = event.getClickedBlock().getRelative(event.getBlockFace());
+	    	Location spawnmobslocation = blockAdjacent.getLocation().add(0.5, 0, 0.5);
+	    	EntityType spawnmobtype = ListFarmItem.EggVersMobs(oeufspawn);
+	    	spawnmobslocation.getWorld().spawnEntity(spawnmobslocation,spawnmobtype);
+	    	
+	    	
+            
         }
 	    
 	}

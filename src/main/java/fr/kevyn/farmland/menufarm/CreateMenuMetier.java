@@ -33,7 +33,7 @@ public class CreateMenuMetier {
 			 return aftername;
         	
 			
-		}else if(TypeMenu.SEEDS == typemenu || TypeMenu.BAG == typemenu || TypeMenu.PASSIF_MOB == typemenu) {
+		}else if(TypeMenu.SEEDS == typemenu || TypeMenu.BAG == typemenu || TypeMenu.PASSIF_MOB == typemenu || TypeMenu.AGGRESSIVE_MOB == typemenu) {
 			int numberofitem = playerserver.getRessource(material);
         	String aftername = " x " + numberofitem;  
         	return aftername;

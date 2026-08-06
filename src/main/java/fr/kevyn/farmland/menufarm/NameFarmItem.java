@@ -80,6 +80,19 @@ public class NameFarmItem {
 				throw new IllegalArgumentException("Unexpected value: " + material);
 			
 		}
+			
+			
+		}
+		if(menu == TypeMenu.AGGRESSIVE_MOB) {
+			switch (material) {
+			case ZOMBIE_SPAWN_EGG: return "Zombie";
+			case SKELETON_SPAWN_EGG: return "Squelette";
+			case CREEPER_SPAWN_EGG: return "Creeper";
+			case SHULKER_SPAWN_EGG: return "Shulker";
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + material);
+			
+		}
 		}
 		return null;
 

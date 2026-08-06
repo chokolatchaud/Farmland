@@ -3,6 +3,8 @@ package fr.kevyn.farmland.menufarm;
 import java.util.ArrayList;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 
 import fr.kevyn.farmland.menu.TypeMenu;
 
@@ -36,6 +38,15 @@ public class ListFarmItem {
 		farmingitem.add(Material.SHULKER_SHELL);
 		return farmingitem;
 	}
+	public static Material mobVersRessource(EntityType type) {
+		return switch (type) {
+			case ZOMBIE -> Material.ROTTEN_FLESH;
+			case SKELETON -> Material.BONE;
+			case CREEPER -> Material.GUNPOWDER;
+			case SHULKER -> Material.SHULKER_SHELL;
+			default -> null;
+		};
+	}
 	
 	public static ArrayList<Material> getlistSeeditem() {
 		ArrayList<Material> farmingSeed = new ArrayList<Material>();
@@ -57,6 +68,10 @@ public class ListFarmItem {
 		listmaterialshop.add(Material.COW_SPAWN_EGG);
 		listmaterialshop.add(Material.CHICKEN_SPAWN_EGG);
 		listmaterialshop.add(Material.SHEEP_SPAWN_EGG);
+		listmaterialshop.add(Material.ZOMBIE_SPAWN_EGG);
+		listmaterialshop.add(Material.SKELETON_SPAWN_EGG);
+		listmaterialshop.add(Material.CREEPER_SPAWN_EGG);
+		listmaterialshop.add(Material.SHULKER_SPAWN_EGG);
 		return listmaterialshop;
 	}
 	
@@ -81,6 +96,16 @@ public class ListFarmItem {
 
 	}
 	
+	public static ArrayList<Material> listTueuritem() {
+		ArrayList<Material> farmingTueur= new ArrayList<Material>();
+		farmingTueur.add(Material.ZOMBIE_SPAWN_EGG);
+		farmingTueur.add(Material.SKELETON_SPAWN_EGG);
+		farmingTueur.add(Material.CREEPER_SPAWN_EGG);
+		farmingTueur.add(Material.SHULKER_SPAWN_EGG);
+		return farmingTueur;
+
+	}
+	
 	public static Material itemVersBlocCulture(Material itemGraine) {
 	    return switch (itemGraine) {
 	        case WHEAT_SEEDS -> Material.WHEAT;
@@ -91,10 +116,19 @@ public class ListFarmItem {
 	    };
 	}
 	
-	
-	
-	
-	
+	public static EntityType EggVersMobs(Material itemGraine) {
+	    return switch (itemGraine) {
+	        case PIG_SPAWN_EGG -> EntityType.PIG;
+	        case COW_SPAWN_EGG -> EntityType.COW;
+	        case SHEEP_SPAWN_EGG -> EntityType.SHEEP;
+	        case CHICKEN_SPAWN_EGG -> EntityType.CHICKEN;
+	        case ZOMBIE_SPAWN_EGG -> EntityType.ZOMBIE;
+	        case CREEPER_SPAWN_EGG -> EntityType.CREEPER;
+	        case SKELETON_SPAWN_EGG -> EntityType.SKELETON;
+	        case SHULKER_SPAWN_EGG -> EntityType.SHULKER;
+	        default -> null;
+	    };
+	}
 
 	public static boolean isCulture(Material type) {
 		return switch (type) {

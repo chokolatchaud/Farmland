@@ -26,9 +26,13 @@ public class SlotPriceFarmItem {
 		case POTATO: return 5;
 		case PUMPKIN_SEEDS: return 10;
 		case PIG_SPAWN_EGG: return 50;
-		case Material.COW_SPAWN_EGG: return 30;
-        case Material.CHICKEN_SPAWN_EGG: return 10;
-        case Material.SHEEP_SPAWN_EGG: return 20;
+		case COW_SPAWN_EGG: return 30;
+        case CHICKEN_SPAWN_EGG: return 10;
+        case SHEEP_SPAWN_EGG: return 20;
+        case ZOMBIE_SPAWN_EGG: return 50;
+		case SKELETON_SPAWN_EGG: return 30;
+        case CREEPER_SPAWN_EGG: return 10;
+        case SHULKER_SPAWN_EGG: return 20;
 		
 
 		default:
@@ -102,6 +106,18 @@ public class SlotPriceFarmItem {
 			case COW_SPAWN_EGG: return 2;
 			case CHICKEN_SPAWN_EGG: return 3;
 			case SHEEP_SPAWN_EGG: return 4;
+			default:
+				throw new IllegalArgumentException("Unexpected value: " + material);
+			
+		}
+	
+}
+		if(menu == TypeMenu.AGGRESSIVE_MOB) {
+			switch (material) {
+			case ZOMBIE_SPAWN_EGG: return 1;
+			case SKELETON_SPAWN_EGG: return 2;
+			case CREEPER_SPAWN_EGG: return 3;
+			case SHULKER_SPAWN_EGG: return 4;
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + material);
 			

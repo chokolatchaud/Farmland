@@ -8,6 +8,7 @@ public enum TypeMenu {
 	BAG,
 	SEEDS,
 	SHOP, 
-	PASSIF_MOB
+	PASSIF_MOB, 
+	AGGRESSIVE_MOB
 
 }

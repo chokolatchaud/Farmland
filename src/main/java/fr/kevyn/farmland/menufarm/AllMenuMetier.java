@@ -29,6 +29,10 @@ public class AllMenuMetier {
 		
         
         }
+	public static Inventory createmenuMobs(PlayerServer playerserver) {
+        Inventory inv = CreateMenuMetier.createmenuMetier("Tueur", 9, TypeMenu.AGGRESSIVE_MOB, ListFarmItem.listTueuritem(), playerserver);
+        return inv;
+        }
        
 
         

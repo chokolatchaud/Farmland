@@ -8,11 +8,13 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 import fr.kevyn.farmland.Farming.HoueFarmeur;
+import fr.kevyn.farmland.agriculteur.HacheFarm;
 import fr.kevyn.farmland.menu.GameMenu;
 import fr.kevyn.farmland.menu.GameMenuHashMap;
 import fr.kevyn.farmland.menu.TypeMenu;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
+import fr.kevyn.farmland.tueur.epeeFarm;
 
 public class MenuListenerFarm implements Listener {
 
@@ -57,6 +59,26 @@ public class MenuListenerFarm implements Listener {
         		ps.setMoney(ps.getMoney() - prix);
         		ps.addRessource(clicked.getType(), 1);
         		player.sendMessage("§a+1 " + clicked.getType().name() + " acheté ! (-" + prix + " $FB)");
+        	}
+        }
+        if (gamemenu.getTypemenu() == TypeMenu.PASSIF_MOB) {
+        	if (!Outils.isOutilsAttendu(iteminhand, Material.NETHERITE_AXE)) {
+        		player.sendMessage("§cTu dois tenir ta Hache en main principale !");
+        		return;
+        	}
+        	if (ListFarmItem.listAgriculteuritem().contains(clicked.getType())) {
+        		HacheFarm.setOeufSelectionnee(iteminhand, clicked.getType());
+        		player.sendMessage("§aOeuf sélectionnée : " + clicked.getType().name());
+        	}
+        }
+        if (gamemenu.getTypemenu() == TypeMenu.AGGRESSIVE_MOB) {
+        	if (!Outils.isOutilsAttendu(iteminhand, Material.NETHERITE_SWORD)) {
+        		player.sendMessage("§cTu dois tenir ton épée en main principale !");
+        		return;
+        	}
+        	if (ListFarmItem.listTueuritem().contains(clicked.getType())) {
+        		epeeFarm.setOeufSelectionnee(iteminhand, clicked.getType());
+        		player.sendMessage("§aOeuf sélectionnée : " + clicked.getType().name());
         	}
         }
 	}

@@ -23,8 +23,7 @@ public class épeeCommands implements CommandExecutor {
 		Player player = (Player) sender;
 		player.give(epeeFarm.create());
 
-		player.sendMessage("§aTu as reçu ta Hache du Tueur !");
-		player.sendMessage("§7Tue les mobs hostiles de tes spawners pour récupérer leurs ressources dans ton /bag.");
+		player.sendMessage("§aTu as reçu ton épée du Tueur !");
 		return true;
 	}
 
