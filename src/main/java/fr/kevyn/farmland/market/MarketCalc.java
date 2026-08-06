@@ -62,6 +62,10 @@ public class MarketCalc {
     }
 
     /** Prix reel actuel = prix de base * coefficient du metier concerne / 100 */
+    public static int getPrixDeBase(Material material) {
+        return PRIX_DE_BASE.getOrDefault(material, 0);
+    }
+
     public static int getPrixActuel(Material material, Market market) {
         Integer base = PRIX_DE_BASE.get(material);
         if (base == null) return 0;

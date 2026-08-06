@@ -33,7 +33,14 @@ public class CreateMenuMetier {
 			 return aftername;
         	
 			
-		}else if(TypeMenu.SEEDS == typemenu || TypeMenu.BAG == typemenu || TypeMenu.PASSIF_MOB == typemenu || TypeMenu.AGGRESSIVE_MOB == typemenu) {
+		}else if(TypeMenu.BAG == typemenu) {
+			int numberofitem = playerserver.getRessource(material);
+			int prixNormal = fr.kevyn.farmland.market.MarketCalc.getPrixDeBase(material);
+			int prixMarche = fr.kevyn.farmland.market.MarketCalc.getPrixActuel(material, fr.kevyn.farmland.market.MarketHolder.get());
+			String aftername = " x " + numberofitem + " §7(§f" + prixNormal + "$ §7→ §e" + prixMarche + "$§7)";
+			return aftername;
+
+		}else if(TypeMenu.SEEDS == typemenu || TypeMenu.PASSIF_MOB == typemenu || TypeMenu.AGGRESSIVE_MOB == typemenu) {
 			int numberofitem = playerserver.getRessource(material);
         	String aftername = " x " + numberofitem;  
         	return aftername;

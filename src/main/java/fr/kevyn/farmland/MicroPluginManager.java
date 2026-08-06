@@ -78,6 +78,7 @@ public class MicroPluginManager {
         MarketHolograms.load(plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, () -> MarketHolograms.updateAll(plugin), 100L, 20L * 60);
         plugin.getCommand("marketadmin").setExecutor(new fr.kevyn.farmland.market.MarketAdminCommands(plugin));
+        plugin.getCommand("market").setExecutor(new fr.kevyn.farmland.market.MarketCommand());
 
 
         // autosave des joueurs toutes les 5 minutes (evite la perte de session si crash)

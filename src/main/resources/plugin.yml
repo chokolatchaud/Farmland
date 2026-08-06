@@ -97,6 +97,10 @@ commands:
     permission: farmland.moderation
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
+  market:
+    description: Affiche l'etat actuel du marche par metier
+    usage: /market
+
   joinboat:
     description: Démarre une course de bateau
     usage: /joinboat
