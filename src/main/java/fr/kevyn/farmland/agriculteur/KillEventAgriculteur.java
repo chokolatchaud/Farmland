@@ -73,10 +73,15 @@ public class KillEventAgriculteur implements Listener {
 	    	    player.sendMessage("§cSélectionne d'abord un œuf avec un clic droit dans le vide !");
 	    	    return;
 	    	}
+	    	if (ps.getRessource(oeufspawn) <= 0) {
+	    		player.sendMessage("§cTu n'as plus cet œuf ! Achète-en au /shop.");
+	    		return;
+	    	}
 	    	Block blockAdjacent = event.getClickedBlock().getRelative(event.getBlockFace());
 	    	Location spawnmobslocation = blockAdjacent.getLocation().add(0.5, 0, 0.5);
 	    	EntityType spawnmobtype = ListFarmItem.EggVersMobs(oeufspawn);
 	    	spawnmobslocation.getWorld().spawnEntity(spawnmobslocation,spawnmobtype);
+	    	ps.RemoveRessource(oeufspawn, 1);
 	    	
 	    	
             

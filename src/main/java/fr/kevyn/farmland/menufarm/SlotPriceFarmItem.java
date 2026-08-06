@@ -92,6 +92,10 @@ public class SlotPriceFarmItem {
 			case COW_SPAWN_EGG: return 4;
 			case CHICKEN_SPAWN_EGG: return 5;
 			case SHEEP_SPAWN_EGG: return 6;
+			case ZOMBIE_SPAWN_EGG: return 8;
+			case SKELETON_SPAWN_EGG: return 9;
+			case CREEPER_SPAWN_EGG: return 10;
+			case SHULKER_SPAWN_EGG: return 11;
 			
 			default:
 				throw new IllegalArgumentException("Unexpected value: " + material);
