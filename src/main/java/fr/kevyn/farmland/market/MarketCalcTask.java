@@ -3,8 +3,8 @@ package fr.kevyn.farmland.market;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
 
+import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.save.MarketSave;
 
 /**
@@ -21,7 +21,7 @@ public class MarketCalcTask {
     private static final int COEF_MIN = 50;
     private static final int COEF_MAX = 150;
 
-    public static void demarrer(JavaPlugin plugin) {
+    public static void demarrer(FarmlandMain plugin) {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             Market market = MarketHolder.get();
             Map<String, Integer> ventes = MarketCalc.getVentesParMetier();
@@ -34,6 +34,12 @@ public class MarketCalcTask {
 
             MarketCalc.resetVentes();
             MarketSave.saveMarket(plugin, market);
+            fr.kevyn.farmland.market.MarketHolograms.updateAll(plugin);
+
+            // pousse aussi vers le site, si le module WebAPI est actif
+            if (plugin.getConfig().getBoolean("webapi.enabled", false) && plugin.getWebApi() != null) {
+                plugin.getWebApi().pushMarketMetiers(market);
+            }
 
             plugin.getLogger().info("[Market] Recalcul effectue - Mineur:" + market.getMoneyforcoefMineur()
                 + " Farmeur:" + market.getMoneyforcoefFarmeur()

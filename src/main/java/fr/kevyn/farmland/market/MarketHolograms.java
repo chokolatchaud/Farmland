@@ -252,22 +252,22 @@ public class MarketHolograms {
 
     private static int getCoefValue(Market market, String coef) {
         switch (coef.toLowerCase()) {
-            case "Mineur": return market.getMoneyforcoefMineur();
-            case "Farmeur": return market.getMoneyforcoefFarmeur();
-            case "Agriculteur": return market.getMoneyforcoefAgriculteur();
-            case "Pecheur": return market.getMoneyforcoefPecheur();
-            case "Tueur": return market.getMoneyforcoefTueur();
+            case "mineur": return market.getMoneyforcoefMineur();
+            case "farmeur": return market.getMoneyforcoefFarmeur();
+            case "agriculteur": return market.getMoneyforcoefAgriculteur();
+            case "pecheur": return market.getMoneyforcoefPecheur();
+            case "tueur": return market.getMoneyforcoefTueur();
             default: return 0;
         }
     }
 
     private static String getDisplayName(String coef) {
         switch (coef.toLowerCase()) {
-            case "Mineur": return "Mineur";
-            case "Farmeur": return "Farmeur";
-            case "Agriculteur": return "Agriculteur";
-            case "Pecheur": return "Pécheur";
-            case "Tueur": return "Tueur";
+            case "mineur": return "Mineur";
+            case "farmeur": return "Farmeur";
+            case "agriculteur": return "Agriculteur";
+            case "pecheur": return "Pécheur";
+            case "tueur": return "Tueur";
             default: return coef;
         }
     }

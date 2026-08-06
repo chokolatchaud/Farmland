@@ -17,7 +17,7 @@ import java.util.logging.Level;
 public class WebApiClient {
 
     private static final String EP_SERVER = "/api/server/status";
-    private static final String EP_MARKET = "/api/market/structures";
+    private static final String EP_MARKET = "/api/market/metiers";
     private static final String EP_LEADER = "/api/leaderboard";
     private static final String EP_VOTE   = "/api/vote/sites";
     private static final String EP_BOATTIMES = "/api/boatrace/times";
@@ -70,9 +70,41 @@ public class WebApiClient {
         post(EP_SERVER, Map.of("online_players", online, "max_players", max, "version", version));
     }
 
-    // pousse le prix d'une structure vers le marché du site
-    public void pushStructurePrice(String name, double price, String category) {
-        post(EP_MARKET, Map.of("name", name, "price", price, "category", category));
+    /**
+     * Pousse l'etat complet du marche par metier vers le site (remplace
+     * l'ancien pushStructurePrice(), pense pour le systeme de structures
+     * qui n'existe plus). Envoie les 5 coefficients + le prix de vente
+     * actuel de chaque ressource, calcules via MarketCalc.
+     *
+     * ATTENTION : format cote a adapter selon ce que ton backend de site
+     * attend reellement - je n'ai pas acces a ce code, ceci est un point
+     * de depart raisonnable, pas une garantie de correspondance exacte.
+     */
+    public void pushMarketMetiers(fr.kevyn.farmland.market.Market market) {
+        Map<String, Object> coefficients = Map.of(
+                "mineur", market.getMoneyforcoefMineur(),
+                "farmeur", market.getMoneyforcoefFarmeur(),
+                "agriculteur", market.getMoneyforcoefAgriculteur(),
+                "pecheur", market.getMoneyforcoefPecheur(),
+                "tueur", market.getMoneyforcoefTueur()
+        );
+
+        List<Map<String, Object>> prix = new ArrayList<>();
+        for (org.bukkit.Material material : new org.bukkit.Material[] {
+                org.bukkit.Material.WHEAT, org.bukkit.Material.CARROT, org.bukkit.Material.POTATO, org.bukkit.Material.PUMPKIN,
+                org.bukkit.Material.COAL, org.bukkit.Material.IRON_INGOT, org.bukkit.Material.GOLD_INGOT, org.bukkit.Material.DIAMOND,
+                org.bukkit.Material.PORKCHOP, org.bukkit.Material.BEEF, org.bukkit.Material.CHICKEN, org.bukkit.Material.MUTTON,
+                org.bukkit.Material.COD, org.bukkit.Material.SALMON, org.bukkit.Material.TROPICAL_FISH, org.bukkit.Material.PUFFERFISH,
+                org.bukkit.Material.ROTTEN_FLESH, org.bukkit.Material.BONE, org.bukkit.Material.GUNPOWDER, org.bukkit.Material.SHULKER_SHELL
+        }) {
+            prix.add(Map.of(
+                    "ressource", material.name(),
+                    "metier", fr.kevyn.farmland.market.MarketCalc.getMetierDeRessource(material),
+                    "prixActuel", fr.kevyn.farmland.market.MarketCalc.getPrixActuel(material, market)
+            ));
+        }
+
+        post(EP_MARKET, Map.of("coefficients", coefficients, "prix", prix));
     }
 
     // pousse la balance + structures + blocs posés d'un joueur vers le classement
