@@ -87,7 +87,7 @@ public class MenuListenerFarm implements Listener {
         		return;
         	}
         	if (ListFarmItem.listAgriculteuritem().contains(clicked.getType())) {
-        		HacheFarm.setOeufSelectionnee(iteminhand, clicked.getType());
+        		HacheFarm.setOeufSelection(iteminhand, clicked.getType());
         		player.sendMessage("§aOeuf sélectionnée : " + clicked.getType().name());
         	}
         }

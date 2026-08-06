@@ -1,10 +1,15 @@
 package fr.kevyn.farmland.agriculteur;
 
+import fr.kevyn.farmland.menufarm.AllMenuMetier;
+import fr.kevyn.farmland.menufarm.ListFarmItem;
+import fr.kevyn.farmland.menufarm.Outils;
+import fr.kevyn.farmland.menufarm.SlotPriceFarmItem;
+import fr.kevyn.farmland.playerserver.PlayerServer;
+import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Animals;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -15,13 +20,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-
-import fr.kevyn.farmland.menufarm.AllMenuMetier;
-import fr.kevyn.farmland.menufarm.ListFarmItem;
-import fr.kevyn.farmland.menufarm.Outils;
-import fr.kevyn.farmland.menufarm.SlotPriceFarmItem;
-import fr.kevyn.farmland.playerserver.PlayerServer;
-import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Tue un mob PASSIF (issu d'un de nos spawners, jamais un vrai mob vanilla
@@ -30,7 +29,7 @@ import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 public class KillEventAgriculteur implements Listener {
 
 	@EventHandler
-	public void onKill(EntityDeathEvent event) {
+	public void onKill(@NonNull EntityDeathEvent event) {
 		LivingEntity mob = event.getEntity();
 		if (!(mob instanceof Animals)) return;
 
@@ -68,7 +67,7 @@ public class KillEventAgriculteur implements Listener {
         }
 	    if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 	    	
-	    	Material oeufspawn =HacheFarm.getOeufSelectionnee(mainPrincipale);
+	    	Material oeufspawn =HacheFarm.getOeufSelection(mainPrincipale);
 	    	if (oeufspawn == null) {
 	    	    player.sendMessage("§cSélectionne d'abord un œuf avec un clic droit dans le vide !");
 	    	    return;
@@ -77,10 +76,10 @@ public class KillEventAgriculteur implements Listener {
 	    		player.sendMessage("§cTu n'as plus cet œuf ! Achète-en au /shop.");
 	    		return;
 	    	}
-	    	Block blockAdjacent = event.getClickedBlock().getRelative(event.getBlockFace());
+            Block blockAdjacent = event.getClickedBlock().getRelative(event.getBlockFace());
 	    	Location spawnmobslocation = blockAdjacent.getLocation().add(0.5, 0, 0.5);
 	    	EntityType spawnmobtype = ListFarmItem.EggVersMobs(oeufspawn);
-	    	spawnmobslocation.getWorld().spawnEntity(spawnmobslocation,spawnmobtype);
+            spawnmobslocation.getWorld().spawnEntity(spawnmobslocation,spawnmobtype);
 	    	ps.RemoveRessource(oeufspawn, 1);
 	    	
 	    	

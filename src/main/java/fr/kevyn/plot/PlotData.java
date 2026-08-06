@@ -1,10 +1,9 @@
 package fr.kevyn.plot;
 
-import java.util.ArrayList;
-
-import org.bukkit.GameRule;
 import org.bukkit.GameRules;
 import org.bukkit.World;
+
+import java.util.ArrayList;
 
 public class PlotData {
     String PlotProprety;
@@ -20,7 +19,6 @@ public class PlotData {
     String meteoActive;
     String meteoTime;
     String meteoRain;
-
     String NameWorld;
 	
 	

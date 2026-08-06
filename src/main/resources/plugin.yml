@@ -2,9 +2,9 @@ name: Farmland
 main: fr.kevyn.farmland.FarmlandMain
 version: 1.0
 api-version: 1.21.11
-loadbefore: [FastAsyncWorldEdit, WorldEdit]
-depend: [PlaceholderAPI, Multiverse-Core]
-softdepend: [Votifier, NuVotifier]
+loadbefore: [ FastAsyncWorldEdit, WorldEdit ]
+depend: [ PlaceholderAPI, Multiverse-Core ]
+softdepend: [ Votifier, NuVotifier ]
 
 commands:
 
@@ -51,7 +51,7 @@ commands:
   hub:
     description: Retourne au hub du serveur
     usage: /hub
-    aliases: [spawn, lobby]
+    aliases: [ spawn, lobby ]
 
   vote:
     description: Affiche les sites de vote du serveur
@@ -110,28 +110,28 @@ commands:
   banf:
     description: Permet de bannir les joueurs
     usage: /banf <player> <raison>
-    aliases: [ban]
+    aliases: [ ban ]
     permission: farmland.moderation
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
   unbanf:
     description: Permet de débannir un joueur
     usage: /unbanf <player>
-    aliases: [unban]
+    aliases: [ unban ]
     permission: farmland.moderation
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
   kickf:
     description: Permet de kick un joueur
     usage: /kickf <player> <raison>
-    aliases: [kick]
+    aliases: [ kick ]
     permission: farmland.moderation
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
   warnf:
     description: Permet d'avertir un joueur
     usage: /warnf <player> <raison>
-    aliases: [warn]
+    aliases: [ warn ]
     permission: farmland.moderation
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
@@ -168,14 +168,14 @@ commands:
   msgf:
     description: Permet d'envoyer un message privé à un joueur
     usage: /msgf <joueur> <message>
-    aliases: [msg, whisper, tell, w]
+    aliases: [ msg, whisper, tell, w ]
     permission: farmland.gamecommands
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
   r:
     description: Permet de répondre au dernier message privé reçu
     usage: /r <message>
-    aliases: [reply]
+    aliases: [ reply ]
     permission: farmland.gamecommands
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
@@ -239,6 +239,22 @@ permissions:
   farmland.market.admin:
     description: Accès aux commandes admin du marché (refresh)
     default: op
+
+website:
+database: false
+load: STARTUP
+awareness:
+  -
+
+default-permission: true
+author:
+prefix:
+libraries:
+  -
+
+description:
+authors:
+  -
 
 
 

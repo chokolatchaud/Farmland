@@ -13,17 +13,17 @@ public class HacheCommands implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		if (!(sender instanceof Player)) {
+		if (!(sender instanceof Player player)) {
 			sender.sendMessage("§cSeul un joueur peut utiliser cette commande !");
 			return true;
 		}
 
-		Player player = (Player) sender;
-		player.give(HacheFarm.create());
+        player.give(HacheFarm.createHache());
 
 		player.sendMessage("§aTu as reçu ton Épée de l'Agriculteur !");
 		player.sendMessage("§7Tue les mobs passifs de tes spawners pour récupérer leurs ressources dans ton /bag.");
 		return true;
 	}
+
 
 }

@@ -1,39 +1,34 @@
 package fr.kevyn.farmland.menufarm;
 
+import fr.kevyn.farmland.menu.TypeMenu;
 import org.bukkit.Material;
 
-import fr.kevyn.farmland.menu.TypeMenu;
-
 public class NameFarmItem {
-	public static String ReturnNameofMaterial(Material material,TypeMenu menu) {
+	public static String ReturnNameofMaterial(Material material, TypeMenu menu) {
 		if(menu == TypeMenu.BAG) {
-			switch (material) {
-			
-			case WHEAT: return "Blé";
-			case CARROT: return "Carotte";
-			case POTATO: return "Patate";
-			case PUMPKIN: return "Citrouille";
-			case COAL: return "Charbon";
-			case IRON_INGOT: return "Fer";
-			case GOLD_INGOT: return "Or";
-			case DIAMOND: return "Diamant";
-			case PORKCHOP: return "Cochon";
-			case BEEF: return "Vache";
-			case CHICKEN: return "Poulet";
-			case MUTTON: return "Mouton";
-			case COD: return "Morue";
-			case SALMON: return "Saumon";
-			case TROPICAL_FISH: return "Guppy";
-			case PUFFERFISH: return "Poisson-Globe";
-			case ROTTEN_FLESH: return "Chair périmée";
-			case BONE: return "Os";
-			case GUNPOWDER: return "Poudre à Canon";
-			case SHULKER_SHELL: return "Coquille";
-
-			default:
-				throw new IllegalArgumentException("Unexpected value: " + material);
-			
-		}
+            return switch (material) {
+                case WHEAT -> "Blé";
+                case CARROT -> "Carotte";
+                case POTATO -> "Patate";
+                case PUMPKIN -> "Citrouille";
+                case COAL -> "Charbon";
+                case IRON_INGOT -> "Fer";
+                case GOLD_INGOT -> "Or";
+                case DIAMOND -> "Diamant";
+                case PORKCHOP -> "Cochon";
+                case BEEF -> "Vache";
+                case CHICKEN -> "Poulet";
+                case MUTTON -> "Mouton";
+                case COD -> "Morue";
+                case SALMON -> "Saumon";
+                case TROPICAL_FISH -> "Guppy";
+                case PUFFERFISH -> "Poisson-Globe";
+                case ROTTEN_FLESH -> "Chair périmée";
+                case BONE -> "Os";
+                case GUNPOWDER -> "Poudre à Canon";
+                case SHULKER_SHELL -> "Coquille";
+                default -> throw new IllegalArgumentException("Unexpected value: " + material);
+            };
 		
 		}
 		if(menu == TypeMenu.SEEDS) {

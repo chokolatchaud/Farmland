@@ -1,16 +1,13 @@
 package fr.kevyn.plot;
 
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.GameRule;
-import org.bukkit.World;
-import org.bukkit.WorldType;
+import org.bukkit.*;
 import org.bukkit.plugin.Plugin;
 import org.mvplugins.multiverse.core.MultiverseCoreApi;
 import org.mvplugins.multiverse.core.world.WorldManager;
 import org.mvplugins.multiverse.core.world.options.CreateWorldOptions;
+
+import java.util.Map;
+import java.util.UUID;
 
 public class Plot {
     UUID uuid;
@@ -75,8 +72,8 @@ public class Plot {
         world.getWorldBorder().setSize(50);
         world.setAutoSave(true);
 
-        world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, Boolean.TRUE);
-        world.setGameRule(GameRule.DO_WEATHER_CYCLE, Boolean.TRUE);
+        world.setGameRule(GameRules.ADVANCE_TIME, Boolean.TRUE);
+        world.setGameRule(GameRules.ADVANCE_WEATHER, Boolean.TRUE);
         
     }
     
