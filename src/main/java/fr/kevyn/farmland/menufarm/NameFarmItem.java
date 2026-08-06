@@ -60,6 +60,10 @@ public class NameFarmItem {
 			case COW_SPAWN_EGG: return "Vache";
 	        case CHICKEN_SPAWN_EGG: return "Poulet";
 	        case SHEEP_SPAWN_EGG: return "Mouton";
+	        case ZOMBIE_SPAWN_EGG: return "Zombie";
+	        case SKELETON_SPAWN_EGG: return "Squelette";
+	        case CREEPER_SPAWN_EGG: return "Creeper";
+	        case SHULKER_SPAWN_EGG: return "Shulker";
 			
 
 
