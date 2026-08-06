@@ -29,10 +29,10 @@ public class SlotPriceFarmItem {
 		case COW_SPAWN_EGG: return 30;
         case CHICKEN_SPAWN_EGG: return 10;
         case SHEEP_SPAWN_EGG: return 20;
-        case ZOMBIE_SPAWN_EGG: return 50;
-		case SKELETON_SPAWN_EGG: return 30;
+        case ZOMBIE_SPAWN_EGG: return 30;
+		case SKELETON_SPAWN_EGG: return 20;
         case CREEPER_SPAWN_EGG: return 10;
-        case SHULKER_SPAWN_EGG: return 20;
+        case SHULKER_SPAWN_EGG: return 100;
 		
 
 		default:

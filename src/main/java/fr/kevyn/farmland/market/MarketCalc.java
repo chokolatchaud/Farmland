@@ -15,38 +15,45 @@ import org.bukkit.Material;
  */
 public class MarketCalc {
 
-    // ===== PRIX DE BASE (avant coefficient de marche) - a ajuster selon ton equilibrage =====
+    // ===== PRIX DE BASE (avant coefficient de marche) =====
+    // Calibre selon : difficulte de farm, prix d'achat au /shop si necessaire,
+    // et duree/effort pour obtenir la ressource (voir explications par metier)
     private static final Map<Material, Integer> PRIX_DE_BASE = new HashMap<>();
     static {
-        // Farmeur
+        // Farmeur - graine achetee (1/3/5/10$) puis pousse. Citrouille reellement
+        // plus lente/complexe a pousser en vanilla (tige + fruit separe)
         PRIX_DE_BASE.put(Material.WHEAT, 5);
-        PRIX_DE_BASE.put(Material.CARROT, 4);
-        PRIX_DE_BASE.put(Material.POTATO, 4);
-        PRIX_DE_BASE.put(Material.PUMPKIN, 8);
+        PRIX_DE_BASE.put(Material.CARROT, 10);
+        PRIX_DE_BASE.put(Material.POTATO, 15);
+        PRIX_DE_BASE.put(Material.PUMPKIN, 30);
 
-        // Mineur
+        // Mineur - aucun achat, prix inversement proportionnel a la vraie
+        // chance de tirage du Cobblegenerator (charbon 20%, fer 10%, or 5%, diamant 2.5%)
         PRIX_DE_BASE.put(Material.COAL, 5);
-        PRIX_DE_BASE.put(Material.IRON_INGOT, 15);
+        PRIX_DE_BASE.put(Material.IRON_INGOT, 12);
         PRIX_DE_BASE.put(Material.GOLD_INGOT, 25);
-        PRIX_DE_BASE.put(Material.DIAMOND, 80);
+        PRIX_DE_BASE.put(Material.DIAMOND, 60);
 
-        // Agriculteur
-        PRIX_DE_BASE.put(Material.PORKCHOP, 6);
-        PRIX_DE_BASE.put(Material.BEEF, 8);
-        PRIX_DE_BASE.put(Material.CHICKEN, 5);
-        PRIX_DE_BASE.put(Material.MUTTON, 7);
+        // Agriculteur - oeuf achete (10/20/30/50$), 1 ressource par kill,
+        // le prix doit nettement depasser le cout de l'oeuf pour que la boucle ait un sens
+        PRIX_DE_BASE.put(Material.CHICKEN, 18);
+        PRIX_DE_BASE.put(Material.MUTTON, 35);
+        PRIX_DE_BASE.put(Material.BEEF, 50);
+        PRIX_DE_BASE.put(Material.PORKCHOP, 80);
 
-        // Pecheur
-        PRIX_DE_BASE.put(Material.COD, 5);
+        // Pecheur - aucun achat, temps d'attente egal pour les 4 dans ce systeme,
+        // prix base sur la rareté/exotisme reel du poisson
+        PRIX_DE_BASE.put(Material.COD, 4);
         PRIX_DE_BASE.put(Material.SALMON, 7);
-        PRIX_DE_BASE.put(Material.TROPICAL_FISH, 10);
-        PRIX_DE_BASE.put(Material.PUFFERFISH, 12);
+        PRIX_DE_BASE.put(Material.TROPICAL_FISH, 18);
+        PRIX_DE_BASE.put(Material.PUFFERFISH, 18);
 
-        // Tueur
-        PRIX_DE_BASE.put(Material.ROTTEN_FLESH, 3);
-        PRIX_DE_BASE.put(Material.BONE, 6);
-        PRIX_DE_BASE.put(Material.GUNPOWDER, 10);
-        PRIX_DE_BASE.put(Material.SHULKER_SHELL, 100);
+        // Tueur - oeuf achete (10/20/30/100$), le Shulker est VOLONTAIREMENT le
+        // plus cher des 4 (vraie difficulte de fin de jeu, Cite de l'End)
+        PRIX_DE_BASE.put(Material.GUNPOWDER, 18);
+        PRIX_DE_BASE.put(Material.BONE, 35);
+        PRIX_DE_BASE.put(Material.ROTTEN_FLESH, 50);
+        PRIX_DE_BASE.put(Material.SHULKER_SHELL, 160);
     }
 
     // ===== A QUEL METIER APPARTIENT CHAQUE RESSOURCE =====

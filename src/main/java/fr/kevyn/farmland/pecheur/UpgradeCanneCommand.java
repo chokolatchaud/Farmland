@@ -31,7 +31,8 @@ public class UpgradeCanneCommand implements CommandExecutor {
             return true;
         }
 
-        int cout = 100 * (niveauActuel + 1);
+        // cout eleve : meme logique que la Houe, multiplicateur de rendement brut
+        int cout = 150 * (niveauActuel + 1);
         if (ps.getMoney() < cout) {
             player.sendMessage("§cIl te faut " + cout + " $FB pour améliorer ta Canne !");
             return true;

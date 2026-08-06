@@ -31,7 +31,8 @@ public class UpgradePiocheCommand implements CommandExecutor {
             return true;
         }
 
-        int cout = 100 * (niveauActuel + 1);
+        // cout bas : l'effet est modeste (+5% de chance total, reparti sur 4 paliers)
+        int cout = 50 * (niveauActuel + 1);
         if (ps.getMoney() < cout) {
             player.sendMessage("§cIl te faut " + cout + " $FB pour améliorer ton Cobblegenerator !");
             return true;
