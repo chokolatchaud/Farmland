@@ -22,31 +22,39 @@ public class MarketCalcTask {
     private static final int COEF_MAX = 150;
 
     public static void demarrer(FarmlandMain plugin) {
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            Market market = MarketHolder.get();
-            Map<String, Integer> ventes = MarketCalc.getVentesParMetier();
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> effectuerRecalcul(plugin),
+            20L * 60 * 30, 20L * 60 * 30); // toutes les 30 minutes
+    }
 
-            market.setMoneyforcoefMineur(recalculer(market.getMoneyforcoefMineur(), ventes.getOrDefault("Mineur", 0)));
-            market.setMoneyforcoefFarmeur(recalculer(market.getMoneyforcoefFarmeur(), ventes.getOrDefault("Farmeur", 0)));
-            market.setMoneyforcoefAgriculteur(recalculer(market.getMoneyforcoefAgriculteur(), ventes.getOrDefault("Agriculteur", 0)));
-            market.setMoneyforcoefPecheur(recalculer(market.getMoneyforcoefPecheur(), ventes.getOrDefault("Pecheur", 0)));
-            market.setMoneyforcoefTueur(recalculer(market.getMoneyforcoefTueur(), ventes.getOrDefault("Tueur", 0)));
+    /** Force un recalcul immediat, sans attendre le prochain cycle - utile pour /marketadmin recalc */
+    public static void forcerRecalcul(FarmlandMain plugin) {
+        effectuerRecalcul(plugin);
+    }
 
-            MarketCalc.resetVentes();
-            MarketSave.saveMarket(plugin, market);
-            fr.kevyn.farmland.market.MarketHolograms.updateAll(plugin);
+    private static void effectuerRecalcul(FarmlandMain plugin) {
+        Market market = MarketHolder.get();
+        Map<String, Integer> ventes = MarketCalc.getVentesParMetier();
 
-            // pousse aussi vers le site, si le module WebAPI est actif
-            if (plugin.getConfig().getBoolean("webapi.enabled", false) && plugin.getWebApi() != null) {
-                plugin.getWebApi().pushMarketMetiers(market);
-            }
+        market.setMoneyforcoefMineur(recalculer(market.getMoneyforcoefMineur(), ventes.getOrDefault("Mineur", 0)));
+        market.setMoneyforcoefFarmeur(recalculer(market.getMoneyforcoefFarmeur(), ventes.getOrDefault("Farmeur", 0)));
+        market.setMoneyforcoefAgriculteur(recalculer(market.getMoneyforcoefAgriculteur(), ventes.getOrDefault("Agriculteur", 0)));
+        market.setMoneyforcoefPecheur(recalculer(market.getMoneyforcoefPecheur(), ventes.getOrDefault("Pecheur", 0)));
+        market.setMoneyforcoefTueur(recalculer(market.getMoneyforcoefTueur(), ventes.getOrDefault("Tueur", 0)));
 
-            plugin.getLogger().info("[Market] Recalcul effectue - Mineur:" + market.getMoneyforcoefMineur()
-                + " Farmeur:" + market.getMoneyforcoefFarmeur()
-                + " Agriculteur:" + market.getMoneyforcoefAgriculteur()
-                + " Pecheur:" + market.getMoneyforcoefPecheur()
-                + " Tueur:" + market.getMoneyforcoefTueur());
-        }, 20L * 60 * 30, 20L * 60 * 30); // toutes les 30 minutes
+        MarketCalc.resetVentes();
+        MarketSave.saveMarket(plugin, market);
+        fr.kevyn.farmland.market.MarketHolograms.updateAll(plugin);
+
+        // pousse aussi vers le site, si le module WebAPI est actif
+        if (plugin.getConfig().getBoolean("webapi.enabled", false) && plugin.getWebApi() != null) {
+            plugin.getWebApi().pushMarketMetiers(market);
+        }
+
+        plugin.getLogger().info("[Market] Recalcul effectue - Mineur:" + market.getMoneyforcoefMineur()
+            + " Farmeur:" + market.getMoneyforcoefFarmeur()
+            + " Agriculteur:" + market.getMoneyforcoefAgriculteur()
+            + " Pecheur:" + market.getMoneyforcoefPecheur()
+            + " Tueur:" + market.getMoneyforcoefTueur());
     }
 
     private static int recalculer(int coefficientActuel, int nombreDeVentes) {

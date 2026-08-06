@@ -77,6 +77,7 @@ public class MicroPluginManager {
         // hologrammes du marche : chargement + apparition/rafraichissement toutes les 60s
         MarketHolograms.load(plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, () -> MarketHolograms.updateAll(plugin), 100L, 20L * 60);
+        plugin.getCommand("marketadmin").setExecutor(new fr.kevyn.farmland.market.MarketAdminCommands(plugin));
 
 
         // autosave des joueurs toutes les 5 minutes (evite la perte de session si crash)

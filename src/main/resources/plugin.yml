@@ -91,6 +91,12 @@ commands:
     permission: farmland.admin
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
+  marketadmin:
+    description: Gestion admin du marche par metier (info, holo, set, reset, recalc)
+    usage: /marketadmin
+    permission: farmland.moderation
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
   joinboat:
     description: Démarre une course de bateau
     usage: /joinboat
