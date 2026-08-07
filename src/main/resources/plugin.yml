@@ -265,22 +265,6 @@ permissions:
     description: Accès aux commandes admin du marché (refresh)
     default: op
 
-website:
-database: false
-load: STARTUP
-awareness:
-  -
-
-default-permission: true
-author:
-prefix:
-libraries:
-  -
-
-description:
-authors:
-  -
-
 
 
 
