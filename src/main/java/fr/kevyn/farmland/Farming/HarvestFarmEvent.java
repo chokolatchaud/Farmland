@@ -56,7 +56,7 @@ public class HarvestFarmEvent implements Listener {
 			return;
 		}
 
-		event.setDropItems(false); // jamais de vrai drop au sol, tout passe par le /bag
+		event.setDropItems(false); 
 		int niveauHoue = Math.max(1, ps.getHoueLevel());
 		int numberdone = fr.kevyn.farmland.menufarm.MultiplicateurUtil.tirerMultiplicateur(niveauHoue);
 		ps.addRessource(ressource, numberdone);

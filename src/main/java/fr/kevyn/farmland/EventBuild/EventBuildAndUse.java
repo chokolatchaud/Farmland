@@ -103,9 +103,8 @@ public class EventBuildAndUse implements Listener {
 
     @EventHandler
     public void onSpawnMob(CreatureSpawnEvent event) {
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.COMMAND
-                || event.getEntityType() == EntityType.ARMOR_STAND
-                || event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.CUSTOM) {
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL)
+                 {
             return;
         }
         event.setCancelled(true);

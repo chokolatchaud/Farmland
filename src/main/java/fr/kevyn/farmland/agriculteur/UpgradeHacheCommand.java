@@ -34,7 +34,7 @@ public class UpgradeHacheCommand implements CommandExecutor {
             return true;
         }
 
-        int cout = 100 * (niveauActuel + 1);
+        int cout = 100 * (niveauActuel + 1) * 3;
         if (ps.getMoney() < cout) {
             player.sendMessage("§cIl te faut " + cout + " $FB pour améliorer ta Hache !");
             return true;

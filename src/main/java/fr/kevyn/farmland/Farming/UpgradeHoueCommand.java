@@ -31,9 +31,8 @@ public class UpgradeHoueCommand implements CommandExecutor {
             return true;
         }
 
-        // cout eleve : debloque des multiplicateurs de rendement brut, l'effet
-        // devient tres puissant a haut niveau, donc plus cher pour eviter le snowball
-        int cout = 150 * (niveauActuel + 1);
+
+        int cout = 150 * (niveauActuel + 1) * 3;
         if (ps.getMoney() < cout) {
             player.sendMessage("§cIl te faut " + cout + " $FB pour améliorer ta Houe !");
             return true;
