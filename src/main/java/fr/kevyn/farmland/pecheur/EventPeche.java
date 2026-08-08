@@ -1,6 +1,5 @@
 package fr.kevyn.farmland.pecheur;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 import org.bukkit.Material;
@@ -10,7 +9,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 
-import fr.kevyn.farmland.menufarm.ListFarmItem;
 import fr.kevyn.farmland.menufarm.Outils;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
@@ -30,13 +28,8 @@ public class EventPeche implements Listener {
 				return;
 				
 			}
-			ArrayList<Material> listfishreward = ListFarmItem.listfichingitem();
-			int index = random.nextInt(listfishreward.size());
-			Material fish = listfishreward.get(index);
 			int niveauCanne = Math.max(1, ps.getCanneLevel());
-			int quantite = fr.kevyn.farmland.menufarm.MultiplicateurUtil.tirerMultiplicateur(niveauCanne);
-			ps.addRessource(fish, quantite);
-			player.sendMessage("Vous avez pecher un " + fish.name() + " x " + quantite);
+			
 			event.setCancelled(true);
 
         }

@@ -9,13 +9,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import fr.kevyn.farmland.menufarm.AllMenuMetier;
-import fr.kevyn.farmland.menufarm.ListFarmItem;
 import fr.kevyn.farmland.menufarm.Outils;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
@@ -47,33 +44,19 @@ public class HarvestFarmEvent implements Listener {
 		// verifie que la culture est bien arrivee a MATURITE (age maximal)
 		if (ageable.getAge() < ageable.getMaximumAge()) return;
 
-		Material ressource = ListFarmItem.blocCultureVersRessource(block.getType());
-		if (ressource == null) return;
-
+	
 
 		PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
 		if (ps == null) {
 			return;
 		}
-
 		event.setDropItems(false); 
-		int niveauHoue = Math.max(1, ps.getHoueLevel());
-		int numberdone = fr.kevyn.farmland.menufarm.MultiplicateurUtil.tirerMultiplicateur(niveauHoue);
-		ps.addRessource(ressource, numberdone);
-		player.sendMessage("§a+" + numberdone +" " + ressource.name() + " ajouté à ton /bag !");
-	}
-	
-	
-	
-	@EventHandler
-	public void onPlacePlant(BlockPlaceEvent event) {
-		Material type = event.getBlock().getType();
 
-		if (ListFarmItem.isCulture(type)) {
-			event.setCancelled(true);
-			event.getPlayer().sendMessage("§cSeul le Planteur peut faire pousser ces cultures !");
-		}
 	}
+	
+	
+	
+	
 	
 	@EventHandler
 	public void onClicHoue(PlayerInteractEvent event) {
@@ -84,35 +67,9 @@ public class HarvestFarmEvent implements Listener {
 	    ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
 
 	    if (!Outils.isOutilsAttendu(mainPrincipale, Material.NETHERITE_HOE)) return;
-	    if (event.getAction() != Action.RIGHT_CLICK_BLOCK) {
-	        if (event.getAction() == Action.RIGHT_CLICK_AIR) {
-	            player.openInventory(AllMenuMetier.createmenuSeeds(ps));
-	        }
-	        return;
-	    }
 
-	    Block blocClique = event.getClickedBlock();
-	    if (blocClique.getType() == Material.FARMLAND) {
-	    	Material seedplanteur = HoueFarmeur.getGraineSelectionnee(mainPrincipale);
-	        if (seedplanteur == null) {
-	            player.sendMessage("§cSélectionne d'abord une graine (clic droit dans le vide) !");
-	            return;
-	        }
 
-	        if (ps.getGraine(seedplanteur) <= 0) {
-	            player.sendMessage("§cTu n'as plus de graines de ce type ! Achete-en via le menu.");
-	            return;
-	        }
-	        
-	        Material blocAPoser = ListFarmItem.itemVersBlocCulture(seedplanteur);
-	        if (blocAPoser == null) return;
-	        Block emplacementPlantation = blocClique.getRelative(BlockFace.UP);
-	        if (emplacementPlantation.getType() != Material.AIR) return;
-	        
-	        emplacementPlantation.setType(blocAPoser);
-	        ps.removeGraine(seedplanteur, 1);
-
-	        event.setCancelled(true);
+	   
 	    	
 	    	
 	    	
@@ -122,4 +79,4 @@ public class HarvestFarmEvent implements Listener {
 	    
 	
 	
-}
+

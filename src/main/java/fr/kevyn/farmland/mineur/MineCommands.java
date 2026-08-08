@@ -5,10 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-/**
- * /pioche - donne la Pioche du Mineur (casse le minerai généré par ton
- * Cobblegenerator, l'envoie directement dans ton /bag).
- */
+
 public class MineCommands implements CommandExecutor {
 
 	@Override

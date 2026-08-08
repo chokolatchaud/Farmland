@@ -20,7 +20,6 @@ public class BagCommands implements CommandExecutor {
 		}
 		PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
 		
-		player.openInventory(AllMenuMetier.createmenuBag(ps));
 		return true;
 	}
 

@@ -14,7 +14,7 @@ import fr.kevyn.farmland.menufarm.Outils;
 public class epeeFarm {
 
 	private static final NamespacedKey CLE_MODIFIER = new NamespacedKey("farmland", "epee_degats");
-	private static final NamespacedKey CLE_OEUF_SELECTIONNEE = new NamespacedKey("farmland", "oeuf_selectionneetueur");
+
 
 	public static ItemStack create() {
 		ItemStack item = Outils.create(Material.NETHERITE_SWORD, "§cépée du Tueur");
@@ -22,17 +22,7 @@ public class epeeFarm {
 		return item;
 	}
 	
-	public static void setOeufSelectionnee(ItemStack hache, Material oeuf) {
-        ItemMeta meta = hache.getItemMeta();
-        meta.getPersistentDataContainer().set(CLE_OEUF_SELECTIONNEE, PersistentDataType.STRING, oeuf.name());
-        hache.setItemMeta(meta);
-    }
 
-    public static Material getOeufSelectionnee(ItemStack épée) {
-        if (épée == null || !épée.hasItemMeta()) return null;
-        String nom = épée.getItemMeta().getPersistentDataContainer().get(CLE_OEUF_SELECTIONNEE, PersistentDataType.STRING);
-        return nom != null ? Material.valueOf(nom) : null;
-    }
 
 
 	public static void appliquerDegats(ItemStack item, double degats) {
