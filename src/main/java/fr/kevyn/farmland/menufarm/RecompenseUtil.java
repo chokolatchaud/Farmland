@@ -2,6 +2,7 @@ package fr.kevyn.farmland.menufarm;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import fr.kevyn.farmland.playerserver.PlayerServer;
 
@@ -65,6 +66,11 @@ public class RecompenseUtil {
         int nouveauNiveau = ajouterXp(ps, "Agriculteur", ps.getHacheLevel(), xp);
         if (nouveauNiveau > ps.getHacheLevel()) {
             ps.setHacheLevel(nouveauNiveau);
+            ItemStack hacheEnMain = joueur.getInventory().getItemInMainHand();
+            if (Outils.isOutilsAttendu(hacheEnMain, org.bukkit.Material.NETHERITE_AXE)) {
+                fr.kevyn.farmland.agriculteur.HacheFarm.appliquerDegats(hacheEnMain,
+                    fr.kevyn.farmland.agriculteur.ArmesUtil.calculerDegats(nouveauNiveau));
+            }
             joueur.sendMessage("§b⭐ Agriculteur niveau " + nouveauNiveau + " !");
         }
         ps.addRessource(JETON_AGRICULTEUR, jeton);
@@ -75,6 +81,11 @@ public class RecompenseUtil {
         int nouveauNiveau = ajouterXp(ps, "Tueur", ps.getEpeeLevel(), xp);
         if (nouveauNiveau > ps.getEpeeLevel()) {
             ps.setEpeeLevel(nouveauNiveau);
+            ItemStack epeeEnMain = joueur.getInventory().getItemInMainHand();
+            if (Outils.isOutilsAttendu(epeeEnMain, org.bukkit.Material.NETHERITE_SWORD)) {
+                fr.kevyn.farmland.tueur.epeeFarm.appliquerDegats(epeeEnMain,
+                    fr.kevyn.farmland.agriculteur.ArmesUtil.calculerDegats(nouveauNiveau));
+            }
             joueur.sendMessage("§b⭐ Tueur niveau " + nouveauNiveau + " !");
         }
         ps.addRessource(JETON_TUEUR, jeton);

@@ -70,7 +70,9 @@ public class EventMineSpawn implements Listener {
 		}
 
 		event.setDropItems(false); // jamais de vrai drop au sol, tout passe par le /bag
-		fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompenseMineur(player, ps, 10, 1);
+		int niveauPioche = Math.max(1, ps.getCobblestonegeneratorlevel());
+		int jeton = fr.kevyn.farmland.menufarm.MultiplicateurUtil.tirerMultiplicateur(niveauPioche);
+		fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompenseMineur(player, ps, 10, jeton);
 	}
     @EventHandler
     public void onMinePlace(BlockPlaceEvent event) {
