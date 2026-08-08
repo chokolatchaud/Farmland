@@ -9,21 +9,22 @@ import fr.kevyn.farmland.playerserver.PlayerServer;
 /**
  * Point central des recompenses de metier. Chaque action legitime (recolte,
  * kill, peche, minage) donne :
- *   - de l'XP, GRATUIT, qui fait monter automatiquement le niveau de l'outil
- *     (meme niveau que celui utilise par ArmesUtil/MultiplicateurUtil/le
- *     Cobblegenerator - un seul systeme de niveau, plus de /upgradeX payant
- *     necessaire pour la progression de base)
- *   - des JETONS, la monnaie VENDABLE du metier, stockee dans le /bag comme
- *     n'importe quelle ressource (reutilise ps.ressources), vendue via le
- *     marche existant (MarketCalc)
+ *   - de l'XP, GRATUIT, qui fait monter automatiquement le niveau de l'outil,
+ *     SANS PLAFOND (niveaux infinis)
+ *   - des JETONS, la monnaie VENDABLE du metier, stockee dans le /bag
  *
- * Le seuil d'XP necessaire pour passer au niveau superieur augmente a
- * chaque niveau (100 * (niveau+1)), plafonne a 10 comme le reste du
- * systeme de niveaux.
+ * Farmeur/Pecheur/Mineur : le niveau ameliore directement les chances de
+ * "duplique" (plusieurs Jetons d'un coup, voir MultiplicateurUtil).
+ *
+ * Agriculteur/Tueur (armes) : le niveau augmente les DEGATS jusqu'a un
+ * plafond de 20 (niveau 15). Au-dela, le niveau continue de monter mais
+ * n'ajoute plus de degats - il alimente a la place le MEME systeme de
+ * multiplicateur de duplique que les 3 autres metiers.
+ *
+ * Plus de /upgradeX payant : toute la progression vient desormais
+ * uniquement de l'XP gagnee en jouant.
  */
 public class RecompenseUtil {
-
-    private static final int NIVEAU_MAX = 10;
 
     // ===== Jetons - un item distinct par metier, sert juste d'icone dans le /bag =====
     public static final Material JETON_MINEUR = Material.IRON_NUGGET;
@@ -32,39 +33,47 @@ public class RecompenseUtil {
     public static final Material JETON_AGRICULTEUR = Material.LEATHER;
     public static final Material JETON_TUEUR = Material.GUNPOWDER;
 
-    public static void donnerRecompenseMineur(Player joueur, PlayerServer ps, int xp, int jeton) {
-        int nouveauNiveau = ajouterXp(ps, "Mineur", ps.getCobblestonegeneratorlevel(), xp);
-        if (nouveauNiveau > ps.getCobblestonegeneratorlevel()) {
+    public static void donnerRecompenseMineur(Player joueur, PlayerServer ps, int xp, int jetonBase) {
+        int niveauAvant = ps.getCobblestonegeneratorlevel();
+        int nouveauNiveau = ajouterXp(ps, "Mineur", niveauAvant, xp);
+        if (nouveauNiveau > niveauAvant) {
             ps.setCobblestonegeneratorlevel(nouveauNiveau);
             joueur.sendMessage("§b⭐ Mineur niveau " + nouveauNiveau + " !");
         }
+        int jeton = MultiplicateurUtil.tirerMultiplicateur(Math.max(1, nouveauNiveau)) * jetonBase;
         ps.addRessource(JETON_MINEUR, jeton);
         joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Mineur");
     }
 
-    public static void donnerRecompenseFarmeur(Player joueur, PlayerServer ps, int xp, int jeton) {
-        int nouveauNiveau = ajouterXp(ps, "Farmeur", ps.getHoueLevel(), xp);
-        if (nouveauNiveau > ps.getHoueLevel()) {
+    public static void donnerRecompenseFarmeur(Player joueur, PlayerServer ps, int xp, int jetonBase) {
+        int niveauAvant = ps.getHoueLevel();
+        int nouveauNiveau = ajouterXp(ps, "Farmeur", niveauAvant, xp);
+        if (nouveauNiveau > niveauAvant) {
             ps.setHoueLevel(nouveauNiveau);
             joueur.sendMessage("§b⭐ Farmeur niveau " + nouveauNiveau + " !");
         }
+        int jeton = MultiplicateurUtil.tirerMultiplicateur(Math.max(1, nouveauNiveau)) * jetonBase;
         ps.addRessource(JETON_FARMEUR, jeton);
         joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Farmeur");
     }
 
-    public static void donnerRecompensePecheur(Player joueur, PlayerServer ps, int xp, int jeton) {
-        int nouveauNiveau = ajouterXp(ps, "Pecheur", ps.getCanneLevel(), xp);
-        if (nouveauNiveau > ps.getCanneLevel()) {
+    public static void donnerRecompensePecheur(Player joueur, PlayerServer ps, int xp, int jetonBase) {
+        int niveauAvant = ps.getCanneLevel();
+        int nouveauNiveau = ajouterXp(ps, "Pecheur", niveauAvant, xp);
+        if (nouveauNiveau > niveauAvant) {
             ps.setCanneLevel(nouveauNiveau);
             joueur.sendMessage("§b⭐ Pêcheur niveau " + nouveauNiveau + " !");
         }
+        int jeton = MultiplicateurUtil.tirerMultiplicateur(Math.max(1, nouveauNiveau)) * jetonBase;
         ps.addRessource(JETON_PECHEUR, jeton);
         joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Pêcheur");
     }
 
-    public static void donnerRecompenseAgriculteur(Player joueur, PlayerServer ps, int xp, int jeton) {
-        int nouveauNiveau = ajouterXp(ps, "Agriculteur", ps.getHacheLevel(), xp);
-        if (nouveauNiveau > ps.getHacheLevel()) {
+    public static void donnerRecompenseAgriculteur(Player joueur, PlayerServer ps, int xp, int jetonBase) {
+        int niveauAvant = ps.getHacheLevel();
+        int nouveauNiveau = ajouterXp(ps, "Agriculteur", niveauAvant, xp);
+
+        if (nouveauNiveau > niveauAvant) {
             ps.setHacheLevel(nouveauNiveau);
             ItemStack hacheEnMain = joueur.getInventory().getItemInMainHand();
             if (Outils.isOutilsAttendu(hacheEnMain, org.bukkit.Material.NETHERITE_AXE)) {
@@ -73,13 +82,18 @@ public class RecompenseUtil {
             }
             joueur.sendMessage("§b⭐ Agriculteur niveau " + nouveauNiveau + " !");
         }
+
+        int niveauExcedent = fr.kevyn.farmland.agriculteur.ArmesUtil.niveauExcedentaire(nouveauNiveau);
+        int jeton = jetonBase * (niveauExcedent > 0 ? MultiplicateurUtil.tirerMultiplicateur(niveauExcedent) : 1);
         ps.addRessource(JETON_AGRICULTEUR, jeton);
         joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Agriculteur");
     }
 
-    public static void donnerRecompenseTueur(Player joueur, PlayerServer ps, int xp, int jeton) {
-        int nouveauNiveau = ajouterXp(ps, "Tueur", ps.getEpeeLevel(), xp);
-        if (nouveauNiveau > ps.getEpeeLevel()) {
+    public static void donnerRecompenseTueur(Player joueur, PlayerServer ps, int xp, int jetonBase) {
+        int niveauAvant = ps.getEpeeLevel();
+        int nouveauNiveau = ajouterXp(ps, "Tueur", niveauAvant, xp);
+
+        if (nouveauNiveau > niveauAvant) {
             ps.setEpeeLevel(nouveauNiveau);
             ItemStack epeeEnMain = joueur.getInventory().getItemInMainHand();
             if (Outils.isOutilsAttendu(epeeEnMain, org.bukkit.Material.NETHERITE_SWORD)) {
@@ -88,19 +102,20 @@ public class RecompenseUtil {
             }
             joueur.sendMessage("§b⭐ Tueur niveau " + nouveauNiveau + " !");
         }
+
+        int niveauExcedent = fr.kevyn.farmland.agriculteur.ArmesUtil.niveauExcedentaire(nouveauNiveau);
+        int jeton = jetonBase * (niveauExcedent > 0 ? MultiplicateurUtil.tirerMultiplicateur(niveauExcedent) : 1);
         ps.addRessource(JETON_TUEUR, jeton);
         joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Tueur");
     }
 
-    /** Ajoute l'XP, renvoie le NOUVEAU niveau (identique a l'ancien si pas de palier franchi) */
+    /** Ajoute l'XP, renvoie le NOUVEAU niveau (identique a l'ancien si pas de palier franchi). Niveaux INFINIS. */
     private static int ajouterXp(PlayerServer ps, String metier, int niveauActuel, int xpGagne) {
-        if (niveauActuel >= NIVEAU_MAX) return niveauActuel; // deja au max, XP ignore
-
         int xpTotal = ps.getXp(metier) + xpGagne;
         int seuil = 100 * (niveauActuel + 1);
 
         int niveau = niveauActuel;
-        while (xpTotal >= seuil && niveau < NIVEAU_MAX) {
+        while (xpTotal >= seuil) {
             xpTotal -= seuil;
             niveau++;
             seuil = 100 * (niveau + 1);
