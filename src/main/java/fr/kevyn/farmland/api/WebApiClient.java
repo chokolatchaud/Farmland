@@ -90,17 +90,16 @@ public class WebApiClient {
         );
 
         List<Map<String, Object>> prix = new ArrayList<>();
-        for (org.bukkit.Material material : new org.bukkit.Material[] {
-                fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_MINEUR,
-                fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_FARMEUR,
-                fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_AGRICULTEUR,
-                fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_PECHEUR,
-                fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_TUEUR
+        for (String metier : new String[] {
+                fr.kevyn.farmland.market.MarketCalc.MINEUR,
+                fr.kevyn.farmland.market.MarketCalc.FARMEUR,
+                fr.kevyn.farmland.market.MarketCalc.AGRICULTEUR,
+                fr.kevyn.farmland.market.MarketCalc.PECHEUR,
+                fr.kevyn.farmland.market.MarketCalc.TUEUR
         }) {
             prix.add(Map.of(
-                    "ressource", material.name(),
-                    "metier", fr.kevyn.farmland.market.MarketCalc.getMetierDeRessource(material),
-                    "prixActuel", fr.kevyn.farmland.market.MarketCalc.getPrixActuel(material, market)
+                    "metier", metier,
+                    "prixActuel", fr.kevyn.farmland.market.MarketCalc.getPrixActuel(metier, market)
             ));
         }
 

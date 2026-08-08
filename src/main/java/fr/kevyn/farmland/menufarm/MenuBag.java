@@ -13,9 +13,9 @@ import fr.kevyn.farmland.menu.TypeMenu;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 
 /**
- * Le /bag - affiche les 5 Jetons de metier (fini les 20 ressources
- * individuelles). Clic sur un jeton = vend tout le stock au prix actuel du
- * marche (voir MenuListenerFarm pour la logique de vente).
+ * Le /bag - affiche les 5 Jetons de metier. Chaque Jeton vit dans son
+ * propre champ dedie sur PlayerServer (pas un inventaire generique) - le
+ * Material ici ne sert QUE d'icone visuelle pour l'affichage.
  */
 public class MenuBag {
 
@@ -24,21 +24,20 @@ public class MenuBag {
 		new GameMenu(inv, TypeMenu.BAG);
 		GameMenu.fillmenu(Material.BLACK_STAINED_GLASS_PANE, inv);
 
-		placerJeton(inv, 10, RecompenseUtil.JETON_MINEUR, "§7Jeton Mineur", ps);
-		placerJeton(inv, 12, RecompenseUtil.JETON_FARMEUR, "§aJeton Farmeur", ps);
-		placerJeton(inv, 13, RecompenseUtil.JETON_PECHEUR, "§bJeton Pêcheur", ps);
-		placerJeton(inv, 14, RecompenseUtil.JETON_AGRICULTEUR, "§eJeton Agriculteur", ps);
-		placerJeton(inv, 16, RecompenseUtil.JETON_TUEUR, "§cJeton Tueur", ps);
+		placerJeton(inv, 10, Material.IRON_NUGGET, MarketCalc.MINEUR, "§7Jeton Mineur", ps.getJetonMineur());
+		placerJeton(inv, 12, Material.WHEAT, MarketCalc.FARMEUR, "§aJeton Farmeur", ps.getJetonFarmeur());
+		placerJeton(inv, 13, Material.PRISMARINE_SHARD, MarketCalc.PECHEUR, "§bJeton Pêcheur", ps.getJetonPecheur());
+		placerJeton(inv, 14, Material.LEATHER, MarketCalc.AGRICULTEUR, "§eJeton Agriculteur", ps.getJetonAgriculteur());
+		placerJeton(inv, 16, Material.GUNPOWDER, MarketCalc.TUEUR, "§cJeton Tueur", ps.getJetonTueur());
 
 		return inv;
 	}
 
-	private static void placerJeton(Inventory inv, int slot, Material material, String nom, PlayerServer ps) {
-		int quantite = ps.getRessource(material);
-		int prixNormal = MarketCalc.getPrixDeBase(material);
-		int prixMarche = MarketCalc.getPrixActuel(material, MarketHolder.get());
+	private static void placerJeton(Inventory inv, int slot, Material icone, String metier, String nom, int quantite) {
+		int prixNormal = MarketCalc.getPrixDeBase(metier);
+		int prixMarche = MarketCalc.getPrixActuel(metier, MarketHolder.get());
 
-		ItemStack item = new ItemStack(material);
+		ItemStack item = new ItemStack(icone);
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(nom + " §7x " + quantite + " §7(§f" + prixNormal + "$ §7→ §e" + prixMarche + "$§7)");
 		item.setItemMeta(meta);

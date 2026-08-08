@@ -108,6 +108,35 @@ public class PlayerServer {
         xpMetiers.put(metier, valeur);
     }
 
+    // ===== JETONS - 5 champs dedies, PAS un stockage generique.
+    // (l'ancien systeme reutilisait ps.ressources, une Map generique pensee
+    // pour n'importe quelle ressource - inutile ici puisqu'il n'y a QUE 5
+    // jetons fixes, jamais d'autres items)
+    int jetonMineur = 0;
+    public int getJetonMineur() { return jetonMineur; }
+    public void setJetonMineur(int valeur) { this.jetonMineur = valeur; }
+    public void addJetonMineur(int quantite) { this.jetonMineur += quantite; }
+
+    int jetonFarmeur = 0;
+    public int getJetonFarmeur() { return jetonFarmeur; }
+    public void setJetonFarmeur(int valeur) { this.jetonFarmeur = valeur; }
+    public void addJetonFarmeur(int quantite) { this.jetonFarmeur += quantite; }
+
+    int jetonPecheur = 0;
+    public int getJetonPecheur() { return jetonPecheur; }
+    public void setJetonPecheur(int valeur) { this.jetonPecheur = valeur; }
+    public void addJetonPecheur(int quantite) { this.jetonPecheur += quantite; }
+
+    int jetonAgriculteur = 0;
+    public int getJetonAgriculteur() { return jetonAgriculteur; }
+    public void setJetonAgriculteur(int valeur) { this.jetonAgriculteur = valeur; }
+    public void addJetonAgriculteur(int quantite) { this.jetonAgriculteur += quantite; }
+
+    int jetonTueur = 0;
+    public int getJetonTueur() { return jetonTueur; }
+    public void setJetonTueur(int valeur) { this.jetonTueur = valeur; }
+    public void addJetonTueur(int quantite) { this.jetonTueur += quantite; }
+
     // niveaux d'amelioration Agriculteur/Tueur - separes, mais la formule de
     // degats est partagee (voir ArmesUtil.calculerDegats)
     int epeeLevel = 0;
