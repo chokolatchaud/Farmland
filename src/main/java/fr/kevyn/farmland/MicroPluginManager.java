@@ -111,6 +111,23 @@ public class MicroPluginManager {
             }
         }, 0L, 40L);
 
+        // classement vers le site : toutes les 60 secondes (la fonction existait
+        // deja dans WebApiClient mais n'etait jamais appelee nulle part - le
+        // classement du site est reste vide depuis toujours a cause de ca)
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            if (!plugin.getConfig().getBoolean("webapi.enabled", false) || plugin.getWebApi() == null) return;
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                fr.kevyn.farmland.playerserver.PlayerServer ps =
+                    fr.kevyn.farmland.playerserver.PlayerserverHashMap.getInstance().getplayerHaspMaps(p.getUniqueId());
+                if (ps == null) continue;
+                plugin.getWebApi().pushPlayerBalance(
+                    p.getName(), ps.getMoney(), 0, ps.getBlocpose(),
+                    ps.getCobblestonegeneratorlevel(), ps.getHoueLevel(), ps.getCanneLevel(),
+                    ps.getHacheLevel(), ps.getEpeeLevel()
+                );
+            }
+        }, 100L, 20L * 60);
+
         try {
             plugin.getCommand("raceadmin").setExecutor(new RaceAdminCommands(plugin));
             BoatRaceHologram.load(plugin);

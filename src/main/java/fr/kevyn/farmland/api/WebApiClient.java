@@ -106,13 +106,20 @@ public class WebApiClient {
         post(EP_MARKET, Map.of("coefficients", coefficients, "prix", prix));
     }
 
-    // pousse la balance + structures + blocs posés d'un joueur vers le classement
-    public void pushPlayerBalance(String username, double balance, int structures, int blocpose) {
+    // pousse la balance + blocs poses + niveaux des 5 metiers d'un joueur vers le classement
+    public void pushPlayerBalance(String username, double balance, int structures, int blocpose,
+                                   int niveauMineur, int niveauFarmeur, int niveauPecheur,
+                                   int niveauAgriculteur, int niveauTueur) {
         post(EP_LEADER, Map.of(
                 "username",   username,
                 "balance",    balance,
                 "structures", structures,
-                "blocpose",   blocpose
+                "blocpose",   blocpose,
+                "niveauMineur", niveauMineur,
+                "niveauFarmeur", niveauFarmeur,
+                "niveauPecheur", niveauPecheur,
+                "niveauAgriculteur", niveauAgriculteur,
+                "niveauTueur", niveauTueur
         ));
     }
 
