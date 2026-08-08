@@ -29,7 +29,9 @@ public class EventPeche implements Listener {
 				
 			}
 			int niveauCanne = Math.max(1, ps.getCanneLevel());
-			
+			int jeton = fr.kevyn.farmland.menufarm.MultiplicateurUtil.tirerMultiplicateur(niveauCanne);
+			fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompensePecheur(player, ps, 10, jeton);
+
 			event.setCancelled(true);
 
         }

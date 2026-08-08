@@ -62,9 +62,7 @@ public class EventMineSpawn implements Listener {
 		}
 
 		Block block = event.getBlock();
-		Material ressource = convertirMineraiEnBloc(block.getType());
-		if (ressource == null) return;
-
+		if (!isMineur(block.getType())) return; // pas un minerai genere par notre Cobblegenerator
 
 		PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
 		if (ps == null) {
@@ -72,9 +70,7 @@ public class EventMineSpawn implements Listener {
 		}
 
 		event.setDropItems(false); // jamais de vrai drop au sol, tout passe par le /bag
-		int numberdone = 1;
-		ps.addRessource(ressource, numberdone);
-		player.sendMessage("§a+" + numberdone +" " + ressource.name() + " ajouté à ton /bag !");
+		fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompenseMineur(player, ps, 10, 1);
 	}
     @EventHandler
     public void onMinePlace(BlockPlaceEvent event) {
@@ -127,16 +123,6 @@ public class EventMineSpawn implements Listener {
             case GOLD_INGOT -> Material.GOLD_ORE;
             case DIAMOND -> Material.DIAMOND_ORE;
             default -> Material.COBBLESTONE;
-        };
-    }
-    
-    private Material convertirMineraiEnBloc(Material item) {
-        return switch (item) {
-            case COAL_ORE -> Material.COAL;
-            case IRON_ORE -> Material.IRON_INGOT;
-            case GOLD_ORE -> Material.GOLD_INGOT;
-            case DIAMOND_ORE -> Material.DIAMOND;
-            default -> null;
         };
     }
 

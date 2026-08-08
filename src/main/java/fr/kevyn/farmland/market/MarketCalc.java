@@ -15,57 +15,26 @@ import org.bukkit.Material;
  */
 public class MarketCalc {
 
-    // ===== PRIX DE BASE (avant coefficient de marche) =====
-    // Calibre selon : difficulte de farm, prix d'achat au /shop si necessaire,
-    // et duree/effort pour obtenir la ressource (voir explications par metier)
+    // ===== PRIX DE BASE DES 5 JETONS (avant coefficient de marche) =====
+    // Un seul jeton par metier desormais (fini les listes de ressources
+    // individuelles) - le prix reflete la difficulte/rarete globale du metier
     private static final Map<Material, Integer> PRIX_DE_BASE = new HashMap<>();
     static {
-        // Farmeur - graine achetee (1/3/5/10$) puis pousse. Citrouille reellement
-        // plus lente/complexe a pousser en vanilla (tige + fruit separe)
-        PRIX_DE_BASE.put(Material.WHEAT, 5);
-        PRIX_DE_BASE.put(Material.CARROT, 10);
-        PRIX_DE_BASE.put(Material.POTATO, 15);
-        PRIX_DE_BASE.put(Material.PUMPKIN, 30);
-
-        // Mineur - aucun achat, prix inversement proportionnel a la vraie
-        // chance de tirage du Cobblegenerator (charbon 20%, fer 10%, or 5%, diamant 2.5%)
-        PRIX_DE_BASE.put(Material.COAL, 5);
-        PRIX_DE_BASE.put(Material.IRON_INGOT, 12);
-        PRIX_DE_BASE.put(Material.GOLD_INGOT, 25);
-        PRIX_DE_BASE.put(Material.DIAMOND, 60);
-
-        // Agriculteur - oeuf achete (10/20/30/50$), 1 ressource par kill,
-        // le prix doit nettement depasser le cout de l'oeuf pour que la boucle ait un sens
-        PRIX_DE_BASE.put(Material.CHICKEN, 18);
-        PRIX_DE_BASE.put(Material.MUTTON, 35);
-        PRIX_DE_BASE.put(Material.BEEF, 50);
-        PRIX_DE_BASE.put(Material.PORKCHOP, 80);
-
-        // Pecheur - aucun achat, temps d'attente egal pour les 4 dans ce systeme,
-        // prix base sur la rareté/exotisme reel du poisson
-        PRIX_DE_BASE.put(Material.COD, 4);
-        PRIX_DE_BASE.put(Material.SALMON, 7);
-        PRIX_DE_BASE.put(Material.TROPICAL_FISH, 18);
-        PRIX_DE_BASE.put(Material.PUFFERFISH, 18);
-
-        // Tueur - oeuf achete (10/20/30/100$), le Shulker est VOLONTAIREMENT le
-        // plus cher des 4 (vraie difficulte de fin de jeu, Cite de l'End)
-        PRIX_DE_BASE.put(Material.GUNPOWDER, 18);
-        PRIX_DE_BASE.put(Material.BONE, 35);
-        PRIX_DE_BASE.put(Material.ROTTEN_FLESH, 50);
-        PRIX_DE_BASE.put(Material.SHULKER_SHELL, 160);
+        PRIX_DE_BASE.put(fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_FARMEUR, 8);
+        PRIX_DE_BASE.put(fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_MINEUR, 15);
+        PRIX_DE_BASE.put(fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_AGRICULTEUR, 12);
+        PRIX_DE_BASE.put(fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_PECHEUR, 10);
+        PRIX_DE_BASE.put(fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_TUEUR, 20);
     }
 
-    // ===== A QUEL METIER APPARTIENT CHAQUE RESSOURCE =====
+    // ===== A QUEL METIER APPARTIENT CHAQUE JETON =====
     public static String getMetierDeRessource(Material material) {
-        return switch (material) {
-            case WHEAT, CARROT, POTATO, PUMPKIN -> "Farmeur";
-            case COAL, IRON_INGOT, GOLD_INGOT, DIAMOND -> "Mineur";
-            case PORKCHOP, BEEF, CHICKEN, MUTTON -> "Agriculteur";
-            case COD, SALMON, TROPICAL_FISH, PUFFERFISH -> "Pecheur";
-            case ROTTEN_FLESH, BONE, GUNPOWDER, SHULKER_SHELL -> "Tueur";
-            default -> null;
-        };
+        if (material == fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_FARMEUR) return "Farmeur";
+        if (material == fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_MINEUR) return "Mineur";
+        if (material == fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_AGRICULTEUR) return "Agriculteur";
+        if (material == fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_PECHEUR) return "Pecheur";
+        if (material == fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_TUEUR) return "Tueur";
+        return null;
     }
 
     /** Prix reel actuel = prix de base * coefficient du metier concerne / 100 */

@@ -64,6 +64,7 @@ public class MicroPluginManager {
         plugin.getCommand("psadmin").setExecutor(new PlayerAdminCommands(plugin));
         plugin.getCommand("plotadmin").setExecutor(new PlotAdminCommands(plugin));
         plugin.getCommand("bag").setExecutor(new BagCommands());
+        plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.menufarm.MenuListenerFarm(), plugin);
 
 
         TpaCommand tpaCommand = new TpaCommand(plugin);

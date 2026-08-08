@@ -52,6 +52,10 @@ public class HarvestFarmEvent implements Listener {
 		}
 		event.setDropItems(false); 
 
+		int niveauHoue = Math.max(1, ps.getHoueLevel());
+		int jeton = fr.kevyn.farmland.menufarm.MultiplicateurUtil.tirerMultiplicateur(niveauHoue);
+		fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompenseFarmeur(player, ps, 10, jeton);
+
 	}
 	
 	

@@ -31,6 +31,8 @@ public class KillEventTueur implements Listener {
 		event.getDrops().clear();
 		event.setDroppedExp(0);
 
+		fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompenseTueur(tueur, ps, 10, 1);
+
 	}
 }
 	

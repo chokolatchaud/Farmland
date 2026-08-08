@@ -97,6 +97,17 @@ public class PlayerServer {
     public int getCanneLevel() { return canneLevel; }
     public void setCanneLevel(int canneLevel) { this.canneLevel = canneLevel; }
 
+    // ===== XP PAR METIER - gratuit, fait monter le niveau automatiquement =====
+    Map<String, Integer> xpMetiers = new HashMap<>();
+
+    public int getXp(String metier) {
+        return xpMetiers.getOrDefault(metier, 0);
+    }
+
+    public void setXp(String metier, int valeur) {
+        xpMetiers.put(metier, valeur);
+    }
+
     // niveaux d'amelioration Agriculteur/Tueur - separes, mais la formule de
     // degats est partagee (voir ArmesUtil.calculerDegats)
     int epeeLevel = 0;
