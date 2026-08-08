@@ -91,11 +91,11 @@ public class WebApiClient {
 
         List<Map<String, Object>> prix = new ArrayList<>();
         for (org.bukkit.Material material : new org.bukkit.Material[] {
-                org.bukkit.Material.WHEAT, org.bukkit.Material.CARROT, org.bukkit.Material.POTATO, org.bukkit.Material.PUMPKIN,
-                org.bukkit.Material.COAL, org.bukkit.Material.IRON_INGOT, org.bukkit.Material.GOLD_INGOT, org.bukkit.Material.DIAMOND,
-                org.bukkit.Material.PORKCHOP, org.bukkit.Material.BEEF, org.bukkit.Material.CHICKEN, org.bukkit.Material.MUTTON,
-                org.bukkit.Material.COD, org.bukkit.Material.SALMON, org.bukkit.Material.TROPICAL_FISH, org.bukkit.Material.PUFFERFISH,
-                org.bukkit.Material.ROTTEN_FLESH, org.bukkit.Material.BONE, org.bukkit.Material.GUNPOWDER, org.bukkit.Material.SHULKER_SHELL
+                fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_MINEUR,
+                fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_FARMEUR,
+                fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_AGRICULTEUR,
+                fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_PECHEUR,
+                fr.kevyn.farmland.menufarm.RecompenseUtil.JETON_TUEUR
         }) {
             prix.add(Map.of(
                     "ressource", material.name(),

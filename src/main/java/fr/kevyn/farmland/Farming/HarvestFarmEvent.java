@@ -20,7 +20,6 @@ import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
 
 public class HarvestFarmEvent implements Listener {
-	Material[] seedlist = {Material.WHEAT_SEEDS,Material.CARROT,Material.POTATO,Material.PUMPKIN_STEM};
 
 	@EventHandler
 	public void onHarvest(BlockBreakEvent event) {
