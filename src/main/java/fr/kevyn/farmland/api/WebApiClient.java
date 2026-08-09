@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import fr.kevyn.farmland.boathub.BoatTimeSave;
 import okhttp3.*;
 import org.bukkit.plugin.Plugin;
+import org.jspecify.annotations.NonNull;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -107,13 +108,12 @@ public class WebApiClient {
     }
 
     // pousse la balance + blocs poses + niveaux des 5 metiers d'un joueur vers le classement
-    public void pushPlayerBalance(String username, double balance, int structures, int blocpose,
-                                   int niveauMineur, int niveauFarmeur, int niveauPecheur,
-                                   int niveauAgriculteur, int niveauTueur) {
+    public void pushPlayerBalance(String username, double balance, int blocpose,
+                                  int niveauMineur, int niveauFarmeur, int niveauPecheur,
+                                  int niveauAgriculteur, int niveauTueur) {
         post(EP_LEADER, Map.of(
                 "username",   username,
                 "balance",    balance,
-                "structures", structures,
                 "blocpose",   blocpose,
                 "niveauMineur", niveauMineur,
                 "niveauFarmeur", niveauFarmeur,
@@ -133,7 +133,7 @@ public class WebApiClient {
                 .post(RequestBody.create(gson.toJson(bodyObj).getBytes(StandardCharsets.UTF_8), JSON))
                 .build();
         http.newCall(req).enqueue(new Callback() {
-            @Override public void onFailure(Call call, IOException e) {
+            @Override public void onFailure(@NonNull Call call, IOException e) {
                 plugin.getLogger().log(Level.WARNING, "[WebAPI] echec POST " + path + " : " + e.getMessage());
             }
             @Override public void onResponse(Call call, Response response) {

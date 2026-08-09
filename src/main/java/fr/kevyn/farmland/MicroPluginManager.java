@@ -1,10 +1,5 @@
 package fr.kevyn.farmland;
 
-import java.util.Collection;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import discordwebhook.messagediscord;
 import fr.kevyn.farmland.EventBuild.ChatListener;
 import fr.kevyn.farmland.EventBuild.EventBuildAndUse;
@@ -40,6 +35,10 @@ import fr.kevyn.farmland.vote.VoteListener;
 import fr.kevyn.farmland.worldeditgestion.WorldEditSecureListener;
 import fr.kevyn.plot.PlotAdminCommands;
 import fr.kevyn.plot.Plotcommands;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import java.util.Collection;
 
 public class MicroPluginManager {
 
@@ -120,13 +119,12 @@ public class MicroPluginManager {
                 fr.kevyn.farmland.playerserver.PlayerServer ps =
                     fr.kevyn.farmland.playerserver.PlayerserverHashMap.getInstance().getplayerHaspMaps(p.getUniqueId());
                 if (ps == null) continue;
-                plugin.getWebApi().pushPlayerBalance(
-                    p.getName(), ps.getMoney(), 0, ps.getBlocpose(),
-                    ps.getCobblestonegeneratorlevel(), ps.getHoueLevel(), ps.getCanneLevel(),
-                    ps.getHacheLevel(), ps.getEpeeLevel()
-                );
+                plugin.getWebApi().pushPlayerBalance(ps.getName(), ps.getMoney(),ps.getBlocpose(),ps.getCobblestonegeneratorlevel(),
+                ps.getHoueLevel(),ps.getCanneLevel(),ps.getHacheLevel(),ps.getEpeeLevel());
+
             }
         }, 100L, 20L * 60);
+
 
         try {
             plugin.getCommand("raceadmin").setExecutor(new RaceAdminCommands(plugin));
@@ -168,9 +166,9 @@ public class MicroPluginManager {
             Bukkit.getScheduler().runTaskTimer(plugin, () ->
                 ChatCalcListener.lancerNouveauCalcul(plugin), 20L * 60 * 5, 20L * 60 * 5);
 
-            // annonce aleatoire toutes les 5 minutes (jeu + Discord)
+            // annonce aleatoire toutes les 10 minutes (jeu + Discord)
             Bukkit.getScheduler().runTaskTimer(plugin, () ->
-                AnnouncementBroadcaster.broadcastRandom(plugin), 20L * 60 * 5, 20L * 60 * 5);
+                AnnouncementBroadcaster.broadcastRandom(plugin), 20L * 60 * 10, 20L * 60 * 10);
             plugin.getCommand("plot").setExecutor(new Plotcommands(plugin));
         } catch (Exception e) {
             plugin.getLogger().severe("Erreur lors du chargement du module Plot !");

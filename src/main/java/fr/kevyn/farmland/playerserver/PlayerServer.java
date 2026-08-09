@@ -1,15 +1,13 @@
 package fr.kevyn.farmland.playerserver;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
+import fr.kevyn.plot.PlotData;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import fr.kevyn.plot.PlotData;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class PlayerServer {
     UUID uuid;
@@ -24,7 +22,6 @@ public class PlayerServer {
     PlotData plotdata;
     int upgrade;
     long weTimeExpiry;
-    Map<Material, Integer> ressources = new HashMap<>();
     int cobblestonegeneratorlevel = 1;
     
 
@@ -55,39 +52,13 @@ public class PlayerServer {
     public void setCobblestonegeneratorlevel(int cobblestonegeneratorlevel) {
 		this.cobblestonegeneratorlevel = cobblestonegeneratorlevel;
 	}
-    
-    
-    public int getRessource(Material material) {
-        return ressources.getOrDefault(material, 0);
-    }
 
-    public void addRessource(Material material , int quantite) {
-        ressources.put(material, getRessource(material) + quantite);
-    }
-    
-    public void RemoveRessource(Material material , int quantite) {
-        ressources.put(material, getRessource(material) - quantite);
-    }
+
+
 
     // ===== GRAINES - stock SEPARE des ressources vendables du /bag =====
     Map<Material, Integer> graines = new HashMap<>();
 
-    public int getGraine(Material material) {
-        return graines.getOrDefault(material, 0);
-    }
-
-    public void addGraine(Material material, int quantite) {
-        graines.put(material, getGraine(material) + quantite);
-    }
-
-    public void removeGraine(Material material, int quantite) {
-        graines.put(material, getGraine(material) - quantite);
-    }
-
-    // ===== NIVEAUX D'AMELIORATION DES OUTILS - 0 a 10, cout croissant =====
-    int piocheLevel = 0;
-    public int getPiocheLevel() { return piocheLevel; }
-    public void setPiocheLevel(int piocheLevel) { this.piocheLevel = piocheLevel; }
 
     int houeLevel = 0;
     public int getHoueLevel() { return houeLevel; }
@@ -108,10 +79,7 @@ public class PlayerServer {
         xpMetiers.put(metier, valeur);
     }
 
-    // ===== JETONS - 5 champs dedies, PAS un stockage generique.
-    // (l'ancien systeme reutilisait ps.ressources, une Map generique pensee
-    // pour n'importe quelle ressource - inutile ici puisqu'il n'y a QUE 5
-    // jetons fixes, jamais d'autres items)
+
     int jetonMineur = 0;
     public int getJetonMineur() { return jetonMineur; }
     public void setJetonMineur(int valeur) { this.jetonMineur = valeur; }
@@ -186,9 +154,6 @@ public class PlayerServer {
     }
     public PlotData getPlotdata() {
         return plotdata;
-    }
-    public void setPlotdata(PlotData plotdata) {
-        this.plotdata = plotdata;
     }
     public int getBlocpose() {
         return blocpose;
