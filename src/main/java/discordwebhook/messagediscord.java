@@ -1,10 +1,10 @@
 package discordwebhook;
 
+import fr.kevyn.farmland.FarmlandMain;
+
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import fr.kevyn.farmland.FarmlandMain;
 
 public class messagediscord {
 	
@@ -39,7 +39,7 @@ public class messagediscord {
 	        	webhookUrl = webhookUrlModeration;
 	        }
 	        
-	        if (webhookUrl == null || webhookUrl.isEmpty()) {
+	        if (webhookUrl.isEmpty()) {
 	        	System.out.println("⚠ Webhook Discord non configuré pour le salon \"" + salon + "\" (voir config.yml)");
 	        	return;
 	        }
@@ -75,8 +75,8 @@ public class messagediscord {
 	            System.out.println("⚠ Erreur envoi Discord : code HTTP " + responseCode);
 	        }
 	        
-	    } catch (Exception e) {
-	        e.printStackTrace();
+	    } catch (Exception _) {
+
 	    }
 	}
 }

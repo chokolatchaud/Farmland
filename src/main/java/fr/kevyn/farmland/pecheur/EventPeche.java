@@ -1,7 +1,8 @@
 package fr.kevyn.farmland.pecheur;
 
-import java.util.Random;
-
+import fr.kevyn.farmland.menufarm.Outils;
+import fr.kevyn.farmland.playerserver.PlayerServer;
+import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,9 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemStack;
 
-import fr.kevyn.farmland.menufarm.Outils;
-import fr.kevyn.farmland.playerserver.PlayerServer;
-import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
+import java.util.Random;
 
 public class EventPeche implements Listener {
 	Random random = new Random();
@@ -30,7 +29,7 @@ public class EventPeche implements Listener {
 			}
 			int niveauCanne = Math.max(1, ps.getCanneLevel());
 			int jeton = fr.kevyn.farmland.menufarm.MultiplicateurUtil.tirerMultiplicateur(niveauCanne);
-			fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompensePecheur(player, ps, 10, jeton);
+			fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompensePecheur(player, ps, 10);
 
 			event.setCancelled(true);
 

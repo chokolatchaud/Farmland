@@ -12,43 +12,43 @@ import fr.kevyn.farmland.tueur.epeeFarm;
 
 public class RecompenseUtil {
 
-    public static void donnerRecompenseMineur(Player joueur, PlayerServer ps, int xp, int jetonBase) {
+    public static void donnerRecompenseMineur(Player joueur, PlayerServer ps, int xp) {
         int niveauAvant = ps.getCobblestonegeneratorlevel();
         int nouveauNiveau = ajouterXp(ps, "Mineur", niveauAvant, xp);
         if (nouveauNiveau > niveauAvant) {
             ps.setCobblestonegeneratorlevel(nouveauNiveau);
             joueur.sendMessage("§b⭐ Mineur niveau " + nouveauNiveau + " !");
         }
-        int jeton = MultiplicateurUtil.tirerMultiplicateur(Math.max(1, nouveauNiveau)) * jetonBase;
+        int jeton = MultiplicateurUtil.tirerMultiplicateur(Math.max(1, nouveauNiveau));
         ps.addJetonMineur(jeton);
         joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Mineur");
     }
 
-    public static void donnerRecompenseFarmeur(Player joueur, PlayerServer ps, int xp, int jetonBase) {
+    public static void donnerRecompenseFarmeur(Player joueur, PlayerServer ps, int xp) {
         int niveauAvant = ps.getHoueLevel();
         int nouveauNiveau = ajouterXp(ps, "Farmeur", niveauAvant, xp);
         if (nouveauNiveau > niveauAvant) {
             ps.setHoueLevel(nouveauNiveau);
             joueur.sendMessage("§b⭐ Farmeur niveau " + nouveauNiveau + " !");
         }
-        int jeton = MultiplicateurUtil.tirerMultiplicateur(Math.max(1, nouveauNiveau)) * jetonBase;
+        int jeton = MultiplicateurUtil.tirerMultiplicateur(Math.max(1, nouveauNiveau));
         ps.addJetonFarmeur(jeton);
         joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Farmeur");
     }
 
-    public static void donnerRecompensePecheur(Player joueur, PlayerServer ps, int xp, int jetonBase) {
+    public static void donnerRecompensePecheur(Player joueur, PlayerServer ps, int xp) {
         int niveauAvant = ps.getCanneLevel();
         int nouveauNiveau = ajouterXp(ps, "Pecheur", niveauAvant, xp);
         if (nouveauNiveau > niveauAvant) {
             ps.setCanneLevel(nouveauNiveau);
             joueur.sendMessage("§b⭐ Pêcheur niveau " + nouveauNiveau + " !");
         }
-        int jeton = MultiplicateurUtil.tirerMultiplicateur(Math.max(1, nouveauNiveau)) * jetonBase;
+        int jeton = MultiplicateurUtil.tirerMultiplicateur(Math.max(1, nouveauNiveau));
         ps.addJetonPecheur(jeton);
         joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Pêcheur");
     }
 
-    public static void donnerRecompenseAgriculteur(Player joueur, PlayerServer ps, int xp, int jetonBase) {
+    public static void donnerRecompenseAgriculteur(Player joueur, PlayerServer ps, int xp) {
         int niveauAvant = ps.getHacheLevel();
         int nouveauNiveau = ajouterXp(ps, "Agriculteur", niveauAvant, xp);
 
@@ -63,12 +63,12 @@ public class RecompenseUtil {
         }
 
         int niveauExcedent = ArmesUtil.niveauExcedentaire(nouveauNiveau);
-        int jeton = jetonBase * (niveauExcedent > 0 ? MultiplicateurUtil.tirerMultiplicateur(niveauExcedent) : 1);
+        int jeton = (niveauExcedent > 0 ? MultiplicateurUtil.tirerMultiplicateur(niveauExcedent) : 1);
         ps.addJetonAgriculteur(jeton);
         joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Agriculteur");
     }
 
-    public static void donnerRecompenseTueur(Player joueur, PlayerServer ps, int xp, int jetonBase) {
+    public static void donnerRecompenseTueur(Player joueur, PlayerServer ps, int xp) {
         int niveauAvant = ps.getEpeeLevel();
         int nouveauNiveau = ajouterXp(ps, "Tueur", niveauAvant, xp);
 
@@ -83,12 +83,12 @@ public class RecompenseUtil {
         }
 
         int niveauExcedent = ArmesUtil.niveauExcedentaire(nouveauNiveau);
-        int jeton = jetonBase * (niveauExcedent > 0 ? MultiplicateurUtil.tirerMultiplicateur(niveauExcedent) : 1);
+        int jeton = (niveauExcedent > 0 ? MultiplicateurUtil.tirerMultiplicateur(niveauExcedent) : 1);
         ps.addJetonTueur(jeton);
         joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Tueur");
     }
 
-    /** Ajoute l'XP, renvoie le NOUVEAU niveau (identique a l'ancien si pas de palier franchi). Niveaux INFINIS. */
+
     private static int ajouterXp(PlayerServer ps, String metier, int niveauActuel, int xpGagne) {
         int xpTotal = ps.getXp(metier) + xpGagne;
         int seuil = 100 * (niveauActuel + 1);

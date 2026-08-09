@@ -41,7 +41,7 @@ public class KillEventAgriculteur implements Listener {
 		event.getDrops().clear(); // jamais de vrai drop au sol, tout passe par le /bag
 		event.setDroppedExp(0);
 
-		fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompenseAgriculteur(tueur, ps, 10, 1);
+		fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompenseAgriculteur(tueur, ps, 10);
 
 	}
 	

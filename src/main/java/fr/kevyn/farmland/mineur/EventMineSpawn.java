@@ -1,11 +1,12 @@
 package fr.kevyn.farmland.mineur;
 
-import java.util.Random;
-
+import fr.kevyn.farmland.menufarm.Outils;
+import fr.kevyn.farmland.playerserver.PlayerServer;
+import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
+import fr.kevyn.plot.Plot;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,11 +15,7 @@ import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
-import fr.kevyn.farmland.Farming.HoueFarmeur;
-import fr.kevyn.farmland.menufarm.Outils;
-import fr.kevyn.farmland.playerserver.PlayerServer;
-import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
-import fr.kevyn.plot.Plot;
+import java.util.Random;
 
 public class EventMineSpawn implements Listener {
 	private static final Random random = new Random();
@@ -72,7 +69,7 @@ public class EventMineSpawn implements Listener {
 		event.setDropItems(false); // jamais de vrai drop au sol, tout passe par le /bag
 		int niveauPioche = Math.max(1, ps.getCobblestonegeneratorlevel());
 		int jeton = fr.kevyn.farmland.menufarm.MultiplicateurUtil.tirerMultiplicateur(niveauPioche);
-		fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompenseMineur(player, ps, 10, jeton);
+		fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompenseMineur(player, ps, 10);
 	}
     @EventHandler
     public void onMinePlace(BlockPlaceEvent event) {

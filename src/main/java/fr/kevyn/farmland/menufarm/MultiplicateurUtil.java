@@ -2,13 +2,7 @@ package fr.kevyn.farmland.menufarm;
 
 import java.util.Random;
 
-/**
- * Systeme de multiplicateur par palier, partage entre la Houe (Farmeur) et
- * la Canne (Pecheur). Le niveau debloque des paliers (niveau N debloque les
- * multiplicateurs x1 a xN), et a chaque recolte/peche, un tirage aleatoire
- * PONDERE determine quel multiplicateur s'applique - les paliers bas sont
- * plus frequents que les hauts.
- */
+
 public class MultiplicateurUtil {
 
     private static final Random random = new Random();

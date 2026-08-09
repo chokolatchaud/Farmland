@@ -3,8 +3,13 @@ package fr.kevyn.plot;
 import org.bukkit.*;
 import org.bukkit.plugin.Plugin;
 import org.mvplugins.multiverse.core.MultiverseCoreApi;
+import org.mvplugins.multiverse.core.world.MultiverseWorld;
 import org.mvplugins.multiverse.core.world.WorldManager;
 import org.mvplugins.multiverse.core.world.options.CreateWorldOptions;
+import org.mvplugins.multiverse.core.world.options.LoadWorldOptions;
+import org.mvplugins.multiverse.core.world.options.DeleteWorldOptions;
+import org.mvplugins.multiverse.core.utils.result.Attempt;
+import org.mvplugins.multiverse.external.vavr.control.Option;
 
 import java.util.Map;
 import java.util.UUID;
@@ -18,46 +23,44 @@ public class Plot {
         this.uuid = uuid;
         PlotHashmap.getInstance().addPlotHashMap(uuid.toString(), this);
         String nameplot = uuid.toString();
-        
+
         WorldManager multivers = MultiverseCoreApi.get().getWorldManager();
-        
-        
 
         if (Bukkit.getWorld(nameplot) != null) {
             initializeWorld(nameplot);
             return;
         }
-        
+
         if (multivers.isWorld(nameplot)) {
 
-            
-            boolean loaded = multivers.loadWorld(nameplot).isSuccess();
+            Option<MultiverseWorld> multiverseWorldOpt = multivers.getUnloadedWorld(nameplot);
 
-            if (loaded) {
-                Bukkit.getScheduler().runTaskLater(plugin, task -> {
-                    initializeWorld(nameplot);
-                }, 40L);
-                return; 
-            } else {
+            if (multiverseWorldOpt.isDefined()) {
+                MultiverseWorld mvWorld = multiverseWorldOpt.get();
+                Attempt<?, ?> resultat = multivers.loadWorld(LoadWorldOptions.world(mvWorld));
 
-                multivers.removeWorld(nameplot);
+                if (resultat.isSuccess()) {
+                    Bukkit.getScheduler().runTaskLater(plugin, task -> {
+                        initializeWorld(nameplot);
+                    }, 40L);
+                    return;
+                } else {
+                    multivers.deleteWorld(DeleteWorldOptions.world(mvWorld));
+                }
             }
         }
 
-        
         boolean created = multivers.createWorld(
-            CreateWorldOptions.worldName(nameplot)
-                .worldType(WorldType.FLAT)
-                .generateStructures(false)
+                CreateWorldOptions.worldName(nameplot)
+                        .worldType(WorldType.FLAT)
+                        .generateStructures(false)
         ).isSuccess();
-        
+
         if (created) {
             Bukkit.getScheduler().runTaskLater(plugin, task -> {
                 initializeWorld(nameplot);
             }, 80L);
-        } else {
         }
-        
     }
     
     private void initializeWorld(String nameplot) {
@@ -86,8 +89,7 @@ public class Plot {
     }
     
     public static Plot Worldtoplot(World world) {
-        if (PlotHashmap.getInstance() == null) return null;
-        
+
         Map<String, Plot> plotinhashmap = PlotHashmap.getInstance().getPlots();
         if (plotinhashmap == null) return null;
 

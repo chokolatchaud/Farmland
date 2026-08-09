@@ -1,22 +1,18 @@
 package fr.kevyn.farmland.Farming;
 
+import fr.kevyn.farmland.menufarm.Outils;
+import fr.kevyn.farmland.playerserver.PlayerServer;
+import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-
-import fr.kevyn.farmland.menufarm.Outils;
-import fr.kevyn.farmland.playerserver.PlayerServer;
-import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
-
 
 
 public class HarvestFarmEvent implements Listener {
@@ -53,7 +49,7 @@ public class HarvestFarmEvent implements Listener {
 
 		int niveauHoue = Math.max(1, ps.getHoueLevel());
 		int jeton = fr.kevyn.farmland.menufarm.MultiplicateurUtil.tirerMultiplicateur(niveauHoue);
-		fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompenseFarmeur(player, ps, 10, jeton);
+		fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompenseFarmeur(player, ps, 10);
 
 	}
 	

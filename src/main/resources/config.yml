@@ -28,7 +28,7 @@ vote:
     - "https://serveur-prive.net/minecraft/farmland"
     - "https://top-serveurs.net/minecraft/farmland"
   # texte de récompense affiché sur la page Vote du site
-  reward: "+15 $FB"
+  reward: "+1h worldedit $FB"
 
 # Annonces aleatoires diffusees toutes les 5 minutes (jeu + Discord)
 annonces:
