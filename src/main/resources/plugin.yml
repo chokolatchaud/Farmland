@@ -102,6 +102,12 @@ commands:
     permission: farmland.moderation
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
+  classementadmin:
+    description: Gestion des hologrammes de classement par metier (top 5)
+    usage: /classementadmin holo <set|remove|list> [metier]
+    permission: farmland.moderation
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
   market:
     description: Affiche l'etat actuel du marche par metier
     usage: /market

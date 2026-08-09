@@ -75,6 +75,7 @@ public class MicroPluginManager {
 
         // hologrammes du marche : chargement + apparition/rafraichissement toutes les 60s
         MarketHolograms.load(plugin);
+        fr.kevyn.farmland.menufarm.LeaderboardHolograms.load(plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, () -> MarketHolograms.updateAll(plugin), 100L, 20L * 60);
         plugin.getCommand("marketadmin").setExecutor(new fr.kevyn.farmland.market.MarketAdminCommands(plugin));
         plugin.getCommand("market").setExecutor(new fr.kevyn.farmland.market.MarketCommand());
@@ -124,6 +125,12 @@ public class MicroPluginManager {
 
             }
         }, 100L, 20L * 60);
+
+        // hologrammes de classement : independant du webapi, toujours actifs en jeu
+        Bukkit.getScheduler().runTaskTimer(plugin, () ->
+            fr.kevyn.farmland.menufarm.LeaderboardHolograms.updateAll(plugin), 120L, 20L * 60);
+
+        plugin.getCommand("classementadmin").setExecutor(new fr.kevyn.farmland.menufarm.ClassementAdminCommands(plugin));
 
 
         try {
