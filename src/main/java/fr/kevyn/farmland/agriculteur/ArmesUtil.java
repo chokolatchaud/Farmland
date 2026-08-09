@@ -18,7 +18,6 @@ public class ArmesUtil {
         return Math.min(DEGATS_MAX, 5.0 + niveauBorne);
     }
 
-    /** Niveau "en trop" au-dela du plafond de degats, qui alimente le multiplicateur de duplique */
     public static int niveauExcedentaire(int niveau) {
         return Math.max(0, niveau - NIVEAU_PLAFOND_DEGATS);
     }

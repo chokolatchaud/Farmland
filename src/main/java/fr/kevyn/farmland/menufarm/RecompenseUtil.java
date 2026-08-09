@@ -1,30 +1,15 @@
 package fr.kevyn.farmland.menufarm;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import fr.kevyn.farmland.agriculteur.ArmesUtil;
+import fr.kevyn.farmland.agriculteur.HacheFarm;
 import fr.kevyn.farmland.playerserver.PlayerServer;
+import fr.kevyn.farmland.tueur.epeeFarm;
 
-/**
- * Point central des recompenses de metier. Chaque action legitime (recolte,
- * kill, peche, minage) donne :
- *   - de l'XP, GRATUIT, qui fait monter automatiquement le niveau de l'outil,
- *     SANS PLAFOND (niveaux infinis)
- *   - des JETONS, la monnaie VENDABLE du metier - 5 champs DEDIES sur
- *     PlayerServer (jetonMineur, jetonFarmeur...), PAS un stockage
- *     generique type inventaire
- *
- * Farmeur/Pecheur/Mineur : le niveau ameliore directement les chances de
- * "duplique" (plusieurs Jetons d'un coup, voir MultiplicateurUtil).
- *
- * Agriculteur/Tueur (armes) : le niveau augmente les DEGATS jusqu'a un
- * plafond de 20 (niveau 15). Au-dela, le niveau continue de monter mais
- * n'ajoute plus de degats - il alimente a la place le MEME systeme de
- * multiplicateur de duplique que les 3 autres metiers.
- *
- * Plus de /upgradeX payant : toute la progression vient desormais
- * uniquement de l'XP gagnee en jouant.
- */
+
 public class RecompenseUtil {
 
     public static void donnerRecompenseMineur(Player joueur, PlayerServer ps, int xp, int jetonBase) {
@@ -71,13 +56,13 @@ public class RecompenseUtil {
             ps.setHacheLevel(nouveauNiveau);
             ItemStack hacheEnMain = joueur.getInventory().getItemInMainHand();
             if (Outils.isOutilsAttendu(hacheEnMain, org.bukkit.Material.NETHERITE_AXE)) {
-                fr.kevyn.farmland.agriculteur.HacheFarm.appliquerDegats(hacheEnMain,
-                    fr.kevyn.farmland.agriculteur.ArmesUtil.calculerDegats(nouveauNiveau));
+                HacheFarm.appliquerDegats(hacheEnMain,
+                    ArmesUtil.calculerDegats(nouveauNiveau));
             }
             joueur.sendMessage("§b⭐ Agriculteur niveau " + nouveauNiveau + " !");
         }
 
-        int niveauExcedent = fr.kevyn.farmland.agriculteur.ArmesUtil.niveauExcedentaire(nouveauNiveau);
+        int niveauExcedent = ArmesUtil.niveauExcedentaire(nouveauNiveau);
         int jeton = jetonBase * (niveauExcedent > 0 ? MultiplicateurUtil.tirerMultiplicateur(niveauExcedent) : 1);
         ps.addJetonAgriculteur(jeton);
         joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Agriculteur");
@@ -90,14 +75,14 @@ public class RecompenseUtil {
         if (nouveauNiveau > niveauAvant) {
             ps.setEpeeLevel(nouveauNiveau);
             ItemStack epeeEnMain = joueur.getInventory().getItemInMainHand();
-            if (Outils.isOutilsAttendu(epeeEnMain, org.bukkit.Material.NETHERITE_SWORD)) {
-                fr.kevyn.farmland.tueur.epeeFarm.appliquerDegats(epeeEnMain,
-                    fr.kevyn.farmland.agriculteur.ArmesUtil.calculerDegats(nouveauNiveau));
+            if (Outils.isOutilsAttendu(epeeEnMain, Material.NETHERITE_SWORD)) {
+                epeeFarm.appliquerDegats(epeeEnMain,
+                    ArmesUtil.calculerDegats(nouveauNiveau));
             }
             joueur.sendMessage("§b⭐ Tueur niveau " + nouveauNiveau + " !");
         }
 
-        int niveauExcedent = fr.kevyn.farmland.agriculteur.ArmesUtil.niveauExcedentaire(nouveauNiveau);
+        int niveauExcedent = ArmesUtil.niveauExcedentaire(nouveauNiveau);
         int jeton = jetonBase * (niveauExcedent > 0 ? MultiplicateurUtil.tirerMultiplicateur(niveauExcedent) : 1);
         ps.addJetonTueur(jeton);
         joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Tueur");
