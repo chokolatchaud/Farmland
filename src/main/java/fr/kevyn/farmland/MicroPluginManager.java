@@ -25,6 +25,8 @@ import fr.kevyn.farmland.moderation.ModerationCommands;
 import fr.kevyn.farmland.pecheur.EventPeche;
 import fr.kevyn.farmland.pecheur.FishingCommands;
 import fr.kevyn.farmland.playerserver.PlayerAdminCommands;
+import fr.kevyn.farmland.playerserver.PlayerServer;
+import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.farmland.save.Filesave;
 import fr.kevyn.farmland.scoreboard.CreativePlotScoreboard;
 import fr.kevyn.farmland.tpa.TpaCommand;
@@ -116,11 +118,9 @@ public class MicroPluginManager {
         // classement du site est reste vide depuis toujours a cause de ca)
         Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             if (!plugin.getConfig().getBoolean("webapi.enabled", false) || plugin.getWebApi() == null) return;
-            for (Player p : Bukkit.getOnlinePlayers()) {
-                fr.kevyn.farmland.playerserver.PlayerServer ps =
-                    fr.kevyn.farmland.playerserver.PlayerserverHashMap.getInstance().getplayerHaspMaps(p.getUniqueId());
+            for (PlayerServer ps : PlayerserverHashMap.getInstance().getHashMapPlayer().values()) {
                 if (ps == null) continue;
-                plugin.getWebApi().pushPlayerBalance(ps.getName(), ps.getMoney(),ps.getBlocpose(),ps.getCobblestonegeneratorlevel(),
+                plugin.getWebApi().pushPlayerBalance(ps.getName(), ps.getMoney(),ps.getBlocposetotal(),ps.getCobblestonegeneratorlevel(),
                 ps.getHoueLevel(),ps.getCanneLevel(),ps.getHacheLevel(),ps.getEpeeLevel());
 
             }
