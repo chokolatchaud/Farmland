@@ -1,29 +1,39 @@
 package fr.kevyn.farmland.playerserver;
 
+import fr.kevyn.farmland.utils.BanData;
+import fr.kevyn.farmland.utils.JobType;
+import fr.kevyn.farmland.utils.ToolType;
 import fr.kevyn.plot.PlotData;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class PlayerServer {
+
+    // -- Identité du joueur-- //
     UUID uuid;
     String Name;
-    Boolean lastjoin;
-    boolean ban;
-    String raison;
-    int money;
-    int blocpose;
-    int blocposetotal;
     String grade;
-    PlotData plotdata;
+    Boolean lastjoin;
+    final BanData banData = new BanData();
+
+    // -- Statistiques & Économie -- //
+    int money;
+    int blocPose;
+    int blocPoseTotal;
     int upgrade;
-    long weTimeExpiry;
     int cobblestonegeneratorlevel = 1;
-    
+    long weTimeExpiry;
+    PlotData plotdata;
+
+    // -- Outils & Jetons -- //
+    private final Map<ToolType, Integer> toolLevels = new EnumMap<>(ToolType.class);
+    private final Map<JobType, Integer> jobTokens = new EnumMap<>(JobType.class);
 
 
     public PlayerServer() {}
@@ -32,12 +42,12 @@ public class PlayerServer {
         this.uuid = uuid;
         this.Name = Name;
         this.lastjoin = lastjoin;
-        this.ban = ban;
+        this.banData.setBanned(ban);
         this.grade = grade;
-        this.raison = raison;
+        this.banData.setReason(raison);
         this.money = money;
         this.plotdata = plotdata;
-        this.blocpose = blocpose;
+        this.blocPose = blocpose;
         this.upgrade = upgrade;
         
 
@@ -54,19 +64,38 @@ public class PlayerServer {
 	}
 
 
+    // -- Accès aux outils -- //
+
+    public int getToolLevel(ToolType tool) {
+        return toolLevels.getOrDefault(tool, 0);
+    }
+
+    public void setToolLevel(ToolType tool, int level) {
+        toolLevels.put(tool, level);
+    }
+
+    // -- Accès aux jetons -- //
+    public int getJobTokens(JobType job) {
+        return jobTokens.getOrDefault(job, 0);
+    }
+
+    public void setJobTokens(JobType job, int amount) {
+        jobTokens.put(job, amount);
+    }
+
+    public void addJobTokens(JobType job, int amount) {
+        setJobTokens(job, getJobTokens(job) + amount);
+    }
 
 
     // ===== GRAINES - stock SEPARE des ressources vendables du /bag =====
     Map<Material, Integer> graines = new HashMap<>();
 
+    public int getHoueLevel() { return getToolLevel(ToolType.HOUE); }
+    public void setHoueLevel(int level) { setToolLevel(ToolType.HOUE, level); }
 
-    int houeLevel = 0;
-    public int getHoueLevel() { return houeLevel; }
-    public void setHoueLevel(int houeLevel) { this.houeLevel = houeLevel; }
-
-    int canneLevel = 0;
-    public int getCanneLevel() { return canneLevel; }
-    public void setCanneLevel(int canneLevel) { this.canneLevel = canneLevel; }
+    public int getCanneLevel() { return getToolLevel(ToolType.CANNE); }
+    public void setCanneLevel(int level) { setToolLevel(ToolType.CANNE, level); }
 
     // ===== XP PAR METIER - gratuit, fait monter le niveau automatiquement =====
     Map<String, Integer> xpMetiers = new HashMap<>();
@@ -80,40 +109,33 @@ public class PlayerServer {
     }
 
 
-    int jetonMineur = 0;
-    public int getJetonMineur() { return jetonMineur; }
-    public void setJetonMineur(int valeur) { this.jetonMineur = valeur; }
-    public void addJetonMineur(int quantite) { this.jetonMineur += quantite; }
+    public int getJetonMineur() { return getJobTokens(JobType.MINEUR); }
+    public void setJetonMineur(int valeur) { setJobTokens(JobType.MINEUR, valeur); }
+    public void addJetonMineur(int quantite) { addJobTokens(JobType.MINEUR, quantite); }
 
-    int jetonFarmeur = 0;
-    public int getJetonFarmeur() { return jetonFarmeur; }
-    public void setJetonFarmeur(int valeur) { this.jetonFarmeur = valeur; }
-    public void addJetonFarmeur(int quantite) { this.jetonFarmeur += quantite; }
+    public int getJetonFarmeur() { return getJobTokens(JobType.FARMEUR); }
+    public void setJetonFarmeur(int valeur) { setJobTokens(JobType.FARMEUR, valeur); }
+    public void addJetonFarmeur(int quantite) { addJobTokens(JobType.FARMEUR, quantite); }
 
-    int jetonPecheur = 0;
-    public int getJetonPecheur() { return jetonPecheur; }
-    public void setJetonPecheur(int valeur) { this.jetonPecheur = valeur; }
-    public void addJetonPecheur(int quantite) { this.jetonPecheur += quantite; }
+    public int getJetonPecheur() { return getJobTokens(JobType.PECHEUR); }
+    public void setJetonPecheur(int valeur) { setJobTokens(JobType.PECHEUR, valeur); }
+    public void addJetonPecheur(int quantite) { addJobTokens(JobType.PECHEUR, quantite); }
 
-    int jetonAgriculteur = 0;
-    public int getJetonAgriculteur() { return jetonAgriculteur; }
-    public void setJetonAgriculteur(int valeur) { this.jetonAgriculteur = valeur; }
-    public void addJetonAgriculteur(int quantite) { this.jetonAgriculteur += quantite; }
+    public int getJetonAgriculteur() { return getJobTokens(JobType.AGRICULTEUR); }
+    public void setJetonAgriculteur(int valeur) { setJobTokens(JobType.AGRICULTEUR, valeur); }
+    public void addJetonAgriculteur(int quantite) { addJobTokens(JobType.AGRICULTEUR, quantite); }
 
-    int jetonTueur = 0;
-    public int getJetonTueur() { return jetonTueur; }
-    public void setJetonTueur(int valeur) { this.jetonTueur = valeur; }
-    public void addJetonTueur(int quantite) { this.jetonTueur += quantite; }
+    public int getJetonTueur() { return getJobTokens(JobType.TUEUR); }
+    public void setJetonTueur(int valeur) { setJobTokens(JobType.TUEUR, valeur); }
+    public void addJetonTueur(int quantite) { addJobTokens(JobType.TUEUR, quantite); }
 
     // niveaux d'amelioration Agriculteur/Tueur - separes, mais la formule de
     // degats est partagee (voir ArmesUtil.calculerDegats)
-    int epeeLevel = 0;
-    public int getEpeeLevel() { return epeeLevel; }
-    public void setEpeeLevel(int epeeLevel) { this.epeeLevel = epeeLevel; }
+    public int getEpeeLevel() { return getToolLevel(ToolType.EPEE); }
+    public void setEpeeLevel(int level) { setToolLevel(ToolType.EPEE, level); }
 
-    int hacheLevel = 0;
-    public int getHacheLevel() { return hacheLevel; }
-    public void setHacheLevel(int hacheLevel) { this.hacheLevel = hacheLevel; }
+    public int getHacheLevel() { return getToolLevel(ToolType.HACHE); }
+    public void setHacheLevel(int level) { setToolLevel(ToolType.EPEE, level); }
 
 
     public Boolean getLastjoin() {
@@ -125,18 +147,12 @@ public class PlayerServer {
     public String getName() {
         return Name;
     }
-    public String getRaison() {
-        return raison;
-    }
+    public String getRaison() { return banData.getReason(); }
     public UUID getUuid() {
         return uuid;
     }
-    public boolean getBan() {
-        return ban;    
-    }
-    public void setBan(boolean ban) {
-        this.ban = ban;
-    }
+    public boolean getBan() { return banData.isBanned(); }
+    public void setBan(boolean ban) { this.banData.setBanned(ban); }
     public void setLastjoin(Boolean lastjoin) {
         this.lastjoin = lastjoin;
     }
@@ -146,9 +162,7 @@ public class PlayerServer {
     public void setName(String name) {
         Name = name;
     }
-    public void setRaison(String raison) {
-        this.raison = raison;
-    }
+    public void setRaison(String raison) { this.banData.setReason(raison); }
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }
@@ -156,16 +170,16 @@ public class PlayerServer {
         return plotdata;
     }
     public int getBlocpose() {
-        return blocpose;
+        return blocPose;
     }
     public void setBlocpose(int blocpose) {
-        this.blocpose = blocpose;
+        this.blocPose = blocpose;
     }
     public int getBlocposetotal() {
-        return blocposetotal;
+        return blocPoseTotal;
     }
     public void setBlocposetotal(int blocposetotal) {
-        this.blocposetotal = blocposetotal;
+        this.blocPoseTotal = blocposetotal;
     }
 
     public String getGrade() {
@@ -195,7 +209,7 @@ public class PlayerServer {
     public static Player getplayer(PlayerServer playerserver) {
     	Player player = Bukkit.getPlayer(playerserver.getUuid());
     	if(player == null) {
-    		return null;	
+    		return null;
     	}
     	return player;
     }
