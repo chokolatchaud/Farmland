@@ -11,7 +11,7 @@ package fr.kevyn.farmland.agriculteur;
 public class ArmesUtil {
 
     public static final double DEGATS_MAX = 20.0;
-    public static final int NIVEAU_PLAFOND_DEGATS = 15; // niveau ou les degats atteignent DEGATS_MAX
+    public static final int NIVEAU_PLAFOND_DEGATS = 13; // niveau ou les degats atteignent DEGATS_MAX | limité a 13 car décalage de 1 à la formule du nv excedentaire et celle du tirermultiplicateur
 
     public static double calculerDegats(int niveau) {
         int niveauBorne = Math.max(0, Math.min(NIVEAU_PLAFOND_DEGATS, niveau));
