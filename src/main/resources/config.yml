@@ -30,6 +30,7 @@ vote:
   # texte de récompense affiché sur la page Vote du site
   reward: "+1h worldedit $FB"
 
+GsonSave: 1
 # Annonces aleatoires diffusees toutes les 5 minutes (jeu + Discord)
 annonces:
   messages:

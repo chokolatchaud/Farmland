@@ -1,14 +1,15 @@
 package fr.kevyn.farmland;
 
+import fr.kevyn.farmland.playerserver.PlayerServer;
+import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
+import fr.kevyn.farmland.save.PlayerSave;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import fr.kevyn.farmland.playerserver.PlayerServer;
-import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
-import fr.kevyn.farmland.save.Filesave;
+import java.io.IOException;
 
 public class Savecomands implements CommandExecutor {
     JavaPlugin plugin;
@@ -28,7 +29,11 @@ public class Savecomands implements CommandExecutor {
             
             sender.sendMessage(MessageColor.YELLOW.apply("Sauvegarde en cours..."));
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                Filesave.SavePlayerserverFile(plugin);
+                try {
+                    PlayerSave.saveAllPlayerServerFile(plugin);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 sender.sendMessage(MessageColor.GREEN.apply("Sauvegarde terminée !"));
             });
             

@@ -1,5 +1,9 @@
 package fr.kevyn.farmland.agriculteur;
 
+import fr.kevyn.farmland.menufarm.Outils;
+import fr.kevyn.farmland.menufarm.RecompenseUtil;
+import fr.kevyn.farmland.playerserver.PlayerServer;
+import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import org.bukkit.Material;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.LivingEntity;
@@ -9,10 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.NonNull;
-
-import fr.kevyn.farmland.menufarm.Outils;
-import fr.kevyn.farmland.playerserver.PlayerServer;
-import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
 /**
  * Tue un mob PASSIF (issu d'un de nos spawners, jamais un vrai mob vanilla
@@ -41,7 +41,7 @@ public class KillEventAgriculteur implements Listener {
 		event.getDrops().clear(); // jamais de vrai drop au sol, tout passe par le /bag
 		event.setDroppedExp(0);
 
-		fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompenseAgriculteur(tueur, ps, 10);
+		RecompenseUtil.donnerRecompenseAgriculteur(tueur, ps, 10);
 
 	}
 	

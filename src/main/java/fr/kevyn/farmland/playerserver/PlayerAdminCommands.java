@@ -1,5 +1,6 @@
 package fr.kevyn.farmland.playerserver;
 
+import fr.kevyn.farmland.save.PlayerSave;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -7,7 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import fr.kevyn.farmland.FarmlandMain;
-import fr.kevyn.farmland.save.Filesave;
+
+import java.io.IOException;
 
 
 public class PlayerAdminCommands implements CommandExecutor {
@@ -101,7 +103,7 @@ public class PlayerAdminCommands implements CommandExecutor {
                 return true;
         }
 
-        Filesave.saveOnePlayerServerFile(plugin, ps);
+        PlayerSave.saveOnePlayerServerFile(plugin, ps);
         sender.sendMessage("§aArgent de " + ps.getName() + " : §f" + ps.getMoney() + " $FB");
         plugin.getLogger().info("[PsAdmin] " + sender.getName() + " -> money " + args[2] + " " + montant + " sur " + ps.getName() + " (nouveau solde : " + ps.getMoney() + ")");
 
@@ -141,7 +143,7 @@ public class PlayerAdminCommands implements CommandExecutor {
             ps.getPlotdata().setWorldborder(ps.getPlotdata().getWorldborder() + delta);
         }
 
-        Filesave.saveOnePlayerServerFile(plugin, ps);
+        PlayerSave.saveOnePlayerServerFile(plugin, ps);
         sender.sendMessage("§aUpgrade de " + ps.getName() + " : " + ancienRang + " → " + rang + " (bordure ajustée)");
         plugin.getLogger().info("[PsAdmin] " + sender.getName() + " -> upgrade " + ancienRang + " -> " + rang + " sur " + ps.getName());
         return true;
@@ -149,7 +151,11 @@ public class PlayerAdminCommands implements CommandExecutor {
 
     private boolean saveallCommand(CommandSender sender) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            Filesave.SavePlayerserverFile(plugin);
+            try {
+                PlayerSave.saveAllPlayerServerFile(plugin);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         });
         sender.sendMessage("§aSauvegarde de tous les joueurs lancée !");
         plugin.getLogger().info("[PsAdmin] " + sender.getName() + " a lance une sauvegarde globale");

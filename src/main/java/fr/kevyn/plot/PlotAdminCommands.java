@@ -1,5 +1,6 @@
 package fr.kevyn.plot;
 
+import fr.kevyn.farmland.save.PlayerSave;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -13,7 +14,6 @@ import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.game.HubCommand;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
-import fr.kevyn.farmland.save.Filesave;
 
 /**
  * /plotadmin - depannage des plots joueurs (permission farmland.admin)
@@ -148,7 +148,7 @@ public class PlotAdminCommands implements CommandExecutor {
         }
 
         ps.getPlotdata().setWorldborder(value);
-        Filesave.saveOnePlayerServerFile(plugin, ps);
+        PlayerSave.saveOnePlayerServerFile(plugin, ps);
         sender.sendMessage("§aBordure du plot de " + ps.getName() + " forcée à " + value + " !");
         plugin.getLogger().info("[PlotAdmin] " + sender.getName() + " -> border " + value + " sur " + ps.getName());
         return true;
@@ -179,7 +179,7 @@ public class PlotAdminCommands implements CommandExecutor {
         int delta = (rang - ancienRang) * 5;
         ps.getPlotdata().setWorldborder(ps.getPlotdata().getWorldborder() + delta);
 
-        Filesave.saveOnePlayerServerFile(plugin, ps);
+        PlayerSave.saveOnePlayerServerFile(plugin, ps);
         sender.sendMessage("§aRang d'upgrade de " + ps.getName() + " : " + ancienRang + " → " + rang + " (bordure ajustée)");
         plugin.getLogger().info("[PlotAdmin] " + sender.getName() + " -> upgrade " + ancienRang + " -> " + rang + " sur " + ps.getName());
         return true;
@@ -195,7 +195,7 @@ public class PlotAdminCommands implements CommandExecutor {
 
         boolean value = Boolean.parseBoolean(args[2]);
         ps.getPlotdata().setPrivateplot(value);
-        Filesave.saveOnePlayerServerFile(plugin, ps);
+        PlayerSave.saveOnePlayerServerFile(plugin, ps);
         sender.sendMessage("§aConfidentialité du plot de " + ps.getName() + " : " + value);
         plugin.getLogger().info("[PlotAdmin] " + sender.getName() + " -> privacy " + value + " sur " + ps.getName());
         return true;

@@ -1,6 +1,8 @@
 package fr.kevyn.farmland.pecheur;
 
+import fr.kevyn.farmland.menufarm.MultiplicateurUtil;
 import fr.kevyn.farmland.menufarm.Outils;
+import fr.kevyn.farmland.menufarm.RecompenseUtil;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import org.bukkit.Material;
@@ -28,8 +30,8 @@ public class EventPeche implements Listener {
 				
 			}
 			int niveauCanne = Math.max(1, ps.getCanneLevel());
-			int jeton = fr.kevyn.farmland.menufarm.MultiplicateurUtil.tirerMultiplicateur(niveauCanne);
-			fr.kevyn.farmland.menufarm.RecompenseUtil.donnerRecompensePecheur(player, ps, 10);
+			int jeton = MultiplicateurUtil.tirerMultiplicateur(niveauCanne);
+			RecompenseUtil.donnerRecompensePecheur(player, ps, 10);
 
 			event.setCancelled(true);
 

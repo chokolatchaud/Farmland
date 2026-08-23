@@ -27,7 +27,7 @@ import fr.kevyn.farmland.pecheur.FishingCommands;
 import fr.kevyn.farmland.playerserver.PlayerAdminCommands;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
-import fr.kevyn.farmland.save.Filesave;
+import fr.kevyn.farmland.save.PlayerSave;
 import fr.kevyn.farmland.scoreboard.CreativePlotScoreboard;
 import fr.kevyn.farmland.tpa.TpaCommand;
 import fr.kevyn.farmland.tueur.KillEventTueur;
@@ -40,6 +40,7 @@ import fr.kevyn.plot.Plotcommands;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.io.IOException;
 import java.util.Collection;
 
 public class MicroPluginManager {
@@ -85,7 +86,11 @@ public class MicroPluginManager {
 
         // autosave des joueurs toutes les 5 minutes (evite la perte de session si crash)
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
-            Filesave.SavePlayerserverFile(plugin);
+            try {
+                PlayerSave.saveAllPlayerServerFile(plugin);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             plugin.getLogger().info("[Autosave] Joueurs sauvegardes");
         }, 20L * 60 * 5, 20L * 60 * 5);
 
@@ -213,7 +218,7 @@ public class MicroPluginManager {
                     
                 } else {
                     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                        Filesave.SavePlayerserverFile(plugin);
+
                        
 
                         
