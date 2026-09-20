@@ -17,7 +17,7 @@ public class PlayerServer {
 
     // -- Identité du joueur-- //
     UUID uuid;
-    String Name;
+    String name;
     String grade;
     Boolean lastjoin;
     final BanData banData = new BanData();
@@ -29,40 +29,35 @@ public class PlayerServer {
     int upgrade;
     int cobblestonegeneratorlevel = 1;
     long weTimeExpiry;
-    PlotData plotdata;
+    PlotData plotData;
 
     // -- Outils & Jetons -- //
     private final Map<ToolType, Integer> toolLevels = new EnumMap<>(ToolType.class);
     private final Map<JobType, Integer> jobTokens = new EnumMap<>(JobType.class);
 
-
     public PlayerServer() {}
 
-    public PlayerServer(UUID uuid,String Name, Boolean lastjoin, boolean ban,String raison,int money,PlotData plotdata,int blocpose, String grade,int upgrade) {
+    public PlayerServer(UUID uuid,String name, Boolean lastjoin, boolean ban,String raison,int money,PlotData plotData,int blocpose, String grade,int upgrade) {
         this.uuid = uuid;
-        this.Name = Name;
+        this.name = name;
         this.lastjoin = lastjoin;
         this.banData.setBanned(ban);
         this.grade = grade;
         this.banData.setReason(raison);
         this.money = money;
-        this.plotdata = plotdata;
+        this.plotData = plotData;
         this.blocPose = blocpose;
         this.upgrade = upgrade;
-        
-
 
         PlayerserverHashMap.getInstance().AddplayerHaspMaps(uuid, this);
     }
-    
-    
-    public int getCobblestonegeneratorlevel() {
-		return cobblestonegeneratorlevel;
-	}
-    public void setCobblestonegeneratorlevel(int cobblestonegeneratorlevel) {
-		this.cobblestonegeneratorlevel = cobblestonegeneratorlevel;
-	}
 
+    public int getCobblestonegeneratorlevel() {
+        return cobblestonegeneratorlevel;
+    }
+    public void setCobblestonegeneratorlevel(int cobblestonegeneratorlevel) {
+        this.cobblestonegeneratorlevel = cobblestonegeneratorlevel;
+    }
 
     // -- Accès aux outils -- //
 
@@ -87,7 +82,6 @@ public class PlayerServer {
         setJobTokens(job, getJobTokens(job) + amount);
     }
 
-
     // ===== GRAINES - stock SEPARE des ressources vendables du /bag =====
     Map<Material, Integer> graines = new HashMap<>();
 
@@ -107,7 +101,6 @@ public class PlayerServer {
     public void setXp(String metier, int valeur) {
         xpMetiers.put(metier, valeur);
     }
-
 
     public int getJetonMineur() { return getJobTokens(JobType.MINEUR); }
     public void setJetonMineur(int valeur) { setJobTokens(JobType.MINEUR, valeur); }
@@ -137,7 +130,6 @@ public class PlayerServer {
     public int getHacheLevel() { return getToolLevel(ToolType.HACHE); }
     public void setHacheLevel(int level) { setToolLevel(ToolType.EPEE, level); }
 
-
     public Boolean getLastjoin() {
         return lastjoin;
     }
@@ -145,7 +137,7 @@ public class PlayerServer {
         return money;
     }
     public String getName() {
-        return Name;
+        return name;
     }
     public String getRaison() { return banData.getReason(); }
     public UUID getUuid() {
@@ -160,14 +152,14 @@ public class PlayerServer {
         this.money = money;
     }
     public void setName(String name) {
-        Name = name;
+        name = name;
     }
     public void setRaison(String raison) { this.banData.setReason(raison); }
     public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }
     public PlotData getPlotdata() {
-        return plotdata;
+        return plotData;
     }
     public int getBlocpose() {
         return blocPose;
@@ -207,15 +199,11 @@ public class PlayerServer {
     public boolean isWeActive() { return weTimeExpiry > System.currentTimeMillis(); }
     public long getWeTimeRemaining() { return Math.max(0, weTimeExpiry - System.currentTimeMillis()); }
     public static Player getplayer(PlayerServer playerserver) {
-    	Player player = Bukkit.getPlayer(playerserver.getUuid());
-    	if(player == null) {
-    		return null;
-    	}
-    	return player;
+        Player player = Bukkit.getPlayer(playerserver.getUuid());
+        if(player == null) {
+            return null;
+        }
+        return player;
     }
-
-  
-
-	
 
 }

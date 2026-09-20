@@ -32,12 +32,13 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
  * que MarketHolograms (TextDisplay natif, JSON pour les emplacements).
  * Pose via /classementadmin holo set <metier>.
  */
-public class LeaderboardHolograms {
+public final class LeaderboardHolograms {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String HOLO_FILE = "leaderboard_holograms.json";
     private static final String TAG_PREFIX = "farmland_classement_holo_";
     private static final int TOP_N = 5;
+    private static final int DISPLAY_SCAN_RADIUS = 2;
 
     public static class HoloLoc {
         String world;
@@ -53,10 +54,14 @@ public class LeaderboardHolograms {
 
     public static void load(JavaPlugin plugin) {
         File file = new File(plugin.getDataFolder(), HOLO_FILE);
-        if (!file.exists()) return;
+        if (!file.exists()) {
+            return;
+        }
         try (FileReader reader = new FileReader(file)) {
             Map<String, HoloLoc> data = gson.fromJson(reader, new TypeToken<Map<String, HoloLoc>>(){}.getType());
-            if (data != null) emplacements = data;
+            if (data != null) {
+                emplacements = data;
+            }
             plugin.getLogger().info("[Holo] " + emplacements.size() + " hologramme(s) de classement chargé(s)");
         } catch (IOException e) {
             plugin.getLogger().warning("[Holo] Impossible de charger " + HOLO_FILE + " : " + e.getMessage());
@@ -96,7 +101,9 @@ public class LeaderboardHolograms {
     public static boolean removeHologram(JavaPlugin plugin, String metier) {
         metier = metier.toLowerCase();
         HoloLoc holo = emplacements.remove(metier);
-        if (holo == null) return false;
+        if (holo == null) {
+            return false;
+        }
         World world = Bukkit.getWorld(holo.world);
         despawn(metier, world);
         save(plugin);
@@ -121,7 +128,7 @@ public class LeaderboardHolograms {
             TextDisplay display = getSpawned(metier, world);
 
             if (display == null) {
-                for (Entity e : world.getNearbyEntities(loc, 2, 2, 2)) {
+                for (Entity e : world.getNearbyEntities(loc, DISPLAY_SCAN_RADIUS, DISPLAY_SCAN_RADIUS, DISPLAY_SCAN_RADIUS)) {
                     if (e instanceof TextDisplay && e.getScoreboardTags().contains(TAG_PREFIX + metier)) {
                         e.remove();
                     }
@@ -175,8 +182,8 @@ public class LeaderboardHolograms {
         }
 
         String[] medailles = { "§6#1", "§7#2", "§c#3", "§f#4", "§f#5" };
-        int limite = Math.min(TOP_N, entrees.size());
-        for (int i = 0; i < limite; i++) {
+        int limit = Math.min(TOP_N, entrees.size());
+        for (int i = 0; i < limit; i++) {
             Entree e = entrees.get(i);
             sb.append(medailles[i]).append(" §f").append(e.nom()).append(" §7- niveau §b").append(e.niveau());
             if (i < limite - 1) sb.append("\n");

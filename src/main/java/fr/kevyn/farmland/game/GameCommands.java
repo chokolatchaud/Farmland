@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,8 +23,10 @@ import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
-
-public class GameCommands implements CommandExecutor {
+/**
+ * Commandes générales du serveur : économie, messages privés et signalements.
+ */
+public final class GameCommands implements CommandExecutor {
 
     // ✅ CORRIGÉ : Utilisation de timestamps pour éviter les memory leaks
     private final Map<UUID, UUID> lastSender = new HashMap<>();
@@ -37,28 +38,28 @@ public class GameCommands implements CommandExecutor {
             sender.sendMessage(MessageColor.RED.apply("Vous n'avez pas la permission"));
             return true;
         }
-        
+
         if (!(sender instanceof Player)) {
             sender.sendMessage(MessageColor.RED.apply("Seul un joueur peut exécuter cette commande !"));
             return true;
         }
 
-        Player playerevent = (Player) sender;
-        PlayerServer playerSender = PlayerserverHashMap.getInstance().getplayerHaspMaps(playerevent.getUniqueId());
-        Player player = PlayerServer.getplayer(playerSender);
+        Player player = (Player) sender;
+        PlayerServer playerServer = PlayerserverHashMap.getInstance()
+                .getplayerHaspMaps(player.getUniqueId());
 
-        if (playerSender == null) {
+        if (playerServer == null) {
             messagediscord.sendmessage(command.getName() + " : erreur playerSender null","statut");
             player.sendMessage(MessageColor.RED.apply("Une erreur est survenue. Contactez un administrateur."));
             return true;
         }
 
         switch (command.getName().toLowerCase()) {
-            case "pay": return PayCommand(player, playerSender, args);
-            case "money": return MoneyCommand(player, playerSender, args);
-            case "msgf": return MsgCommand(player, playerSender, args, "msgf");
-            case "r": return MsgCommand(player, playerSender, args, "r");
-            case "reportmsg": return reportmsg(player, playerSender, args);
+            case "pay": return handlePayCommand(player, playerServer, args);
+            case "money": return handleMoneyCommand(player, playerServer, args);
+            case "msgf": return handlePrivateMessage(player, playerServer, args, "msgf");
+            case "r": return handlePrivateMessage(player, playerServer, args, "r");
+            case "reportmsg": return handleReportMessage(player, playerServer, args);
             default: return false;
         }
     }
@@ -66,7 +67,7 @@ public class GameCommands implements CommandExecutor {
     // =========================
     // /reportmsg - ✅ CORRIGÉ
     // =========================
-    private boolean reportmsg(Player player, PlayerServer playerSender, String[] args) {
+    private boolean handleReportMessage(Player player, PlayerServer playerServer, String[] args) {
         if (args.length < 2) {
             player.sendMessage(MessageColor.RED.apply("Usage : /reportmsg <joueur> <message>"));
             return true;
@@ -74,7 +75,7 @@ public class GameCommands implements CommandExecutor {
 
         String reportedName = args[0];
         Player reportedPlayer = Bukkit.getPlayer(reportedName);
-        
+
         if (reportedPlayer == null) {
             player.sendMessage(MessageColor.RED.apply("Le joueur " + reportedName + "n'est plus en ligne !"));
             return true;
@@ -83,11 +84,11 @@ public class GameCommands implements CommandExecutor {
         // ✅ CORRIGÉ : Cooldown par paire de joueurs
         String reportKey = player.getUniqueId() + ":" + reportedPlayer.getUniqueId();
         long currentTime = System.currentTimeMillis();
-        
+
         if (reportCooldown.containsKey(reportKey)) {
             long lastReport = reportCooldown.get(reportKey);
             long timeLeft = 60000 - (currentTime - lastReport); // 1 minute
-            
+
             if (timeLeft > 0) {
                 player.sendMessage(MessageColor.RED.apply("Vous devez attendre " + (timeLeft / 1000) + " secondes avant de reporter à nouveau ce joueur !"));
                 return true;
@@ -95,14 +96,14 @@ public class GameCommands implements CommandExecutor {
         }
 
         String message = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-        
+
         // ✅ AJOUTÉ : Échappement pour éviter l'injection
         String safeMessage = message.replace("\"", "'").replace("\n", " ").replace("\r", "");
 
         player.sendMessage(MessageColor.GREEN.apply("✅ Signalement envoyé contre " + reportedName + " !"));
 
-        String discordMessage = "🚨 REPORT 🚨 | Joueur signalé : " + reportedName + 
-                                " | Signalé par : " + player.getName() + 
+        String discordMessage = "🚨 REPORT 🚨 | Joueur signalé : " + reportedName +
+                                " | Signalé par : " + player.getName() +
                                 " | Message reçu : ||" + safeMessage + "||";
         messagediscord.sendmessage(discordMessage, "message");
         Bukkit.getLogger().info("[REPORT] " + player.getName() + " → " + reportedName + " : " + safeMessage);
@@ -115,20 +116,20 @@ public class GameCommands implements CommandExecutor {
     // =========================
     // /msgf et /r - ✅ CORRIGÉ
     // =========================
-    private boolean MsgCommand(Player player, PlayerServer playerSender, String[] args, String rormsg) {
+    private boolean handlePrivateMessage(Player player, PlayerServer playerServer, String[] args, String rormsg) {
         Player targetPlayer;
         String message;
 
         if (rormsg.equalsIgnoreCase("r")) {
             UUID lastSenderUUID = lastSender.get(player.getUniqueId());
-            
+
             if (lastSenderUUID == null) {
                 player.sendMessage(MessageColor.RED.apply("Aucun message auquel répondre !"));
                 return true;
             }
 
             // ✅ CORRIGÉ : Utilisation correcte de getPlayer(UUID)
-            targetPlayer = Bukkit.getPlayer(lastSenderUUID); 
+            targetPlayer = Bukkit.getPlayer(lastSenderUUID);
             if (targetPlayer == null || !targetPlayer.isOnline()) {
                 player.sendMessage("§cLe joueur n'est plus en ligne !");
                 return true;
@@ -198,9 +199,9 @@ public class GameCommands implements CommandExecutor {
     // =========================
     // /money - ✅ OK
     // =========================
-    private boolean MoneyCommand(Player player, PlayerServer playerSender, String[] args) {
+    private boolean handleMoneyCommand(Player player, PlayerServer playerServer, String[] args) {
         if (args.length == 0) {
-            player.sendMessage("§aVous avez §e" + playerSender.getMoney() + "§a d'argent.");
+            player.sendMessage("§aVous avez §e" + playerServer.getMoney() + "§a d'argent.");
             return true;
         }
 
@@ -223,7 +224,7 @@ public class GameCommands implements CommandExecutor {
     // =========================
     // /pay - ✅ CORRIGÉ
     // =========================
-    private boolean PayCommand(Player player, PlayerServer senderServer, String[] args) {
+    private boolean handlePayCommand(Player player, PlayerServer senderServer, String[] args) {
         if (args.length < 2) {
             player.sendMessage(MessageColor.RED.apply("Usage : /pay <player> <montant>"));
             return true;

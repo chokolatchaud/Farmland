@@ -7,12 +7,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.io.IOException;
 
-public class Savecomands implements CommandExecutor {
-    JavaPlugin plugin;
+/**
+ * Commandes d'administration liées aux sauvegardes et aux données joueurs.
+ */
+public final class Savecomands implements CommandExecutor {
+    private final FarmlandMain plugin;
 
     public Savecomands(FarmlandMain plugin) {
         this.plugin = plugin;
@@ -32,7 +33,8 @@ public class Savecomands implements CommandExecutor {
                 try {
                     PlayerSave.saveAllPlayerServerFile(plugin);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    plugin.getLogger().severe("Erreur lors de la sauvegarde manuelle : " + e.getMessage());
+                    sender.sendMessage(MessageColor.RED.apply("La sauvegarde a échoué."));
                 }
                 sender.sendMessage(MessageColor.GREEN.apply("Sauvegarde terminée !"));
             });
@@ -56,7 +58,7 @@ public class Savecomands implements CommandExecutor {
                 }
             } else {
                 String nameplayer = args[0];
-                PlayerServer playeridentificate = PlayerserverHashMap.getInstance().getplayerHaspMaps(nameplayer.toString());
+                PlayerServer playeridentificate = PlayerserverHashMap.getInstance().getplayerHaspMaps(nameplayer);
                 if(playeridentificate == null) {
                     sender.sendMessage(MessageColor.RED.apply("Joueur introuvable !"));
                     sender.sendMessage("Usage: /playerserver <joueur>");

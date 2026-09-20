@@ -2,11 +2,9 @@ package fr.kevyn.farmland.worldeditgestion;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
@@ -31,7 +29,10 @@ import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.plot.PlotData;
 
-public class WorldEditSecureListener implements Listener {
+/**
+ * Contrôle l'utilisation de WorldEdit/FAWE dans les plots.
+ */
+public final class WorldEditSecureListener implements Listener {
 
     private static final Set<String> BANNED_BLOCKS = new HashSet<>(Arrays.asList(
         "tnt", "bedrock", "barrier", "command_block", "chain_command_block",
@@ -101,8 +102,6 @@ public class WorldEditSecureListener implements Listener {
                     player.sendMessage("§c❌ La sélection dépasse la limite du monde !");
                     return;
                 }
-
-                
 
             } catch (Exception e) {
                 Bukkit.getLogger().warning("[WorldEditSecure] Erreur lors de la vérification de sélection : " + e.getMessage());

@@ -17,10 +17,14 @@ import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.menu.MenuPlotConfig;
 import fr.kevyn.farmland.menu.MenuPlotUpgrade;
 import fr.kevyn.farmland.menu.MenuPlotVisit;
+
+/**
+ * Commandes joueur liées aux plots.
+ */
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
-public class Plotcommands implements CommandExecutor {
+public final class Plotcommands implements CommandExecutor {
 
     private final FarmlandMain plugin;
 
@@ -41,14 +45,16 @@ public class Plotcommands implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        PlayerServer playerserver = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
-        if (playerserver == null || playerserver.getPlotdata() == null) {
+        PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
+        if (playerServer == null || playerServer.getPlotdata() == null) {
             player.sendMessage(MessageColor.RED.apply("Erreur : vos données joueur sont introuvables."));
             return true;
         }
 
-        if (!command.getName().equalsIgnoreCase("plot") && !command.getName().equalsIgnoreCase("p"))
+        if (!command.getName().equalsIgnoreCase("plot")
+                && !command.getName().equalsIgnoreCase("p")) {
             return false;
+        }
 
         if (args.length == 0) {
             player.sendMessage(MessageColor.YELLOW.apply("Sous-commande manquante. Utilise: /plot <add/unadd/trust/untrust/buy/visit/home/config/setspawnpoint>"));
@@ -61,29 +67,29 @@ public class Plotcommands implements CommandExecutor {
                 player.sendMessage(MessageColor.RED.apply("Usage: /plot add <joueur>"));
                 return true;
             }
-            String worldname = player.getWorld().getName();
-            
-            if(playercanaddtrust(player, playerserver, worldname, "")) {
+            String worldName = player.getWorld().getName();
+
+            if(canManagePlotAccess(player, playerServer, worldName, "")) {
                 // Cherche d'abord en ligne, sinon dans le HashMap (hors ligne)
-                PlayerServer playerservertarget = PlayerserverHashMap.getInstance().getplayerHaspMaps(args[1]);
-                
-                if(playerservertarget == null || playerservertarget.getPlotdata() == null) {
+                PlayerServer targetServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(args[1]);
+
+                if(targetServer == null || targetServer.getPlotdata() == null) {
                     player.sendMessage(MessageColor.RED.apply("Le joueur n'existe pas ou n'a jamais rejoint le serveur"));
                     return true;
                 }
-                
-                if(playerservertarget.getUuid().equals(player.getUniqueId())) {
+
+                if(targetServer.getUuid().equals(player.getUniqueId())) {
                     player.sendMessage(MessageColor.RED.apply("Tu ne peux pas t'ajouter toi-même !"));
                     return true;
                 }
-                
-                Player playertarget = Bukkit.getPlayer(playerservertarget.getUuid());
-                
-                if(isnotaddinplot(playertarget, playerservertarget, worldname) && 
-                   isnottrustinplot(playertarget, playerservertarget, worldname)) {
-                    playerservertarget.getPlotdata().AddAllplotadd(worldname);
-                    if (playertarget != null && playertarget.isOnline()) {
-                        playertarget.sendMessage(MessageColor.GREEN.apply("Tu viens d'être add sur le plot de " + player.getName()));
+
+                Player targetPlayer = Bukkit.getPlayer(targetServer.getUuid());
+
+                if(isNotAddedToPlot(targetPlayer, targetServer, worldName) && 
+                   isNotTrustedOnPlot(targetPlayer, targetServer, worldName)) {
+                    targetServer.getPlotdata().AddAllplotadd(worldName);
+                    if (targetPlayer != null && targetPlayer.isOnline()) {
+                        targetPlayer.sendMessage(MessageColor.GREEN.apply("Tu viens d'être add sur le plot de " + player.getName()));
                     }
                     player.sendMessage(MessageColor.GREEN.apply("Le joueur a été ajouté avec succès !"));
                     return true;
@@ -96,26 +102,26 @@ public class Plotcommands implements CommandExecutor {
                 return true;
             }
         }
-        
+
         // /plot unadd <joueur>
         else if (args[0].equalsIgnoreCase("unadd")) {
             if (args.length < 2) {
                 player.sendMessage(MessageColor.RED.apply("Usage: /plot unadd <joueur>"));
                 return true;
             }
-            String worldname = player.getWorld().getName();
-            
-            if(playercanaddtrust(player, playerserver, worldname, "")) {
-                PlayerServer playerservertarget = PlayerserverHashMap.getInstance().getplayerHaspMaps(args[1]);
-                if(playerservertarget == null || playerservertarget.getPlotdata() == null) {
+            String worldName = player.getWorld().getName();
+
+            if(canManagePlotAccess(player, playerServer, worldName, "")) {
+                PlayerServer targetServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(args[1]);
+                if(targetServer == null || targetServer.getPlotdata() == null) {
                     player.sendMessage(MessageColor.RED.apply("Le joueur n'existe pas ou n'a jamais rejoint le serveur"));
                     return true;
                 }
-                Player playertarget = Bukkit.getPlayer(playerservertarget.getUuid());
-                if(!isnotaddinplot(playertarget, playerservertarget, worldname)) {
-                    playerservertarget.getPlotdata().RemoveAllplotadd(worldname);
-                    if (playertarget != null && playertarget.isOnline())
-                        playertarget.sendMessage(MessageColor.RED.apply("Tu viens d'être unadd du plot de " + player.getName()));
+                Player targetPlayer = Bukkit.getPlayer(targetServer.getUuid());
+                if(!isNotAddedToPlot(targetPlayer, targetServer, worldName)) {
+                    targetServer.getPlotdata().RemoveAllplotadd(worldName);
+                    if (targetPlayer != null && targetPlayer.isOnline())
+                        targetPlayer.sendMessage(MessageColor.RED.apply("Tu viens d'être unadd du plot de " + player.getName()));
                     player.sendMessage(MessageColor.GREEN.apply("Le joueur a été unadd avec succès !"));
                     return true;
                 } else {
@@ -127,34 +133,34 @@ public class Plotcommands implements CommandExecutor {
                 return true;
             }
         }
-        
+
         // /plot trust <joueur>
         else if (args[0].equalsIgnoreCase("trust")) {
             if (args.length < 2) {
                 player.sendMessage(MessageColor.RED.apply("Usage: /plot trust <joueur>"));
                 return true;
             }
-            String worldname = player.getWorld().getName();
-            
-            if(playercanaddtrust(player, playerserver, worldname,"trust")) {
-                PlayerServer playerservertarget = PlayerserverHashMap.getInstance().getplayerHaspMaps(args[1]);
-                if(playerservertarget == null || playerservertarget.getPlotdata() == null) {
+            String worldName = player.getWorld().getName();
+
+            if(canManagePlotAccess(player, playerServer, worldName,"trust")) {
+                PlayerServer targetServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(args[1]);
+                if(targetServer == null || targetServer.getPlotdata() == null) {
                     player.sendMessage(MessageColor.RED.apply("Le joueur n'existe pas ou n'a jamais rejoint le serveur"));
                     return true;
                 }
-                if(playerservertarget.getUuid().equals(player.getUniqueId())) {
+                if(targetServer.getUuid().equals(player.getUniqueId())) {
                     player.sendMessage(MessageColor.RED.apply("Tu ne peux pas te trust toi-même !"));
                     return true;
                 }
-                Player playertarget = Bukkit.getPlayer(playerservertarget.getUuid());
-                if(isnottrustinplot(playertarget, playerservertarget, worldname)) {
-                    if(!isnotaddinplot(playertarget, playerservertarget, worldname)) {
-                        playerservertarget.getPlotdata().RemoveAllplotadd(worldname);
+                Player targetPlayer = Bukkit.getPlayer(targetServer.getUuid());
+                if(isNotTrustedOnPlot(targetPlayer, targetServer, worldName)) {
+                    if(!isNotAddedToPlot(targetPlayer, targetServer, worldName)) {
+                        targetServer.getPlotdata().RemoveAllplotadd(worldName);
                         player.sendMessage(MessageColor.YELLOW.apply("Le joueur a été automatiquement retiré de la liste ADD."));
                     }
-                    playerservertarget.getPlotdata().AddAllplottrust(worldname);
-                    if (playertarget != null && playertarget.isOnline())
-                        playertarget.sendMessage(MessageColor.GREEN.apply("Tu viens d'être trust sur le plot de " + player.getName()));
+                    targetServer.getPlotdata().AddAllplottrust(worldName);
+                    if (targetPlayer != null && targetPlayer.isOnline())
+                        targetPlayer.sendMessage(MessageColor.GREEN.apply("Tu viens d'être trust sur le plot de " + player.getName()));
                     player.sendMessage(MessageColor.GREEN.apply("Le joueur a été trust avec succès !"));
                     return true;
                 } else {
@@ -166,26 +172,26 @@ public class Plotcommands implements CommandExecutor {
                 return true;
             }
         }
-        
+
         // /plot untrust <joueur>
         else if (args[0].equalsIgnoreCase("untrust")) {
             if (args.length < 2) {
                 player.sendMessage(MessageColor.RED.apply("Usage: /plot untrust <joueur>"));
                 return true;
             }
-            String worldname = player.getWorld().getName();
-            
-            if(playercanaddtrust(player, playerserver, worldname, "trust")) {
-                PlayerServer playerservertarget = PlayerserverHashMap.getInstance().getplayerHaspMaps(args[1]);
-                if(playerservertarget == null || playerservertarget.getPlotdata() == null) {
+            String worldName = player.getWorld().getName();
+
+            if(canManagePlotAccess(player, playerServer, worldName, "trust")) {
+                PlayerServer targetServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(args[1]);
+                if(targetServer == null || targetServer.getPlotdata() == null) {
                     player.sendMessage(MessageColor.RED.apply("Le joueur n'existe pas ou n'a jamais rejoint le serveur"));
                     return true;
                 }
-                Player playertarget = Bukkit.getPlayer(playerservertarget.getUuid());
-                if(!isnottrustinplot(playertarget, playerservertarget, worldname)) {
-                    playerservertarget.getPlotdata().RemoveAllplottrust(worldname);
-                    if (playertarget != null && playertarget.isOnline())
-                        playertarget.sendMessage(MessageColor.RED.apply("Tu viens d'être untrust du plot de " + player.getName()));
+                Player targetPlayer = Bukkit.getPlayer(targetServer.getUuid());
+                if(!isNotTrustedOnPlot(targetPlayer, targetServer, worldName)) {
+                    targetServer.getPlotdata().RemoveAllplottrust(worldName);
+                    if (targetPlayer != null && targetPlayer.isOnline())
+                        targetPlayer.sendMessage(MessageColor.RED.apply("Tu viens d'être untrust du plot de " + player.getName()));
                     player.sendMessage(MessageColor.GREEN.apply("Le joueur a été untrust avec succès !"));
                     return true;
                 } else {
@@ -200,18 +206,18 @@ public class Plotcommands implements CommandExecutor {
 
         // /plot home
         else if (args[0].equalsIgnoreCase("home") || args[0].equalsIgnoreCase("h")) {
-            String plotplayer = playerserver.getPlotdata().PlotProprety;
-            World plotworld = Plot.getWorldforname(plotplayer);
-            
-            if (plotworld == null) {
+            String plotName = playerServer.getPlotdata().PlotProprety;
+            World plotWorld = Plot.getWorldforname(plotName);
+
+            if (plotWorld == null) {
                 player.sendMessage(MessageColor.RED.apply("Erreur : monde introuvable"));
                 return true;
             }
-            
-            Location location = new Location(plotworld,
-                    playerserver.getPlotdata().getLocationspawnX(),
-                    playerserver.getPlotdata().getLocationspawnY(),
-                    playerserver.getPlotdata().getLocationspawnZ());
+
+            Location location = new Location(plotWorld,
+                    playerServer.getPlotdata().getLocationspawnX(),
+                    playerServer.getPlotdata().getLocationspawnY(),
+                    playerServer.getPlotdata().getLocationspawnZ());
             player.teleport(location);
             player.sendMessage(MessageColor.GREEN.apply("Téléportation vers votre plot !"));
             return true;
@@ -232,16 +238,16 @@ public class Plotcommands implements CommandExecutor {
                     return true;
                 }
 
-                String plotplayer = target.getPlotdata().PlotProprety;
-                World plottarget = Plot.getWorldforname(plotplayer);
+                String plotName = target.getPlotdata().PlotProprety;
+                World targetPlotWorld = Plot.getWorldforname(plotName);
 
-                if (plottarget == null) {
+                if (targetPlotWorld == null) {
                     // Charger le monde si pas encore chargé
                     player.sendMessage(MessageColor.GRAY.apply("Chargement du plot en cours..."));
-                    new Plot(UUID.fromString(plotplayer), plugin);
+                    new Plot(UUID.fromString(plotName), plugin);
                     final PlayerServer finalTarget = target;
                     Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                        World loaded = Plot.getWorldforname(plotplayer);
+                        World loaded = Plot.getWorldforname(plotName);
                         if (loaded == null) {
                             player.sendMessage(MessageColor.RED.apply("Erreur : impossible de charger le plot !"));
                             return;
@@ -251,7 +257,7 @@ public class Plotcommands implements CommandExecutor {
                     return true;
                 }
 
-                teleportSafe(player, target, plottarget);
+                teleportSafe(player, target, targetPlotWorld);
                 return true;
             }
 
@@ -266,15 +272,15 @@ public class Plotcommands implements CommandExecutor {
 
         // /plot buy
         else if (args[0].equalsIgnoreCase("buy") || args[0].equalsIgnoreCase("b")) {
-            Inventory inventaire0 = MenuPlotUpgrade.createmenuplotUpgrade("plotupgrade", 0, playerserver);
+            Inventory inventaire0 = MenuPlotUpgrade.createmenuplotUpgrade("plotupgrade", 0, playerServer);
             if (inventaire0 == null) {
                 player.sendMessage(MessageColor.RED.apply("Erreur du côté serveur."));
                 return true;
             }
-            if(playerserver.getPlotdata().getNameWorld().equalsIgnoreCase(player.getWorld().getName())){
-            	player.openInventory(inventaire0);
+            if(playerServer.getPlotdata().getNameWorld().equalsIgnoreCase(player.getWorld().getName())){
+                player.openInventory(inventaire0);
                 return true;
-            	
+
             }
             player.sendMessage(MessageColor.RED.apply("Merci d'étre sur votre Plot pour effectuée cette commande"));
             return true;
@@ -282,15 +288,15 @@ public class Plotcommands implements CommandExecutor {
 
         // /plot config
         else if (args[0].equalsIgnoreCase("config") || args[0].equalsIgnoreCase("c")) {
-            Inventory inventaireconfig = MenuPlotConfig.createmenuplotconfig("plotconfig", playerserver);
+            Inventory inventaireconfig = MenuPlotConfig.createmenuplotconfig("plotconfig", playerServer);
             if (inventaireconfig == null) {
                 player.sendMessage(MessageColor.RED.apply("Erreur du côté serveur"));
                 return true;
             }
-            if(playerserver.getPlotdata().getNameWorld().equalsIgnoreCase(player.getWorld().getName())){
-            	player.openInventory(inventaireconfig);
+            if(playerServer.getPlotdata().getNameWorld().equalsIgnoreCase(player.getWorld().getName())){
+                player.openInventory(inventaireconfig);
                 return true;
-            	
+
             }
             player.sendMessage(MessageColor.RED.apply("Merci d'étre sur votre Plot pour effectuée cette commande"));
             return true;
@@ -298,16 +304,16 @@ public class Plotcommands implements CommandExecutor {
 
         // /plot setspawnpoint
         else if (args[0].equalsIgnoreCase("setspawnpoint") || args[0].equalsIgnoreCase("setspawn")) {
-        	if(!playerserver.getPlotdata().getNameWorld().equalsIgnoreCase(player.getWorld().getName())) {
-        		player.sendMessage(MessageColor.RED.apply("Merci d'être sur votre Plot pour effectuer cette commande"));
+            if(!playerServer.getPlotdata().getNameWorld().equalsIgnoreCase(player.getWorld().getName())) {
+                player.sendMessage(MessageColor.RED.apply("Merci d'être sur votre Plot pour effectuer cette commande"));
                 return true;
             }
-            int locatex = player.getLocation().getBlockX();
-            int locatey = player.getLocation().getBlockY();
-            int locatez = player.getLocation().getBlockZ();
-            playerserver.getPlotdata().setLocationspawnX(locatex);
-            playerserver.getPlotdata().setLocationspawnY(locatey);
-            playerserver.getPlotdata().setLocationspawnZ(locatez);
+            int spawnX = player.getLocation().getBlockX();
+            int spawnY = player.getLocation().getBlockY();
+            int spawnZ = player.getLocation().getBlockZ();
+            playerServer.getPlotdata().setLocationspawnX(spawnX);
+            playerServer.getPlotdata().setLocationspawnY(spawnY);
+            playerServer.getPlotdata().setLocationspawnZ(spawnZ);
             player.sendMessage(MessageColor.GREEN.apply("Zone de spawn définie !"));
             return true;
         }
@@ -315,18 +321,20 @@ public class Plotcommands implements CommandExecutor {
         player.sendMessage(MessageColor.YELLOW.apply("Sous-commande inconnue. Utilise: /plot <add/unadd/trust/untrust/buy/visit/home/config/setspawnpoint>"));
         return true;
     }
-    
-    public boolean playercanaddtrust(Player player, PlayerServer playerserver, String Worldname, String trust) {
-        String ownerplot = playerserver.getPlotdata().getPlotProprety();
-        ArrayList<String> listtrust = playerserver.getPlotdata().getAllplottrust();
-        if(ownerplot.equalsIgnoreCase(Worldname)) {
+
+    public boolean canManagePlotAccess(Player player, PlayerServer playerServer,
+            String worldName, String trust) {
+        String ownerplot = playerServer.getPlotdata().getPlotProprety();
+        ArrayList<String> listtrust = playerServer.getPlotdata().getAllplottrust();
+        if (ownerplot.equalsIgnoreCase(worldName)) {
             return true;
-        } else if(listtrust.contains(Worldname) && !trust.equalsIgnoreCase("trust")){
+        } else if (listtrust.contains(worldName) && !trust.equalsIgnoreCase("trust")) {
             return true;
-        } else
-            return false;
+        }
+
+        return false;
     }
-    
+
     private void teleportSafe(Player player, PlayerServer target, World world) {
         int spawnX = target.getPlotdata().getLocationspawnX();
         int spawnY = target.getPlotdata().getLocationspawnY();
@@ -354,29 +362,25 @@ public class Plotcommands implements CommandExecutor {
         }, 10L);
     }
 
-    public boolean isnotaddinplot(Player player, PlayerServer playerserver, String plotwantaddtrust) {
-        ArrayList<String> listadd = playerserver.getPlotdata().getAllplotadd();
-        
-        if(playerserver.getPlotdata().getPlotProprety().equals(plotwantaddtrust)) {
+    public boolean isNotAddedToPlot(Player player, PlayerServer playerServer,
+            String plotName) {
+        ArrayList<String> listadd = playerServer.getPlotdata().getAllplotadd();
+
+        if (playerServer.getPlotdata().getPlotProprety().equals(plotName)) {
             return false;
         }
-        
-        if(listadd.contains(plotwantaddtrust)) {
-            return false;
-        }
-        return true;
+
+        return !listadd.contains(plotName);
     }
 
-    public boolean isnottrustinplot(Player player, PlayerServer playerserver, String plotwantaddtrust) {
-        ArrayList<String> listtrust = playerserver.getPlotdata().getAllplottrust();
-        
-        if(playerserver.getPlotdata().getPlotProprety().equals(plotwantaddtrust)) {
+    public boolean isNotTrustedOnPlot(Player player, PlayerServer playerServer,
+            String plotName) {
+        ArrayList<String> listtrust = playerServer.getPlotdata().getAllplottrust();
+
+        if(playerServer.getPlotdata().getPlotProprety().equals(plotwantaddtrust)) {
             return false;
         }
-        
-        if(listtrust.contains(plotwantaddtrust)) {
-            return false;
-        }
-        return true;
+
+        return !listtrust.contains(plotName);
     }
 }

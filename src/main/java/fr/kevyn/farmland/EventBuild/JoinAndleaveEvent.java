@@ -18,98 +18,105 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.ArrayList;
 
-public class JoinAndleaveEvent implements Listener {
+/**
+ * Gère l'entrée et la sortie des joueurs ainsi que l'initialisation de leur plot.
+ */
+public final class JoinAndleaveEvent implements Listener {
 
     private static final long PLOT_CREATION_DELAY = 40L;
-    private FarmlandMain plugin;
+    private static final long WORLD_RELOAD_DELAY = 20L;
+    private static final long WORLD_BORDER_UPDATE_DELAY = WORLD_RELOAD_DELAY;
+    private static final long WORLD_EDIT_RESTORE_DELAY = 5L;
+    private static final FarmlandMain plugin;
 
     public JoinAndleaveEvent(FarmlandMain plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e) {
-        e.setJoinMessage("");
-        PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(e.getPlayer().getUniqueId());
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        event.setJoinMessage("");
+        PlayerServer playerServer = PlayerserverHashMap.getInstance()
+                .getplayerHaspMaps(event.getPlayer().getUniqueId());
 
         // ✅ Vérif ban
         if (playerServer != null && playerServer.getBan()) {
-            e.getPlayer().kickPlayer("&cVous êtes banni définitivement !" +
+            event.getPlayer().kickPlayer("&cVous êtes banni définitivement !" +
                     "\nRaison : " + playerServer.getRaison());
             return;
         }
 
         if (playerServer == null) {
             // ===== NOUVEAU JOUEUR =====
-            e.getPlayer().sendMessage(MessageColor.YELLOW.apply("Bienvenue Sur Farmland"));
-            String messageBienvenue = MessageColor.LIGHT_PURPLE.apply("&eBienvenue à " + e.getPlayer().getName() + " Sur FarmLand !!!");
+            event.getPlayer().sendMessage(MessageColor.YELLOW.apply("Bienvenue Sur Farmland"));
+            String messageBienvenue = MessageColor.LIGHT_PURPLE.apply("&eBienvenue à " + event.getPlayer().getName() + " Sur FarmLand !!!");
             for (Player p : Bukkit.getOnlinePlayers()) {
                 p.sendMessage(messageBienvenue);
             }
 
             PlotData plotData = new PlotData(
-                e.getPlayer().getUniqueId().toString(),
+                event.getPlayer().getUniqueId().toString(),
                 new ArrayList<>(), new ArrayList<>(),
-                e.getPlayer().getUniqueId().toString(),
+                event.getPlayer().getUniqueId().toString(),
                 50, 0, "minecraftActive", "day", "weatherclear"
             );
             
             PlayerServer newPlayerServer = new PlayerServer(
-                e.getPlayer().getUniqueId(), e.getPlayer().getName(),
+                event.getPlayer().getUniqueId(), event.getPlayer().getName(),
                 false, false, "", 0, plotData, 0, "joueur", 0
             );
 
             if (newPlayerServer.getUuid() == null || newPlayerServer.getName() == null) {
-                e.getPlayer().kickPlayer("Erreur de Sécurité, veuillez tenter une reconnexion.");
-                plugin.getLogger().warning("Player " + e.getPlayer().getUniqueId() + " kick : SavePlayer incomplet.");
+                event.getPlayer().kickPlayer("Erreur de Sécurité, veuillez tenter une reconnexion.");
+                plugin.getLogger().warning("Player " + event.getPlayer().getUniqueId() + " kick : SavePlayer incomplet.");
                 messagediscord.sendmessage("Joueur kick pour cause newplayer... == null @everyone", "statut");
                 return;
             }
             PlayerSave.saveOnePlayerServerFile(plugin, newPlayerServer);
             messagediscord.sendmessage("Nouveau joueur " + newPlayerServer.getName() + " a rejoint", "statut");
 
-            ChatListener.updateTab(e.getPlayer());
+            ChatListener.updateTab(event.getPlayer());
 
             // ✅ Création du plot uniquement
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                new Plot(e.getPlayer().getUniqueId(), plugin);
+                new Plot(event.getPlayer().getUniqueId(), plugin);
             }, PLOT_CREATION_DELAY);
 
         } else {
             // ===== JOUEUR EXISTANT =====
-            if (!e.getPlayer().getUniqueId().toString().equalsIgnoreCase(playerServer.getUuid().toString())) {
-                e.getPlayer().kickPlayer("Erreur 23 Rapprocher vous d'un modérateur");
-                messagediscord.sendmessage(e.getPlayer().getName() + " Erreur 23", "statut");
+            if (!event.getPlayer().getUniqueId().toString().equalsIgnoreCase(playerServer.getUuid().toString())) {
+                event.getPlayer().kickPlayer("Erreur 23 Rapprocher vous d'un modérateur");
+                messagediscord.sendmessage(event.getPlayer().getName() + " Erreur 23", "statut");
                 return;
             }
 
-            if (!playerServer.getName().equalsIgnoreCase(e.getPlayer().getName())) {
-                playerServer.setName(e.getPlayer().getName());
+            if (!playerServer.getName().equalsIgnoreCase(event.getPlayer().getName())) {
+                playerServer.setName(event.getPlayer().getName());
             }
 
             if (!playerServer.getLastjoin()) {
                 playerServer.setLastjoin(true);
             }
 
-            e.getPlayer().sendMessage(MessageColor.GRAY.apply("Données bien synchronisées"));
+            event.getPlayer().sendMessage(MessageColor.GRAY.apply("Données bien synchronisées"));
 
             messagediscord.sendmessage("[" + playerServer.getGrade() + "]: " + playerServer.getName() + " est revenu", "statut");
-            LuckpermGrade.updateGrade(e.getPlayer());
-            ChatListener.updateTab(e.getPlayer());
+            LuckpermGrade.updateGrade(event.getPlayer());
+            ChatListener.updateTab(event.getPlayer());
 
             // Restaurer les permissions WorldEdit si encore actif
             if (playerServer.isWeActive()) {
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    BuyCommands.restoreAttachment(e.getPlayer(), playerServer, plugin);
-                }, 5L);
+                    BuyCommands.restoreAttachment(event.getPlayer(), playerServer, plugin);
+                }, WORLD_EDIT_RESTORE_DELAY);
             }
 
             // ✅ Création du plot + application de la bordure après chargement
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                new Plot(e.getPlayer().getUniqueId(), plugin);
+                new Plot(event.getPlayer().getUniqueId(), plugin);
                 // Appliquer la bordure après que le monde soit chargé
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(e.getPlayer().getUniqueId());
+                    PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(event.getPlayer().getUniqueId());
                     if (ps != null && ps.getPlotdata() != null) {
                         String worldName = ps.getPlotdata().getNameWorld();
                         org.bukkit.World plotWorld = Bukkit.getWorld(worldName);
@@ -117,11 +124,11 @@ public class JoinAndleaveEvent implements Listener {
                             plotWorld.getWorldBorder().setSize(ps.getPlotdata().getWorldborder());
                         }
                     }
-                }, 20L);
+                }, WORLD_BORDER_UPDATE_DELAY);
             }, PLOT_CREATION_DELAY);
         }
 
-        // pousse le statut du serveur vers farm-land.fr
+        // Pousse le statut du serveur vers farm-land.fr.
         if (plugin.getWebApi() != null) {
             plugin.getWebApi().pushServerStatus(
                 plugin.getServer().getOnlinePlayers().size(),
@@ -132,8 +139,9 @@ public class JoinAndleaveEvent implements Listener {
     }
 
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent e) {
-        PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(e.getPlayer().getUniqueId());
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        PlayerServer playerServer = PlayerserverHashMap.getInstance()
+                .getplayerHaspMaps(event.getPlayer().getUniqueId());
         if (playerServer != null) {
             playerServer.getPlotdata().setAllplotadd(new ArrayList<String>());
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -141,7 +149,7 @@ public class JoinAndleaveEvent implements Listener {
             });
         }
         // Nettoyer l'attachment WorldEdit à la déconnexion
-        BuyCommands.removeAttachment(e.getPlayer().getUniqueId());
+        BuyCommands.removeAttachment(event.getPlayer().getUniqueId());
         
         // pousse le statut du serveur vers farm-land.fr
         if (plugin.getWebApi() != null) {
@@ -152,6 +160,6 @@ public class JoinAndleaveEvent implements Listener {
             );
         }
         
-        e.setQuitMessage("");
+        event.setQuitMessage("");
     }
 }
