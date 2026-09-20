@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,7 +23,10 @@ import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
-public class GameCommands implements CommandExecutor {
+/**
+ * Commandes générales du serveur : économie, messages privés et signalements.
+ */
+public final class GameCommands implements CommandExecutor {
 
     // ✅ CORRIGÉ : Utilisation de timestamps pour éviter les memory leaks
     private final Map<UUID, UUID> lastSender = new HashMap<>();
@@ -53,11 +55,11 @@ public class GameCommands implements CommandExecutor {
         }
 
         switch (command.getName().toLowerCase()) {
-            case "pay": return PayCommand(player, playerServer, args);
-            case "money": return MoneyCommand(player, playerServer, args);
-            case "msgf": return MsgCommand(player, playerServer, args, "msgf");
-            case "r": return MsgCommand(player, playerServer, args, "r");
-            case "reportmsg": return reportmsg(player, playerServer, args);
+            case "pay": return handlePayCommand(player, playerServer, args);
+            case "money": return handleMoneyCommand(player, playerServer, args);
+            case "msgf": return handlePrivateMessage(player, playerServer, args, "msgf");
+            case "r": return handlePrivateMessage(player, playerServer, args, "r");
+            case "reportmsg": return handleReportMessage(player, playerServer, args);
             default: return false;
         }
     }
@@ -65,7 +67,7 @@ public class GameCommands implements CommandExecutor {
     // =========================
     // /reportmsg - ✅ CORRIGÉ
     // =========================
-    private boolean reportmsg(Player player, PlayerServer playerServer, String[] args) {
+    private boolean handleReportMessage(Player player, PlayerServer playerServer, String[] args) {
         if (args.length < 2) {
             player.sendMessage(MessageColor.RED.apply("Usage : /reportmsg <joueur> <message>"));
             return true;
@@ -114,7 +116,7 @@ public class GameCommands implements CommandExecutor {
     // =========================
     // /msgf et /r - ✅ CORRIGÉ
     // =========================
-    private boolean MsgCommand(Player player, PlayerServer playerServer, String[] args, String rormsg) {
+    private boolean handlePrivateMessage(Player player, PlayerServer playerServer, String[] args, String rormsg) {
         Player targetPlayer;
         String message;
 
@@ -197,7 +199,7 @@ public class GameCommands implements CommandExecutor {
     // =========================
     // /money - ✅ OK
     // =========================
-    private boolean MoneyCommand(Player player, PlayerServer playerServer, String[] args) {
+    private boolean handleMoneyCommand(Player player, PlayerServer playerServer, String[] args) {
         if (args.length == 0) {
             player.sendMessage("§aVous avez §e" + playerServer.getMoney() + "§a d'argent.");
             return true;
@@ -222,7 +224,7 @@ public class GameCommands implements CommandExecutor {
     // =========================
     // /pay - ✅ CORRIGÉ
     // =========================
-    private boolean PayCommand(Player player, PlayerServer senderServer, String[] args) {
+    private boolean handlePayCommand(Player player, PlayerServer senderServer, String[] args) {
         if (args.length < 2) {
             player.sendMessage(MessageColor.RED.apply("Usage : /pay <player> <montant>"));
             return true;
