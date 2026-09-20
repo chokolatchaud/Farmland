@@ -100,8 +100,8 @@ public class GameCommands implements CommandExecutor {
 
         player.sendMessage(MessageColor.GREEN.apply("✅ Signalement envoyé contre " + reportedName + " !"));
 
-        String discordMessage = "🚨 REPORT 🚨 | Joueur signalé : " + reportedName + 
-                                " | Signalé par : " + player.getName() + 
+        String discordMessage = "🚨 REPORT 🚨 | Joueur signalé : " + reportedName +
+                                " | Signalé par : " + player.getName() +
                                 " | Message reçu : ||" + safeMessage + "||";
         messagediscord.sendmessage(discordMessage, "message");
         Bukkit.getLogger().info("[REPORT] " + player.getName() + " → " + reportedName + " : " + safeMessage);
@@ -127,7 +127,7 @@ public class GameCommands implements CommandExecutor {
             }
 
             // ✅ CORRIGÉ : Utilisation correcte de getPlayer(UUID)
-            targetPlayer = Bukkit.getPlayer(lastSenderUUID); 
+            targetPlayer = Bukkit.getPlayer(lastSenderUUID);
             if (targetPlayer == null || !targetPlayer.isOnline()) {
                 player.sendMessage("§cLe joueur n'est plus en ligne !");
                 return true;
