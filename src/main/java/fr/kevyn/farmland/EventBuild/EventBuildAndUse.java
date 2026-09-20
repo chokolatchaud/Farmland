@@ -52,7 +52,7 @@ public class EventBuildAndUse implements Listener {
         Block bloc = event.getClickedBlock();
         GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
 
-        if (!authorizedbuild(player, gameregion, bloc, false, null)) {
+        if (!canBuild(player, gameregion, bloc, false, null)) {
             event.setCancelled(true);
         }
     }
@@ -70,7 +70,7 @@ public class EventBuildAndUse implements Listener {
         Block bloc = event.getClickedBlock();
         GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
 
-        if (!authorizedbuild(player, gameregion, bloc, false, null)) {
+        if (!canBuild(player, gameregion, bloc, false, null)) {
             event.setCancelled(true);
         }
     }
@@ -84,7 +84,7 @@ public class EventBuildAndUse implements Listener {
         Block bloc = event.getBlock();
         GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
 
-        if (!authorizedbuild(player, gameregion, bloc, false, null)) {
+        if (!canBuild(player, gameregion, bloc, false, null)) {
             event.setCancelled(true);
         }
     }
@@ -94,7 +94,7 @@ public class EventBuildAndUse implements Listener {
         Player player = event.getPlayer();
         Block bloc = event.getBlock();
         GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
-        if(!authorizedbuild(player, gameregion, bloc, false, null)) {
+        if(!canBuild(player, gameregion, bloc, false, null)) {
             event.setCancelled(true);
         }
     }
@@ -114,7 +114,7 @@ public class EventBuildAndUse implements Listener {
         Block bloc = event.getBlock();
         GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
 
-        if(!authorizedbuild(player, gameregion, bloc, true,null)) {
+        if(!canBuild(player, gameregion, bloc, true,null)) {
             event.setCancelled(true);
         }
 
@@ -139,7 +139,7 @@ public class EventBuildAndUse implements Listener {
         Block bloc = event.getBlock();
         Material bucket = event.getBucket();
         GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
-        if(!authorizedbuild(player, gameregion, bloc,false, bucket)) {
+        if(!canBuild(player, gameregion, bloc,false, bucket)) {
             event.setCancelled(true);
         }
 
@@ -151,7 +151,7 @@ public class EventBuildAndUse implements Listener {
         Block bloc = event.getBlock();
         Material bucket = event.getBucket();
         GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
-        if(!authorizedbuild(player, gameregion, bloc,false, bucket)) {
+        if(!canBuild(player, gameregion, bloc,false, bucket)) {
             event.setCancelled(true);
         }
 
@@ -161,7 +161,7 @@ public class EventBuildAndUse implements Listener {
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
         if (event.getEntity().getShooter() instanceof Player player) {
             GameRegion gameregion = GameRegionHashMap.getInstance().Playerwhatistregion(player);
-            if(!authorizedbuild(player, gameregion, null,false, null)) {
+            if(!canBuild(player, gameregion, null,false, null)) {
                 event.setCancelled(true);
             }
 
@@ -170,9 +170,9 @@ public class EventBuildAndUse implements Listener {
 
     public boolean canBuild(Player player, GameRegion region,Block bloc, Boolean countbloc, Material bucket) {
         if (player.hasPermission("farmland.placeblocbypass")) {
-            if(countbloc) {countBlockPlacement(player);}
+            if (countbloc) {countBlockPlacement(player);}
             return true;
-        };
+        }
 
         //on verifie la permission
         if (!player.hasPermission("farmland.placebloc")) {
@@ -194,20 +194,20 @@ public class EventBuildAndUse implements Listener {
 
         //on verifie si Region
         if (region != null) {
-            return whereonregionplayer(player, region);
+            return canBuildInRegion(player, region);
             }
 
         //On verifie si cest son plot ADD/TRUST
-        if(whereonplotplayers(player)) {       
+        if(isOutsideAllowedPlot(player)) {       
             return false;
         }
 
-        if(!canUseWaterLava(player, bloc, bucket)) {
+        if (!canUseWaterLava(player, bloc, bucket)) {
             return false;
         }
 
         //Sinnon on fait
-        if(countbloc) {countBlockPlacement(player);}
+        if (countbloc) {countBlockPlacement(player);}
         return true;
     }
 
@@ -277,7 +277,7 @@ public class EventBuildAndUse implements Listener {
 
     public boolean canUseWaterLava(Player player, Block bloc, Material Bucket) {
 
-        if(Bucket == null) {
+        if (Bucket == null) {
             return true;
         }
         PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
