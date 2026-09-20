@@ -2,6 +2,12 @@ package fr.kevyn.farmland;
 
 import fr.kevyn.farmland.infrastructure.ModuleLoader;
 
+/**
+ * Façade de compatibilité pour les anciens appels au gestionnaire de modules.
+ *
+ * Le chargement normal passe désormais directement par {@link ModuleLoader}.
+ */
+@Deprecated
 public final class MicroPluginManager {
 
     private MicroPluginManager() {
