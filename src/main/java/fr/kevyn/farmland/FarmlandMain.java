@@ -23,11 +23,11 @@ public final class FarmlandMain extends JavaPlugin {
         this.webApi = new WebApiClient(this, baseUrl, apiKey);
     }
 
-    @Override
     /**
      * Initialise le plugin dans un ordre déterministe :
      * configuration, services de base, données joueurs, puis modules.
      */
+    @Override
     public void onEnable() {
         getLogger().info("----- Plugin activé -----");
 
