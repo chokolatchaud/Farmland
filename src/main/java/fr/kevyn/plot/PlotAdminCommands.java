@@ -29,7 +29,10 @@ import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
  *   /plotadmin reload <joueur>                -> recharge/regenere le monde du plot s'il est bloque
  *   /plotadmin reset <joueur>                 -> remet le TERRAIN du plot a zero (garde bordure/upgrade)
  */
-public class PlotAdminCommands implements CommandExecutor {
+public final class PlotAdminCommands implements CommandExecutor {
+
+    private static final long PLOT_LOAD_DELAY_TICKS = 60L;
+    private static final long RESET_RELOAD_DELAY_TICKS = 100L;
 
     private final FarmlandMain plugin;
 
@@ -37,6 +40,9 @@ public class PlotAdminCommands implements CommandExecutor {
         this.plugin = plugin;
     }
 
+    /**
+     * Gère les commandes d'administration des plots.
+     */
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
@@ -122,7 +128,7 @@ public class PlotAdminCommands implements CommandExecutor {
                 if (loaded == null) { admin.sendMessage("§cImpossible de charger le plot !"); return; }
                 admin.teleport(loaded.getSpawnLocation());
                 admin.sendMessage("§aTéléporté sur le plot de " + ps.getName() + " !");
-            }, 60L);
+            }, PLOT_LOAD_DELAY_TICKS);
             return true;
         }
 
@@ -197,6 +203,11 @@ public class PlotAdminCommands implements CommandExecutor {
         PlayerServer ps = getTarget(sender, args[1]);
         if (ps == null) return true;
 
+        if (!args[2].equalsIgnoreCase("true") && !args[2].equalsIgnoreCase("false")) {
+            sender.sendMessage("§cValeur invalide ! Utilise true ou false.");
+            return true;
+        }
+
         boolean value = Boolean.parseBoolean(args[2]);
         ps.getPlotdata().setPrivateplot(value);
         PlayerSave.saveOnePlayerServerFile(plugin, ps);
@@ -253,14 +264,15 @@ public class PlotAdminCommands implements CommandExecutor {
         // une fois le nouveau monde genere, on reapplique la bordure (pas la valeur par
         // defaut 50 posee par Plot.initializeWorld, mais celle que le joueur avait deja payee)
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (world != null) {
-                world.getWorldBorder().setSize(bordureActuelle);
+            World reloadedWorld = Bukkit.getWorld(plotName);
+            if (reloadedWorld != null) {
+                reloadedWorld.getWorldBorder().setSize(bordureActuelle);
                 sender.sendMessage("§aTerrain de " + ps.getName() + " reinitialise ! Bordure (" + bordureActuelle + ") et upgrade (rang " + ps.getUpgrade() + ") conserves.");
                 plugin.getLogger().info("[PlotAdmin] " + sender.getName() + " a reset le terrain de " + ps.getName() + " (bordure conservee : " + bordureActuelle + ")");
             } else {
                 sender.sendMessage("§cLe monde ne s'est pas encore regenere, reessaie /plotadmin border " + ps.getName() + " " + bordureActuelle + " dans quelques secondes si besoin.");
             }
-        }, 100L);
+        }, RESET_RELOAD_DELAY_TICKS);
 
         return true;
     }
