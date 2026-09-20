@@ -1,18 +1,5 @@
 package fr.kevyn.farmland.market;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import fr.kevyn.farmland.save.MarketSave;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Display;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.TextDisplay;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -21,6 +8,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Display;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.TextDisplay;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import fr.kevyn.farmland.save.MarketSave;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 /**
  * Hologrammes du marché — 100% natif (entités TextDisplay, aucune dépendance).
@@ -174,7 +176,7 @@ public class MarketHolograms {
         if (coef.equalsIgnoreCase(actuel.getLastEventMetier())
                 && actuel.getLastEventMessage() != null
                 && !actuel.getLastEventMessage().isBlank()) {
-            evenement = "§f💬 " + actuel.getLastEventMessage();
+            evenement = "\n§f💬 " + actuel.getLastEventMessage();
         }
 
         // tendance par rapport à l'avant-dernier snapshot (avec pourcentage)
@@ -202,12 +204,12 @@ public class MarketHolograms {
         }
 
         return "§8§m                              \n"
-                + "§6✦ §e§l" + getDisplayName(coef).toUpperCase() + " §6✦\n"
-                + "§f§l" + valeur + " $FB  " + tendance + "\n"
-                + courbe + "\n"
-                + stats + evenement + "\n"
-                + "§8Marché mis à jour : " + heure + " §8— §7/market\n"
-                + "§8§m                              ";
+             + "§6✦ §e§l" + getDisplayName(coef).toUpperCase() + " §6✦\n"
+             + "§f§l" + valeur + " $FB  " + tendance + "\n"
+             + courbe + "\n"
+             + stats + evenement + "\n"
+             + "§8Marché mis à jour : " + heure + " §8— §7/market\n"
+             + "§8§m                              ";
     }
 
     /** Mini-courbe façon bourse avec les 12 derniers points de l'historique.
