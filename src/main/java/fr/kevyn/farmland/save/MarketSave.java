@@ -26,8 +26,6 @@ public final class MarketSave {
     private static final int MAX_HISTORY = 100;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-
-
     // ===== CLASSE POUR L'HISTORIQUE (sans LocalDateTime) =====
     public static class MarketSnapshot {
         public Market market;
@@ -48,7 +46,7 @@ public final class MarketSave {
     }
 
     // ===== SAUVEGARDER LE MARKET (ajoute à l'historique) =====
-    public static void saveMarket(JavaPlugin plugin,Market market) {
+    public static void saveMarket(JavaPlugin plugin, Market market) {
         if (market == null) return;
 
         // 1. Charger l'historique existant
@@ -73,7 +71,7 @@ public final class MarketSave {
     }
 
     // ===== SAUVEGARDER L'HISTORIQUE DANS LE FICHIER =====
-    private static void saveMarketHistory(JavaPlugin plugin,MarketHistory marketHistory) {
+    private static void saveMarketHistory(JavaPlugin plugin, MarketHistory marketHistory) {
         File file = new File(plugin.getDataFolder(), MARKET_HISTORY_FILE);
         file.getParentFile().mkdirs();
 
@@ -133,7 +131,7 @@ public final class MarketSave {
     }
 
     // ===== RÉCUPÉRER UN MARKET ANTÉRIEUR (0 = le plus ancien) =====
-    public static Market getMarketAt(JavaPlugin plugin,int index) {
+    public static Market getMarketAt(JavaPlugin plugin, int index) {
         List<MarketSnapshot> history = getFullHistory(plugin);
         
         if (index < 0 || index >= history.size()) {
