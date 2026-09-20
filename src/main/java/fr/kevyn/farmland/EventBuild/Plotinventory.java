@@ -197,16 +197,6 @@ public class Plotinventory implements Listener {
                 player.sendMessage(MessageColor.YELLOW.apply("Option eau/lave modifiée"));
                 player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", ps));
             }
-
-            if (clicked.getType() == Material.EGG && event.getSlot() == 7) {
-                boolean actif = ps.getPlotdata().getSpawnMob();
-                ps.getPlotdata().setSpawnMob(!actif);
-                player.sendMessage(MessageColor.YELLOW.apply(
-                        !actif ? "Les mobs sont maintenant activés sur ton plot."
-                               : "Les mobs sont maintenant désactivés sur ton plot."));
-                player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", ps));
-                return;
-            }
             if (customType == CustomItemType.DOOR_PRIVACY) {
                 ps.getPlotdata().setPrivateplot(!ps.getPlotdata().getPrivateplot());
                 player.sendMessage(MessageColor.YELLOW.apply("Visibilité du plot modifiée"));
