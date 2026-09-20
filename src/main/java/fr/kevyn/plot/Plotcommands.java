@@ -45,8 +45,9 @@ public final class Plotcommands implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
-        if (playerServer == null || playerServer.getPlotdata() == null) {
+        PlayerServer playerServer = PlayerserverHashMap.getInstance()
+                .getplayerHaspMaps(player.getUniqueId());
+        if (playerServer == null) {
             player.sendMessage(MessageColor.RED.apply("Erreur : vos données joueur sont introuvables."));
             return true;
         }
@@ -377,7 +378,7 @@ public final class Plotcommands implements CommandExecutor {
             String plotName) {
         ArrayList<String> listtrust = playerServer.getPlotdata().getAllplottrust();
 
-        if(playerServer.getPlotdata().getPlotProprety().equals(plotwantaddtrust)) {
+        if(playerServer.getPlotdata().getPlotProprety().equals(plotName)) {
             return false;
         }
 
