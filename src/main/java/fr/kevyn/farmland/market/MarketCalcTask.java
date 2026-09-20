@@ -60,13 +60,13 @@ public class MarketCalcTask {
     }
 
     private static void genererEvenementMarche(Market market, Map<String, Integer> ventes) {
-        String metierSurproduction = null;
-        int maxVentes = SEUIL_SURPRODUCTION;
-
         String[] metiers = {
             MarketCalc.MINEUR, MarketCalc.FARMEUR, MarketCalc.AGRICULTEUR,
             MarketCalc.PECHEUR, MarketCalc.TUEUR
         };
+
+        String metierSurproduction = null;
+        int maxVentes = SEUIL_SURPRODUCTION;
 
         for (String metier : metiers) {
             int nombreDeVentes = ventes.getOrDefault(metier, 0);
@@ -79,31 +79,33 @@ public class MarketCalcTask {
         if (metierSurproduction != null) {
             market.setLastEventMetier(metierSurproduction);
             market.setLastEventMessage(MarketFlavor.getMessage(metierSurproduction, false));
-
             Bukkit.broadcastMessage("");
             Bukkit.broadcastMessage("§6§l📊 Bulletin économique");
-            Bukkit.broadcastMessage("§c▼ " + metierSurproduction + " : surproduction");
+            Bukkit.broadcastMessage("§c▼ " + metierSurproduction + " : surproduction (" + maxVentes + " ventes)");
             Bukkit.broadcastMessage("§7" + market.getLastEventMessage());
             Bukkit.broadcastMessage("");
             return;
         }
 
+        // Pour la récupération, on choisit le métier avec le moins de ventes,
+        // et non le premier de la liste. Tous les métiers peuvent donc apparaître.
         String metierRecuperation = null;
+        int minVentes = SEUIL_RECUPERATION;
+
         for (String metier : metiers) {
             int nombreDeVentes = ventes.getOrDefault(metier, 0);
-            if (nombreDeVentes < SEUIL_RECUPERATION) {
+            if (nombreDeVentes < minVentes) {
+                minVentes = nombreDeVentes;
                 metierRecuperation = metier;
-                break;
             }
         }
 
         if (metierRecuperation != null) {
             market.setLastEventMetier(metierRecuperation);
             market.setLastEventMessage(MarketFlavor.getMessage(metierRecuperation, true));
-
             Bukkit.broadcastMessage("");
             Bukkit.broadcastMessage("§6§l📊 Bulletin économique");
-            Bukkit.broadcastMessage("§a▲ " + metierRecuperation + " : le marché se redresse");
+            Bukkit.broadcastMessage("§a▲ " + metierRecuperation + " : le marché se redresse (" + minVentes + " ventes)");
             Bukkit.broadcastMessage("§7" + market.getLastEventMessage());
             Bukkit.broadcastMessage("");
             return;
