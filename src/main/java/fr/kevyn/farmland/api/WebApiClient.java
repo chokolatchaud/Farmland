@@ -33,7 +33,7 @@ public class WebApiClient {
         plugin.getLogger().info("[WebAPI] Classement bateaux pousse (" + data.size() + " temps)");
     }
 
-    // pousse la liste complete des sites de vote 
+    // pousse la liste complete des sites de vote
     // le nom affiche sur le site = le domaine de l'URL
     public void pushVoteSites(List<String> urls, String reward) {
         List<Map<String, Object>> sites = new ArrayList<>();
