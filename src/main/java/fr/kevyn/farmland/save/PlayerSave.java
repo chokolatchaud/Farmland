@@ -77,8 +77,13 @@ public class PlayerSave {
                     && json.has("Name") && !json.get("Name").isJsonNull()) {
                 json.add("name", json.get("Name"));
                 json.remove("Name");
-                FileManager.savefile(file, creategsoninstance().toJson(json));
-                plugin.getLogger().info("[PlayerSave] Champ Name -> name réparé dans " + file.getName());
+            }
+
+            // Les fichiers existants peuvent avoir un nom null.
+            // Le vrai pseudo sera injecté lors de la connexion.
+            if (json.has("name") && !json.get("name").isJsonNull()
+                    && json.get("name").getAsString().isBlank()) {
+                json.add("name", com.google.gson.JsonNull.INSTANCE);
             }
 
             PlayerServer player = creategsoninstance().fromJson(
@@ -93,8 +98,6 @@ public class PlayerSave {
                 continue;
             }
 
-            // Les anciennes sauvegardes peuvent avoir un nom null.
-            // Il sera renseigné avec le pseudo réel lors de la connexion.
             PlayerserverHashMap.getInstance().AddplayerHaspMaps(player.getUuid(), player);
         }
     }

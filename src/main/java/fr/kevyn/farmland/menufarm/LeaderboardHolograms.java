@@ -186,7 +186,7 @@ public final class LeaderboardHolograms {
         for (int i = 0; i < limit; i++) {
             Entree e = entrees.get(i);
             sb.append(medailles[i]).append(" §f").append(e.nom()).append(" §7- niveau §b").append(e.niveau());
-            if (i < limite - 1) sb.append("\n");
+            if (i < limit - 1) sb.append("\n");
         }
 
         return sb.toString();
