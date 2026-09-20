@@ -38,12 +38,12 @@ public class MarketCalc {
     }
 
     /** Prix reel actuel = prix de base * coefficient du metier concerne / 100 */
-    public static int getPrixActuel(String metier, Market market) {
+    public static double getPrixActuel(String metier, Market market) {
         Integer base = PRIX_DE_BASE.get(metier);
-        if (base == null) return 0;
+        if (base == null) return 0.0;
 
         int coefficient = getCoefficientMetier(metier, market);
-        return Math.max(1, (int) Math.round(base * (coefficient / 100.0)));
+        return Math.max(0.01, base * (coefficient / 100.0));
     }
 
     private static int getCoefficientMetier(String metier, Market market) {
