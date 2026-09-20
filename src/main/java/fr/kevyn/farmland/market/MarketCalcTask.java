@@ -8,13 +8,10 @@ import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.save.MarketSave;
 
 /**
- * Toutes les 30 minutes, regarde combien de ventes ont eu lieu par metier
- * depuis le dernier cycle. Trop de ventes = trop d'offre = le prix de CE
- * metier s'effondre (coefficient baisse de 2%). Peu/pas de ventes = le
- * marche se redresse doucement vers 100 (prix de base).
- */
-/**
  * Planifie et exécute les recalculs périodiques du marché.
+ *
+ * Toutes les 30 minutes, les ventes du dernier cycle sont utilisées pour
+ * ajuster les coefficients des métiers.
  */
 public final class MarketCalcTask {
 
