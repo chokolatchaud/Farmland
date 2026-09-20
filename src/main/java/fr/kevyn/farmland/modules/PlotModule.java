@@ -30,8 +30,6 @@ public final class PlotModule {
             plugin.getServer().getPluginManager().registerEvents(new BoatRaceListener(plugin), plugin);
             plugin.getServer().getPluginManager().registerEvents(new ChatCalcListener(), plugin);
 
-            plugin.getServer().getPluginManager().registerEvents(new BoatRaceListener(plugin), plugin);
-
             plugin.getServer().getScheduler().runTaskTimer(plugin,
                     () -> DailyBoatReward.checkAndRewardIfNewDay(plugin),
                     100L,
