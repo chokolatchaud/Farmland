@@ -1,7 +1,7 @@
 package fr.kevyn.farmland.modules;
 
 import discordwebhook.messagediscord;
-import fr.kevyn.farmland.EventBuild.ChatCalcListener;
+import fr.kevyn.farmland.chat.ChatCalcListener;
 import fr.kevyn.farmland.EventBuild.EventBuildAndUse;
 import fr.kevyn.farmland.EventBuild.Plotinventory;
 import fr.kevyn.farmland.FarmlandMain;
