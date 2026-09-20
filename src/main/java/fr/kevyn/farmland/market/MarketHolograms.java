@@ -176,8 +176,7 @@ public class MarketHolograms {
         if (coef.equalsIgnoreCase(actuel.getLastEventMetier())
                 && actuel.getLastEventMessage() != null
                 && !actuel.getLastEventMessage().isBlank()) {
-            evenement = "
-§f💬 " + actuel.getLastEventMessage();
+            evenement = "\n§f💬 " + actuel.getLastEventMessage();
         }
 
         // tendance par rapport à l'avant-dernier snapshot (avec pourcentage)
