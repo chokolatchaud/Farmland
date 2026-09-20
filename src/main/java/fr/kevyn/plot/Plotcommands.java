@@ -17,6 +17,10 @@ import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.menu.MenuPlotConfig;
 import fr.kevyn.farmland.menu.MenuPlotUpgrade;
 import fr.kevyn.farmland.menu.MenuPlotVisit;
+
+/**
+ * Commandes joueur liées aux plots.
+ */
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
