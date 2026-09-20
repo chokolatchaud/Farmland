@@ -1,8 +1,8 @@
 package fr.kevyn.farmland.modules;
 
 import discordwebhook.messagediscord;
-import fr.kevyn.farmland.chat.ChatCalcListener;
 import fr.kevyn.farmland.EventBuild.EventBuildAndUse;
+import fr.kevyn.farmland.chat.ChatCalcListener;
 import fr.kevyn.farmland.EventBuild.Plotinventory;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.boathub.BoatRaceListener;
@@ -16,6 +16,9 @@ import fr.kevyn.plot.Plotcommands;
 public final class PlotModule {
 
     private static final long MINUTE_TICKS = 20L * 60;
+    private static final long CHAT_CALC_TICKS = 20L * 60 * 5;
+    private static final long ANNOUNCEMENT_TICKS = 20L * 60 * 10;
+    private static final long BOAT_REWARD_INITIAL_DELAY = 100L;
 
     private final FarmlandMain plugin;
 
@@ -25,27 +28,9 @@ public final class PlotModule {
 
     public void register() {
         try {
-            plugin.getServer().getPluginManager().registerEvents(new EventBuildAndUse(plugin), plugin);
-            plugin.getServer().getPluginManager().registerEvents(new Plotinventory(plugin), plugin);
-            plugin.getServer().getPluginManager().registerEvents(new BoatRaceListener(plugin), plugin);
-            plugin.getServer().getPluginManager().registerEvents(new ChatCalcListener(), plugin);
-
-            plugin.getServer().getScheduler().runTaskTimer(plugin,
-                    () -> DailyBoatReward.checkAndRewardIfNewDay(plugin),
-                    100L,
-                    MINUTE_TICKS);
-
-            plugin.getServer().getScheduler().runTaskTimer(plugin,
-                    () -> ChatCalcListener.lancerNouveauCalcul(plugin),
-                    20L * 60 * 5,
-                    20L * 60 * 5);
-
-            plugin.getServer().getScheduler().runTaskTimer(plugin,
-                    () -> AnnouncementBroadcaster.broadcastRandom(plugin),
-                    20L * 60 * 10,
-                    20L * 60 * 10);
-
-            plugin.getCommand("plot").setExecutor(new Plotcommands(plugin));
+            registerListeners();
+            registerTasks();
+            registerCommands();
 
             messagediscord.sendmessage("Module Plot bien lancé", "statut");
         } catch (Exception e) {
@@ -53,5 +38,33 @@ public final class PlotModule {
             messagediscord.sendmessage("Module Plot erreur: " + e, "statut");
             e.printStackTrace();
         }
+    }
+
+    private void registerListeners() {
+        plugin.getServer().getPluginManager().registerEvents(new EventBuildAndUse(plugin), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new Plotinventory(plugin), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new BoatRaceListener(plugin), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new ChatCalcListener(), plugin);
+    }
+
+    private void registerTasks() {
+        plugin.getServer().getScheduler().runTaskTimer(plugin,
+                () -> DailyBoatReward.checkAndRewardIfNewDay(plugin),
+                BOAT_REWARD_INITIAL_DELAY,
+                MINUTE_TICKS);
+
+        plugin.getServer().getScheduler().runTaskTimer(plugin,
+                () -> ChatCalcListener.lancerNouveauCalcul(plugin),
+                CHAT_CALC_TICKS,
+                CHAT_CALC_TICKS);
+
+        plugin.getServer().getScheduler().runTaskTimer(plugin,
+                () -> AnnouncementBroadcaster.broadcastRandom(plugin),
+                ANNOUNCEMENT_TICKS,
+                ANNOUNCEMENT_TICKS);
+    }
+
+    private void registerCommands() {
+        plugin.getCommand("plot").setExecutor(new Plotcommands(plugin));
     }
 }
