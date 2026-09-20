@@ -174,7 +174,8 @@ public final class GameModule {
 
                     for (PlayerServer playerServer
                             : PlayerserverHashMap.getInstance().getHashMapPlayer().values()) {
-                        if (playerServer == null) {
+                        if (playerServer == null || playerServer.getName() == null
+                                || playerServer.getName().isBlank()) {
                             continue;
                         }
 
