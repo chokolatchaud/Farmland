@@ -24,7 +24,8 @@ import java.util.ArrayList;
 public final class JoinAndleaveEvent implements Listener {
 
     private static final long PLOT_CREATION_DELAY = 40L;
-    private static final long WORLD_BORDER_UPDATE_DELAY = 20L;
+    private static final long WORLD_RELOAD_DELAY = 20L;
+    private static final long WORLD_BORDER_UPDATE_DELAY = WORLD_RELOAD_DELAY;
     private static final long WORLD_EDIT_RESTORE_DELAY = 5L;
     private static final FarmlandMain plugin;
 
