@@ -14,10 +14,6 @@ public final class MicroPluginManager {
     /**
      * Compatibilité avec les anciens appels.
      */
-    public static void moduleGame(FarmlandMain plugin) {
-        new fr.kevyn.farmland.modules.GameModule(plugin).register();
-    }
-
     public static void moduleModeration(FarmlandMain plugin) {
         new fr.kevyn.farmland.modules.ModerationModule(plugin).register();
     }
