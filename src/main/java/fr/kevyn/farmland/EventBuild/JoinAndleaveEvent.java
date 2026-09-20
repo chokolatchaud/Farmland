@@ -128,7 +128,7 @@ public final class JoinAndleaveEvent implements Listener {
             }, PLOT_CREATION_DELAY);
         }
 
-        // pousse le statut du serveur vers farm-land.fr
+        // Pousse le statut du serveur vers farm-land.fr.
         if (plugin.getWebApi() != null) {
             plugin.getWebApi().pushServerStatus(
                 plugin.getServer().getOnlinePlayers().size(),
