@@ -39,6 +39,12 @@ public class MenuPlotConfig {
         GameMenu.set_oneitem_menu(CustomItemType.WATERLAVASELECTION.create(), namewaterlava, 12, inv);
         
 
+        // EGG - Spawn des mobs
+        String nameSpawnMob = playerserver.getPlotdata().getSpawnMob()
+                ? "Mobs activés"
+                : "Mobs désactivés";
+        GameMenu.set_oneitem_menu(new ItemStack(Material.EGG), nameSpawnMob, 7, inv);
+
         // DOOR - Privé/Public
         String namePrivatepublic = "erreur";
         if(playerserver.getPlotdata().getPrivateplot()) {

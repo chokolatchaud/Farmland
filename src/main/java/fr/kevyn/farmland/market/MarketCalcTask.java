@@ -67,6 +67,11 @@ public class MarketCalcTask {
 
         String metierSurproduction = null;
         int maxVentes = SEUIL_SURPRODUCTION;
+        int coefficientAvantMineur = 0;
+        int coefficientAvantFarmeur = 0;
+        int coefficientAvantAgriculteur = 0;
+        int coefficientAvantPecheur = 0;
+        int coefficientAvantTueur = 0;
 
         for (String metier : metiers) {
             int nombreDeVentes = ventes.getOrDefault(metier, 0);
@@ -87,9 +92,9 @@ public class MarketCalcTask {
             return;
         }
 
-        // Pour la récupération, on choisit le métier qui a le plus gros recul
-        // du coefficient vers 100, afin que l'événement corresponde réellement
-        // à un changement du marché. En cas d'égalité, on départage par le moins de ventes.
+        // En récupération, on ne sélectionne un métier que si son coefficient
+        // a réellement augmenté pendant ce recalcul. Puis on choisit celui
+        // dont le marché a le plus progressé.
         String metierRecuperation = null;
         int meilleurGain = 0;
         int moinsDeVentes = Integer.MAX_VALUE;
@@ -104,33 +109,21 @@ public class MarketCalcTask {
             int coefficientApres;
 
             switch (metier) {
-                case MarketCalc.MINEUR -> {
-                    coefficientAvant = market.getMoneyforcoefMineur();
-                    coefficientApres = recalculer(coefficientAvant, nombreDeVentes);
-                }
-                case MarketCalc.FARMEUR -> {
-                    coefficientAvant = market.getMoneyforcoefFarmeur();
-                    coefficientApres = recalculer(coefficientAvant, nombreDeVentes);
-                }
-                case MarketCalc.AGRICULTEUR -> {
-                    coefficientAvant = market.getMoneyforcoefAgriculteur();
-                    coefficientApres = recalculer(coefficientAvant, nombreDeVentes);
-                }
-                case MarketCalc.PECHEUR -> {
-                    coefficientAvant = market.getMoneyforcoefPecheur();
-                    coefficientApres = recalculer(coefficientAvant, nombreDeVentes);
-                }
-                case MarketCalc.TUEUR -> {
-                    coefficientAvant = market.getMoneyforcoefTueur();
-                    coefficientApres = recalculer(coefficientAvant, nombreDeVentes);
-                }
-                default -> {
-                    continue;
-                }
+                case MarketCalc.MINEUR -> coefficientAvant = market.getMoneyforcoefMineur();
+                case MarketCalc.FARMEUR -> coefficientAvant = market.getMoneyforcoefFarmeur();
+                case MarketCalc.AGRICULTEUR -> coefficientAvant = market.getMoneyforcoefAgriculteur();
+                case MarketCalc.PECHEUR -> coefficientAvant = market.getMoneyforcoefPecheur();
+                case MarketCalc.TUEUR -> coefficientAvant = market.getMoneyforcoefTueur();
+                default -> continue;
             }
 
+            // Ce recalcul est appelé avant l'écriture du snapshot, donc pour
+            // connaître le vrai changement il faut comparer avec 2% de la
+            // valeur actuelle, comme le ferait recalculer().
+            coefficientApres = recalculer(coefficientAvant, nombreDeVentes);
             int gain = coefficientApres - coefficientAvant;
-            if (gain > meilleurGain || (gain == meilleurGain && nombreDeVentes < moinsDeVentes)) {
+
+            if (gain > meilleurGain || (gain == meilleurGain && gain > 0 && nombreDeVentes < moinsDeVentes)) {
                 meilleurGain = gain;
                 moinsDeVentes = nombreDeVentes;
                 metierRecuperation = metier;
