@@ -58,30 +58,10 @@ public class Plotinventory implements Listener {
         ItemStack clickedItem = event.getCurrentItem();
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
 
-        // ── PLOTVISIT : têtes de joueurs ──────────────────────────────────────
-        if (gameMenu.getTypemenu() == TypeMenu.PLOTVISIT && clickedItem.getType() == Material.PLAYER_HEAD) {
-            if (!(clickedItem.getItemMeta() instanceof SkullMeta)) return;
-            SkullMeta meta = (SkullMeta) clickedItem.getItemMeta();
-            OfflinePlayer owning = meta.getOwningPlayer();
-            if (owning == null) { player.sendMessage(MessageColor.RED.apply("Erreur : propriétaire introuvable !")); return; }
-
-            PlayerServer targetServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(owning.getUniqueId());
-            if (targetServer == null || targetServer.getPlotdata() == null) { player.sendMessage(MessageColor.RED.apply("Erreur : plot introuvable !")); return; }
-            if (targetServer.getPlotdata().getPrivateplot()) { player.sendMessage(MessageColor.RED.apply("Ce plot est privé")); return; }
-
-            String targetPlotName = targetServer.getPlotdata().getPlotProprety();
-            World targetPlotWorld = Plot.getWorldforname(targetPlotName);
-            if (targetPlotWorld == null) {
-                player.sendMessage(MessageColor.GRAY.apply("Chargement du plot en cours..."));
-                new Plot(UUID.fromString(targetPlotName), plugin);
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    World loaded = Plot.getWorldforname(targetPlotName);
-                    if (loaded == null) { player.sendMessage(MessageColor.RED.apply("Impossible de charger le plot !")); return; }
-                    teleportToPlot(player, targetServer, loaded);
-                }, 60L);
-                return;
-            }
-            teleportToPlot(player, targetServer, targetPlotWorld);
+        // Visite d'un plot depuis le menu.
+        if (gameMenu.getTypemenu() == TypeMenu.PLOTVISIT
+                && clickedItem.getType() == Material.PLAYER_HEAD) {
+            handlePlotVisit(player, clickedItem);
             return;
         }
 
@@ -220,6 +200,55 @@ public class Plotinventory implements Listener {
                 }
             }
         }
+    }
+
+    private void handlePlotVisit(Player player, ItemStack clickedItem) {
+        if (!(clickedItem.getItemMeta() instanceof SkullMeta)) {
+            return;
+        }
+
+        SkullMeta meta = (SkullMeta) clickedItem.getItemMeta();
+        OfflinePlayer owningPlayer = meta.getOwningPlayer();
+        if (owningPlayer == null) {
+            player.sendMessage(MessageColor.RED.apply("Erreur : propriétaire introuvable !"));
+            return;
+        }
+
+        PlayerServer targetServer =
+                PlayerserverHashMap.getInstance().getplayerHaspMaps(owningPlayer.getUniqueId());
+        if (targetServer == null || targetServer.getPlotdata() == null) {
+            player.sendMessage(MessageColor.RED.apply("Erreur : plot introuvable !"));
+            return;
+        }
+
+        if (targetServer.getPlotdata().getPrivateplot()) {
+            player.sendMessage(MessageColor.RED.apply("Ce plot est privé"));
+            return;
+        }
+
+        String plotName = targetServer.getPlotdata().getPlotProprety();
+        World plotWorld = Plot.getWorldforname(plotName);
+        if (plotWorld == null) {
+            loadPlotForVisit(player, targetServer, plotName);
+            return;
+        }
+
+        teleportToPlot(player, targetServer, plotWorld);
+    }
+
+    private void loadPlotForVisit(Player player, PlayerServer targetServer, String plotName) {
+        player.sendMessage(MessageColor.GRAY.apply("Chargement du plot en cours..."));
+        new Plot(UUID.fromString(plotName), plugin);
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            World loadedWorld = Plot.getWorldforname(plotName);
+            if (loadedWorld == null) {
+                player.sendMessage(MessageColor.RED.apply("Impossible de charger le plot !"));
+                return;
+            }
+
+            teleportToPlot(player, targetServer, loadedWorld);
+        }, 60L);
     }
 
     // ── TP vers un plot avec position sûre ───────────────────────────────────
