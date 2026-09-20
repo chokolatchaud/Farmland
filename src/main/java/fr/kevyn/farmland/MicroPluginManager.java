@@ -76,10 +76,16 @@ public class MicroPluginManager {
         plugin.getCommand("tpaccept").setExecutor(tpaCommand);
         plugin.getCommand("tpdeny").setExecutor(tpaCommand);
 
-        // hologrammes du marche : chargement + apparition/rafraichissement toutes les 60s
+        // hologrammes du marche : chargement + apparition immediate
         MarketHolograms.load(plugin);
         fr.kevyn.farmland.menufarm.LeaderboardHolograms.load(plugin);
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> MarketHolograms.updateAll(plugin), 100L, 20L * 60);
+
+        // Premier spawn juste apres le chargement du monde/module.
+        MarketHolograms.updateAll(plugin);
+
+        // Rafraichissement uniquement quand necessaire (le recalcul du marche
+        // appelle deja updateAll), mais on conserve un filet de securite toutes les 10s.
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> MarketHolograms.updateAll(plugin), 20L * 10, 20L * 10);
         plugin.getCommand("marketadmin").setExecutor(new fr.kevyn.farmland.market.MarketAdminCommands(plugin));
         plugin.getCommand("market").setExecutor(new fr.kevyn.farmland.market.MarketCommand());
 
