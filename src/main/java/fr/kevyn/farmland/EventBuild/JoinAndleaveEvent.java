@@ -146,7 +146,9 @@ public final class JoinAndleaveEvent implements Listener {
         PlayerServer playerServer = PlayerserverHashMap.getInstance()
                 .getplayerHaspMaps(event.getPlayer().getUniqueId());
         if (playerServer != null) {
-            playerServer.getPlotdata().setAllplotadd(new ArrayList<String>());
+            if (playerServer.getPlotdata() != null) {
+                playerServer.getPlotdata().setAllplotadd(new ArrayList<String>());
+            }
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 PlayerSave.saveOnePlayerServerFile(plugin, playerServer);
             });

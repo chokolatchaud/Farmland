@@ -111,6 +111,11 @@ public class WebApiClient {
     public void pushPlayerBalance(String username, double balance, int blocpose,
                                   int niveauMineur, int niveauFarmeur, int niveauPecheur,
                                   int niveauAgriculteur, int niveauTueur) {
+        if (username == null || username.isBlank()) {
+            plugin.getLogger().warning("[WebAPI] Joueur ignoré : pseudo vide.");
+            return;
+        }
+
         post(EP_LEADER, Map.of(
                 "username",   username,
                 "balance",    balance,
