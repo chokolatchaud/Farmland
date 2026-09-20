@@ -70,6 +70,14 @@ public class PlayerSave {
 
 
 
+
+    private static String getPlayerName(JsonObject json) {
+        if (json.has("Name") && !json.get("Name").isJsonNull()) {
+            return json.get("Name").getAsString();
+        }
+        return "inconnu";
+    }
+
     public static void verifyallPlayerSaves(JavaPlugin plugin) {
         File folder = new File(plugin.getDataFolder() + "/players");
         if (!folder.exists()){
@@ -91,7 +99,7 @@ public class PlayerSave {
                 if (stringjson.has("GsonSave")) {
                     int version = stringjson.get("GsonSave").getAsInt();
                     if (version == configymlversion) {
-                        messagediscord.sendmessage("Aucun changement sur le fichier de " + stringjson.get("Name").getAsString() ,"statut" );
+                        messagediscord.sendmessage("Aucun changement sur le fichier de " + getPlayerName(stringjson) ,"statut" );
                     }else{
                         //correction a mettre en place sur le json
                         //Cette Correction depend de la classe CorrecteurJson
@@ -103,7 +111,7 @@ public class PlayerSave {
                     stringjson.addProperty("GsonSave",0);
                     String nouveauContenu = creategsoninstance().toJson(stringjson);
                     FileManager.savefile(file, nouveauContenu);
-                    messagediscord.sendmessage("Rajout de GSONSAVE sur le fichier de " + stringjson.get("Name").getAsString() ,"statut" );
+                    messagediscord.sendmessage("Rajout de GSONSAVE sur le fichier de " + getPlayerName(stringjson) ,"statut" );
                 }
 
 
