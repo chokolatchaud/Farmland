@@ -59,7 +59,7 @@ public class Plotinventory implements Listener {
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
 
         // ── PLOTVISIT : têtes de joueurs ──────────────────────────────────────
-        if (gameMenu.getTypeMenu() == TypeMenu.PLOTVISIT && clickedItem.getType() == Material.PLAYER_HEAD) {
+        if (gameMenu.getTypemenu() == TypeMenu.PLOTVISIT && clickedItem.getType() == Material.PLAYER_HEAD) {
             if (!(clickedItem.getItemMeta() instanceof SkullMeta)) return;
             SkullMeta meta = (SkullMeta) clickedItem.getItemMeta();
             OfflinePlayer owning = meta.getOwningPlayer();
@@ -86,7 +86,7 @@ public class Plotinventory implements Listener {
         }
 
         // ── COSMETICS : achat/equipement d'un chapeau ─────────────────────────
-        if (gameMenu.getTypeMenu() == TypeMenu.COSMETICS) {
+        if (gameMenu.getTypemenu() == TypeMenu.COSMETICS) {
             int slot = event.getSlot();
             if (slot < 0 || slot >= CosmeticShop.COSMETICS.size()) return;
 
@@ -121,7 +121,7 @@ public class Plotinventory implements Listener {
         if (customItemType == null) return;
 
         // ── PLOTUPGRADE ───────────────────────────────────────────────────────
-        if (gameMenu.getTypeMenu() == TypeMenu.PLOTUPGRADE) {
+        if (gameMenu.getTypemenu() == TypeMenu.PLOTUPGRADE) {
             if (customItemType == CustomItemType.UPGRADE_LOCKED) {
                 PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
                 if (playerServer == null) { player.kickPlayer("erreur 23"); return; }
@@ -158,7 +158,7 @@ public class Plotinventory implements Listener {
         }
 
         // ── PLOTCONFIG ────────────────────────────────────────────────────────
-        else if (gameMenu.getTypeMenu() == TypeMenu.PLOTCONFIG) {
+        else if (gameMenu.getTypemenu() == TypeMenu.PLOTCONFIG) {
             PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
             if (playerServer == null) { player.kickPlayer("erreur 23"); return; }
 
@@ -205,7 +205,7 @@ public class Plotinventory implements Listener {
         }
 
         // ── PLOTVISIT navigation ──────────────────────────────────────────────
-        else if (gameMenu.getTypeMenu() == TypeMenu.PLOTVISIT) {
+        else if (gameMenu.getTypemenu() == TypeMenu.PLOTVISIT) {
             if (customItemType == CustomItemType.ARROW_NEXT) {
                 int p = playerPageById.getOrDefault(player.getUniqueId(), 1);
                 playerPageById.put(player.getUniqueId(), p + 1);
