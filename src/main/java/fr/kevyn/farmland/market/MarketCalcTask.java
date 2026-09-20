@@ -87,25 +87,63 @@ public class MarketCalcTask {
             return;
         }
 
-        // Pour la récupération, on choisit le métier avec le moins de ventes,
-        // et non le premier de la liste. Tous les métiers peuvent donc apparaître.
+        // Pour la récupération, on choisit le métier qui a le plus gros recul
+        // du coefficient vers 100, afin que l'événement corresponde réellement
+        // à un changement du marché. En cas d'égalité, on départage par le moins de ventes.
         String metierRecuperation = null;
-        int minVentes = SEUIL_RECUPERATION;
+        int meilleurGain = 0;
+        int moinsDeVentes = Integer.MAX_VALUE;
 
         for (String metier : metiers) {
             int nombreDeVentes = ventes.getOrDefault(metier, 0);
-            if (nombreDeVentes < minVentes) {
-                minVentes = nombreDeVentes;
+            if (nombreDeVentes >= SEUIL_RECUPERATION) {
+                continue;
+            }
+
+            int coefficientAvant;
+            int coefficientApres;
+
+            switch (metier) {
+                case MarketCalc.MINEUR -> {
+                    coefficientAvant = market.getMoneyforcoefMineur();
+                    coefficientApres = recalculer(coefficientAvant, nombreDeVentes);
+                }
+                case MarketCalc.FARMEUR -> {
+                    coefficientAvant = market.getMoneyforcoefFarmeur();
+                    coefficientApres = recalculer(coefficientAvant, nombreDeVentes);
+                }
+                case MarketCalc.AGRICULTEUR -> {
+                    coefficientAvant = market.getMoneyforcoefAgriculteur();
+                    coefficientApres = recalculer(coefficientAvant, nombreDeVentes);
+                }
+                case MarketCalc.PECHEUR -> {
+                    coefficientAvant = market.getMoneyforcoefPecheur();
+                    coefficientApres = recalculer(coefficientAvant, nombreDeVentes);
+                }
+                case MarketCalc.TUEUR -> {
+                    coefficientAvant = market.getMoneyforcoefTueur();
+                    coefficientApres = recalculer(coefficientAvant, nombreDeVentes);
+                }
+                default -> {
+                    continue;
+                }
+            }
+
+            int gain = coefficientApres - coefficientAvant;
+            if (gain > meilleurGain || (gain == meilleurGain && nombreDeVentes < moinsDeVentes)) {
+                meilleurGain = gain;
+                moinsDeVentes = nombreDeVentes;
                 metierRecuperation = metier;
             }
         }
 
-        if (metierRecuperation != null) {
+        if (metierRecuperation != null && meilleurGain > 0) {
+            int ventesRecuperation = ventes.getOrDefault(metierRecuperation, 0);
             market.setLastEventMetier(metierRecuperation);
             market.setLastEventMessage(MarketFlavor.getMessage(metierRecuperation, true));
             Bukkit.broadcastMessage("");
             Bukkit.broadcastMessage("§6§l📊 Bulletin économique");
-            Bukkit.broadcastMessage("§a▲ " + metierRecuperation + " : le marché se redresse (" + minVentes + " ventes)");
+            Bukkit.broadcastMessage("§a▲ " + metierRecuperation + " : le marché se redresse (" + ventesRecuperation + " ventes)");
             Bukkit.broadcastMessage("§7" + market.getLastEventMessage());
             Bukkit.broadcastMessage("");
             return;
