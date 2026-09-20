@@ -102,8 +102,6 @@ public class WorldEditSecureListener implements Listener {
                     return;
                 }
 
-                
-
             } catch (Exception e) {
                 Bukkit.getLogger().warning("[WorldEditSecure] Erreur lors de la vérification de sélection : " + e.getMessage());
             }
