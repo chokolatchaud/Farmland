@@ -33,7 +33,7 @@ import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.plot.Plot;
 
-public class Plotinventory implements Listener {
+public final class Plotinventory implements Listener {
     private final Map<UUID, Integer> playerPageById = new HashMap<>();
     private final FarmlandMain plugin;
 
@@ -43,6 +43,8 @@ public class Plotinventory implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
+        // Tous les clics sur les menus de plots passent par ce point d'entrée.
+
         if (!(event.getWhoClicked() instanceof Player)) return;
         Player player = (Player) event.getWhoClicked();
 
@@ -66,13 +68,18 @@ public class Plotinventory implements Listener {
         // ── COSMETICS : achat/equipement d'un chapeau ─────────────────────────
         if (gameMenu.getTypemenu() == TypeMenu.COSMETICS) {
             int slot = event.getSlot();
-            if (slot < 0 || slot >= CosmeticShop.COSMETICS.size()) return;
+            if (slot < 0 || slot >= CosmeticShop.COSMETICS.size()) {
+                return;
+            }
 
             CosmeticShop.Cosmetic cosmetic =
                     CosmeticShop.COSMETICS.get(slot);
 
-            PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
-            if (playerServer == null) return;
+            PlayerServer playerServer = PlayerserverHashMap.getInstance()
+                    .getplayerHaspMaps(player.getUniqueId());
+            if (playerServer == null) {
+                return;
+            }
 
             if (playerServer.getCosmeticsOwned().contains(cosmetic.id)) {
                 player.getInventory().setHelmet(cosmetic.createItem());
