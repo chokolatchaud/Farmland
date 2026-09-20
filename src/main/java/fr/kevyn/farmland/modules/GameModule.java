@@ -87,7 +87,7 @@ public final class GameModule {
 
         plugin.getCommand("marketadmin").setExecutor(new MarketAdminCommands(plugin));
         plugin.getCommand("market").setExecutor(new MarketCommand());
-        plugin.getCommand("classementadmin").setExecutor(new ClassementAdminCommands());
+        plugin.getCommand("classementadmin").setExecutor(new ClassementAdminCommands(plugin));
 
         TpaCommand tpaCommand = new TpaCommand(plugin);
         plugin.getCommand("tpa").setExecutor(tpaCommand);
