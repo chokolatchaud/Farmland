@@ -17,14 +17,16 @@ import com.google.gson.GsonBuilder;
 
 import fr.kevyn.farmland.market.Market;
 
-public class MarketSave {
+/**
+ * Persiste le marché et son historique dans le fichier JSON dédié.
+ */
+public final class MarketSave {
 
     private static final String MARKET_HISTORY_FILE = "market_history.json";
     private static final int MAX_HISTORY = 100;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    
-    
+
 
     // ===== CLASSE POUR L'HISTORIQUE (sans LocalDateTime) =====
     public static class MarketSnapshot {
@@ -59,7 +61,7 @@ public class MarketSave {
         String timestamp = LocalDateTime.now().format(DATE_FORMATTER);
         marketHistory.history.add(new MarketSnapshot(market, timestamp));
 
-        // 3. Garder seulement les 20 derniers
+        // 3. Garder seulement les derniers snapshots
         while (marketHistory.history.size() > MAX_HISTORY) {
             marketHistory.history.removeFirst();
         }
@@ -67,7 +69,7 @@ public class MarketSave {
         // 4. Sauvegarder l'historique
         saveMarketHistory(plugin,marketHistory);
         
-        plugin.getLogger().info("Market sauvegardé ! (Historique: " + marketHistory.history.size() + "/20)");
+        plugin.getLogger().info("Market sauvegardé ! (Historique: " + marketHistory.history.size() + "/" + MAX_HISTORY + ")");
     }
 
     // ===== SAUVEGARDER L'HISTORIQUE DANS LE FICHIER =====
@@ -130,7 +132,7 @@ public class MarketSave {
         return new ArrayList<>(history.history);
     }
 
-    // ===== RÉCUPÉRER UN MARKET ANTÉRIEUR (0 = le plus ancien, 19 = le plus récent) =====
+    // ===== RÉCUPÉRER UN MARKET ANTÉRIEUR (0 = le plus ancien) =====
     public static Market getMarketAt(JavaPlugin plugin,int index) {
         List<MarketSnapshot> history = getFullHistory(plugin);
         
@@ -146,7 +148,7 @@ public class MarketSave {
         List<MarketSnapshot> history = getFullHistory(plugin);
         
         System.out.println("=== HISTORIQUE DU MARKET ===");
-        System.out.println("Total: " + history.size() + "/20");
+        System.out.println("Total: " + history.size() + "/" + MAX_HISTORY);
         System.out.println();
         
         for (int i = 0; i < history.size(); i++) {
