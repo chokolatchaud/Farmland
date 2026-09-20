@@ -90,8 +90,11 @@ public final class JoinAndleaveEvent implements Listener {
                 return;
             }
 
-            if (!playerServer.getName().equalsIgnoreCase(event.getPlayer().getName())) {
-                playerServer.setName(event.getPlayer().getName());
+            String playerName = event.getPlayer().getName();
+            if (playerServer.getName() == null
+                    || !playerServer.getName().equalsIgnoreCase(playerName)) {
+                playerServer.setName(playerName);
+                PlayerSave.saveOnePlayerServerFile(plugin, playerServer);
             }
 
             if (!playerServer.getLastjoin()) {
