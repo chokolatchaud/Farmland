@@ -172,6 +172,14 @@ public class MarketHolograms {
         int valeur = getCoefValue(actuel, coef);
         List<fr.kevyn.farmland.save.MarketSave.MarketSnapshot> history = MarketSave.getFullHistory(plugin);
 
+        String evenement = "";
+        if (coef.equalsIgnoreCase(actuel.getLastEventMetier())
+                && actuel.getLastEventMessage() != null
+                && !actuel.getLastEventMessage().isBlank()) {
+            evenement = "
+§f💬 " + actuel.getLastEventMessage();
+        }
+
         // tendance par rapport à l'avant-dernier snapshot (avec pourcentage)
         String tendance = "§7─ stable";
         if (history.size() >= 2) {
@@ -200,7 +208,7 @@ public class MarketHolograms {
              + "§6✦ §e§l" + getDisplayName(coef).toUpperCase() + " §6✦\n"
              + "§f§l" + valeur + " $FB  " + tendance + "\n"
              + courbe + "\n"
-             + stats + "\n"
+             + stats + evenement + "\n"
              + "§8Marché mis à jour : " + heure + " §8— §7/market\n"
              + "§8§m                              ";
     }

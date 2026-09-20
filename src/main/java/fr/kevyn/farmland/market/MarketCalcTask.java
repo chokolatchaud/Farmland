@@ -41,6 +41,8 @@ public class MarketCalcTask {
         market.setMoneyforcoefPecheur(recalculer(market.getMoneyforcoefPecheur(), ventes.getOrDefault("Pecheur", 0)));
         market.setMoneyforcoefTueur(recalculer(market.getMoneyforcoefTueur(), ventes.getOrDefault("Tueur", 0)));
 
+        genererEvenementMarche(market, ventes);
+
         MarketCalc.resetVentes();
         MarketSave.saveMarket(plugin, market);
         fr.kevyn.farmland.market.MarketHolograms.updateAll(plugin);
@@ -55,6 +57,60 @@ public class MarketCalcTask {
             + " Agriculteur:" + market.getMoneyforcoefAgriculteur()
             + " Pecheur:" + market.getMoneyforcoefPecheur()
             + " Tueur:" + market.getMoneyforcoefTueur());
+    }
+
+    private static void genererEvenementMarche(Market market, Map<String, Integer> ventes) {
+        String metierSurproduction = null;
+        int maxVentes = SEUIL_SURPRODUCTION;
+
+        String[] metiers = {
+            MarketCalc.MINEUR, MarketCalc.FARMEUR, MarketCalc.AGRICULTEUR,
+            MarketCalc.PECHEUR, MarketCalc.TUEUR
+        };
+
+        for (String metier : metiers) {
+            int nombreDeVentes = ventes.getOrDefault(metier, 0);
+            if (nombreDeVentes > maxVentes) {
+                maxVentes = nombreDeVentes;
+                metierSurproduction = metier;
+            }
+        }
+
+        if (metierSurproduction != null) {
+            market.setLastEventMetier(metierSurproduction);
+            market.setLastEventMessage(MarketFlavor.getMessage(metierSurproduction, false));
+
+            Bukkit.broadcastMessage("");
+            Bukkit.broadcastMessage("§6§l📊 Bulletin économique");
+            Bukkit.broadcastMessage("§c▼ " + metierSurproduction + " : surproduction");
+            Bukkit.broadcastMessage("§7" + market.getLastEventMessage());
+            Bukkit.broadcastMessage("");
+            return;
+        }
+
+        String metierRecuperation = null;
+        for (String metier : metiers) {
+            int nombreDeVentes = ventes.getOrDefault(metier, 0);
+            if (nombreDeVentes < SEUIL_RECUPERATION) {
+                metierRecuperation = metier;
+                break;
+            }
+        }
+
+        if (metierRecuperation != null) {
+            market.setLastEventMetier(metierRecuperation);
+            market.setLastEventMessage(MarketFlavor.getMessage(metierRecuperation, true));
+
+            Bukkit.broadcastMessage("");
+            Bukkit.broadcastMessage("§6§l📊 Bulletin économique");
+            Bukkit.broadcastMessage("§a▲ " + metierRecuperation + " : le marché se redresse");
+            Bukkit.broadcastMessage("§7" + market.getLastEventMessage());
+            Bukkit.broadcastMessage("");
+            return;
+        }
+
+        market.setLastEventMetier("");
+        market.setLastEventMessage("");
     }
 
     private static int recalculer(int coefficientActuel, int nombreDeVentes) {
