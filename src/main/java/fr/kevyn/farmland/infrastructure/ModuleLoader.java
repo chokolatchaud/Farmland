@@ -3,6 +3,7 @@ package fr.kevyn.farmland.infrastructure;
 import org.bukkit.Bukkit;
 
 import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.modules.GameModule;
 import fr.kevyn.farmland.modules.ModerationModule;
 import fr.kevyn.farmland.modules.MetierModule;
 import fr.kevyn.farmland.modules.PlotModule;
@@ -25,6 +26,7 @@ public final class ModuleLoader {
             new ModerationModule(plugin).register();
             new PlotModule(plugin).register();
             new SaveModule(plugin).register();
+            new GameModule(plugin).register();
             new SecureWorldEditModule(plugin).register();
             new WebApiModule(plugin).register();
             new MetierModule(plugin).register();
