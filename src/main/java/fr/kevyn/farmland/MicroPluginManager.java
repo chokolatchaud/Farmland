@@ -46,13 +46,12 @@ import java.util.Collection;
 public class MicroPluginManager {
 
     public static void moduleGame(FarmlandMain plugin) {
-    	
-    	int timecalculateMarket = 20 *60 *60 *24 * 1; //1 jour
-    	int timeDonateMoneyStructure = 20 * 60 * 30; //30 minutes
+
+        int timecalculateMarket = 20 *60 *60 *24 * 1; //1 jour
+        int timeDonateMoneyStructure = 20 * 60 * 30; //30 minutes
 
         GameCommands gameCommands = new GameCommands();
 
-        //erer
         plugin.getCommand("pay").setExecutor(gameCommands);
         plugin.getCommand("money").setExecutor(gameCommands);
         plugin.getCommand("msgf").setExecutor(gameCommands);
@@ -68,7 +67,6 @@ public class MicroPluginManager {
         plugin.getCommand("bag").setExecutor(new BagCommands());
         plugin.getCommand("classement").setExecutor(new fr.kevyn.farmland.menufarm.ClassementCommand());
         plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.menufarm.MenuListenerFarm(), plugin);
-
 
         TpaCommand tpaCommand = new TpaCommand(plugin);
         plugin.getCommand("tpa").setExecutor(tpaCommand);
@@ -89,7 +87,6 @@ public class MicroPluginManager {
         plugin.getCommand("marketadmin").setExecutor(new fr.kevyn.farmland.market.MarketAdminCommands(plugin));
         plugin.getCommand("market").setExecutor(new fr.kevyn.farmland.market.MarketCommand());
 
-
         // autosave des joueurs toutes les 5 minutes (evite la perte de session si crash)
         Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             try {
@@ -107,7 +104,7 @@ public class MicroPluginManager {
         } else {
             plugin.getLogger().warning("[Vote] NuVotifier non trouvé — les votes ne donneront pas de récompense");
         }
-        
+
         plugin.getServer().getPluginManager().registerEvents(new ChatListener(), plugin);
 
         // tab toutes les 10 secondes
@@ -142,7 +139,6 @@ public class MicroPluginManager {
             fr.kevyn.farmland.menufarm.LeaderboardHolograms.updateAll(plugin), 120L, 20L * 60);
 
         plugin.getCommand("classementadmin").setExecutor(new fr.kevyn.farmland.menufarm.ClassementAdminCommands(plugin));
-
 
         try {
             plugin.getCommand("raceadmin").setExecutor(new RaceAdminCommands(plugin));
@@ -221,15 +217,12 @@ public class MicroPluginManager {
                 Collection<? extends Player> players = Bukkit.getOnlinePlayers();
                 if (players.isEmpty()) {
                     plugin.getLogger().info("Sauvegarde non faite, aucun joueur connecté");
-                    
+
                 } else {
                     Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 
-                       
-
-                        
                     });
-                    
+
                     plugin.getLogger().info("Sauvegarde réalisée pour " + players.size() + " joueurs");
                 }
             }, 6000L, 6000L);
@@ -255,8 +248,6 @@ public class MicroPluginManager {
             plugin.getLogger().warning("PlaceholderAPI non trouvé ! Les placeholders joueurs ne fonctionneront pas.");
         }
     }
-    
-    
 
     public static void moduleWebApi(FarmlandMain plugin) {
         if (!plugin.getConfig().getBoolean("webapi.enabled", false)) {
@@ -269,7 +260,6 @@ public class MicroPluginManager {
             long ticks  = plugin.getConfig().getLong("webapi.push_interval_seconds", 30L) * 20L;
 
             plugin.initWebApi(base, key);
-
 
             // push des sites de vote (une seule source de verite : le config.yml du plugin)
             plugin.getWebApi().pushVoteSites(
@@ -294,31 +284,31 @@ public class MicroPluginManager {
             e.printStackTrace();
         }
     }
-    
+
     public static void modulemetier(FarmlandMain plugin) {
-    	// charge le dernier market sauvegarde, ou demarre a 100 (prix de base) si aucun historique
-    	fr.kevyn.farmland.market.Market marketSauvegarde = fr.kevyn.farmland.save.MarketSave.loadMarket(plugin);
-    	if (marketSauvegarde != null) {
-    		fr.kevyn.farmland.market.MarketHolder.set(marketSauvegarde);
-    	}
-    	fr.kevyn.farmland.market.MarketCalcTask.demarrer(plugin);
+        // charge le dernier market sauvegarde, ou demarre a 100 (prix de base) si aucun historique
+        fr.kevyn.farmland.market.Market marketSauvegarde = fr.kevyn.farmland.save.MarketSave.loadMarket(plugin);
+        if (marketSauvegarde != null) {
+            fr.kevyn.farmland.market.MarketHolder.set(marketSauvegarde);
+        }
+        fr.kevyn.farmland.market.MarketCalcTask.demarrer(plugin);
 
-    	plugin.getServer().getPluginManager().registerEvents(new EventMineSpawn(), plugin);
-    	plugin.getServer().getPluginManager().registerEvents(new HarvestFarmEvent(), plugin);
-    	plugin.getCommand("houe").setExecutor(new FarmCommands());
-    	plugin.getCommand("pioche").setExecutor(new MineCommands());
-    	plugin.getCommand("peche").setExecutor(new FishingCommands());
-    	plugin.getServer().getPluginManager().registerEvents(new EventPeche(), plugin);
-    	plugin.getServer().getPluginManager().registerEvents(new KillEventAgriculteur(), plugin);
-    	plugin.getServer().getPluginManager().registerEvents(new KillEventTueur(), plugin);
-    	plugin.getCommand("epee").setExecutor(new épeeCommands());
-    	plugin.getCommand("hache").setExecutor(new fr.kevyn.farmland.agriculteur.HacheCommands());
+        plugin.getServer().getPluginManager().registerEvents(new EventMineSpawn(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new HarvestFarmEvent(), plugin);
+        plugin.getCommand("houe").setExecutor(new FarmCommands());
+        plugin.getCommand("pioche").setExecutor(new MineCommands());
+        plugin.getCommand("peche").setExecutor(new FishingCommands());
+        plugin.getServer().getPluginManager().registerEvents(new EventPeche(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new KillEventAgriculteur(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new KillEventTueur(), plugin);
+        plugin.getCommand("epee").setExecutor(new épeeCommands());
+        plugin.getCommand("hache").setExecutor(new fr.kevyn.farmland.agriculteur.HacheCommands());
 
-    	plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.Farming.BlockFertilizeListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.Farming.BlockFertilizeListener(), plugin);
 
-    	plugin.getLogger().info("[Metier] Module Metier activé");
-    	messagediscord.sendmessage("Module Metier bien lancé ","statut");
-        
+        plugin.getLogger().info("[Metier] Module Metier activé");
+        messagediscord.sendmessage("Module Metier bien lancé ","statut");
+
     }
 
     public static void loadModules(FarmlandMain plugin) {
