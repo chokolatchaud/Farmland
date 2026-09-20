@@ -1,5 +1,7 @@
 package fr.kevyn.farmland.playerserver;
 
+import com.google.gson.annotations.SerializedName;
+
 import fr.kevyn.farmland.utils.BanData;
 import fr.kevyn.farmland.utils.JobType;
 import fr.kevyn.farmland.utils.ToolType;
@@ -17,7 +19,10 @@ public class PlayerServer {
 
     // -- Identité du joueur-- //
     UUID uuid;
+
+    @SerializedName(value = "name", alternate = {"Name"})
     String name;
+
     String grade;
     Boolean lastjoin;
     final BanData banData = new BanData();
@@ -29,6 +34,8 @@ public class PlayerServer {
     int upgrade;
     int cobblestonegeneratorlevel = 1;
     long weTimeExpiry;
+
+    @SerializedName(value = "plotData", alternate = {"plotdata"})
     PlotData plotData;
 
     // -- Outils & Jetons -- //
