@@ -31,7 +31,10 @@ import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.plot.PlotData;
 
-public class WorldEditSecureListener implements Listener {
+/**
+ * Contrôle l'utilisation de WorldEdit/FAWE dans les plots.
+ */
+public final class WorldEditSecureListener implements Listener {
 
     private static final Set<String> BANNED_BLOCKS = new HashSet<>(Arrays.asList(
         "tnt", "bedrock", "barrier", "command_block", "chain_command_block",
