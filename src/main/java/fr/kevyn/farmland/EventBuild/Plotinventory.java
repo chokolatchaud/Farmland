@@ -36,7 +36,7 @@ import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 import fr.kevyn.plot.Plot;
 
 public class Plotinventory implements Listener {
-    private final Map<UUID, Integer> playerPages = new HashMap<>();
+    private final Map<UUID, Integer> playerPageById = new HashMap<>();
     private final FarmlandMain plugin;
 
     public Plotinventory(FarmlandMain plugin) {
@@ -48,68 +48,68 @@ public class Plotinventory implements Listener {
         if (!(event.getWhoClicked() instanceof Player)) return;
         Player player = (Player) event.getWhoClicked();
 
-        GameMenu gamemenu = null;
+        GameMenu gameMenu = null;
         for (GameMenu g : GameMenuHashMap.getInstance().getMenulist()) {
-            if (event.getInventory().equals(g.getInventory())) { gamemenu = g; break; }
+            if (event.getInventory().equals(g.getInventory())) { gameMenu = g; break; }
         }
-        if (gamemenu == null) return;
+        if (gameMenu == null) return;
         event.setCancelled(true);
 
-        ItemStack clicked = event.getCurrentItem();
-        if (clicked == null || clicked.getType() == Material.AIR) return;
+        ItemStack clickedItem = event.getCurrentItem();
+        if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
 
         // ── PLOTVISIT : têtes de joueurs ──────────────────────────────────────
-        if (gamemenu.getTypemenu() == TypeMenu.PLOTVISIT && clicked.getType() == Material.PLAYER_HEAD) {
-            if (!(clicked.getItemMeta() instanceof SkullMeta)) return;
-            SkullMeta meta = (SkullMeta) clicked.getItemMeta();
+        if (gameMenu.getTypeMenu() == TypeMenu.PLOTVISIT && clickedItem.getType() == Material.PLAYER_HEAD) {
+            if (!(clickedItem.getItemMeta() instanceof SkullMeta)) return;
+            SkullMeta meta = (SkullMeta) clickedItem.getItemMeta();
             OfflinePlayer owning = meta.getOwningPlayer();
             if (owning == null) { player.sendMessage(MessageColor.RED.apply("Erreur : propriétaire introuvable !")); return; }
 
-            PlayerServer ps1 = PlayerserverHashMap.getInstance().getplayerHaspMaps(owning.getUniqueId());
-            if (ps1 == null || ps1.getPlotdata() == null) { player.sendMessage(MessageColor.RED.apply("Erreur : plot introuvable !")); return; }
-            if (ps1.getPlotdata().getPrivateplot()) { player.sendMessage(MessageColor.RED.apply("Ce plot est privé")); return; }
+            PlayerServer targetServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(owning.getUniqueId());
+            if (targetServer == null || targetServer.getPlotdata() == null) { player.sendMessage(MessageColor.RED.apply("Erreur : plot introuvable !")); return; }
+            if (targetServer.getPlotdata().getPrivateplot()) { player.sendMessage(MessageColor.RED.apply("Ce plot est privé")); return; }
 
-            String plotName = ps1.getPlotdata().getPlotProprety();
-            World plotWorld = Plot.getWorldforname(plotName);
-            if (plotWorld == null) {
+            String targetPlotName = targetServer.getPlotdata().getPlotProprety();
+            World targetPlotWorld = Plot.getWorldforname(targetPlotName);
+            if (targetPlotWorld == null) {
                 player.sendMessage(MessageColor.GRAY.apply("Chargement du plot en cours..."));
-                new Plot(UUID.fromString(plotName), plugin);
+                new Plot(UUID.fromString(targetPlotName), plugin);
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    World loaded = Plot.getWorldforname(plotName);
+                    World loaded = Plot.getWorldforname(targetPlotName);
                     if (loaded == null) { player.sendMessage(MessageColor.RED.apply("Impossible de charger le plot !")); return; }
-                    teleportToPlot(player, ps1, loaded);
+                    teleportToPlot(player, targetServer, loaded);
                 }, 60L);
                 return;
             }
-            teleportToPlot(player, ps1, plotWorld);
+            teleportToPlot(player, targetServer, targetPlotWorld);
             return;
         }
 
         // ── COSMETICS : achat/equipement d'un chapeau ─────────────────────────
-        if (gamemenu.getTypemenu() == TypeMenu.COSMETICS) {
+        if (gameMenu.getTypeMenu() == TypeMenu.COSMETICS) {
             int slot = event.getSlot();
             if (slot < 0 || slot >= CosmeticShop.COSMETICS.size()) return;
 
             CosmeticShop.Cosmetic cosmetic =
                     CosmeticShop.COSMETICS.get(slot);
 
-            PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
-            if (ps == null) return;
+            PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
+            if (playerServer == null) return;
 
-            if (ps.getCosmeticsOwned().contains(cosmetic.id)) {
+            if (playerServer.getCosmeticsOwned().contains(cosmetic.id)) {
                 player.getInventory().setHelmet(cosmetic.createItem());
                 player.sendMessage(MessageColor.GREEN.apply("✔ " + cosmetic.name + " équipé !"));
                 player.closeInventory();
                 return;
             }
 
-            if (ps.getMoney() < cosmetic.price) {
+            if (playerServer.getMoney() < cosmetic.price) {
                 player.sendMessage(MessageColor.RED.apply("Tu n'as pas assez d'argent (" + cosmetic.price + " $FB)"));
                 return;
             }
 
-            ps.setMoney(ps.getMoney() - cosmetic.price);
-            ps.getCosmeticsOwned().add(cosmetic.id);
+            playerServer.setMoney(playerServer.getMoney() - cosmetic.price);
+            playerServer.getCosmeticsOwned().add(cosmetic.id);
             player.getInventory().setHelmet(cosmetic.createItem());
             player.sendMessage(MessageColor.GREEN.apply("✔ " + cosmetic.name + " acheté et équipé ! (-" + cosmetic.price + " $FB)"));
             player.closeInventory();
@@ -117,17 +117,17 @@ public class Plotinventory implements Listener {
         }
 
         // ── CUSTOM ITEMS ──────────────────────────────────────────────────────
-        CustomItemType customType = CustomItemType.fromItem(clicked);
-        if (customType == null) return;
+        CustomItemType customItemType = CustomItemType.fromItem(clickedItem);
+        if (customItemType == null) return;
 
         // ── PLOTUPGRADE ───────────────────────────────────────────────────────
-        if (gamemenu.getTypemenu() == TypeMenu.PLOTUPGRADE) {
-            if (customType == CustomItemType.UPGRADE_LOCKED) {
-                PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
-                if (ps == null) { player.kickPlayer("erreur 23"); return; }
-                if (ps.getPlotdata() == null) { player.sendMessage(MessageColor.RED.apply("Erreur : plot introuvable !")); return; }
+        if (gameMenu.getTypeMenu() == TypeMenu.PLOTUPGRADE) {
+            if (customItemType == CustomItemType.UPGRADE_LOCKED) {
+                PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
+                if (playerServer == null) { player.kickPlayer("erreur 23"); return; }
+                if (playerServer.getPlotdata() == null) { player.sendMessage(MessageColor.RED.apply("Erreur : plot introuvable !")); return; }
 
-                int rank = ps.getUpgrade();
+                int rank = playerServer.getUpgrade();
 
                 // Le systeme est infini : plus de "tu as tout achete", juste un palier suivant
                 // Le slot clique doit correspondre au PROCHAIN upgrade DANS LE PALIER ACTUEL
@@ -141,11 +141,11 @@ public class Plotinventory implements Listener {
 
                 // Prix récupéré côté serveur (rang absolu, jamais depuis le nom de l'item)
                 int cost = MenuPlotUpgrade.getCost(rank);
-                if (ps.getMoney() < cost) { player.sendMessage(MessageColor.RED.apply("Tu n'as pas assez d'argent (" + cost + " $FB)")); return; }
+                if (playerServer.getMoney() < cost) { player.sendMessage(MessageColor.RED.apply("Tu n'as pas assez d'argent (" + cost + " $FB)")); return; }
 
-                ps.setMoney(ps.getMoney() - cost);
-                ps.setUpgrade(ps.getUpgrade() + 1);
-                ps.getPlotdata().setWorldborder(ps.getPlotdata().getWorldborder() + 5);
+                playerServer.setMoney(playerServer.getMoney() - cost);
+                playerServer.setUpgrade(playerServer.getUpgrade() + 1);
+                playerServer.getPlotdata().setWorldborder(playerServer.getPlotdata().getWorldborder() + 5);
                 player.sendMessage(MessageColor.GREEN.apply("Upgrade acheté ! (-" + cost + " $FB, +5 de bordure)"));
 
                 // nouveau palier atteint : prevenir le joueur que les prix montent
@@ -158,94 +158,94 @@ public class Plotinventory implements Listener {
         }
 
         // ── PLOTCONFIG ────────────────────────────────────────────────────────
-        else if (gamemenu.getTypemenu() == TypeMenu.PLOTCONFIG) {
-            PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
-            if (ps == null) { player.kickPlayer("erreur 23"); return; }
+        else if (gameMenu.getTypeMenu() == TypeMenu.PLOTCONFIG) {
+            PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
+            if (playerServer == null) { player.kickPlayer("erreur 23"); return; }
 
-            if (customType == CustomItemType.CLOCK_DAYNIGHT) {
-                if (ps.getPlotdata().getMeteoTime().equalsIgnoreCase("day")) {
-                    ps.getPlotdata().setMeteoTime("night", Bukkit.getWorld(ps.getPlotdata().getNameWorld()));
+            if (customItemType == CustomItemType.CLOCK_DAYNIGHT) {
+                if (playerServer.getPlotdata().getMeteoTime().equalsIgnoreCase("day")) {
+                    playerServer.getPlotdata().setMeteoTime("night", Bukkit.getWorld(playerServer.getPlotdata().getNameWorld()));
                     player.sendMessage(MessageColor.DARK_BLUE.apply("La nuit approche"));
                 } else {
-                    ps.getPlotdata().setMeteoTime("day", Bukkit.getWorld(ps.getPlotdata().getNameWorld()));
+                    playerServer.getPlotdata().setMeteoTime("day", Bukkit.getWorld(playerServer.getPlotdata().getNameWorld()));
                     player.sendMessage(MessageColor.YELLOW.apply("Le jour approche"));
                 }
             }
-            if (customType == CustomItemType.RAIN_TOGGLE) {
-                if (ps.getPlotdata().getMeteoRain().equalsIgnoreCase("weatherclear")) {
-                    ps.getPlotdata().setMeteoRain("weatherain", Bukkit.getWorld(ps.getPlotdata().getNameWorld()));
+            if (customItemType == CustomItemType.RAIN_TOGGLE) {
+                if (playerServer.getPlotdata().getMeteoRain().equalsIgnoreCase("weatherclear")) {
+                    playerServer.getPlotdata().setMeteoRain("weatherain", Bukkit.getWorld(playerServer.getPlotdata().getNameWorld()));
                     player.sendMessage(MessageColor.BLUE.apply("La pluie approche"));
                 } else {
-                    ps.getPlotdata().setMeteoRain("weatherclear", Bukkit.getWorld(ps.getPlotdata().getNameWorld()));
+                    playerServer.getPlotdata().setMeteoRain("weatherclear", Bukkit.getWorld(playerServer.getPlotdata().getNameWorld()));
                     player.sendMessage(MessageColor.BLUE.apply("La pluie s'éloigne"));
                 }
             }
-            if (customType == CustomItemType.TIME_FREEZE) {
-            	World plot = Bukkit.getWorld(ps.getPlotdata().getNameWorld());
-                if (ps.getPlotdata().getMeteoActive().equalsIgnoreCase("minecraftActive")) {
-                    ps.getPlotdata().setMeteoActive("minecraftDeactive", plot);
+            if (customItemType == CustomItemType.TIME_FREEZE) {
+                World plot = Bukkit.getWorld(playerServer.getPlotdata().getNameWorld());
+                if (playerServer.getPlotdata().getMeteoActive().equalsIgnoreCase("minecraftActive")) {
+                    playerServer.getPlotdata().setMeteoActive("minecraftDeactive", plot);
                     plot.setGameRule(GameRules.ADVANCE_TIME, true);
                     player.sendMessage(MessageColor.GOLD.apply("La météo se met à bouger"));
                 } else {
-                    ps.getPlotdata().setMeteoActive("minecraftActive", plot);
+                    playerServer.getPlotdata().setMeteoActive("minecraftActive", plot);
                     plot.setGameRule(GameRules.ADVANCE_TIME, false);
                     player.sendMessage(MessageColor.GOLD.apply("La météo se fige"));
                 }
             }
-            if (customType == CustomItemType.WATERLAVASELECTION) {
-                ps.getPlotdata().setwaterlava(!ps.getPlotdata().getwaterlava());
+            if (customItemType == CustomItemType.WATERLAVASELECTION) {
+                playerServer.getPlotdata().setwaterlava(!playerServer.getPlotdata().getwaterlava());
                 player.sendMessage(MessageColor.YELLOW.apply("Option eau/lave modifiée"));
-                player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", ps));
+                player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", playerServer));
             }
-            if (customType == CustomItemType.DOOR_PRIVACY) {
-                ps.getPlotdata().setPrivateplot(!ps.getPlotdata().getPrivateplot());
+            if (customItemType == CustomItemType.DOOR_PRIVACY) {
+                playerServer.getPlotdata().setPrivateplot(!playerServer.getPlotdata().getPrivateplot());
                 player.sendMessage(MessageColor.YELLOW.apply("Visibilité du plot modifiée"));
-                player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", ps));
+                player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", playerServer));
             }
         }
 
         // ── PLOTVISIT navigation ──────────────────────────────────────────────
-        else if (gamemenu.getTypemenu() == TypeMenu.PLOTVISIT) {
-            if (customType == CustomItemType.ARROW_NEXT) {
-                int p = playerPages.getOrDefault(player.getUniqueId(), 1);
-                playerPages.put(player.getUniqueId(), p + 1);
-                Inventory newMenu = MenuPlotVisit.createmenuplotvisit("Visite", p + 1);
-                if (newMenu != null) player.openInventory(newMenu);
-            } else if (customType == CustomItemType.ARROW_PREV) {
-                int p = playerPages.getOrDefault(player.getUniqueId(), 1);
+        else if (gameMenu.getTypeMenu() == TypeMenu.PLOTVISIT) {
+            if (customItemType == CustomItemType.ARROW_NEXT) {
+                int p = playerPageById.getOrDefault(player.getUniqueId(), 1);
+                playerPageById.put(player.getUniqueId(), p + 1);
+                Inventory newInventory = MenuPlotVisit.createmenuplotvisit("Visite", p + 1);
+                if (newInventory != null) player.openInventory(newInventory);
+            } else if (customItemType == CustomItemType.ARROW_PREV) {
+                int p = playerPageById.getOrDefault(player.getUniqueId(), 1);
                 if (p > 1) {
-                    playerPages.put(player.getUniqueId(), p - 1);
-                    Inventory newMenu = MenuPlotVisit.createmenuplotvisit("Visite", p - 1);
-                    if (newMenu != null) player.openInventory(newMenu);
+                    playerPageById.put(player.getUniqueId(), p - 1);
+                    Inventory newInventory = MenuPlotVisit.createmenuplotvisit("Visite", p - 1);
+                    if (newInventory != null) player.openInventory(newInventory);
                 }
             }
         }
     }
 
     // ── TP vers un plot avec position sûre ───────────────────────────────────
-    private void teleportToPlot(Player player, PlayerServer ps1, World plotWorld) {
-        int spawnX = ps1.getPlotdata().getLocationspawnX();
-        int spawnY = ps1.getPlotdata().getLocationspawnY();
-        int spawnZ = ps1.getPlotdata().getLocationspawnZ();
+    private void teleportToPlot(Player player, PlayerServer targetServer, World targetPlotWorld) {
+        int spawnX = targetServer.getPlotdata().getLocationspawnX();
+        int spawnY = targetServer.getPlotdata().getLocationspawnY();
+        int spawnZ = targetServer.getPlotdata().getLocationspawnZ();
 
         int tx = (spawnX == 0 && spawnY == 0 && spawnZ == 0) ? 0 : spawnX;
         int tz = (spawnX == 0 && spawnY == 0 && spawnZ == 0) ? 0 : spawnZ;
         int ty = (spawnX == 0 && spawnY == 0 && spawnZ == 0) ? 64 : spawnY;
 
         plugin.getLogger().info("[DEBUG-TP] Spawn sauvegardé: " + spawnX + "/" + spawnY + "/" + spawnZ);
-        plugin.getLogger().info("[DEBUG-TP] Target: " + tx + "/" + ty + "/" + tz + " monde: " + plotWorld.getName());
+        plugin.getLogger().info("[DEBUG-TP] Target: " + tx + "/" + ty + "/" + tz + " monde: " + targetPlotWorld.getName());
 
-        plotWorld.loadChunk(tx >> 4, tz >> 4, true);
+        targetPlotWorld.loadChunk(tx >> 4, tz >> 4, true);
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            Location start = new Location(plotWorld, tx + 0.5, ty, tz + 0.5);
-            int highY = plotWorld.getHighestBlockYAt(tx, tz);
+            Location start = new Location(targetPlotWorld, tx + 0.5, ty, tz + 0.5);
+            int highY = targetPlotWorld.getHighestBlockYAt(tx, tz);
             plugin.getLogger().info("[DEBUG-TP] highY=" + highY + " startY=" + ty);
             Location safe = findSafeLocation(start);
             plugin.getLogger().info("[DEBUG-TP] Position safe finale: " + safe.getBlockX() + "/" + safe.getBlockY() + "/" + safe.getBlockZ());
             player.teleport(safe);
             player.closeInventory();
-            player.sendMessage(MessageColor.GREEN.apply("Téléportation vers le plot de " + ps1.getName()));
+            player.sendMessage(MessageColor.GREEN.apply("Téléportation vers le plot de " + targetServer.getName()));
         }, 10L);
     }
 
