@@ -1,5 +1,7 @@
 package fr.kevyn.farmland.EventBuild;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Material;
@@ -30,61 +32,72 @@ import fr.kevyn.farmland.gameregion.GameRegionHashMap;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
-public class EventBuildAndUse implements Listener {
+/**
+ * Centralise les règles de construction, destruction et utilisation du terrain.
+ */
+public final class EventBuildAndUse implements Listener {
+
+    private static final Set<UUID> COMPTAGE_ERREUR_PREVENU = new HashSet<>();
+
     private final FarmlandMain plugin;
 
     public EventBuildAndUse(FarmlandMain plugin) {
         this.plugin = plugin;
-
     }
 
     @EventHandler
     public void onBoatPlace(PlayerInteractEvent event) {
-        // on evite de traiter 2 fois (main principale + main secondaire)
-        if (event.getHand() != EquipmentSlot.HAND) return;
-
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (event.getHand() != EquipmentSlot.HAND
+                || event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
 
         ItemStack item = event.getItem();
-        if (item == null || !isBoat(item.getType())) return;
+        if (item == null || !isBoat(item.getType())) {
+            return;
+        }
 
         Player player = event.getPlayer();
-        Block bloc = event.getClickedBlock();
-        GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
+        Block block = event.getClickedBlock();
+        GameRegion region = getRegion(block);
 
-        if (!canBuild(player, gameregion, bloc, false, null)) {
+        if (!canBuild(player, region, block, false, null)) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onArmorStandPlace(PlayerInteractEvent event) {
-        if (event.getHand() != EquipmentSlot.HAND) return;
-
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
+        if (event.getHand() != EquipmentSlot.HAND
+                || event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+            return;
+        }
 
         ItemStack item = event.getItem();
-        if (item == null || item.getType() != Material.ARMOR_STAND) return;
+        if (item == null || item.getType() != Material.ARMOR_STAND) {
+            return;
+        }
 
         Player player = event.getPlayer();
-        Block bloc = event.getClickedBlock();
-        GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
+        Block block = event.getClickedBlock();
+        GameRegion region = getRegion(block);
 
-        if (!canBuild(player, gameregion, bloc, false, null)) {
+        if (!canBuild(player, region, block, false, null)) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onHangingPlace(HangingPlaceEvent event) {
-        // couvre cadres, cadres lumineux, tableaux et noeuds de laisse en un seul handler
         Player player = event.getPlayer();
-        if (player == null) return; // securite : pose non-joueur (ex: dispenser), rare
+        if (player == null) {
+            return;
+        }
 
-        Block bloc = event.getBlock();
-        GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
+        Block block = event.getBlock();
+        GameRegion region = getRegion(block);
 
-        if (!canBuild(player, gameregion, bloc, false, null)) {
+        if (!canBuild(player, region, block, false, null)) {
             event.setCancelled(true);
         }
     }
@@ -92,209 +105,226 @@ public class EventBuildAndUse implements Listener {
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        Block bloc = event.getBlock();
-        GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
-        if(!canBuild(player, gameregion, bloc, false, null)) {
+        Block block = event.getBlock();
+        GameRegion region = getRegion(block);
+
+        if (!canBuild(player, region, block, false, null)) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onSpawnMob(CreatureSpawnEvent event) {
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL)
-                 {
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) {
             return;
         }
+
         event.setCancelled(true);
     }
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        Block bloc = event.getBlock();
-        GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
+        Block block = event.getBlock();
+        GameRegion region = getRegion(block);
 
-        if(!canBuild(player, gameregion, bloc, true,null)) {
+        if (!canBuild(player, region, block, true, null)) {
             event.setCancelled(true);
         }
-
     }
+
     @EventHandler
     public void onTntprime(TNTPrimeEvent event) {
-
         event.setCancelled(true);
     }
 
     @EventHandler
     public void onExplode(EntityExplodeEvent event) {
-        if (event.getEntity().getType() == EntityType.TNT) {
-            event.blockList().clear(); // aucun bloc detruit
-            event.setCancelled(true);  // aucun degat
+        if (event.getEntity().getType() != EntityType.TNT) {
+            return;
         }
+
+        event.blockList().clear();
+        event.setCancelled(true);
     }
 
     @EventHandler
     public void onBucketEmpty(PlayerBucketEmptyEvent event) {
         Player player = event.getPlayer();
-        Block bloc = event.getBlock();
+        Block block = event.getBlock();
         Material bucket = event.getBucket();
-        GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
-        if(!canBuild(player, gameregion, bloc,false, bucket)) {
+        GameRegion region = getRegion(block);
+
+        if (!canBuild(player, region, block, false, bucket)) {
             event.setCancelled(true);
         }
-
     }
 
     @EventHandler
     public void onBucketFill(PlayerBucketFillEvent event) {
         Player player = event.getPlayer();
-        Block bloc = event.getBlock();
+        Block block = event.getBlock();
         Material bucket = event.getBucket();
-        GameRegion gameregion = GameRegionHashMap.getInstance().Blockwhatistregion(bloc);
-        if(!canBuild(player, gameregion, bloc,false, bucket)) {
+        GameRegion region = getRegion(block);
+
+        if (!canBuild(player, region, block, false, bucket)) {
             event.setCancelled(true);
         }
-
     }
 
     @EventHandler
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
-        if (event.getEntity().getShooter() instanceof Player player) {
-            GameRegion gameregion = GameRegionHashMap.getInstance().Playerwhatistregion(player);
-            if(!canBuild(player, gameregion, null,false, null)) {
-                event.setCancelled(true);
-            }
-
-        }
-    }
-
-    public boolean canBuild(Player player, GameRegion region,Block bloc, Boolean countbloc, Material bucket) {
-        if (player.hasPermission("farmland.placeblocbypass")) {
-            if (countbloc) {countBlockPlacement(player);}
-            return true;
-        }
-
-        //on verifie la permission
-        if (!player.hasPermission("farmland.placebloc")) {
-            player.sendMessage(MessageColor.RED.apply("❌ Vous n'avez pas la permission de placer/détruire des blocs."));
-            return false;
-        }
-
-        //on verfie si le bloc est autorisé
-        if (bloc != null && (
-                bloc.getType() == Material.SPAWNER
-                || bloc.getType() == Material.COMMAND_BLOCK
-                || bloc.getType() == Material.REPEATING_COMMAND_BLOCK
-                || bloc.getType() == Material.CHAIN_COMMAND_BLOCK
-                || bloc.getType() == Material.COMMAND_BLOCK_MINECART
-                || bloc.getType() == Material.STRUCTURE_BLOCK
-                || bloc.getType() == Material.STRUCTURE_VOID)) {
-            return false;
-        }
-
-        //on verifie si Region
-        if (region != null) {
-            return canBuildInRegion(player, region);
-            }
-
-        //On verifie si cest son plot ADD/TRUST
-        if(isOutsideAllowedPlot(player)) {       
-            return false;
-        }
-
-        if (!canUseWaterLava(player, bloc, bucket)) {
-            return false;
-        }
-
-        //Sinnon on fait
-        if (countbloc) {countBlockPlacement(player);}
-        return true;
-    }
-
-    public boolean canBuildInRegion(Player player, GameRegion gameregion) {
-        if (gameregion.getCanbuild()) {
-            UUID playerproprietaire = gameregion.getPropriétaire();
-
-            if (playerproprietaire == null) {
-                player.sendMessage(MessageColor.RED.apply("Cette région n'a pas de propriétaire !"));
-                return false;
-
-            }
-            if (!player.getUniqueId().equals(playerproprietaire)) {
-                 player.sendMessage(MessageColor.RED.apply("Tu n'as pas le droit ici !"));
-                return false;
-
-            }
-        } else {
-            player.sendMessage(MessageColor.RED.apply("⛔ Cette région est protégée !"));
-            return false;
-
-        }
-        return true;
-
-    }
-
-    public boolean isOutsideAllowedPlot(Player player) {
-
-        PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
-        if (ps == null || ps.getPlotdata() == null) {
-            player.sendMessage(MessageColor.RED.apply("⚠ Vos données serveur sont introuvables !"));
-            return true;
-        }
-        String currentWorld = player.getWorld().getName();
-
-        if (currentWorld.equalsIgnoreCase(ps.getPlotdata().getPlotProprety())) return false;
-        if (ps.getPlotdata().getAllplotadd().contains(currentWorld)) return false;
-        if (ps.getPlotdata().getAllplottrust().contains(currentWorld)) return false;
-
-        player.sendMessage(MessageColor.RED.apply("⛔ Vous ne pouvez pas modifier ce terrain !"));
-        return true;
-    }
-
-    // joueurs déjà prévenus d'une erreur de comptage (évite le spam à chaque bloc)
-    private static final java.util.Set<java.util.UUID> comptageErreurPrevenu = new java.util.HashSet<>();
-
-    public void countBlockPlacement(Player player) {
-        PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
-        if (ps == null) {
-            if (!comptageErreurPrevenu.contains(player.getUniqueId())) {
-                comptageErreurPrevenu.add(player.getUniqueId());
-                player.sendMessage(MessageColor.RED.apply("⚠ Erreur dans le comptage de vos blocs."));
-                messagediscord.sendmessage("Erreur comptage blocs pour " + player.getName(), "statut");
-            }
+        if (!(event.getEntity().getShooter() instanceof Player player)) {
             return;
         }
 
-        ps.setBlocpose(ps.getBlocpose() + 1);
-        ps.setBlocposetotal(ps.getBlocposetotal() + 1);
+        GameRegion region = GameRegionHashMap.getInstance().Playerwhatistregion(player);
+        if (!canBuild(player, region, null, false, null)) {
+            event.setCancelled(true);
+        }
+    }
 
-        if (ps.getBlocpose() >= 150) {
-            ps.setBlocpose(ps.getBlocpose() - 150);
-            ps.setMoney(ps.getMoney() + 25);
+    /**
+     * Vérifie si un joueur est autorisé à construire ou utiliser un bloc.
+     */
+    public boolean canBuild(Player player, GameRegion region, Block block, boolean countBlock, Material bucket) {
+        if (player.hasPermission("farmland.placeblocbypass")) {
+            if (countBlock) {
+                countBlockPlacement(player);
+            }
+            return true;
+        }
+
+        if (!player.hasPermission("farmland.placebloc")) {
+            player.sendMessage(MessageColor.RED.apply(
+                    "❌ Vous n'avez pas la permission de placer/détruire des blocs."
+            ));
+            return false;
+        }
+
+        if (isRestrictedBlock(block)) {
+            return false;
+        }
+
+        if (region != null) {
+            return canBuildInRegion(player, region);
+        }
+
+        if (isOutsideAllowedPlot(player)) {
+            return false;
+        }
+
+        if (!canUseWaterLava(player, block, bucket)) {
+            return false;
+        }
+
+        if (countBlock) {
+            countBlockPlacement(player);
+        }
+
+        return true;
+    }
+
+    /**
+     * Vérifie les droits de construction spécifiques à une GameRegion.
+     */
+    public boolean canBuildInRegion(Player player, GameRegion region) {
+        if (!region.getCanbuild()) {
+            player.sendMessage(MessageColor.RED.apply("⛔ Cette région est protégée !"));
+            return false;
+        }
+
+        UUID owner = region.getPropriétaire();
+        if (owner == null) {
+            player.sendMessage(MessageColor.RED.apply("Cette région n'a pas de propriétaire !"));
+            return false;
+        }
+
+        if (!player.getUniqueId().equals(owner)) {
+            player.sendMessage(MessageColor.RED.apply("Tu n'as pas le droit ici !"));
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Vérifie que le joueur se trouve sur son plot, un plot ajouté ou un plot trusted.
+     */
+    public boolean isOutsideAllowedPlot(Player player) {
+        PlayerServer playerServer = getPlayerServer(player);
+        if (playerServer == null || playerServer.getPlotdata() == null) {
+            player.sendMessage(MessageColor.RED.apply(
+                    "⚠ Vos données serveur sont introuvables !"
+            ));
+            return true;
+        }
+
+        String currentWorld = player.getWorld().getName();
+        if (currentWorld.equalsIgnoreCase(playerServer.getPlotdata().getPlotProprety())) {
+            return false;
+        }
+        if (playerServer.getPlotdata().getAllplotadd().contains(currentWorld)) {
+            return false;
+        }
+        if (playerServer.getPlotdata().getAllplottrust().contains(currentWorld)) {
+            return false;
+        }
+
+        player.sendMessage(MessageColor.RED.apply(
+                "⛔ Vous ne pouvez pas modifier ce terrain !"
+        ));
+        return true;
+    }
+
+    public void countBlockPlacement(Player player) {
+        PlayerServer playerServer = getPlayerServer(player);
+        if (playerServer == null) {
+            warnCountingError(player);
+            return;
+        }
+
+        playerServer.setBlocpose(playerServer.getBlocpose() + 1);
+        playerServer.setBlocposetotal(playerServer.getBlocposetotal() + 1);
+
+        if (playerServer.getBlocpose() >= 150) {
+            playerServer.setBlocpose(playerServer.getBlocpose() - 150);
+            playerServer.setMoney(playerServer.getMoney() + 25);
             player.sendMessage(MessageColor.AQUA.apply("+25FB pour 150 blocs placés !"));
         }
     }
 
-    public boolean canUseWaterLava(Player player, Block bloc, Material Bucket) {
-
-        if (Bucket == null) {
+    /**
+     * Vérifie les autorisations d'utilisation des seaux d'eau et de lave.
+     */
+    public boolean canUseWaterLava(Player player, Block block, Material bucket) {
+        if (bucket == null) {
             return true;
         }
-        PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
-        if (ps == null || ps.getPlotdata() == null) return false;
 
-        String currentWorld = player.getWorld().getName();
-        boolean isOwner = currentWorld.equalsIgnoreCase(ps.getPlotdata().getPlotProprety());
-        boolean isTrusted = ps.getPlotdata().getAllplottrust().contains(currentWorld) ||
-                           ps.getPlotdata().getAllplotadd().contains(currentWorld);
-
-        if (!isOwner && !isTrusted) {
-            player.sendMessage(MessageColor.RED.apply("❌ Vous ne pouvez pas utiliser de seau ici."));
+        PlayerServer playerServer = getPlayerServer(player);
+        if (playerServer == null || playerServer.getPlotdata() == null) {
             return false;
         }
 
-        if (ps.getPlotdata().getwaterlava()) {
-            player.sendMessage(MessageColor.RED.apply("&c❌ L'eau et la lave sont désactivées dans ce plot !"));
+        String currentWorld = player.getWorld().getName();
+        boolean isOwner = currentWorld.equalsIgnoreCase(
+                playerServer.getPlotdata().getPlotProprety()
+        );
+        boolean isTrusted = playerServer.getPlotdata().getAllplottrust().contains(currentWorld)
+                || playerServer.getPlotdata().getAllplotadd().contains(currentWorld);
+
+        if (!isOwner && !isTrusted) {
+            player.sendMessage(MessageColor.RED.apply(
+                    "❌ Vous ne pouvez pas utiliser de seau ici."
+            ));
+            return false;
+        }
+
+        if (playerServer.getPlotdata().getwaterlava()) {
+            player.sendMessage(MessageColor.RED.apply(
+                    "&c❌ L'eau et la lave sont désactivées dans ce plot !"
+            ));
             return false;
         }
 
@@ -305,4 +335,41 @@ public class EventBuildAndUse implements Listener {
         return type.name().endsWith("_BOAT") || type.name().endsWith("_RAFT");
     }
 
+    private GameRegion getRegion(Block block) {
+        return GameRegionHashMap.getInstance().Blockwhatistregion(block);
+    }
+
+    private PlayerServer getPlayerServer(Player player) {
+        return PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
+    }
+
+    private boolean isRestrictedBlock(Block block) {
+        if (block == null) {
+            return false;
+        }
+
+        Material type = block.getType();
+        return type == Material.SPAWNER
+                || type == Material.COMMAND_BLOCK
+                || type == Material.REPEATING_COMMAND_BLOCK
+                || type == Material.CHAIN_COMMAND_BLOCK
+                || type == Material.COMMAND_BLOCK_MINECART
+                || type == Material.STRUCTURE_BLOCK
+                || type == Material.STRUCTURE_VOID;
+    }
+
+    private void warnCountingError(Player player) {
+        UUID uuid = player.getUniqueId();
+        if (!COMPTAGE_ERREUR_PREVENU.add(uuid)) {
+            return;
+        }
+
+        player.sendMessage(MessageColor.RED.apply(
+                "⚠ Erreur dans le comptage de vos blocs."
+        ));
+        messagediscord.sendmessage(
+                "Erreur comptage blocs pour " + player.getName(),
+                "statut"
+        );
+    }
 }
