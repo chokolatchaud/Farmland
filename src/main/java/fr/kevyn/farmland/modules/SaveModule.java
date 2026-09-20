@@ -5,10 +5,12 @@ import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.Savecomands;
 
 /**
- * Commandes et sauvegarde périodique des joueurs.
+ * Enregistre les commandes liées aux sauvegardes des joueurs.
+ *
+ * La sauvegarde automatique est gérée par le module Game pour conserver
+ * une seule planification périodique.
  */
 public final class SaveModule {
-
 
     private final FarmlandMain plugin;
 
@@ -29,5 +31,4 @@ public final class SaveModule {
             e.printStackTrace();
         }
     }
-
 }
