@@ -1,7 +1,6 @@
 package fr.kevyn.farmland.modules;
 
 import discordwebhook.messagediscord;
-import fr.kevyn.farmland.EventBuild.ChatListener;
 import fr.kevyn.farmland.Farming.BlockFertilizeListener;
 import fr.kevyn.farmland.Farming.FarmCommands;
 import fr.kevyn.farmland.Farming.HarvestFarmEvent;
