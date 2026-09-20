@@ -12,6 +12,9 @@ public final class FarmlandMain extends JavaPlugin {
 
     private WebApiClient webApi;
 
+    /**
+     * Retourne le client WebAPI, lorsqu'il a été initialisé.
+     */
     public WebApiClient getWebApi() {
         return webApi;
     }
