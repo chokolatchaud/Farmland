@@ -78,6 +78,10 @@ public class PlayerSave {
         return "inconnu";
     }
 
+    private static void logVerification(JavaPlugin plugin, String message) {
+        plugin.getLogger().info("[PlayerSave] " + message);
+    }
+
     public static void verifyallPlayerSaves(JavaPlugin plugin) {
         File folder = new File(plugin.getDataFolder() + "/players");
         if (!folder.exists()){
@@ -99,7 +103,11 @@ public class PlayerSave {
                 if (stringjson.has("GsonSave")) {
                     int version = stringjson.get("GsonSave").getAsInt();
                     if (version == configymlversion) {
-                        messagediscord.sendmessage("Aucun changement sur le fichier de " + getPlayerName(stringjson) ,"statut" );
+                        if (stringjson.has("name") && !stringjson.get("name").isJsonNull()) {
+                            logVerification(plugin, "Aucun changement sur le fichier " + file.getName() + " (" + getPlayerName(stringjson) + ")");
+                        } else {
+                            logVerification(plugin, "Nom manquant pour " + file.getName() + " : sera réparé depuis le pseudo à la reconnexion");
+                        }
                     }else{
                         //correction a mettre en place sur le json
                         //Cette Correction depend de la classe CorrecteurJson
@@ -111,7 +119,7 @@ public class PlayerSave {
                     stringjson.addProperty("GsonSave",0);
                     String nouveauContenu = creategsoninstance().toJson(stringjson);
                     FileManager.savefile(file, nouveauContenu);
-                    messagediscord.sendmessage("Rajout de GSONSAVE sur le fichier de " + getPlayerName(stringjson) ,"statut" );
+                    logVerification(plugin, "GsonSave ajouté au fichier " + file.getName());
                 }
 
 
