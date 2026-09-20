@@ -103,52 +103,11 @@ public class EventBuildAndUse implements Listener {
 
     @EventHandler
     public void onSpawnMob(CreatureSpawnEvent event) {
-        fr.kevyn.plot.Plot plot = fr.kevyn.plot.Plot.Worldtoplot(event.getLocation().getWorld());
-        if (plot == null) return;
-
-        PlayerServer ownerPs = PlayerserverHashMap.getInstance().getplayerHaspMaps(plot.getUuid());
-        if (ownerPs == null || ownerPs.getPlotdata() == null) return;
-
-        // Si les mobs sont désactivés, aucun nouveau mob ne peut apparaître.
-        // Les mobs déjà présents restent intacts.
-        if (!ownerPs.getPlotdata().getSpawnMob()) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler
-    public void onMobBreed(org.bukkit.event.entity.EntityBreedEvent event) {
-        fr.kevyn.plot.Plot plot = fr.kevyn.plot.Plot.Worldtoplot(event.getEntity().getWorld());
-        if (plot == null) return;
-
-        Player breeder = event.getBreeder() instanceof Player player ? player : null;
-        if (breeder == null) return;
-
-        PlayerServer ownerPs = PlayerserverHashMap.getInstance().getplayerHaspMaps(plot.getUuid());
-        if (ownerPs == null || ownerPs.getPlotdata() == null) {
-            event.setCancelled(true);
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL)
+                 {
             return;
         }
-
-        if (!ownerPs.getPlotdata().getSpawnMob()) {
-            event.setCancelled(true);
-            return;
-        }
-
-        // Seul le propriétaire ou un joueur ADD/TRUST peut déclencher une reproduction.
-        String worldName = plot.getWorld().getName();
-        boolean autorise = breeder.getUniqueId().equals(plot.getUuid());
-
-        if (!autorise && ownerPs.getPlotdata().getAllplotadd().contains(worldName)) {
-            autorise = true;
-        }
-        if (!autorise && ownerPs.getPlotdata().getAllplottrust().contains(worldName)) {
-            autorise = true;
-        }
-
-        if (!autorise) {
-            event.setCancelled(true);
-        }
+        event.setCancelled(true);
     }
 
     @EventHandler

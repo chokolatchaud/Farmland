@@ -16,7 +16,6 @@ public class PlotData {
     int worldborder;
     int boost;
     boolean waterlava;
-    boolean spawnMob;
     String meteoActive;
     String meteoTime;
     String meteoRain;
@@ -32,7 +31,6 @@ public class PlotData {
         this.worldborder = worldborder;
         this.boost = boost;
         this.waterlava = true;
-        this.spawnMob = true;
         this.locationspawnX = 0;
         this.locationspawnY = 0;
         this.locationspawnZ = 0;
@@ -97,14 +95,6 @@ public class PlotData {
     }
     public boolean getwaterlava() {
         return waterlava;
-    }
-
-    public boolean getSpawnMob() {
-        return spawnMob;
-    }
-
-    public void setSpawnMob(boolean spawnMob) {
-        this.spawnMob = spawnMob;
     }
     public int getLocationspawnX() {
         return locationspawnX;
