@@ -24,14 +24,46 @@ public final class ModuleLoader {
 
     public static void load(FarmlandMain plugin) {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            new ModerationModule(plugin).register();
-            new PlotModule(plugin).register();
-            new PlaceholderModule(plugin).register();
-            new SaveModule(plugin).register();
-            new GameModule(plugin).register();
-            new SecureWorldEditModule(plugin).register();
-            new WebApiModule(plugin).register();
-            new MetierModule(plugin).register();
+            loadModeration(plugin);
+            loadPlot(plugin);
+            loadPlaceholder(plugin);
+            loadSave(plugin);
+            loadGame(plugin);
+            loadSecureWorldEdit(plugin);
+            loadWebApi(plugin);
+            loadMetier(plugin);
         }, LOAD_DELAY_TICKS);
+    }
+
+    private static void loadModeration(FarmlandMain plugin) {
+        new ModerationModule(plugin).register();
+    }
+
+    private static void loadPlot(FarmlandMain plugin) {
+        new PlotModule(plugin).register();
+    }
+
+    private static void loadPlaceholder(FarmlandMain plugin) {
+        new PlaceholderModule(plugin).register();
+    }
+
+    private static void loadSave(FarmlandMain plugin) {
+        new SaveModule(plugin).register();
+    }
+
+    private static void loadGame(FarmlandMain plugin) {
+        new GameModule(plugin).register();
+    }
+
+    private static void loadSecureWorldEdit(FarmlandMain plugin) {
+        new SecureWorldEditModule(plugin).register();
+    }
+
+    private static void loadWebApi(FarmlandMain plugin) {
+        new WebApiModule(plugin).register();
+    }
+
+    private static void loadMetier(FarmlandMain plugin) {
+        new MetierModule(plugin).register();
     }
 }
