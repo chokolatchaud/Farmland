@@ -231,7 +231,7 @@ public class MicroPluginManager {
         } catch (Exception e) {
             plugin.getLogger().severe("Erreur lors du chargement du module SaveCommand !");
             messagediscord.sendmessage("Module SaveCommand erreur: " + e.toString(), "statut");
-            e.printStackTrace(); 
+            e.printStackTrace();
         }
     }
 
