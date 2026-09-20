@@ -224,7 +224,7 @@ public final class Plotcommands implements CommandExecutor {
             }
 
             String plotName = getOwnPlotName(playerServer);
-            if (plotName == null) {
+            if (plotName == null || plotName.isBlank()) {
                 player.sendMessage(MessageColor.RED.apply("Erreur : nom du plot introuvable."));
                 return true;
             }
