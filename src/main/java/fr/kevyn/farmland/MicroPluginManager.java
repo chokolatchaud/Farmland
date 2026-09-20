@@ -12,8 +12,7 @@ public final class MicroPluginManager {
     }
 
     /**
-     * Méthodes conservées pour compatibilité avec le code existant.
-     * Le chargement réel est maintenant géré par les classes de modules.
+     * Compatibilité avec les anciens appels.
      */
     public static void moduleGame(FarmlandMain plugin) {
         new fr.kevyn.farmland.modules.GameModule(plugin).register();
