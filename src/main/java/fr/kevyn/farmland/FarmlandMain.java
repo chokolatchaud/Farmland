@@ -24,6 +24,10 @@ public final class FarmlandMain extends JavaPlugin {
     }
 
     @Override
+    /**
+     * Initialise le plugin dans un ordre déterministe :
+     * configuration, services de base, données joueurs, puis modules.
+     */
     public void onEnable() {
         getLogger().info("----- Plugin activé -----");
 
@@ -41,6 +45,9 @@ public final class FarmlandMain extends JavaPlugin {
         ModuleLoader.load(this);
     }
 
+    /**
+     * Charge les données joueurs avant tout module dépendant de PlayerServer.
+     */
     private boolean loadPlayerData() {
         try {
             PlayerSave.verifyallPlayerSaves(this);
