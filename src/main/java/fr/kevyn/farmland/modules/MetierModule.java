@@ -66,5 +66,4 @@ public final class MetierModule {
         plugin.getCommand("epee").setExecutor(new épeeCommands());
         plugin.getCommand("hache").setExecutor(new HacheCommands());
     }
-    }
 }
