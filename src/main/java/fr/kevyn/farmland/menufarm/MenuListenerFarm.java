@@ -1,6 +1,10 @@
 package fr.kevyn.farmland.menufarm;
 
 import org.bukkit.entity.Player;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -19,6 +23,8 @@ import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
  * plus qu'une icone visuelle) - meme disposition que MenuBag.createmenu.
  */
 public class MenuListenerFarm implements Listener {
+
+	private static final DecimalFormat PRIX_FORMAT = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.FRANCE));
 
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent event) {
@@ -45,17 +51,18 @@ public class MenuListenerFarm implements Listener {
 			return;
 		}
 
-		int prixUnitaire = MarketCalc.getPrixActuel(metier, MarketHolder.get());
-		int total = prixUnitaire * quantite;
+		double prixUnitaire = MarketCalc.getPrixActuel(metier, MarketHolder.get());
+		double totalDecimal = prixUnitaire * quantite;
+		int gain = (int) Math.round(totalDecimal);
 
 		setQuantiteJeton(ps, metier, 0);
-		ps.setMoney(ps.getMoney() + total);
+		ps.setMoney(ps.getMoney() + gain);
 
 		for (int i = 0; i < quantite; i++) {
 			MarketCalc.enregistrerVente(metier);
 		}
 
-		player.sendMessage("§aVendu : " + quantite + "x Jeton " + metier + " pour " + total + " $FB !");
+		player.sendMessage("§aVendu : " + quantite + "x Jeton " + metier + " pour " + PRIX_FORMAT.format(prixUnitaire) + " $FB/unité, soit " + gain + " $FB !");
 		player.closeInventory();
 	}
 
