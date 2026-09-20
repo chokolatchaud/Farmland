@@ -31,11 +31,13 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
  * se mettent à jour à chaque changement du marché (updateAll).
  * ATTENTION : updateAll doit être appelé depuis le thread principal (spawn d'entités).
  */
-public class MarketHolograms {
+public final class MarketHolograms {
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String HOLO_FILE = "holograms.json";
     private static final String TAG_PREFIX = "farmland_holo_";
+    private static final int SPARKLINE_POINTS = 12;
+    private static final int DISPLAY_SCAN_RADIUS = 2;
 
     /** Emplacement sauvegardé d'un hologramme */
     public static class HoloLoc {
@@ -54,10 +56,14 @@ public class MarketHolograms {
     // ===== CHARGEMENT / SAUVEGARDE DU FICHIER =====
     public static void load(JavaPlugin plugin) {
         File file = new File(plugin.getDataFolder(), HOLO_FILE);
-        if (!file.exists()) return;
+        if (!file.exists()) {
+            return;
+        }
         try (FileReader reader = new FileReader(file)) {
             Map<String, HoloLoc> data = gson.fromJson(reader, new TypeToken<Map<String, HoloLoc>>(){}.getType());
-            if (data != null) emplacements = data;
+            if (data != null) {
+                emplacements = data;
+            }
             plugin.getLogger().info("[Holo] " + emplacements.size() + " hologramme(s) de marché chargé(s)");
         } catch (IOException e) {
             plugin.getLogger().warning("[Holo] Impossible de charger " + HOLO_FILE + " : " + e.getMessage());
@@ -76,7 +82,9 @@ public class MarketHolograms {
     // ===== COMMANDES =====
     public static boolean isValidCoef(String coef) {
         for (String c : COEFS) {
-            if (c.equalsIgnoreCase(coef)) return true;
+            if (c.equalsIgnoreCase(coef)) {
+                return true;
+            }
         }
         return false;
     }
@@ -100,7 +108,9 @@ public class MarketHolograms {
     public static boolean removeHologram(JavaPlugin plugin, String coef) {
         coef = coef.toLowerCase();
         HoloLoc holo = emplacements.remove(coef);
-        if (holo == null) return false;
+        if (holo == null) {
+            return false;
+        }
         World world = Bukkit.getWorld(holo.world);
         despawn(coef, world);
         save(plugin);
@@ -129,7 +139,7 @@ public class MarketHolograms {
 
             if (display == null) {
                 // nettoie d'éventuels restes du même hologramme avant de respawn
-                for (Entity e : world.getNearbyEntities(loc, 2, 2, 2)) {
+                for (Entity e : world.getNearbyEntities(loc, DISPLAY_SCAN_RADIUS, DISPLAY_SCAN_RADIUS, DISPLAY_SCAN_RADIUS)) {
                     if (e instanceof TextDisplay && e.getScoreboardTags().contains(TAG_PREFIX + coef)) {
                         e.remove();
                     }
@@ -217,7 +227,7 @@ public class MarketHolograms {
     private static String buildSparkline(List<fr.kevyn.farmland.save.MarketSave.MarketSnapshot> history, String coef) {
         if (history.size() < 2) return "§7(pas encore d'historique)";
 
-        int nb = Math.min(12, history.size());
+        int nb = Math.min(SPARKLINE_POINTS, history.size());
         int[] valeurs = new int[nb];
         for (int i = 0; i < nb; i++) {
             valeurs[i] = getCoefValue(history.get(history.size() - nb + i).market, coef);
