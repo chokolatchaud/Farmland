@@ -28,6 +28,9 @@ import fr.kevyn.farmland.tpa.TpaCommand;
 import fr.kevyn.farmland.vote.VoteCommand;
 import fr.kevyn.farmland.vote.VoteListener;
 
+/**
+ * Enregistre les commandes, listeners et tâches du gameplay général.
+ */
 public final class GameModule {
 
     private static final long TAB_UPDATE_TICKS = 200L;
