@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-
 import org.bukkit.GameRules;
 import org.bukkit.Location;
 import org.bukkit.Material;
