@@ -17,6 +17,10 @@ import fr.kevyn.farmland.modules.WebApiModule;
  */
 public final class ModuleLoader {
 
+    /**
+     * Les modules sont chargés une seconde après l'activation de base.
+     * Les données joueurs sont déjà disponibles à ce moment-là.
+     */
     private static final long LOAD_DELAY_TICKS = 20L;
 
     private ModuleLoader() {
