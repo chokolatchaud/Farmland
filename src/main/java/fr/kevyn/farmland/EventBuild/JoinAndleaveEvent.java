@@ -24,7 +24,10 @@ import java.util.ArrayList;
 public final class JoinAndleaveEvent implements Listener {
 
     private static final long PLOT_CREATION_DELAY = 40L;
-    private final FarmlandMain plugin;
+    private static final long WORLD_BORDER_UPDATE_DELAY = 20L;
+    private static final long WORLD_EDIT_RESTORE_DELAY = 5L;
+    private static final long SERVER_STATUS_DELAY = 0L;
+    private static final FarmlandMain plugin;
 
     public JoinAndleaveEvent(FarmlandMain plugin) {
         this.plugin = plugin;
@@ -105,7 +108,7 @@ public final class JoinAndleaveEvent implements Listener {
             if (playerServer.isWeActive()) {
                 Bukkit.getScheduler().runTaskLater(plugin, () -> {
                     BuyCommands.restoreAttachment(event.getPlayer(), playerServer, plugin);
-                }, 5L);
+                }, WORLD_EDIT_RESTORE_DELAY);
             }
 
             // ✅ Création du plot + application de la bordure après chargement
@@ -121,7 +124,7 @@ public final class JoinAndleaveEvent implements Listener {
                             plotWorld.getWorldBorder().setSize(ps.getPlotdata().getWorldborder());
                         }
                     }
-                }, 20L);
+                }, WORLD_BORDER_UPDATE_DELAY);
             }, PLOT_CREATION_DELAY);
         }
 
