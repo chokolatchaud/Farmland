@@ -17,10 +17,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class BuyCommands implements CommandExecutor {
+public final class BuyCommands implements CommandExecutor {
 
     private static final int WE_COST = 200;
+    private static final int WE_DURATION_HOURS = 1;
     private static final long WE_DURATION_MS = 60L * 60 * 1000;
+    private static final long CONFIRMATION_TIMEOUT_MS = 30_000L;
+    private static final long CONFIRMATION_TIMEOUT_TICKS = 30L * 20;
+    private static final long MILLISECONDS_PER_TICK = 50L;
 
     private static final String[] WE_PERMISSIONS = {
         "farmland.worldedit",
@@ -77,7 +81,7 @@ public class BuyCommands implements CommandExecutor {
         });
 
         // 3. Retirer les permissions a expiration (planifie a chaque octroi, remplace le precedent)
-        long ticksUntilExpiry = (newExpiry - now) / 50L;
+        long ticksUntilExpiry = (newExpiry - now) / MILLISECONDS_PER_TICK;
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             PlayerServer psNow = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
             if (psNow != null && !psNow.isWeActive()) {
@@ -110,9 +114,13 @@ public class BuyCommands implements CommandExecutor {
 
         Player player = (Player) sender;
         PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
-        if (ps == null) return true;
+        if (ps == null) {
+            return true;
+        }
 
-        if (!command.getName().equalsIgnoreCase("buy")) return true;
+        if (!command.getName().equalsIgnoreCase("buy")) {
+            return true;
+        }
 
         if (args.length >= 1 && args[0].equalsIgnoreCase("cosmetic")) {
             player.openInventory(fr.kevyn.farmland.menu.MenuCosmetics.createmenu(ps));
@@ -133,7 +141,7 @@ public class BuyCommands implements CommandExecutor {
         // Confirmation
         if (pendingConfirm.containsKey(player.getUniqueId())) {
             long asked = pendingConfirm.get(player.getUniqueId());
-            if (System.currentTimeMillis() - asked > 30_000) {
+            if (System.currentTimeMillis() - asked > CONFIRMATION_TIMEOUT_MS) {
                 pendingConfirm.remove(player.getUniqueId());
             } else {
                 pendingConfirm.remove(player.getUniqueId());
@@ -157,29 +165,31 @@ public class BuyCommands implements CommandExecutor {
                     player.sendMessage(MessageColor.RED.apply("Confirmation expirée."));
                 }
             }
-        }, 30 * 20L);
+        }, CONFIRMATION_TIMEOUT_TICKS);
 
         return true;
     }
 
     private void activateWorldEdit(Player player, PlayerServer ps) {
         ps.setMoney(ps.getMoney() - WE_COST);
-        grantWorldEditTime(player, ps, plugin, 1);
+        grantWorldEditTime(player, ps, plugin, WE_DURATION_HOURS);
         player.sendMessage(MessageColor.GREEN.apply("✔ WorldEdit activé pour 1 heure ! (-" + WE_COST + " $FB)"));
         player.sendMessage(MessageColor.GRAY.apply("Solde restant : " + ps.getMoney() + " $FB"));
     }
 
     // Appelé à la déconnexion pour nettoyer les attachments
     public static void removeAttachment(UUID uuid) {
-        if (attachments.containsKey(uuid)) {
-            attachments.get(uuid).remove();
-            attachments.remove(uuid);
+        PermissionAttachment attachment = attachments.remove(uuid);
+        if (attachment != null) {
+            attachment.remove();
         }
     }
 
     // Restaure les permissions à la reconnexion si WE encore actif
     public static void restoreAttachment(Player player, PlayerServer ps, FarmlandMain plugin) {
-        if (!ps.isWeActive()) return;
+        if (!ps.isWeActive()) {
+            return;
+        }
 
         // PermissionAttachment instantané
         giveAttachment(player, plugin);
@@ -200,7 +210,7 @@ public class BuyCommands implements CommandExecutor {
         player.sendMessage(MessageColor.GREEN.apply("✔ WorldEdit restauré — temps restant : "
             + fr.kevyn.farmland.scoreboard.CreativePlotScoreboard.formatWE(ps)));
 
-        long ticksUntilExpiry = ps.getWeTimeRemaining() / 50L;
+        long ticksUntilExpiry = ps.getWeTimeRemaining() / MILLISECONDS_PER_TICK;
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             PlayerServer psNow = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
             if (psNow != null && !psNow.isWeActive()) {
