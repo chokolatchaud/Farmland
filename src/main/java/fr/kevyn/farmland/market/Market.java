@@ -8,6 +8,8 @@ public class Market {
 	int moneyforcoefAgriculteur;
 	int moneyforcoefPecheur;
 	int moneyforcoefTueur;
+	private String lastEventMetier = "";
+	private String lastEventMessage = "";
 	public Market(int moneyforcoefMineur,int moneyforcoefFarmeur,int moneyforcoefAgriculteur,int moneyforcoefPecheur,int moneyforcoefTueur) {
 		this.moneyforcoefMineur = moneyforcoefMineur;
 		this.moneyforcoefFarmeur = moneyforcoefFarmeur;
@@ -45,6 +47,22 @@ public class Market {
 	}
 	public void setMoneyforcoefTueur(int moneyforcoefTueur) {
 		this.moneyforcoefTueur = moneyforcoefTueur;
+	}
+
+	public String getLastEventMetier() {
+		return lastEventMetier;
+	}
+
+	public void setLastEventMetier(String lastEventMetier) {
+		this.lastEventMetier = lastEventMetier;
+	}
+
+	public String getLastEventMessage() {
+		return lastEventMessage;
+	}
+
+	public void setLastEventMessage(String lastEventMessage) {
+		this.lastEventMessage = lastEventMessage;
 	}
 	
 
