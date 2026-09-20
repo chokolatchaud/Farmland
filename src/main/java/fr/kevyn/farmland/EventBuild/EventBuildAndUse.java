@@ -103,11 +103,30 @@ public class EventBuildAndUse implements Listener {
 
     @EventHandler
     public void onSpawnMob(CreatureSpawnEvent event) {
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL)
-                 {
+        fr.kevyn.plot.Plot plot = fr.kevyn.plot.Plot.Worldtoplot(event.getLocation().getWorld());
+        if (plot == null) return;
+
+        PlayerServer ownerPs = PlayerserverHashMap.getInstance().getplayerHaspMaps(plot.getUuid());
+        if (ownerPs == null || ownerPs.getPlotdata() == null) return;
+
+        // Option désactivée : on bloque uniquement les nouveaux spawns.
+        // Les mobs déjà présents dans le plot ne sont jamais supprimés.
+        if (!ownerPs.getPlotdata().getSpawnMob()) {
+            event.setCancelled(true);
             return;
         }
-        event.setCancelled(true);
+
+        // Le joueur doit être autorisé sur son plot pour provoquer les spawns
+        // dépendant d'une action joueur (breeding, spawn egg, etc.).
+        if (event.getEntity().getWorld().equals(plot.getWorld())) {
+            if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER
+                    || event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWN_EGG
+                    || event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.BREEDING) {
+                // Les événements non-joueurs seront laissés passer ici ;
+                // le contrôle d'exploitation d'un joueur extérieur est traité
+                // dans les événements d'action concernés.
+            }
+        }
     }
 
     @EventHandler
