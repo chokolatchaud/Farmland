@@ -13,17 +13,21 @@ import fr.kevyn.farmland.save.MarketSave;
  * metier s'effondre (coefficient baisse de 2%). Peu/pas de ventes = le
  * marche se redresse doucement vers 100 (prix de base).
  */
-public class MarketCalcTask {
+/**
+ * Planifie et exécute les recalculs périodiques du marché.
+ */
+public final class MarketCalcTask {
 
     private static final int SEUIL_SURPRODUCTION = 20; // au dela, le marche s'effondre
     private static final int SEUIL_RECUPERATION = 5;    // en dessous, le marche remonte
     private static final int VARIATION_POURCENT = 2;
     private static final int COEF_MIN = 50;
     private static final int COEF_MAX = 150;
+    private static final long RECALC_INTERVAL_TICKS = 20L * 60 * 30;
 
     public static void demarrer(FarmlandMain plugin) {
         Bukkit.getScheduler().runTaskTimer(plugin, () -> effectuerRecalcul(plugin),
-            20L * 60 * 30, 20L * 60 * 30); // toutes les 30 minutes
+            RECALC_INTERVAL_TICKS, RECALC_INTERVAL_TICKS); // toutes les 30 minutes
     }
 
     /** Force un recalcul immediat, sans attendre le prochain cycle - utile pour /marketadmin recalc */
