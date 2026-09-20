@@ -1,5 +1,7 @@
 package fr.kevyn.plot;
 
+import java.util.UUID;
+
 import fr.kevyn.farmland.save.PlayerSave;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -7,8 +9,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.mvplugins.multiverse.core.MultiverseCoreApi;
 import org.mvplugins.multiverse.core.world.MultiverseWorld;
 import org.mvplugins.multiverse.core.world.WorldManager;
+import org.mvplugins.multiverse.core.world.options.DeleteWorldOptions;
 
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.game.HubCommand;
@@ -112,7 +116,7 @@ public class PlotAdminCommands implements CommandExecutor {
 
         if (plotWorld == null) {
             admin.sendMessage("§7Chargement du plot en cours...");
-            new Plot(java.util.UUID.fromString(plotName), plugin);
+            new Plot(UUID.fromString(plotName), plugin);
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 World loaded = Plot.getWorldforname(plotName);
                 if (loaded == null) { admin.sendMessage("§cImpossible de charger le plot !"); return; }
@@ -216,12 +220,11 @@ public class PlotAdminCommands implements CommandExecutor {
             return true;
         }
 
-        new Plot(java.util.UUID.fromString(plotName), plugin);
+        new Plot(UUID.fromString(plotName), plugin);
         sender.sendMessage("§aRechargement du plot de " + ps.getName() + " lancé !");
         plugin.getLogger().info("[PlotAdmin] " + sender.getName() + " a recharge le plot de " + ps.getName());
         return true;
     }
-
 
     private boolean resetCommand(CommandSender sender, String[] args) {
         if (args.length < 2) {
@@ -234,18 +237,18 @@ public class PlotAdminCommands implements CommandExecutor {
         // on sauvegarde la progression AVANT de toucher au monde
         int bordureActuelle = ps.getPlotdata().getWorldborder();
         String plotName = ps.getPlotdata().getPlotProprety();
-        WorldManager worldmanager = org.mvplugins.multiverse.core.MultiverseCoreApi.get().getWorldManager();
+        WorldManager worldmanager = MultiverseCoreApi.get().getWorldManager();
         World world = Bukkit.getWorld(plotName);
         MultiverseWorld worldmulti = worldmanager.getWorld(plotName).get();
-        for(Player player :world.getPlayers()) {
-        	player.teleport(HubCommand.getHubLocation(plugin));
+        for (Player player : world.getPlayers()) {
+            player.teleport(HubCommand.getHubLocation(plugin));
         }
         sender.sendMessage("§7Reinitialisation du terrain en cours (le monde va etre recree)...");
-        
-        worldmanager.deleteWorld(org.mvplugins.multiverse.core.world.options.DeleteWorldOptions.world(worldmulti));
+
+        worldmanager.deleteWorld(DeleteWorldOptions.world(worldmulti));
 
         // recreation d'un monde vierge, exactement comme a la toute premiere creation du plot
-        new Plot(java.util.UUID.fromString(plotName), plugin);
+        new Plot(UUID.fromString(plotName), plugin);
 
         // une fois le nouveau monde genere, on reapplique la bordure (pas la valeur par
         // defaut 50 posee par Plot.initializeWorld, mais celle que le joueur avait deja payee)
