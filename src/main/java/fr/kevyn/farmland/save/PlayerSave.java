@@ -103,7 +103,11 @@ public class PlayerSave {
                 if (stringjson.has("GsonSave")) {
                     int version = stringjson.get("GsonSave").getAsInt();
                     if (version == configymlversion) {
-                        logVerification(plugin, "Aucun changement sur le fichier " + file.getName() + " (" + getPlayerName(stringjson) + ")");
+                        if (stringjson.has("name") && !stringjson.get("name").isJsonNull()) {
+                            logVerification(plugin, "Aucun changement sur le fichier " + file.getName() + " (" + getPlayerName(stringjson) + ")");
+                        } else {
+                            logVerification(plugin, "Nom manquant pour " + file.getName() + " : sera réparé depuis le pseudo à la reconnexion");
+                        }
                     }else{
                         //correction a mettre en place sur le json
                         //Cette Correction depend de la classe CorrecteurJson
@@ -115,7 +119,7 @@ public class PlayerSave {
                     stringjson.addProperty("GsonSave",0);
                     String nouveauContenu = creategsoninstance().toJson(stringjson);
                     FileManager.savefile(file, nouveauContenu);
-                    logVerification(plugin, "GsonSave ajouté au fichier " + file.getName() + " (" + getPlayerName(stringjson) + ")");
+                    logVerification(plugin, "GsonSave ajouté au fichier " + file.getName());
                 }
 
 
