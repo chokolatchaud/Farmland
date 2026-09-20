@@ -17,8 +17,8 @@ import fr.kevyn.farmland.MessageColor;
 import fr.kevyn.farmland.menu.MenuPlotConfig;
 import fr.kevyn.farmland.menu.MenuPlotUpgrade;
 import fr.kevyn.farmland.menu.MenuPlotVisit;
-import fr.kevyn.farmland.playerServer.PlayerServer;
-import fr.kevyn.farmland.playerServer.PlayerserverHashMap;
+import fr.kevyn.farmland.playerserver.PlayerServer;
+import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
 public class Plotcommands implements CommandExecutor {
 
