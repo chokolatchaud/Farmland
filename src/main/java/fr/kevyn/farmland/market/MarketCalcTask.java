@@ -114,7 +114,9 @@ public class MarketCalcTask {
                 case MarketCalc.AGRICULTEUR -> coefficientAvant = market.getMoneyforcoefAgriculteur();
                 case MarketCalc.PECHEUR -> coefficientAvant = market.getMoneyforcoefPecheur();
                 case MarketCalc.TUEUR -> coefficientAvant = market.getMoneyforcoefTueur();
-                default -> continue;
+                default -> {
+                    continue;
+                }
             }
 
             // Ce recalcul est appelé avant l'écriture du snapshot, donc pour
