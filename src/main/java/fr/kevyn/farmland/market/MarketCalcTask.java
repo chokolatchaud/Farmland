@@ -33,6 +33,10 @@ public final class MarketCalcTask {
     }
 
     private static void effectuerRecalcul(FarmlandMain plugin) {
+        if (MarketHolder.get() == null) {
+            plugin.getLogger().warning("[Market] Recalcul ignoré : marché non initialisé.");
+            return;
+        }
         Market market = MarketHolder.get();
         Map<String, Integer> ventes = MarketCalc.getVentesParMetier();
 
