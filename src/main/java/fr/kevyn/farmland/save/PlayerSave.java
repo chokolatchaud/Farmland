@@ -3,6 +3,7 @@ package fr.kevyn.farmland.save;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import discordwebhook.messagediscord;
@@ -12,7 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.UUID;
 
 public class PlayerSave {
 
@@ -49,6 +49,7 @@ public class PlayerSave {
 
         File file = new File(plugin.getDataFolder() + "/players",
                 playerServer.getUuid() + ".json");
+
         FileManager.savefile(file, GSON.toJson(playerServer));
     }
 
@@ -65,40 +66,35 @@ public class PlayerSave {
             return;
         }
 
+        int targetVersion = getConfiguredVersion(plugin);
+
         for (File file : files) {
             if (!file.isFile() || !file.getName().endsWith(".json")) {
                 continue;
             }
 
             try {
-                String content = FileManager.Readfile(file);
-                JsonObject json = parseObject(content, file);
+                JsonObject json = parseObject(FileManager.Readfile(file));
                 if (json == null) {
+                    plugin.getLogger().severe(
+                            "[PlayerSave] JSON invalide ignoré : " + file.getName());
                     continue;
                 }
 
-                boolean changed = migrateLegacyName(json);
-                String normalizedName = normalizeName(json);
-                if (normalizedName != null && !normalizedName.equals(json.get("name").getAsString())) {
-                    json.addProperty("name", normalizedName);
-                    changed = true;
-                } else if (normalizedName != null && !json.has("name")) {
-                    json.addProperty("name", normalizedName);
-                    changed = true;
-                }
+                // Anciennes sauvegardes : Name -> name et plotdata -> plotData.
+                boolean changed = migrateLegacyFields(json);
 
-                int targetVersion = getConfiguredVersion(plugin);
                 int fileVersion = getVersion(json);
-
                 if (fileVersion < targetVersion) {
                     CorrecteurJson.MigrationJson(json, targetVersion);
                     changed = true;
                 }
 
-                if (changed) {
-                    FileManager.savefile(file, GSON.toJson(json));
-                }
-
+                /*
+                 * On désérialise AVANT d'écraser le fichier.
+                 * Une sauvegarde contenant un plot ne peut donc jamais devenir
+                 * plotData = null à cause d'une migration ratée.
+                 */
                 PlayerServer player = GSON.fromJson(json, PlayerServer.class);
 
                 if (player == null || player.getUuid() == null) {
@@ -107,8 +103,24 @@ public class PlayerSave {
                     continue;
                 }
 
+                JsonElement plotJson = json.get("plotData");
+                if (plotJson != null && !plotJson.isJsonNull()
+                        && player.getPlotdata() == null) {
+                    plugin.getLogger().severe(
+                            "[PlayerSave] PROTECTION : PlotData non désérialisé pour "
+                                    + file.getName() + ". Fichier NON réécrit.");
+                    continue;
+                }
+
+                String canonicalJson = GSON.toJson(player);
+
+                if (changed || !canonicalJson.equals(GSON.toJson(json))) {
+                    FileManager.savefile(file, canonicalJson);
+                }
+
                 PlayerserverHashMap.getInstance()
                         .AddplayerHaspMaps(player.getUuid(), player);
+
             } catch (Exception exception) {
                 plugin.getLogger().severe(
                         "[PlayerSave] Impossible de charger " + file.getName()
@@ -117,51 +129,75 @@ public class PlayerSave {
         }
     }
 
-    private static JsonObject parseObject(String content, File file) {
+    private static JsonObject parseObject(String content) {
         try {
             JsonElement element = JsonParser.parseString(content);
-            if (!element.isJsonObject()) {
-                throw new IllegalStateException("Le JSON racine n'est pas un objet.");
-            }
-            return element.getAsJsonObject();
+            return element.isJsonObject() ? element.getAsJsonObject() : null;
         } catch (RuntimeException exception) {
             return null;
         }
     }
 
-    private static boolean migrateLegacyName(JsonObject json) {
-        if (json.has("name") && !json.get("name").isJsonNull()
-                && !json.get("name").getAsString().isBlank()) {
+    private static boolean migrateLegacyFields(JsonObject json) {
+        boolean changed = false;
+
+        changed |= migrateAlias(json, "Name", "name");
+        changed |= migrateAlias(json, "plotdata", "plotData");
+
+        if (json.has("name") && !json.get("name").isJsonNull()) {
+            try {
+                if (json.get("name").getAsString().isBlank()) {
+                    json.add("name", JsonNull.INSTANCE);
+                    changed = true;
+                }
+            } catch (RuntimeException ignored) {
+                json.add("name", JsonNull.INSTANCE);
+                changed = true;
+            }
+        }
+
+        return changed;
+    }
+
+    private static boolean migrateAlias(JsonObject json, String legacyKey, String canonicalKey) {
+        if (!json.has(legacyKey)) {
             return false;
         }
 
-        JsonElement legacyName = json.get("Name");
-        if (legacyName != null && !legacyName.isJsonNull()
-                && !legacyName.getAsString().isBlank()) {
-            json.addProperty("name", legacyName.getAsString());
-            json.remove("Name");
+        JsonElement legacyValue = json.get(legacyKey);
+
+        // Si la clé moderne contient déjà une vraie valeur, on garde celle-ci.
+        if (json.has(canonicalKey)
+                && !json.get(canonicalKey).isJsonNull()
+                && !isEmptyValue(json.get(canonicalKey))) {
+            json.remove(legacyKey);
             return true;
         }
 
-        if (json.has("Name")) {
-            json.remove("Name");
+        json.add(canonicalKey, legacyValue.deepCopy());
+        json.remove(legacyKey);
+        return true;
+    }
+
+    private static boolean isEmptyValue(JsonElement element) {
+        if (element == null || element.isJsonNull()) {
             return true;
+        }
+
+        if (element.isJsonObject()) {
+            return element.getAsJsonObject().entrySet().isEmpty();
+        }
+
+        if (element.isJsonArray()) {
+            return element.getAsJsonArray().isEmpty();
+        }
+
+        if (element.isJsonPrimitive()
+                && element.getAsJsonPrimitive().isString()) {
+            return element.getAsString().isBlank();
         }
 
         return false;
-    }
-
-    private static String normalizeName(JsonObject json) {
-        if (!json.has("name") || json.get("name").isJsonNull()) {
-            return null;
-        }
-
-        String name = json.get("name").getAsString();
-        if (name.isBlank()) {
-            json.add("name", com.google.gson.JsonNull.INSTANCE);
-            return null;
-        }
-        return name;
     }
 
     private static int getConfiguredVersion(JavaPlugin plugin) {
@@ -184,17 +220,23 @@ public class PlayerSave {
     private static String getPlayerName(JsonObject json) {
         JsonElement name = json.get("name");
         if (name != null && !name.isJsonNull()) {
-            String value = name.getAsString();
-            if (!value.isBlank()) {
-                return value;
+            try {
+                String value = name.getAsString();
+                if (!value.isBlank()) {
+                    return value;
+                }
+            } catch (RuntimeException ignored) {
             }
         }
 
         JsonElement legacyName = json.get("Name");
         if (legacyName != null && !legacyName.isJsonNull()) {
-            String value = legacyName.getAsString();
-            if (!value.isBlank()) {
-                return value;
+            try {
+                String value = legacyName.getAsString();
+                if (!value.isBlank()) {
+                    return value;
+                }
+            } catch (RuntimeException ignored) {
             }
         }
 
@@ -232,8 +274,7 @@ public class PlayerSave {
             }
 
             try {
-                String content = FileManager.Readfile(file);
-                JsonObject json = parseObject(content, file);
+                JsonObject json = parseObject(FileManager.Readfile(file));
                 if (json == null) {
                     plugin.getLogger().severe(
                             "[PlayerSave] JSON invalide ignoré pendant la vérification : "
@@ -241,17 +282,7 @@ public class PlayerSave {
                     continue;
                 }
 
-                boolean changed = false;
-
-                if (migrateLegacyName(json)) {
-                    changed = true;
-                }
-
-                if (json.has("name") && !json.get("name").isJsonNull()
-                        && json.get("name").getAsString().isBlank()) {
-                    json.add("name", com.google.gson.JsonNull.INSTANCE);
-                    changed = true;
-                }
+                boolean changed = migrateLegacyFields(json);
 
                 int fileVersion = getVersion(json);
                 if (fileVersion < configuredVersion) {
@@ -259,13 +290,36 @@ public class PlayerSave {
                     changed = true;
                 } else if (fileVersion > configuredVersion) {
                     logVerification(plugin,
-                            "Version GsonSave " + fileVersion + " supérieure à la version configurée "
+                            "Version GsonSave " + fileVersion
+                                    + " supérieure à la version configurée "
                                     + configuredVersion + " pour " + file.getName()
                                     + " : aucune migration appliquée.");
                 }
 
+                PlayerServer player = GSON.fromJson(json, PlayerServer.class);
+                if (player == null || player.getUuid() == null) {
+                    logVerification(plugin,
+                            "Fichier non réécrit car les données joueur sont invalides : "
+                                    + file.getName());
+                    continue;
+                }
+
+                JsonElement plotJson = json.get("plotData");
+                if (plotJson != null && !plotJson.isJsonNull()
+                        && player.getPlotdata() == null) {
+                    logVerification(plugin,
+                            "Protection PlotData : fichier NON réécrit car plotData "
+                                    + "n'a pas pu être désérialisé : " + file.getName());
+                    continue;
+                }
+
+                String canonicalJson = GSON.toJson(player);
+                if (!canonicalJson.equals(GSON.toJson(json))) {
+                    changed = true;
+                }
+
                 if (changed) {
-                    FileManager.savefile(file, GSON.toJson(json));
+                    FileManager.savefile(file, canonicalJson);
                     logVerification(plugin,
                             "Fichier réparé : " + file.getName()
                                     + " (" + getPlayerName(json) + ")");
@@ -274,6 +328,7 @@ public class PlayerSave {
                             "Aucun changement sur le fichier " + file.getName()
                                     + " (" + getPlayerName(json) + ")");
                 }
+
             } catch (Exception exception) {
                 plugin.getLogger().severe(
                         "[PlayerSave] Erreur de vérification pour " + file.getName()
