@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import discordwebhook.messagediscord;
 import fr.kevyn.farmland.EventBuild.ChatListener;
 import fr.kevyn.farmland.FarmlandMain;
-import fr.kevyn.farmland.api.WebApiClient;
 import fr.kevyn.farmland.boathub.BoatRaceHologram;
 import fr.kevyn.farmland.boathub.RaceAdminCommands;
 import fr.kevyn.farmland.game.GameCommands;
