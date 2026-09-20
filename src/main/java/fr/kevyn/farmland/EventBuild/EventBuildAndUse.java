@@ -109,23 +109,45 @@ public class EventBuildAndUse implements Listener {
         PlayerServer ownerPs = PlayerserverHashMap.getInstance().getplayerHaspMaps(plot.getUuid());
         if (ownerPs == null || ownerPs.getPlotdata() == null) return;
 
-        // Option désactivée : on bloque uniquement les nouveaux spawns.
-        // Les mobs déjà présents dans le plot ne sont jamais supprimés.
+        // Si les mobs sont désactivés, aucun nouveau mob ne peut apparaître.
+        // Les mobs déjà présents restent intacts.
+        if (!ownerPs.getPlotdata().getSpawnMob()) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onMobBreed(org.bukkit.event.entity.EntityBreedEvent event) {
+        fr.kevyn.plot.Plot plot = fr.kevyn.plot.Plot.Worldtoplot(event.getEntity().getWorld());
+        if (plot == null) return;
+
+        Player breeder = event.getBreeder() instanceof Player player ? player : null;
+        if (breeder == null) return;
+
+        PlayerServer ownerPs = PlayerserverHashMap.getInstance().getplayerHaspMaps(plot.getUuid());
+        if (ownerPs == null || ownerPs.getPlotdata() == null) {
+            event.setCancelled(true);
+            return;
+        }
+
         if (!ownerPs.getPlotdata().getSpawnMob()) {
             event.setCancelled(true);
             return;
         }
 
-        // Le joueur doit être autorisé sur son plot pour provoquer les spawns
-        // dépendant d'une action joueur (breeding, spawn egg, etc.).
-        if (event.getEntity().getWorld().equals(plot.getWorld())) {
-            if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWNER
-                    || event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.SPAWN_EGG
-                    || event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.BREEDING) {
-                // Les événements non-joueurs seront laissés passer ici ;
-                // le contrôle d'exploitation d'un joueur extérieur est traité
-                // dans les événements d'action concernés.
-            }
+        // Seul le propriétaire ou un joueur ADD/TRUST peut déclencher une reproduction.
+        String worldName = plot.getWorld().getName();
+        boolean autorise = breeder.getUniqueId().equals(plot.getUuid());
+
+        if (!autorise && ownerPs.getPlotdata().getAllplotadd().contains(worldName)) {
+            autorise = true;
+        }
+        if (!autorise && ownerPs.getPlotdata().getAllplottrust().contains(worldName)) {
+            autorise = true;
+        }
+
+        if (!autorise) {
+            event.setCancelled(true);
         }
     }
 
