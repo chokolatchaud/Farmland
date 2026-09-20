@@ -18,23 +18,27 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.ArrayList;
 
-public class JoinAndleaveEvent implements Listener {
+/**
+ * Gère l'entrée et la sortie des joueurs ainsi que l'initialisation de leur plot.
+ */
+public final class JoinAndleaveEvent implements Listener {
 
     private static final long PLOT_CREATION_DELAY = 40L;
-    private FarmlandMain plugin;
+    private final FarmlandMain plugin;
 
     public JoinAndleaveEvent(FarmlandMain plugin) {
         this.plugin = plugin;
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e) {
-        e.setJoinMessage("");
-        PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(e.getPlayer().getUniqueId());
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        event.setJoinMessage("");
+        PlayerServer playerServer = PlayerserverHashMap.getInstance()
+                .getplayerHaspMaps(event.getPlayer().getUniqueId());
 
         // ✅ Vérif ban
         if (playerServer != null && playerServer.getBan()) {
-            e.getPlayer().kickPlayer("&cVous êtes banni définitivement !" +
+            event.getPlayer().kickPlayer("&cVous êtes banni définitivement !" +
                     "\nRaison : " + playerServer.getRaison());
             return;
         }
@@ -132,8 +136,9 @@ public class JoinAndleaveEvent implements Listener {
     }
 
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent e) {
-        PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(e.getPlayer().getUniqueId());
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        PlayerServer playerServer = PlayerserverHashMap.getInstance()
+                .getplayerHaspMaps(event.getPlayer().getUniqueId());
         if (playerServer != null) {
             playerServer.getPlotdata().setAllplotadd(new ArrayList<String>());
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -141,7 +146,7 @@ public class JoinAndleaveEvent implements Listener {
             });
         }
         // Nettoyer l'attachment WorldEdit à la déconnexion
-        BuyCommands.removeAttachment(e.getPlayer().getUniqueId());
+        BuyCommands.removeAttachment(event.getPlayer().getUniqueId());
         
         // pousse le statut du serveur vers farm-land.fr
         if (plugin.getWebApi() != null) {
@@ -152,6 +157,6 @@ public class JoinAndleaveEvent implements Listener {
             );
         }
         
-        e.setQuitMessage("");
+        event.setQuitMessage("");
     }
 }
