@@ -152,7 +152,7 @@ public class PlayerServer {
         this.money = money;
     }
     public void setName(String name) {
-        name = name;
+        this.name = name;
     }
     public void setRaison(String raison) { this.banData.setReason(raison); }
     public void setUuid(UUID uuid) {

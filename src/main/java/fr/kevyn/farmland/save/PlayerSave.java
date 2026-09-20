@@ -58,15 +58,46 @@ public class PlayerSave {
 
         File folder = new File(plugin.getDataFolder() + "/players");
 
-
         if (!folder.exists()) return;
-        for (File file : folder.listFiles()) {
-            if (file.isFile() && file.getName().endsWith(".json")) {
-            PlayerServer player = creategsoninstance().fromJson(FileManager.Readfile(file), PlayerServer.class);
-            PlayerserverHashMap.getInstance().AddplayerHaspMaps(player.getUuid(), player);
-                }
+
+        File[] files = folder.listFiles();
+        if (files == null) return;
+
+        for (File file : files) {
+            if (!file.isFile() || !file.getName().endsWith(".json")) {
+                continue;
             }
+
+            String content = FileManager.Readfile(file);
+            JsonObject json = JsonParser.parseString(content).getAsJsonObject();
+
+            // Migration historique : l'ancien PlayerServer utilisait "Name"
+            // alors que le modèle actuel utilise "name".
+            if ((!json.has("name") || json.get("name").isJsonNull())
+                    && json.has("Name") && !json.get("Name").isJsonNull()) {
+                json.add("name", json.get("Name"));
+                json.remove("Name");
+                FileManager.savefile(file, creategsoninstance().toJson(json));
+                plugin.getLogger().info("[PlayerSave] Champ Name -> name réparé dans " + file.getName());
+            }
+
+            PlayerServer player = creategsoninstance().fromJson(
+                    json,
+                    PlayerServer.class
+            );
+
+            if (player == null || player.getUuid() == null) {
+                plugin.getLogger().severe(
+                        "[PlayerSave] Fichier joueur invalide ignoré : " + file.getName()
+                );
+                continue;
+            }
+
+            // Les anciennes sauvegardes peuvent avoir un nom null.
+            // Il sera renseigné avec le pseudo réel lors de la connexion.
+            PlayerserverHashMap.getInstance().AddplayerHaspMaps(player.getUuid(), player);
         }
+    }
 
 
 
