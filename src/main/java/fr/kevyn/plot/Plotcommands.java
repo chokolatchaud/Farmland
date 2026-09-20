@@ -20,7 +20,7 @@ import fr.kevyn.farmland.menu.MenuPlotVisit;
 import fr.kevyn.farmland.playerserver.PlayerServer;
 import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
 
-public class Plotcommands implements CommandExecutor {
+public final class Plotcommands implements CommandExecutor {
 
     private final FarmlandMain plugin;
 
@@ -47,8 +47,10 @@ public class Plotcommands implements CommandExecutor {
             return true;
         }
 
-        if (!command.getName().equalsIgnoreCase("plot") && !command.getName().equalsIgnoreCase("p"))
+        if (!command.getName().equalsIgnoreCase("plot")
+                && !command.getName().equalsIgnoreCase("p")) {
             return false;
+        }
 
         if (args.length == 0) {
             player.sendMessage(MessageColor.YELLOW.apply("Sous-commande manquante. Utilise: /plot <add/unadd/trust/untrust/buy/visit/home/config/setspawnpoint>"));
@@ -316,15 +318,17 @@ public class Plotcommands implements CommandExecutor {
         return true;
     }
 
-    public boolean canManagePlotAccess(Player player, PlayerServer playerServer, String Worldname, String trust) {
+    public boolean canManagePlotAccess(Player player, PlayerServer playerServer,
+            String worldName, String trust) {
         String ownerplot = playerServer.getPlotdata().getPlotProprety();
         ArrayList<String> listtrust = playerServer.getPlotdata().getAllplottrust();
-        if(ownerplot.equalsIgnoreCase(Worldname)) {
+        if (ownerplot.equalsIgnoreCase(worldName)) {
             return true;
-        } else if(listtrust.contains(Worldname) && !trust.equalsIgnoreCase("trust")){
+        } else if (listtrust.contains(worldName) && !trust.equalsIgnoreCase("trust")) {
             return true;
-        } else
-            return false;
+        }
+
+        return false;
     }
 
     private void teleportSafe(Player player, PlayerServer target, World world) {
@@ -354,29 +358,25 @@ public class Plotcommands implements CommandExecutor {
         }, 10L);
     }
 
-    public boolean isNotAddedToPlot(Player player, PlayerServer playerServer, String plotwantaddtrust) {
+    public boolean isNotAddedToPlot(Player player, PlayerServer playerServer,
+            String plotName) {
         ArrayList<String> listadd = playerServer.getPlotdata().getAllplotadd();
 
-        if(playerServer.getPlotdata().getPlotProprety().equals(plotwantaddtrust)) {
+        if (playerServer.getPlotdata().getPlotProprety().equals(plotName)) {
             return false;
         }
 
-        if(listadd.contains(plotwantaddtrust)) {
-            return false;
-        }
-        return true;
+        return !listadd.contains(plotName);
     }
 
-    public boolean isNotTrustedOnPlot(Player player, PlayerServer playerServer, String plotwantaddtrust) {
+    public boolean isNotTrustedOnPlot(Player player, PlayerServer playerServer,
+            String plotName) {
         ArrayList<String> listtrust = playerServer.getPlotdata().getAllplottrust();
 
         if(playerServer.getPlotdata().getPlotProprety().equals(plotwantaddtrust)) {
             return false;
         }
 
-        if(listtrust.contains(plotwantaddtrust)) {
-            return false;
-        }
-        return true;
+        return !listtrust.contains(plotName);
     }
 }
