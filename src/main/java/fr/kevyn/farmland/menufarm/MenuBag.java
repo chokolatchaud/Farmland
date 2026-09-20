@@ -6,6 +6,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 import fr.kevyn.farmland.market.MarketCalc;
 import fr.kevyn.farmland.market.MarketHolder;
 import fr.kevyn.farmland.menu.GameMenu;
@@ -18,6 +22,8 @@ import fr.kevyn.farmland.playerserver.PlayerServer;
  * Material ici ne sert QUE d'icone visuelle pour l'affichage.
  */
 public class MenuBag {
+
+	private static final DecimalFormat PRIX_FORMAT = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.FRANCE));
 
 	public static Inventory createmenu(PlayerServer ps) {
 		Inventory inv = Bukkit.createInventory(null, 27, "§6Sac");
@@ -35,11 +41,11 @@ public class MenuBag {
 
 	private static void placerJeton(Inventory inv, int slot, Material icone, String metier, String nom, int quantite) {
 		int prixNormal = MarketCalc.getPrixDeBase(metier);
-		int prixMarche = MarketCalc.getPrixActuel(metier, MarketHolder.get());
+		double prixMarche = MarketCalc.getPrixActuel(metier, MarketHolder.get());
 
 		ItemStack item = new ItemStack(icone);
 		ItemMeta meta = item.getItemMeta();
-		meta.setDisplayName(nom + " §7x " + quantite + " §7(§f" + prixNormal + "$ §7→ §e" + prixMarche + "$§7)");
+		meta.setDisplayName(nom + " §7x " + quantite + " §7(§f" + prixNormal + "$ §7→ §e" + PRIX_FORMAT.format(prixMarche) + "$§7)");
 		item.setItemMeta(meta);
 
 		inv.setItem(slot, item);
