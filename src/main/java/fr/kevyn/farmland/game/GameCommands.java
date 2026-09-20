@@ -43,8 +43,8 @@ public class GameCommands implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-        PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(playerevent.getUniqueId());
-        Player player = PlayerServer.getplayer(playerServer);
+        PlayerServer playerServer = PlayerserverHashMap.getInstance()
+                .getplayerHaspMaps(player.getUniqueId());
 
         if (playerServer == null) {
             messagediscord.sendmessage(command.getName() + " : erreur playerSender null","statut");
@@ -199,7 +199,7 @@ public class GameCommands implements CommandExecutor {
     // =========================
     private boolean MoneyCommand(Player player, PlayerServer playerServer, String[] args) {
         if (args.length == 0) {
-            player.sendMessage("§aVous avez §e" + playerSender.getMoney() + "§a d'argent.");
+            player.sendMessage("§aVous avez §e" + playerServer.getMoney() + "§a d'argent.");
             return true;
         }
 
