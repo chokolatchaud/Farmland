@@ -3,7 +3,7 @@ package fr.kevyn.farmland.modules.moderation;
 import fr.kevyn.farmland.directives.administration.messagediscord;
 import fr.kevyn.farmland.directives.gameplay.evenement.LuckpermGrade;
 import fr.kevyn.farmland.FarmlandMain;
-import fr.kevyn.farmland.moderation.ModerationCommands;
+import fr.kevyn.farmland.directives.administration.ModerationCommands;
 
 /**
  * Enregistre les commandes et listeners de modération.

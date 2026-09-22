@@ -1,6 +1,5 @@
-package fr.kevyn.farmland.moderation;
+package fr.kevyn.farmland.directives.administration;
 
-import fr.kevyn.farmland.directives.administration.messagediscord;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.directives.infrastructure.MessageColor;
 import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
