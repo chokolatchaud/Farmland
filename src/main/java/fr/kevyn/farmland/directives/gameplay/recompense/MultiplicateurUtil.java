@@ -1,0 +1,27 @@
+package fr.kevyn.farmland.directives.gameplay.recompense;
+
+import java.util.Random;
+
+
+public class MultiplicateurUtil {
+
+    private static final Random random = new Random();
+
+    public static int tirerMultiplicateur(int niveau) {
+        if (niveau <= 1) return 1;
+
+        int poidsTotal = 0;
+        for (int palier = 1; palier <= niveau; palier++) {
+            poidsTotal += (niveau - palier + 1);
+        }
+
+        int tirage = random.nextInt(poidsTotal);
+        int cumul = 0;
+        for (int palier = 1; palier <= niveau; palier++) {
+            cumul += (niveau - palier + 1);
+            if (tirage < cumul) return palier;
+        }
+
+        return 1;
+    }
+}

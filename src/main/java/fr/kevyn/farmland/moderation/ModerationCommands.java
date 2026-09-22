@@ -1,11 +1,11 @@
 package fr.kevyn.farmland.moderation;
 
-import discordwebhook.messagediscord;
+import fr.kevyn.farmland.directives.administration.messagediscord;
 import fr.kevyn.farmland.FarmlandMain;
-import fr.kevyn.farmland.MessageColor;
-import fr.kevyn.farmland.playerserver.PlayerServer;
-import fr.kevyn.farmland.playerserver.PlayerserverHashMap;
-import fr.kevyn.farmland.save.PlayerSave;
+import fr.kevyn.farmland.directives.infrastructure.MessageColor;
+import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
+import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
+import fr.kevyn.farmland.persistance.joueurs.PlayerSave;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
