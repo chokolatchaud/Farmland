@@ -1,14 +1,20 @@
 package fr.kevyn.farmland.directives.plot.evenement;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
+import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.directives.administration.messagediscord;
+import fr.kevyn.farmland.directives.infrastructure.MessageColor;
+import fr.kevyn.farmland.directives.plot.gestion.Plot;
+import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
+import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
+import fr.kevyn.farmland.doonees.regions.GameRegion;
+import fr.kevyn.farmland.doonees.regions.GameRegionHashMap;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -24,13 +30,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import fr.kevyn.farmland.directives.administration.messagediscord;
-import fr.kevyn.farmland.FarmlandMain;
-import fr.kevyn.farmland.directives.infrastructure.MessageColor;
-import fr.kevyn.farmland.doonees.regions.GameRegion;
-import fr.kevyn.farmland.doonees.regions.GameRegionHashMap;
-import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
-import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Centralise les règles de construction, destruction et utilisation du terrain.
@@ -113,18 +115,24 @@ public final class EventBuildAndUse implements Listener {
         }
     }
 
-    @EventHandler
-    public void onSpawnMob(CreatureSpawnEvent event, Player player) {
+    @EventHandler (priority = EventPriority.HIGH)
+    public void onSpawnMob(CreatureSpawnEvent event) {
 
-        PlayerServer playerServer = getPlayerServer(player);
+        World world = event.getLocation().getWorld();
+        Plot plot = Plot.Worldtoplot(world);
+
+        PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(plot.getUuid().toString());
+
         if (playerServer == null || playerServer.getPlotdata() == null) {
             return;
         }
+
+
         if (!playerServer.getPlotdata().getMobSpawn()) {
             event.setCancelled(true);
         }
 
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL ) {
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) {
             return;
         }
 

@@ -41,6 +41,7 @@ public final class PlotModule {
     }
 
     private void registerListeners() {
+        messagediscord.sendmessage("Module Plotlistener bien lancé", "statut");
         plugin.getServer().getPluginManager().registerEvents(new EventBuildAndUse(plugin), plugin);
         plugin.getServer().getPluginManager().registerEvents(new Plotinventory(plugin), plugin);
         plugin.getServer().getPluginManager().registerEvents(new BoatRaceListener(plugin), plugin);
