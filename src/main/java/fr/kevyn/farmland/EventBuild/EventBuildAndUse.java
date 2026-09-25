@@ -114,8 +114,17 @@ public final class EventBuildAndUse implements Listener {
     }
 
     @EventHandler
-    public void onSpawnMob(CreatureSpawnEvent event) {
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) {
+    public void onSpawnMob(CreatureSpawnEvent event, Player player) {
+
+        PlayerServer playerServer = getPlayerServer(player);
+        if (playerServer == null || playerServer.getPlotdata() == null) {
+            return;
+        }
+        if (!playerServer.getPlotdata().getMobSpawn()) {
+            event.setCancelled(true);
+        }
+
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL ) {
             return;
         }
 

@@ -187,6 +187,12 @@ public final class Plotinventory implements Listener {
                 player.sendMessage(MessageColor.YELLOW.apply("Visibilité du plot modifiée"));
                 player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", playerServer));
             }
+
+            if (customItemType == CustomItemType.MOB_SPAWN) {
+                playerServer.getPlotdata().setMobSpawn(!playerServer.getPlotdata().getMobSpawn());
+                player.sendMessage(MessageColor.YELLOW.apply("Spawn des mobs modifié"));
+                player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", playerServer));
+            }
         }
 
         // ── PLOTVISIT navigation ──────────────────────────────────────────────

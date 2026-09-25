@@ -45,10 +45,19 @@ public class MenuPlotConfig {
         	namePrivatepublic = "Plot privé";
         }else {
         	namePrivatepublic = "Plot public";
-        	
         }
+
+        // MOBSPAWN
+        String nameMobSpawn = "erreur";
+        if(playerserver.getPlotdata().getMobSpawn()) {
+            nameMobSpawn = "Spawn des mobs activé";
+        }else {
+            nameMobSpawn = "Spawn des mobs désactivé";
+        }
+
+
         GameMenu.set_oneitem_menu(CustomItemType.DOOR_PRIVACY.create(), namePrivatepublic, 14, inv);
-        GameMenu.set_oneitem_menu(CustomItemType.SUGGEST.create(), "A venir", 16, inv);
+        GameMenu.set_oneitem_menu(CustomItemType.MOB_SPAWN.create(), nameMobSpawn, 16, inv);
         return inv;
     }
 

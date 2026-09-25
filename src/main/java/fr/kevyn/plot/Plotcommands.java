@@ -302,6 +302,7 @@ public final class Plotcommands implements CommandExecutor {
             return true;
         }
 
+
         // /plot buy
         if (args[0].equalsIgnoreCase("buy") || args[0].equalsIgnoreCase("b")) {
             if (!requireOwnPlot(player, playerServer)) {
