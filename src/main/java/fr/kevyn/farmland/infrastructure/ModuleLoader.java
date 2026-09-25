@@ -3,14 +3,14 @@ package fr.kevyn.farmland.infrastructure;
 import org.bukkit.Bukkit;
 
 import fr.kevyn.farmland.FarmlandMain;
-import fr.kevyn.farmland.modules.GameModule;
-import fr.kevyn.farmland.modules.ModerationModule;
-import fr.kevyn.farmland.modules.MetierModule;
-import fr.kevyn.farmland.modules.PlotModule;
-import fr.kevyn.farmland.modules.PlaceholderModule;
-import fr.kevyn.farmland.modules.SaveModule;
-import fr.kevyn.farmland.modules.SecureWorldEditModule;
-import fr.kevyn.farmland.modules.WebApiModule;
+import fr.kevyn.farmland.modules.gameplay.GameModule;
+import fr.kevyn.farmland.modules.moderation.ModerationModule;
+import fr.kevyn.farmland.modules.gameplay.MetierModule;
+import fr.kevyn.farmland.modules.monde.PlotModule;
+import fr.kevyn.farmland.modules.coeur.PlaceholderModule;
+import fr.kevyn.farmland.modules.coeur.SaveModule;
+import fr.kevyn.farmland.modules.monde.SecureWorldEditModule;
+import fr.kevyn.farmland.modules.coeur.WebApiModule;
 
 /**
  * Centralise le chargement des modules du plugin.

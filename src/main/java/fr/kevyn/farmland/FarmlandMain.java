@@ -1,20 +1,17 @@
 package fr.kevyn.farmland;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
-import discordwebhook.messagediscord;
-import fr.kevyn.farmland.EventBuild.JoinAndleaveEvent;
-import fr.kevyn.farmland.api.WebApiClient;
+import fr.kevyn.farmland.directives.administration.messagediscord;
+import fr.kevyn.farmland.directives.gameplay.evenement.JoinAndleaveEvent;
+import fr.kevyn.farmland.persistance.webapi.WebApiClient;
 import fr.kevyn.farmland.infrastructure.ModuleLoader;
-import fr.kevyn.farmland.save.PlayerSave;
+import fr.kevyn.farmland.persistance.joueurs.PlayerSave;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public final class FarmlandMain extends JavaPlugin {
 
     private WebApiClient webApi;
 
-    /**
-     * Retourne le client WebAPI, lorsqu'il a été initialisé.
-     */
+
     public WebApiClient getWebApi() {
         return webApi;
     }
@@ -23,10 +20,7 @@ public final class FarmlandMain extends JavaPlugin {
         this.webApi = new WebApiClient(this, baseUrl, apiKey);
     }
 
-    /**
-     * Initialise le plugin dans un ordre déterministe :
-     * configuration, services de base, données joueurs, puis modules.
-     */
+
     @Override
     public void onEnable() {
         getLogger().info("----- Plugin activé -----");
