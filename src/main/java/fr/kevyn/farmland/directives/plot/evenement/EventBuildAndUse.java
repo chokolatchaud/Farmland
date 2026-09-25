@@ -3,7 +3,6 @@ package fr.kevyn.farmland.directives.plot.evenement;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.directives.administration.messagediscord;
 import fr.kevyn.farmland.directives.infrastructure.MessageColor;
-import fr.kevyn.farmland.directives.plot.gestion.Plot;
 import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
 import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
 import fr.kevyn.farmland.doonees.regions.GameRegion;
@@ -119,9 +118,9 @@ public final class EventBuildAndUse implements Listener {
     public void onSpawnMob(CreatureSpawnEvent event) {
 
         World world = event.getLocation().getWorld();
-        Plot plot = Plot.Worldtoplot(world);
+        UUID uuidworld = UUID.fromString(world.getName());
 
-        PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(plot.getUuid().toString());
+        PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(uuidworld);
 
         if (playerServer == null || playerServer.getPlotdata() == null) {
             return;
