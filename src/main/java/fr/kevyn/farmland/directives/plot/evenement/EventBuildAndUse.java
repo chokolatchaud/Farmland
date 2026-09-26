@@ -1,19 +1,16 @@
 package fr.kevyn.farmland.directives.plot.evenement;
 
-import fr.kevyn.farmland.FarmlandMain;
-import fr.kevyn.farmland.directives.administration.messagediscord;
-import fr.kevyn.farmland.directives.infrastructure.MessageColor;
-import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
-import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
-import fr.kevyn.farmland.doonees.regions.GameRegion;
-import fr.kevyn.farmland.doonees.regions.GameRegionHashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Animals;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -29,9 +26,15 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import fr.kevyn.farmland.directives.administration.messagediscord;
+import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.directives.infrastructure.MessageColor;
+import fr.kevyn.farmland.doonees.regions.GameRegion;
+import fr.kevyn.farmland.doonees.regions.GameRegionHashMap;
+import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
+import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
+
+import dev.rosewood.rosestacker.event.EntityStackEvent;
 
 /**
  * Centralise les règles de construction, destruction et utilisation du terrain.
@@ -114,24 +117,37 @@ public final class EventBuildAndUse implements Listener {
         }
     }
 
-    @EventHandler (priority = EventPriority.HIGH)
-    public void onSpawnMob(CreatureSpawnEvent event) {
+    @EventHandler
+    public void onSpawnMob(CreatureSpawnEvent event, Player player) {
 
-        World world = event.getLocation().getWorld();
-        UUID uuidworld = UUID.fromString(world.getName());
-
-        PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(uuidworld);
-
+        PlayerServer playerServer = getPlayerServer(player);
         if (playerServer == null || playerServer.getPlotdata() == null) {
             return;
         }
-
-
         if (!playerServer.getPlotdata().getMobSpawn()) {
             event.setCancelled(true);
         }
 
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) {
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL ) {
+
+            if (!(event.getEntity() instanceof Animals animal)) { return; }
+
+            if(!canBreed(event.getEntityType())){return;}
+
+
+
+            return;
+        }
+
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onEntityStack(EntityStackEvent event) {
+
+        LivingEntity entity = event.getStack().getEntity();
+
+        if (!canBreed(entity.getType())) {
             return;
         }
 
@@ -387,5 +403,27 @@ public final class EventBuildAndUse implements Listener {
                 "Erreur comptage blocs pour " + player.getName(),
                 "statut"
         );
+    }
+
+    private boolean canBreed(EntityType type) {
+        return switch (type) {
+            case COW,
+                 SHEEP,
+                 PIG,
+                 CHICKEN,
+                 RABBIT,
+                 GOAT,
+                 HORSE,
+                 DONKEY,
+                 LLAMA,
+                 CAMEL,
+                 FOX,
+                 PANDA,
+                 TURTLE,
+                 BEE,
+                 CAT,
+                 WOLF -> true;
+            default -> false;
+        };
     }
 }
