@@ -5,12 +5,14 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -117,25 +119,24 @@ public final class EventBuildAndUse implements Listener {
         }
     }
 
-    @EventHandler
-    public void onSpawnMob(CreatureSpawnEvent event, Player player) {
+    @EventHandler (priority = EventPriority.HIGH)
+    public void onSpawnMob(CreatureSpawnEvent event) {
 
-        PlayerServer playerServer = getPlayerServer(player);
+        World world = event.getLocation().getWorld();
+        UUID uuidworld = UUID.fromString(world.getName());
+
+        PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(uuidworld);
+
         if (playerServer == null || playerServer.getPlotdata() == null) {
             return;
         }
+
+
         if (!playerServer.getPlotdata().getMobSpawn()) {
             event.setCancelled(true);
         }
 
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL ) {
-
-            if (!(event.getEntity() instanceof Animals animal)) { return; }
-
-            if(!canBreed(event.getEntityType())){return;}
-
-
-
+        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) {
             return;
         }
 
