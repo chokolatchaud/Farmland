@@ -1,13 +1,10 @@
 package fr.kevyn.farmland.doonees.joueurs;
 
 import com.google.gson.annotations.SerializedName;
-
 import fr.kevyn.farmland.directives.infrastructure.JobType;
 import fr.kevyn.farmland.directives.infrastructure.ToolType;
 import fr.kevyn.farmland.doonees.plots.PlotData;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -204,12 +201,7 @@ public class PlayerServer {
     public void setWeTimeExpiry(long weTimeExpiry) { this.weTimeExpiry = weTimeExpiry; }
     public boolean isWeActive() { return weTimeExpiry > System.currentTimeMillis(); }
     public long getWeTimeRemaining() { return Math.max(0, weTimeExpiry - System.currentTimeMillis()); }
-    public static Player getplayer(PlayerServer playerserver) {
-        Player player = Bukkit.getPlayer(playerserver.getUuid());
-        if(player == null) {
-            return null;
-        }
-        return player;
-    }
+
+
 
 }

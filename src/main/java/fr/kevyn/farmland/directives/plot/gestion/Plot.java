@@ -72,12 +72,12 @@ public class Plot {
         }
         
         this.world = world;
-        
-        world.getWorldBorder().setSize(50);
-        world.setAutoSave(true);
 
-        world.setGameRule(GameRules.ADVANCE_TIME, Boolean.TRUE);
-        world.setGameRule(GameRules.ADVANCE_WEATHER, Boolean.TRUE);
+        
+
+        world.setAutoSave(true);
+        PlotInit.init(world);
+
         
     }
     

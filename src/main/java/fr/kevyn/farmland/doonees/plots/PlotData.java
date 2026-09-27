@@ -1,8 +1,6 @@
 package fr.kevyn.farmland.doonees.plots;
 
-import fr.kevyn.farmland.directives.plot.gestion.Plot;
-import org.bukkit.GameRules;
-import org.bukkit.World;
+import fr.kevyn.farmland.directives.plot.gestion.Meteo;
 
 import java.util.ArrayList;
 
@@ -18,14 +16,14 @@ public class PlotData {
     int boost;
     boolean waterlava;
     boolean mobSpawn;
-    String meteoActive;
-    String meteoTime;
-    String meteoRain;
+    Meteo meteoActive;
+    Meteo meteoTime;
+    Meteo meteoRain;
     String NameWorld;
 	
 	
     
-    public PlotData (String PlotProprety,ArrayList<String> allplotadd,ArrayList<String> allplottrust, String NameWorld,int worldborder,int boost,String meteoActive,String meteoTime,String meteoRain) {
+    public PlotData (String PlotProprety,ArrayList<String> allplotadd,ArrayList<String> allplottrust, String NameWorld,int worldborder,int boost,Meteo meteoActive,Meteo meteoTime,Meteo meteoRain) {
         this.PlotProprety = PlotProprety;
         this.allplotadd = allplotadd;
         this.allplottrust = allplottrust;
@@ -43,46 +41,23 @@ public class PlotData {
         this.mobSpawn = true;
     }
     
-    public String getMeteoActive() {
+    public Meteo getMeteoActive() {
         return meteoActive;
     }
-    public String getMeteoTime() {
+    public Meteo getMeteoTime() {
 		return meteoTime;
 	}
-    public String getMeteoRain() {
+    public Meteo getMeteoRain() {
 		return meteoRain;
 	}
-    public void setMeteoRain(String meteoRain, World plotworld) {
-		this.meteoRain = meteoRain;
-		if(meteoRain.equalsIgnoreCase("weatherain")) {
-            plotworld.setStorm(true);
-            plotworld.setWeatherDuration(Integer.MAX_VALUE);
+    public void setMeteoRain(Meteo meteoRain) {this.meteoRain = meteoRain;}
+    public void setMeteoTime(Meteo meteoTime) {this.meteoTime = meteoTime;
         }
-        else if(meteoRain.equalsIgnoreCase("weatherclear")) {
-            plotworld.setStorm(false);
-            plotworld.setClearWeatherDuration(Integer.MAX_VALUE);
-        }
-		
-	}
-    public void setMeteoTime(String meteoTime,World plotworld) {
-    	this.meteoTime = meteoTime;
-    	if(meteoTime.equalsIgnoreCase("Day")){
-            plotworld.setTime(1000);
-        }
-        else if(meteoTime.equalsIgnoreCase("Night")) {
-            plotworld.setTime(13000);
-        }
-	}
+
+
+
     
-    public void setMeteoActive(String meteo, World plotworld) {
-        this.meteoActive = meteo;
-        if(meteo.equalsIgnoreCase("minecraftActive")) {
-            plotworld.setGameRule(GameRules.ADVANCE_TIME, true);
-        }
-        else if(meteo.equalsIgnoreCase("minecraftDeactive")){
-            plotworld.setGameRule(GameRules.ADVANCE_WEATHER, false);
-        }
-    }
+    public void setMeteoActive(Meteo meteo) {this.meteoActive = meteo;}
     
     public int getBoost() {
         return boost;
@@ -152,13 +127,7 @@ public class PlotData {
     }
     public void setMobSpawn(boolean mobSpawn) {this.mobSpawn = mobSpawn;}
     
-    public void setWorldborder(int worldborder) {
-        this.worldborder = worldborder;
-        World world = Plot.getWorldforname(NameWorld);
-        if (world != null) {
-            world.getWorldBorder().setSize(worldborder);
-        }
-    }
+    public void setWorldborder(int worldborder) {this.worldborder = worldborder;}
     
     public void RemoveAllplotadd(String ownerUuid) {
         allplotadd.remove(ownerUuid);

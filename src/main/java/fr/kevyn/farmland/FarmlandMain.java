@@ -2,9 +2,9 @@ package fr.kevyn.farmland;
 
 import fr.kevyn.farmland.directives.administration.messagediscord;
 import fr.kevyn.farmland.directives.gameplay.evenement.JoinAndleaveEvent;
-import fr.kevyn.farmland.persistance.webapi.WebApiClient;
 import fr.kevyn.farmland.infrastructure.ModuleLoader;
 import fr.kevyn.farmland.persistance.joueurs.PlayerSave;
+import fr.kevyn.farmland.persistance.webapi.WebApiClient;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class FarmlandMain extends JavaPlugin {
@@ -24,17 +24,13 @@ public final class FarmlandMain extends JavaPlugin {
     @Override
     public void onEnable() {
         getLogger().info("----- Plugin activé -----");
-
         saveDefaultConfig();
-        messagediscord.init(this);
-
         getServer().getPluginManager().registerEvents(new JoinAndleaveEvent(this), this);
-
+        messagediscord.init(this);
         if (!loadPlayerData()) {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-
         messagediscord.sendmessage("Le plugin vient de s'allumer", "status");
         ModuleLoader.load(this);
     }

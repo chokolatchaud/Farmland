@@ -28,7 +28,7 @@ public class ChatListener implements Listener {
     public void onChat(AsyncPlayerChatEvent event) {
         Player playerevent = event.getPlayer();
         PlayerServer playerserver = PlayerserverHashMap.getInstance().getplayerHaspMaps(playerevent.getUniqueId());
-        Player player = PlayerServer.getplayer(playerserver);
+        Player player = Bukkit.getPlayer(playerserver.getUuid());
         if(!playerevent.equals(player)) {
         	playerevent.kickPlayer("Erreur 23 Rapprocher vous d'un modérateur/admin");
         }

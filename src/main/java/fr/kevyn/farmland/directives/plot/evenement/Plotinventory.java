@@ -1,15 +1,20 @@
 package fr.kevyn.farmland.directives.plot.evenement;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.GameRules;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.directives.cosmetic.CosmeticShop;
+import fr.kevyn.farmland.directives.gameplay.objet.CustomItemType;
+import fr.kevyn.farmland.directives.infrastructure.MessageColor;
+import fr.kevyn.farmland.directives.plot.gestion.Meteo;
+import fr.kevyn.farmland.directives.plot.gestion.Plot;
+import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotConfig;
+import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotUpgrade;
+import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotVisit;
+import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
+import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
+import fr.kevyn.farmland.doonees.menus.GameMenu;
+import fr.kevyn.farmland.doonees.menus.GameMenuHashMap;
+import fr.kevyn.farmland.doonees.menus.TypeMenu;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,19 +24,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import fr.kevyn.farmland.FarmlandMain;
-import fr.kevyn.farmland.directives.infrastructure.MessageColor;
-import fr.kevyn.farmland.directives.cosmetic.CosmeticShop;
-import fr.kevyn.farmland.directives.gameplay.objet.CustomItemType;
-import fr.kevyn.farmland.doonees.menus.GameMenu;
-import fr.kevyn.farmland.doonees.menus.GameMenuHashMap;
-import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotConfig;
-import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotUpgrade;
-import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotVisit;
-import fr.kevyn.farmland.doonees.menus.TypeMenu;
-import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
-import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
-import fr.kevyn.farmland.directives.plot.gestion.Plot;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public final class Plotinventory implements Listener {
     private final Map<UUID, Integer> playerPageById = new HashMap<>();
@@ -144,35 +139,44 @@ public final class Plotinventory implements Listener {
 
         // ── PLOTCONFIG ────────────────────────────────────────────────────────
         else if (gameMenu.getTypemenu() == TypeMenu.PLOTCONFIG) {
+
             PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
             if (playerServer == null) { player.kickPlayer("erreur 23"); return; }
+            World plot = Bukkit.getWorld(playerServer.getPlotdata().getNameWorld());
+            if (plot == null) {
+                player.kickPlayer("erreur 23");
+                return;
+            }
 
             if (customItemType == CustomItemType.CLOCK_DAYNIGHT) {
-                if (playerServer.getPlotdata().getMeteoTime().equalsIgnoreCase("day")) {
-                    playerServer.getPlotdata().setMeteoTime("night", Bukkit.getWorld(playerServer.getPlotdata().getNameWorld()));
+                if (playerServer.getPlotdata().getMeteoTime() == Meteo.DAY) {
+                    playerServer.getPlotdata().setMeteoTime(Meteo.NIGHT);
                     player.sendMessage(MessageColor.DARK_BLUE.apply("La nuit approche"));
+                    plot.setTime(13000);
                 } else {
-                    playerServer.getPlotdata().setMeteoTime("day", Bukkit.getWorld(playerServer.getPlotdata().getNameWorld()));
+                    playerServer.getPlotdata().setMeteoTime(Meteo.DAY);
                     player.sendMessage(MessageColor.YELLOW.apply("Le jour approche"));
+                    plot.setTime(1000);
                 }
             }
             if (customItemType == CustomItemType.RAIN_TOGGLE) {
-                if (playerServer.getPlotdata().getMeteoRain().equalsIgnoreCase("weatherclear")) {
-                    playerServer.getPlotdata().setMeteoRain("weatherain", Bukkit.getWorld(playerServer.getPlotdata().getNameWorld()));
+                if (playerServer.getPlotdata().getMeteoRain() == Meteo.RAINSTOP) {
+                    playerServer.getPlotdata().setMeteoRain(Meteo.RAIN);
+                    plot.setWeatherDuration(-Integer.MAX_VALUE);
                     player.sendMessage(MessageColor.BLUE.apply("La pluie approche"));
                 } else {
-                    playerServer.getPlotdata().setMeteoRain("weatherclear", Bukkit.getWorld(playerServer.getPlotdata().getNameWorld()));
+                    playerServer.getPlotdata().setMeteoRain(Meteo.RAINSTOP);
+                    plot.setClearWeatherDuration(Integer.MAX_VALUE);
                     player.sendMessage(MessageColor.BLUE.apply("La pluie s'éloigne"));
                 }
             }
             if (customItemType == CustomItemType.TIME_FREEZE) {
-                World plot = Bukkit.getWorld(playerServer.getPlotdata().getNameWorld());
-                if (playerServer.getPlotdata().getMeteoActive().equalsIgnoreCase("minecraftActive")) {
-                    playerServer.getPlotdata().setMeteoActive("minecraftDeactive", plot);
+                if (playerServer.getPlotdata().getMeteoActive() == Meteo.TIMEFALSE){
+                    playerServer.getPlotdata().setMeteoActive(Meteo.TIMETRUE);
                     plot.setGameRule(GameRules.ADVANCE_TIME, true);
                     player.sendMessage(MessageColor.GOLD.apply("La météo se met à bouger"));
                 } else {
-                    playerServer.getPlotdata().setMeteoActive("minecraftActive", plot);
+                    playerServer.getPlotdata().setMeteoActive(Meteo.TIMEFALSE);
                     plot.setGameRule(GameRules.ADVANCE_TIME, false);
                     player.sendMessage(MessageColor.GOLD.apply("La météo se fige"));
                 }

@@ -5,6 +5,7 @@ import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.directives.infrastructure.MessageColor;
 import fr.kevyn.farmland.directives.gameplay.chat.ChatListener;
 import fr.kevyn.farmland.directives.marché.commands.BuyCommands;
+import fr.kevyn.farmland.directives.plot.gestion.Meteo;
 import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
 import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
 import fr.kevyn.farmland.persistance.joueurs.PlayerSave;
@@ -59,7 +60,7 @@ public final class JoinAndleaveEvent implements Listener {
                 event.getPlayer().getUniqueId().toString(),
                 new ArrayList<>(), new ArrayList<>(),
                 event.getPlayer().getUniqueId().toString(),
-                50, 0, "minecraftActive", "day", "weatherclear"
+                50, 0, Meteo.TIMETRUE, Meteo.DAY, Meteo.RAINSTOP
             );
             
             PlayerServer newPlayerServer = new PlayerServer(
