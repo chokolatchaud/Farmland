@@ -9,6 +9,8 @@ public enum TypeMenu {
 	SEEDS,
 	SHOP, 
 	PASSIF_MOB, 
-	AGGRESSIVE_MOB
+	AGGRESSIVE_MOB,
+	METIERS,
+	METIERS_LEVELS
 
 }

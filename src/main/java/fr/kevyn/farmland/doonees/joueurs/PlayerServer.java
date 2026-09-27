@@ -134,7 +134,7 @@ public class PlayerServer {
     public void setEpeeLevel(int level) { setToolLevel(ToolType.EPEE, level); }
 
     public int getHacheLevel() { return getToolLevel(ToolType.HACHE); }
-    public void setHacheLevel(int level) { setToolLevel(ToolType.EPEE, level); }
+    public void setHacheLevel(int level) { setToolLevel(ToolType.HACHE, level); }
 
     public Boolean getLastjoin() {
         return lastjoin;

@@ -1,6 +1,8 @@
 package fr.kevyn.farmland.modules.gameplay;
 
 import fr.kevyn.farmland.directives.administration.messagediscord;
+import fr.kevyn.farmland.directives.metiers.MetiersCommands;
+import fr.kevyn.farmland.directives.metiers.MetiersMenuListener;
 import fr.kevyn.farmland.directives.metiers.farmeur.BlockFertilizeListener;
 import fr.kevyn.farmland.directives.metiers.farmeur.FarmCommands;
 import fr.kevyn.farmland.directives.metiers.farmeur.HarvestFarmEvent;
@@ -57,6 +59,7 @@ public final class MetierModule {
         plugin.getServer().getPluginManager().registerEvents(new KillEventAgriculteur(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new KillEventTueur(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new BlockFertilizeListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new MetiersMenuListener(), plugin);
     }
 
     private void registerJobCommands() {
@@ -65,5 +68,7 @@ public final class MetierModule {
         plugin.getCommand("peche").setExecutor(new FishingCommands());
         plugin.getCommand("epee").setExecutor(new épeeCommands());
         plugin.getCommand("hache").setExecutor(new HacheCommands());
+        plugin.getCommand("metiers").setExecutor(new MetiersCommands());
+
     }
 }

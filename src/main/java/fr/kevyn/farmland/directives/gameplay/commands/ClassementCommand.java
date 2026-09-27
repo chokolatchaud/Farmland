@@ -61,7 +61,7 @@ public class ClassementCommand implements CommandExecutor {
         return true;
     }
 
-    private int getNiveau(PlayerServer ps, String metier) {
+    public int getNiveau(PlayerServer ps, String metier) {
         return switch (metier) {
             case "mineur" -> ps.getCobblestonegeneratorlevel();
             case "farmeur" -> ps.getHoueLevel();

@@ -8,6 +8,11 @@ softdepend: [ Votifier, NuVotifier, RoseStacker ]
 
 commands:
 
+  metiers:
+    description: permet d'ouvrir les stats de métiers
+    usage: /metiers
+    permission: farmland.gamecommands
+
   peche:
     description: permet d'obtenir la canne a péche de farm
     usage: /peche
