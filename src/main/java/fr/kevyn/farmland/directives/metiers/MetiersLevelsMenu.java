@@ -1,5 +1,6 @@
 package fr.kevyn.farmland.directives.metiers;
 
+import fr.kevyn.farmland.directives.gameplay.recompense.RecompenseUtil;
 import fr.kevyn.farmland.directives.infrastructure.JobType;
 import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
 import fr.kevyn.farmland.doonees.menus.GameMenu;
@@ -38,7 +39,7 @@ public class MetiersLevelsMenu {
         new GameMenu(inv, TypeMenu.METIERS_LEVELS);
         GameMenu.fillmenu(Material.GRAY_STAINED_GLASS_PANE, inv);
 
-        int playerLevel = getLevel(ps, job);
+        int playerLevel = RecompenseUtil.getLevel(ps, job);
         int startLevel = safePage * LEVELS_PER_PAGE + 1;
         int endLevel = Math.min(startLevel + LEVELS_PER_PAGE - 1, MAX_LEVEL);
 
@@ -85,9 +86,9 @@ public class MetiersLevelsMenu {
         lore.add("\u00A77Metier : \u00A7f" + getDisplayName(job));
         lore.add("\u00A77Statut : " + getStatusLabel(level, playerLevel));
         lore.add("");
-        lore.add("\u00A76Recompense :");
-        lore.add("\u00A77- " + getRewardText(job, level));
-        lore.add("\u00A77- Meilleur potentiel de jetons en farmant");
+        lore.addAll(
+                RecompenseUtil.getRewardLore(job, level)
+        );
         meta.setLore(lore);
 
         item.setItemMeta(meta);
@@ -100,16 +101,6 @@ public class MetiersLevelsMenu {
         meta.setDisplayName(name);
         item.setItemMeta(meta);
         return item;
-    }
-
-    private static int getLevel(PlayerServer ps, JobType job) {
-        return switch (job) {
-            case MINEUR -> ps.getCobblestonegeneratorlevel();
-            case FARMEUR -> ps.getHoueLevel();
-            case PECHEUR -> ps.getCanneLevel();
-            case AGRICULTEUR -> ps.getHacheLevel();
-            case TUEUR -> ps.getEpeeLevel();
-        };
     }
 
     private static Material getStatusMaterial(int level, int playerLevel) {

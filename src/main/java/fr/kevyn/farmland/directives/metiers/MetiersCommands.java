@@ -1,5 +1,7 @@
 package fr.kevyn.farmland.directives.metiers;
 
+import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
+import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,7 +16,12 @@ public class MetiersCommands implements CommandExecutor {
         if(!(sender instanceof Player player)) {
             return true;
         }
-        MetiersMenu.open(player);
+        PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
+        if (ps == null) {
+            player.sendMessage("§cImpossible de trouver tes données joueur.");
+            return true;
+        }
+        MetiersMenu.open(player, ps);
 
         return true;
     }

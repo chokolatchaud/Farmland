@@ -85,7 +85,7 @@ public class MetiersMenuListener implements Listener {
         if (slot == MetiersLevelsMenu.getPreviousSlot()) {
             MetiersLevelsMenu.open(player, ps, state.job(), state.page() - 1);
         } else if (slot == MetiersLevelsMenu.getBackSlot()) {
-            MetiersMenu.open(player);
+            MetiersMenu.open(player, ps);
         } else if (slot == MetiersLevelsMenu.getNextSlot()) {
             MetiersLevelsMenu.open(player, ps, state.job(), state.page() + 1);
         }

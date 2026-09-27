@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.gameplay.recompense;
 
 import fr.kevyn.farmland.directives.gameplay.menus.Outils;
+import fr.kevyn.farmland.directives.infrastructure.JobType;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -9,6 +10,9 @@ import fr.kevyn.farmland.directives.metiers.agriculteur.ArmesUtil;
 import fr.kevyn.farmland.directives.metiers.agriculteur.HacheFarm;
 import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
 import fr.kevyn.farmland.directives.metiers.tueur.epeeFarm;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class RecompenseUtil {
@@ -92,16 +96,53 @@ public class RecompenseUtil {
 
     private static int ajouterXp(PlayerServer ps, String metier, int niveauActuel, int xpGagne) {
         int xpTotal = ps.getXp(metier) + xpGagne;
-        int seuil = 100 * (niveauActuel + 1);
+        int seuil = getXpNeeded(niveauActuel);
 
         int niveau = niveauActuel;
         while (xpTotal >= seuil) {
             xpTotal -= seuil;
             niveau++;
-            seuil = 100 * (niveau + 1);
+            seuil = getXpNeeded(niveau);
         }
 
         ps.setXp(metier, xpTotal);
         return niveau;
+    }
+
+    public static int getXpNeeded(int level) {
+        return 100 * (level + 1);
+    }
+
+    public static List<String> getRewardLore(JobType job, int level) {
+
+        List<String> lore = new ArrayList<>();
+
+        lore.add("§6Récompenses :");
+
+        if (level == 10) {
+            lore.add("§7- §e1 000 $FB");
+        }
+
+        if (level == 20) {
+            lore.add("§7- §e2 500 $FB");
+        }
+
+        if (level == 30) {
+            lore.add("§7- §dObjet spécial du métier");
+        }
+
+        lore.add("§7- Meilleur potentiel de jetons");
+
+        return lore;
+    }
+
+    public static int getLevel(PlayerServer ps, JobType job) {
+        return switch (job) {
+            case MINEUR -> ps.getCobblestonegeneratorlevel();
+            case FARMEUR -> ps.getHoueLevel();
+            case PECHEUR -> ps.getCanneLevel();
+            case AGRICULTEUR -> ps.getHacheLevel();
+            case TUEUR -> ps.getEpeeLevel();
+        };
     }
 }
