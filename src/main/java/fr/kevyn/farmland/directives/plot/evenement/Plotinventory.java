@@ -162,11 +162,15 @@ public final class Plotinventory implements Listener {
             if (customItemType == CustomItemType.RAIN_TOGGLE) {
                 if (playerServer.getPlotdata().getMeteoRain() == Meteo.RAINSTOP) {
                     playerServer.getPlotdata().setMeteoRain(Meteo.RAIN);
-                    plot.setWeatherDuration(-Integer.MAX_VALUE);
+                    plot.setStorm(true);
+                    plot.setWeatherDuration(Integer.MAX_VALUE);
+
                     player.sendMessage(MessageColor.BLUE.apply("La pluie approche"));
                 } else {
                     playerServer.getPlotdata().setMeteoRain(Meteo.RAINSTOP);
+                    plot.setStorm(false);
                     plot.setClearWeatherDuration(Integer.MAX_VALUE);
+
                     player.sendMessage(MessageColor.BLUE.apply("La pluie s'éloigne"));
                 }
             }
