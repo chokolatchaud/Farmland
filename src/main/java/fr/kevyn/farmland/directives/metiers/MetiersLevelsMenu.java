@@ -133,16 +133,6 @@ public class MetiersLevelsMenu {
         return "\u00A7cNon atteint";
     }
 
-    private static String getRewardText(JobType job, int level) {
-        return switch (job) {
-            case MINEUR -> "Generateur de cobblestone niveau " + level;
-            case FARMEUR -> "Houe de farmeur niveau " + level;
-            case PECHEUR -> "Canne a peche niveau " + level;
-            case AGRICULTEUR -> "Hache d'agriculteur niveau " + level;
-            case TUEUR -> "Epee de tueur niveau " + level;
-        };
-    }
-
     private static String getDisplayName(JobType job) {
         return switch (job) {
             case MINEUR -> "Mineur";

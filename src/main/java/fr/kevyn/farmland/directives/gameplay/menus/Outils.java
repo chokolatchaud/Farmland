@@ -63,10 +63,44 @@ public class Outils {
 				}
 		    }
 
-		    
-		    
-		    
+			private static final NamespacedKey CLE_RECOMPENSE_NIVEAU =
+					new NamespacedKey("farmland", "recompense_niveau");
+
+			public static void setRewardLevel(ItemStack item, int level) {
+
+				if (item == null || !item.hasItemMeta()) {
+					return;
+				}
+
+				ItemMeta meta = item.getItemMeta();
+
+				meta.getPersistentDataContainer().set(
+						CLE_RECOMPENSE_NIVEAU,
+						PersistentDataType.INTEGER,
+						level
+				);
+
+				item.setItemMeta(meta);
+			}
+
+			public static int getRewardLevel(ItemStack item) {
+
+				if (item == null || !item.hasItemMeta()) {
+					return 0;
+				}
+
+				return item.getItemMeta()
+						.getPersistentDataContainer()
+						.getOrDefault(
+								CLE_RECOMPENSE_NIVEAU,
+								PersistentDataType.INTEGER,
+								0
+						);
+			}
 
 
-	
+
+
+
+
 }
