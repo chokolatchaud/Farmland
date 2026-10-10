@@ -68,7 +68,12 @@ public class EventMineSpawn implements Listener {
 			return;
 		}
 
-		event.setDropItems(false); // jamais de vrai drop au sol, tout passe par le /bag
+		event.setDropItems(false);
+        if (player.hasCooldown(mainPrincipale.getType())) {
+            event.setCancelled(true);
+            return;
+        }
+        player.setCooldown(mainPrincipale.getType(), 40);
 		int niveauPioche = Math.max(1, ps.getCobblestonegeneratorlevel());
 		int jeton = MultiplicateurUtil.tirerMultiplicateur(niveauPioche);
 		RecompenseUtil.donnerRecompenseMineur(player, ps, 10);
