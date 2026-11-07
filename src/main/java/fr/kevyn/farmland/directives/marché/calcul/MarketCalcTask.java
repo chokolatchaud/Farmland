@@ -157,7 +157,8 @@ public final class MarketCalcTask {
         market.setLastEventMessage("");
     }
 
-    private static int recalculer(int coefficientActuel, int nombreDeVentes) {
+    // Visibilite package (pas private) pour pouvoir etre testee par MarketCalcTaskTest
+    static int recalculer(int coefficientActuel, int nombreDeVentes) {
         int nouveauCoefficient = coefficientActuel;
 
         if (nombreDeVentes > SEUIL_SURPRODUCTION) {

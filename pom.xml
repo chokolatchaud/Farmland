@@ -144,6 +144,14 @@
             <version>1.5.42-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- JUnit 5 (tests uniquement, non embarque dans le JAR) -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.13.4</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <!-- ===================== BUILD ===================== -->
@@ -158,6 +166,13 @@
                 <configuration>
                     <release>${maven.compiler.release}</release>
                 </configuration>
+            </plugin>
+
+            <!-- Surefire Plugin (lance les tests JUnit 5 pendant mvn test) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.3</version>
             </plugin>
 
             <!-- Shade Plugin (Embarque OkHttp dans le JAR final) -->
