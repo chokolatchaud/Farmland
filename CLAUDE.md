@@ -164,3 +164,7 @@ Je veux une aide constante sur le code. Tu modifies, tu testes, tu commits si to
 - Propose d'abord comment les rendre testables (visibilité package ou extraction), sans appliquer sans mon accord.
 - Ajoute JUnit au pom si besoin.
 - Cas à couvrir : plus de 20 ventes, moins de 5 ventes à coefficient < 100, moins de 5 ventes à coefficient ≥ 100 (inchangé), entre 5 et 20 ventes, bornes 50 et 150, troncature des entiers.
+
+## Session de dev guidée
+Quand je dis "on commence une session de dev" ou que je tape `/session`, lis `docs/PROTOCOLE-SESSION.md` et suis-le étape par étape. Tu conduis la session : tu poses les questions, tu proposes la suite et tu me dis où on en est.
+Si je dis "rappelle-moi le guide", résume en 10 lignes le cycle de validation et le protocole, et indique-moi `docs/GUIDE-AGENT.md` pour le détail.
