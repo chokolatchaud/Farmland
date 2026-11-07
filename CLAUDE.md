@@ -52,6 +52,16 @@ Un serveur Paper local, copie approximative du vrai serveur, sert à tester la c
 - Tu ne te connectes jamais à Minestator et tu n'as aucun accès SFTP.
 - Reste dans `C:\farmland-test` et dans le repo : n'écris nulle part ailleurs.
 
+### Messages attendus au démarrage (ce ne sont pas des bugs)
+Ces lignes apparaissent à chaque démarrage du serveur de test. Elles viennent de la configuration volontairement vidée, pas de ton code :
+- `⚠ Webhook Discord non configuré pour le salon "statut" (voir config.yml)` : les webhooks Discord sont vides dans le serveur de test. Elle apparaît 2 fois.
+- `[WebAPI] Module désactivé` : normal, `webapi.enabled` est à `false`. Si tu vois plutôt un module WebAPI actif, arrête-toi et préviens-moi.
+
+Règles :
+- Ignore uniquement ces lignes. Un message du même type pour un autre salon Discord est probablement normal aussi, mais cite-le-moi la première fois.
+- Tout autre `WARN`, `ERROR` ou `Exception` doit m'être signalé, même s'il te semble lié à la config.
+- Ne remplis jamais un webhook pour faire disparaître ces avertissements.
+
 ### Déroulé d'un test
 1. `mvn clean package` puis `mvn test` (les deux doivent passer).
 2. Copie `target/farmland-<version>.jar` (pas le fichier `original-*.jar`) dans `C:\farmland-test\plugins\`, en remplaçant l'ancien jar.
