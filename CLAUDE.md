@@ -15,7 +15,7 @@ Le site (farm-land.fr) est dans un autre repo : le plugin lui envoie des donnée
 - Compiler : `mvn clean package` (jar dans `target/`).
 - CI `build.yml` : Java 25, `mvn -B clean package -DskipTests`. Les tests sont donc ignorés.
 - `discord-notify.yml` envoie les commits sur Discord via le secret GitHub `DISCORD_WEBHOOK`.
-- Aucun test n'existe aujourd'hui (pas de `src/test`, pas de JUnit dans le pom).
+- Tests : JUnit 5 (5.13.4, scope `test`, non embarqué dans le jar) et Surefire 3.5.3 dans le pom. 22 tests dans `src/test/java` (marché : `MarketCalcTaskTest`, `MarketCalcTest`). Ils tournent avec `mvn test` en local, pas en CI.
 
 ## Cycle de validation (toujours dans cet ordre)
 1. Toi : tu modifies, tu compiles, tu lances les tests, tu testes sur le serveur de test, tu commites en local.
@@ -111,7 +111,7 @@ Les clics dans les menus, les téléportations, la bordure, le scoreboard, les h
 
 ## Dette connue (vérifiée)
 - `printStackTrace()` dans 10 fichiers (17 appels). Les logs de debug et les `System.out` ont été retirés.
-- Aucun test, CI qui saute les tests.
+- La CI saute les tests (`-DskipTests`) : seuls les tests du marché existent, et ils ne tournent qu'en local.
 - `dependency-reduced-pom.xml` versionné alors que `createDependencyReducedPom` est à false.
 - Fichiers d'IDE versionnés (`.idea`, `.classpath`, `.project`, `.settings`) alors que `.gitignore` ne contient que `/target/`.
 - `lib/` contient des jars versionnés (FAWE 2.14.0 alors que le pom utilise 2.14.3).
@@ -131,7 +131,7 @@ Les clics dans les menus, les téléportations, la bordure, le scoreboard, les h
 
 ## Tests obligatoires
 - Toute logique de calcul, de prix ou d'argent doit venir avec un test JUnit.
-- Aucun test n'existe aujourd'hui : avant le premier test, propose-moi l'ajout de JUnit au `pom.xml` et attends mon accord.
+- JUnit 5 est déjà dans le `pom.xml` : écris les nouveaux tests dans `src/test/java`, dans le même package que la classe testée (comme les tests du marché).
 - Un changement n'est terminé que si `mvn clean package` et `mvn test` passent. Donne-moi le résultat réel, sans l'arrondir.
 
 ## Façon de travailler avec moi
@@ -158,11 +158,10 @@ Je veux une aide constante sur le code. Tu modifies, tu testes, tu commits si to
 - Ne modifie jamais `pom.xml`, `plugin.yml` ou les workflows sans me le dire d'abord.
 - Si tu n'es pas sûr de quelque chose, dis-le plutôt que d'inventer.
 
-## Premier exercice suggéré : tests du marché
-- Cible : `recalculer()` (privée dans `MarketCalcTask`) et `MarketCalc.getPrixActuel()`.
-- Propose d'abord comment les rendre testables (visibilité package ou extraction), sans appliquer sans mon accord.
-- Ajoute JUnit au pom si besoin.
-- Cas à couvrir : plus de 20 ventes, moins de 5 ventes à coefficient < 100, moins de 5 ventes à coefficient ≥ 100 (inchangé), entre 5 et 20 ventes, bornes 50 et 150, troncature des entiers.
+## Tests du marché (fait)
+- `MarketCalcTask.recalculer()` est en visibilité package (`static`, sans `private`) pour être testable. `MarketCalc.getPrixActuel()` est publique.
+- Cas couverts : plus de 20 ventes, moins de 5 ventes à coefficient < 100, moins de 5 ventes à coefficient ≥ 100 (inchangé), entre 5 et 20 ventes, bornes 50 et 150, troncature des entiers.
+- Si tu modifies le calcul du marché, mets ces tests à jour dans le même commit.
 
 ## Session de dev guidée
 Quand je dis "on commence une session de dev" ou que je tape `/session`, lis `docs/PROTOCOLE-SESSION.md` et suis-le étape par étape. Tu conduis la session : tu poses les questions, tu proposes la suite et tu me dis où on en est.
