@@ -166,3 +166,8 @@ Je veux une aide constante sur le code. Tu modifies, tu testes, tu commits si to
 ## Session de dev guidée
 Quand je dis "on commence une session de dev" ou que je tape `/session`, lis `docs/PROTOCOLE-SESSION.md` et suis-le étape par étape. Tu conduis la session : tu poses les questions, tu proposes la suite et tu me dis où on en est.
 Si je dis "rappelle-moi le guide", résume en 10 lignes le cycle de validation et le protocole, et indique-moi `docs/GUIDE-AGENT.md` pour le détail.
+
+## Liste des tâches (`docs/TACHES.md`)
+- C'est moi qui remplis ce fichier et qui fixe les priorités.
+- Si je lance une session sans sujet, lis-le et propose-moi la tâche suivante.
+- N'y ajoute, n'y réordonne et n'y supprime rien sans mon accord. Si tu repères une tâche ou une dette, propose-la-moi.
