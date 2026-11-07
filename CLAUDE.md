@@ -55,7 +55,7 @@ Un serveur Paper local, copie approximative du vrai serveur, sert à tester la c
 
 ### Messages attendus au démarrage (ce ne sont pas des bugs)
 Ces lignes apparaissent à chaque démarrage du serveur de test. Elles viennent de la configuration volontairement vidée, pas de ton code :
-- `⚠ Webhook Discord non configuré pour le salon "statut" (voir config.yml)` : les webhooks Discord sont vides dans le serveur de test. Elle apparaît plusieurs fois par démarrage (le nombre varie). Le même message existe pour le salon `"status"`, à l'activation et à l'arrêt.
+- `⚠ Webhook Discord non configuré pour le salon "statut" (voir config.yml)`, précédée du préfixe `[Farmland]` dans les logs : les webhooks Discord sont vides dans le serveur de test. Elle apparaît plusieurs fois par démarrage (le nombre varie). Le même message existe pour le salon `"status"`, à l'activation et à l'arrêt.
 - `[WebAPI] Module désactivé` : normal, `webapi.enabled` est à `false`. Si tu vois plutôt un module WebAPI actif, arrête-toi et préviens-moi.
 
 Règles :
@@ -110,8 +110,7 @@ Les clics dans les menus, les téléportations, la bordure, le scoreboard, les h
 - Petits diffs, une tâche à la fois, pas de refactor non demandé.
 
 ## Dette connue (vérifiée)
-- 4 logs `[DEBUG-TP]` dans `Plotinventory.java` (~lignes 283 à 293).
-- `System.out` dans `MarketSave`, `ConfigStartEndZone`, `boatgame`, `messagediscord` ; `printStackTrace()` dans 10 fichiers.
+- `printStackTrace()` dans 10 fichiers (17 appels). Les logs de debug et les `System.out` ont été retirés.
 - Aucun test, CI qui saute les tests.
 - `dependency-reduced-pom.xml` versionné alors que `createDependencyReducedPom` est à false.
 - Fichiers d'IDE versionnés (`.idea`, `.classpath`, `.project`, `.settings`) alors que `.gitignore` ne contient que `/target/`.

@@ -145,14 +145,13 @@ public final class MarketSave {
     public static void displayHistory(JavaPlugin plugin) {
         List<MarketSnapshot> history = getFullHistory(plugin);
         
-        System.out.println("=== HISTORIQUE DU MARKET ===");
-        System.out.println("Total: " + history.size() + "/" + MAX_HISTORY);
-        System.out.println();
-        
+        plugin.getLogger().info("=== HISTORIQUE DU MARKET ===");
+        plugin.getLogger().info("Total: " + history.size() + "/" + MAX_HISTORY);
+
         for (int i = 0; i < history.size(); i++) {
             MarketSnapshot snapshot = history.get(i);
             Market m = snapshot.market;
-            System.out.println((i + 1) + ". " + snapshot.timestamp);
+            plugin.getLogger().info((i + 1) + ". " + snapshot.timestamp);
         }
     }
 

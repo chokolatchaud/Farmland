@@ -1,5 +1,7 @@
 package fr.kevyn.farmland.directives.administration;
 
+import org.bukkit.Bukkit;
+
 import fr.kevyn.farmland.FarmlandMain;
 
 import java.io.OutputStream;
@@ -19,7 +21,8 @@ public class messagediscord {
 	public static void sendmessage(String content, String salon) {
 	    try {
 	    	if (plugin == null) {
-	    		System.out.println("⚠ messagediscord.init() pas appelé, message ignoré : " + content);
+	    		// plugin est null ici : on passe par le logger general du serveur
+	    		Bukkit.getLogger().info("⚠ messagediscord.init() pas appelé, message ignoré : " + content);
 	    		return;
 	    	}
 	    	
@@ -40,7 +43,7 @@ public class messagediscord {
 	        }
 	        
 	        if (webhookUrl.isEmpty()) {
-	        	System.out.println("⚠ Webhook Discord non configuré pour le salon \"" + salon + "\" (voir config.yml)");
+	        	plugin.getLogger().info("⚠ Webhook Discord non configuré pour le salon \"" + salon + "\" (voir config.yml)");
 	        	return;
 	        }
 	        
@@ -72,7 +75,7 @@ public class messagediscord {
 	        // Lecture du code de réponse 
 	        int responseCode = connection.getResponseCode();
 	        if (responseCode != 204 && responseCode != 200) {
-	            System.out.println("⚠ Erreur envoi Discord : code HTTP " + responseCode);
+	            plugin.getLogger().info("⚠ Erreur envoi Discord : code HTTP " + responseCode);
 	        }
 	        
 	    } catch (Exception _) {

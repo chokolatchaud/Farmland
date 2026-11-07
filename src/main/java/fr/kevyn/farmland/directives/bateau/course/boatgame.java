@@ -33,8 +33,6 @@ public class boatgame {
 
 		// petit delai avant de monter le joueur : laisse le temps a la teleportation
 		Bukkit.getScheduler().runTaskLater(plugin, () -> bateau.addPassenger(player), 2L);
-
-		System.out.println("[BoatRace][DEBUG] Bateau spawn pour " + player.getName() + " a " + zonespawn);
 	}
 
 	public static void playerleftboat(Player player, Entity boat, ConfigStartEndZone game, JavaPlugin plugin) {

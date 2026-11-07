@@ -52,7 +52,6 @@ public class ConfigStartEndZone {
         BoatGameHashMap.addListgameboat(this);
         fermerBarriere(this); // remet le verre en place pour cette nouvelle course
         starttime(plugin, this);
-        plugin.getLogger().info("[BoatRace][DEBUG] Nouvelle partie creee");
     }
 
     public GameRegion getWaypoint1() { return Waypoint1; }
@@ -168,7 +167,6 @@ public class ConfigStartEndZone {
             HashMap<Integer, Player> playeringame = game.getPlayeringame();
 
             if (playeringame.isEmpty()) {
-                plugin.getLogger().info("[BoatRace][DEBUG] Plus aucun joueur, arret de la partie");
                 game.killgame(plugin, game);
                 return; // la partie n'existe plus, on stoppe ce tick
             }
@@ -179,7 +177,6 @@ public class ConfigStartEndZone {
                 Map.Entry<Integer, Player> entry = it.next();
                 Player player = entry.getValue();
                 if (!player.isInsideVehicle()) {
-                    System.out.println("[BoatRace][DEBUG] " + player.getName() + " n'est plus dans un bateau -> retire (piste " + entry.getKey() + ")");
                     game.getProgression().remove(player);
                     it.remove();
                 }
@@ -187,13 +184,11 @@ public class ConfigStartEndZone {
 
             if (game.getStatus() == StatutBoatGame.waitplayer) {
                 game.timetolaunch -= 1;
-                System.out.println("[BoatRace][DEBUG] Compte a rebours : " + game.timetolaunch);
                 for (Player player : playeringame.values()) {
                     player.sendMessage("§eDepart dans " + game.timetolaunch + " secondes");
                 }
 
                 if (game.timetolaunch <= 0) {
-                    plugin.getLogger().info("[BoatRace][DEBUG] Depart de la course !");
                     ouvrirBarriere(game); // retire la barriere en verre pour laisser passer les bateaux
                     game.setStatus(StatutBoatGame.race);
                     game.racestarttime = game.getTimegame(); // depart reel, exclut les secondes du decompte
@@ -208,7 +203,6 @@ public class ConfigStartEndZone {
             ArrayList<Player> vainqueurs = new ArrayList<>(); // traites APRES la boucle (pas de modif pendant l'iteration)
 
             for (Map.Entry<Integer, Player> entry : playeringame.entrySet()) {
-                int piste = entry.getKey();
                 Player player = entry.getValue();
 
                 GameRegion region = GameRegionHashMap.getInstance().Playerwhatistregion(player);
@@ -222,7 +216,6 @@ public class ConfigStartEndZone {
                     if (indexTouche == deja + 1) {
                         game.getProgression().put(player, indexTouche);
                         player.sendMessage("§aWaypoint " + indexTouche + "/3 validé !");
-                        plugin.getLogger().info("[BoatRace][DEBUG] " + player.getName() + " valide le waypoint " + indexTouche);
                     }
 
                 }
@@ -239,7 +232,6 @@ public class ConfigStartEndZone {
                         if (record) {
                             player.sendMessage("§d✦ Nouveau record personnel !");
                         }
-                        plugin.getLogger().info("[BoatRace][DEBUG] " + player.getName() + " GAGNE la course en " + tempsCourse + "s (piste " + piste + ")");
                         Bukkit.broadcastMessage("§6" + player.getName() + " §ea remporté la course de bateaux en §b" + tempsCourse + "s§e !");
 
                         BoatRaceHologram.update(plugin);
