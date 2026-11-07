@@ -99,8 +99,7 @@ Le push déclenche la CI et la notification Discord. Le dépôt est public : auc
 - 22 tests JUnit (marché), mais la CI les saute (`-DskipTests`).
 - Sans RoseStacker, le listener de protection des plots ne se charge pas : à garder en tête, à corriger plus tard avec validation.
 - Dette connue :
-  - 4 logs `[DEBUG-TP]` dans `Plotinventory.java` ;
-  - `System.out` dans `MarketSave`, `ConfigStartEndZone`, `boatgame`, `messagediscord`, et `printStackTrace()` dans 10 fichiers ;
+  - `printStackTrace()` dans 10 fichiers (17 appels). Les logs de debug et les `System.out` ont été retirés (commit `ca06da3`) ;
   - noms de salon Discord `statut` et `status` à vérifier ;
   - API dépréciée dans `ModerationCommands.java` ;
   - `dependency-reduced-pom.xml`, fichiers d'IDE et `lib/` versionnés ;
@@ -110,7 +109,6 @@ Le push déclenche la CI et la notification Discord. Le dépôt est public : auc
 ## 11. Prochaines tâches possibles (par ordre de risque)
 
 1. Chercher l'origine de `status` / `statut` (lecture seule).
-2. Retirer les `[DEBUG-TP]`.
-3. Remplacer les `System.out` par le logger du plugin.
-4. Tests sur d'autres calculs (récompenses, multiplicateurs), zone sensible : avec validation.
-5. Corriger la dépendance du listener de protection à RoseStacker : zone sensible.
+2. Remplacer les `printStackTrace()` par le logger du plugin : plusieurs fichiers sensibles (sauvegardes, WebAPI, WorldEdit), validation fichier par fichier.
+3. Tests sur d'autres calculs (récompenses, multiplicateurs), zone sensible : avec validation.
+4. Corriger la dépendance du listener de protection à RoseStacker : zone sensible.
