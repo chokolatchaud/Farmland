@@ -43,7 +43,7 @@ Un serveur Paper local, copie approximative du vrai serveur, sert à tester la c
 
 - Dossier : `C:\farmland-test` (hors du repo, jamais versionné).
 - Copie de référence propre : `C:\farmland-test-backup`. Pour remettre le serveur à zéro, restaure-la.
-- Il contient la même version de Paper que le `pom.xml`, les mêmes plugins que la prod (PlaceholderAPI, Multiverse-Core, NuVotifier, RoseStacker, FAWE, LuckPerms...) et une copie de quelques mondes réels (plots, course de bateaux).
+- Il contient la même version de Paper que la prod : 26.1.2 build 74 (le `pom.xml` vise 26.2 : ne le modifie pas sans me le dire), les mêmes plugins que la prod (PlaceholderAPI, Multiverse-Core, NuVotifier, RoseStacker, FAWE, LuckPerms...) et une copie de quelques mondes réels (plots, course de bateaux).
 - **Si ce dossier n'existe pas ou est incomplet : dis-le-moi et n'invente aucun résultat de test.**
 
 ### Sécurité du serveur de test (à vérifier avant chaque démarrage)
@@ -51,10 +51,11 @@ Un serveur Paper local, copie approximative du vrai serveur, sert à tester la c
 - Webhooks Discord, `api_key` et tokens (dont DiscordSRV) restent vides ou absents. Ne les remplis jamais.
 - Tu ne te connectes jamais à Minestator et tu n'as aucun accès SFTP.
 - Reste dans `C:\farmland-test` et dans le repo : n'écris nulle part ailleurs.
+- Tu peux écrire des fichiers de travail (liste de commandes, message de commit) dans ton dossier temporaire Claude Code, nulle part ailleurs.
 
 ### Messages attendus au démarrage (ce ne sont pas des bugs)
 Ces lignes apparaissent à chaque démarrage du serveur de test. Elles viennent de la configuration volontairement vidée, pas de ton code :
-- `⚠ Webhook Discord non configuré pour le salon "statut" (voir config.yml)` : les webhooks Discord sont vides dans le serveur de test. Elle apparaît 2 fois.
+- `⚠ Webhook Discord non configuré pour le salon "statut" (voir config.yml)` : les webhooks Discord sont vides dans le serveur de test. Elle apparaît plusieurs fois par démarrage (le nombre varie). Le même message existe pour le salon `"status"`, à l'activation et à l'arrêt.
 - `[WebAPI] Module désactivé` : normal, `webapi.enabled` est à `false`. Si tu vois plutôt un module WebAPI actif, arrête-toi et préviens-moi.
 
 Règles :
