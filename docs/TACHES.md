@@ -41,3 +41,7 @@ Questions :
 2. Remplacer les `printStackTrace()` par le logger du plugin : plusieurs fichiers sensibles (sauvegardes, WebAPI, WorldEdit), validation fichier par fichier.
 3. Tests sur d'autres calculs (récompenses, multiplicateurs) : zone sensible, avec validation.
 4. Corriger la dépendance du listener de protection des plots à RoseStacker : zone sensible.
+5. Menu plot visit : remettre la page à 1 à chaque ouverture de `/plot visit`. Aujourd'hui `playerPageById` (`Plotinventory`) garde l'ancienne page, et la flèche "suivante" peut sauter une page.
+6. Menu plot visit : un seul titre pour toutes les pages ("plotvisit" dans `Plotcommands`, "Visite" dans `Plotinventory`).
+7. Menu plot visit : téléporter avec `teleportSafe` (`Plotcommands`) au lieu de `teleportToPlot` et `findSafeLocation`, recopiées dans `Plotinventory`.
+8. Menu plot visit : laisser le propriétaire visiter son propre plot privé depuis le menu, comme avec `/plot visit <nom>`.
