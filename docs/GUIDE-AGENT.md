@@ -14,7 +14,7 @@ Mis en place le 7 novembre 2026. Ce guide est pour moi. L'agent a son propre pro
 4. Deux façons de travailler :
    - **Mode autonome** : remplir `docs/TACHES.md`, puis dire "lance les tâches". L'agent travaille sur la branche `agent/AAAA-MM-JJ` (jamais sur `master`) et traite les tâches dans l'ordre, un commit par tâche. Il s'arrête après 3 tâches (2 au tout premier lancement), sauf si je dis "lance 5 tâches". Il met de côté celles qui touchent une zone sensible et finit par un rapport (règles dans `CLAUDE.md`, section 3).
    - **Mode guidé** : `/session` ou `/session <sujet>`, ou dire "on commence une session de dev". L'agent conduit la session en 7 étapes (check-in, objectif, branche, plan, exécution, vérification, clôture) et attend mon "ok" à chaque étape.
-   - `.claude/commands/session.md` est une copie locale de `docs/PROTOCOLE-SESSION.md`, non versionnée : c'est la copie versionnée qui fait foi.
+   - `.claude/commands/session.md` est une copie de `docs/PROTOCOLE-SESSION.md`, versionnée elle aussi (c'est elle qui crée la commande `/session`). `docs/PROTOCOLE-SESSION.md` fait foi : si je modifie l'un, je recopie dans l'autre.
 
 ## 2. Ce qu'est l'agent, et ce qu'il n'est pas
 
