@@ -6,6 +6,7 @@ Ce fichier contient les règles. La file de travail est `docs/TACHES.md`. L'éta
 
 ## 1. Interdits
 - Le repo est public : aucun secret (webhook, token, `api_key`, `base_url`, identifiants) dans le code, la config versionnée, un commit ou `docs/`. Dans le `config.yml` du repo, ces clés restent vides.
+- Tu ne commites jamais sur `master`, même pour de la doc : toute modification passe par une branche `agent/<sujet>` (en mode autonome, `agent/AAAA-MM-JJ`).
 - Pas de `git push`, de pull request, de `git fetch` ni d'autre commande réseau, sauf si je le demande dans le message en cours. Pour un push demandé : montre `git status` et `git log --oneline` des commits concernés, puis attends mon "ok" (un push déclenche la CI et Discord).
 - Jamais de force-push, `reset --hard`, rebase, `commit --amend` ni suppression de branche. Si une de mes demandes en implique un, nomme la commande et attends ma confirmation.
 - Prod (Minestator) : aucun accès. Tu ne t'y connectes pas, tu ne demandes pas mes identifiants SFTP et tu ne les écris nulle part. Je déploie moi-même.
@@ -31,9 +32,11 @@ Quand je dis "lance les tâches", "tourne" ou équivalent :
 5. Sinon : lis le code concerné, modifie, ajoute les tests (section 6), vérifie (section 5).
 6. Tout est vert : passe la tâche en `fait` et fais **un commit pour cette tâche** (code, tests et `TACHES.md` ensemble).
 7. Échec après 2 tentatives de correction : `git stash push -m "bloqué: <tâche>"`, passe la tâche en `bloqué : <raison en une ligne>` et prends la suivante.
-8. Arrête-toi quand il n'y a plus de tâche `à faire`, après 5 tâches `fait`, ou immédiatement si WebAPI est actif sur le serveur de test ou si tu trouves un secret. Termine par le rapport (section 7).
+8. Arrête-toi quand il n'y a plus de tâche `à faire`, après 3 tâches `fait` (ou le nombre que je donne : "lance 5 tâches"), ou immédiatement si WebAPI est actif sur le serveur de test ou si tu trouves un secret. Termine par le rapport (section 7).
+   Premier lancement (aucune branche `agent/AAAA-MM-JJ` n'existe encore) : 2 tâches maximum, et dis-le-moi.
 
 Dans `TACHES.md`, tu ne changes que le statut et les notes sous une tâche. Tu n'ajoutes, ne réordonnes et ne supprimes aucune tâche : tes idées vont dans la section "Propositions de l'agent".
+Note : je règle moi-même les commandes autorisées avec `/permissions` (`mvn` et `git` en lecture et commit autorisés, `git push` jamais autorisé d'office). Tu ne modifies pas ces réglages.
 
 ## 4. Mode guidé : `/session`
 Quand je tape `/session` ou dis "on commence une session de dev" : suis `docs/PROTOCOLE-SESSION.md` étape par étape, avec mon "ok" à chaque étape.
@@ -54,11 +57,11 @@ Si je dis "rappelle-moi le guide" : résume en 10 lignes le cycle de validation 
 
 ## 7. Rapport de fin
 Dans cet ordre :
-- **Tâches** : pour chacune, son statut et ce qui a changé en 1 ou 2 lignes simples.
+- **Tâches** : pour chacune, un bloc avec son statut, ce qui a changé (1 ou 2 lignes simples), son hash de commit, sa commande `git revert <hash>` et sa liste précise "à vérifier en jeu" (avec les commandes). Si un test en jeu échoue, je dois retrouver la tâche en cause.
 - **Résultats réels** : `BUILD SUCCESS` ou non, ligne `Tests run`, ce que le serveur de test a montré.
-- **Commits** : commit de retour, hash de chaque commit, hash du commit d'où vient le jar, branche, et `git revert <hash>` à lancer du plus récent au plus ancien.
+- **Commits** : branche, commit de retour, hash du commit d'où vient le jar. Pour tout annuler : les `git revert` du plus récent au plus ancien.
+- **Décisions prises seul** : ce que tu as choisi sans me demander.
 - **Pour déployer** : `target/farmland-<version>.jar` (version du pom, jamais `original-*.jar`), construit contre 26.1.2 ; clés de `plugins/Farmland/config.yml` à ajouter ou modifier (sans valeur secrète) ; garder l'ancien jar en le renommant ; redémarrage nécessaire. Si le format Gson change : **sauvegarder `plugins/Farmland/` avant de déployer**.
-- **À vérifier en jeu** : liste précise, avec les commandes.
 - **Pour toi** : les tâches `attend validation` et `bloqué`, avec ce que j'attends de toi.
 - **Surprises** : ce que tu as vu d'anormal, sans l'avoir corrigé.
 
