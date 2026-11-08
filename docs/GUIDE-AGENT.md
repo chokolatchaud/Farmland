@@ -11,9 +11,9 @@ Mis en place le 7 novembre 2026. Ce guide est pour moi. L'agent a son propre pro
    ```
 2. Donner l'accès au serveur de test : `/add-dir C:\farmland-test`
 3. Vérifier le mode (ligne du bas) : doit être `manual mode`. `Shift+Tab` pour changer.
-4. Lancer le guide : `/session` ou `/session <sujet>`, ou dire "on commence une session de dev".
-
-L'agent conduit alors la session en 7 étapes : check-in, objectif, branche, plan, exécution, vérification, clôture.
+4. Deux façons de travailler :
+   - **Mode autonome** : remplir `docs/TACHES.md`, puis dire "lance les tâches". L'agent traite les tâches dans l'ordre, un commit par tâche, met de côté celles qui touchent une zone sensible et finit par un rapport (règles dans `CLAUDE.md`, section 3).
+   - **Mode guidé** : `/session` ou `/session <sujet>`, ou dire "on commence une session de dev". L'agent conduit la session en 7 étapes (check-in, objectif, branche, plan, exécution, vérification, clôture) et attend mon "ok" à chaque étape.
 
 ## 2. Ce qu'est l'agent, et ce qu'il n'est pas
 
@@ -96,7 +96,7 @@ Le push déclenche la CI et la notification Discord. Le dépôt est public : auc
 ## 10. État du projet constaté (7 novembre 2026)
 
 - Prod : Paper 26.1.2 build 74. Le `pom.xml` compile contre 26.2.build.87. Le projet compile aussi contre 26.1.2.
-- 22 tests JUnit (marché), mais la CI les saute (`-DskipTests`).
+- 22 tests JUnit (marché), mais la CI les saute (`-DskipTests`). `MarketCalcTask.recalculer()` est en visibilité package pour être testée ; cas couverts : plus de 20 ventes, moins de 5 ventes à coefficient < 100, moins de 5 ventes à coefficient ≥ 100 (inchangé), entre 5 et 20 ventes, bornes 50 et 150, troncature des entiers.
 - Sans RoseStacker, le listener de protection des plots ne se charge pas : à garder en tête, à corriger plus tard avec validation.
 - Dette connue :
   - `printStackTrace()` dans 10 fichiers (17 appels). Les logs de debug et les `System.out` ont été retirés (commit `ca06da3`) ;
@@ -106,9 +106,6 @@ Le push déclenche la CI et la notification Discord. Le dépôt est public : auc
   - version `pom.xml` 1.1.0 contre `plugin.yml` 1.0, et `api-version` à confirmer.
 - Plugins du serveur à mettre à jour à l'occasion : FAWE, FancyNpcs.
 
-## 11. Prochaines tâches possibles (par ordre de risque)
+## 11. Prochaines tâches
 
-1. Chercher l'origine de `status` / `statut` (lecture seule).
-2. Remplacer les `printStackTrace()` par le logger du plugin : plusieurs fichiers sensibles (sauvegardes, WebAPI, WorldEdit), validation fichier par fichier.
-3. Tests sur d'autres calculs (récompenses, multiplicateurs), zone sensible : avec validation.
-4. Corriger la dépendance du listener de protection à RoseStacker : zone sensible.
+Elles sont dans `docs/TACHES.md` (section "Propositions de l'agent").
