@@ -16,7 +16,9 @@ Statut : à faire
 
 ## À traiter
 
-(vide)
+### Menu plot visit plus stylisé
+Statut : à faire
+Refaire le menu plot visit en mode plus stylisé.
 
 ## Propositions de l'agent
 
