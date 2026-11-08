@@ -208,13 +208,13 @@ public final class Plotinventory implements Listener {
             if (customItemType == CustomItemType.ARROW_NEXT) {
                 int p = playerPageById.getOrDefault(player.getUniqueId(), 1);
                 playerPageById.put(player.getUniqueId(), p + 1);
-                Inventory newInventory = MenuPlotVisit.createmenuplotvisit("Visite", p + 1);
+                Inventory newInventory = MenuPlotVisit.createmenuplotvisit("Visiter un plot", p + 1);
                 if (newInventory != null) player.openInventory(newInventory);
             } else if (customItemType == CustomItemType.ARROW_PREV) {
                 int p = playerPageById.getOrDefault(player.getUniqueId(), 1);
                 if (p > 1) {
                     playerPageById.put(player.getUniqueId(), p - 1);
-                    Inventory newInventory = MenuPlotVisit.createmenuplotvisit("Visite", p - 1);
+                    Inventory newInventory = MenuPlotVisit.createmenuplotvisit("Visiter un plot", p - 1);
                     if (newInventory != null) player.openInventory(newInventory);
                 }
             }

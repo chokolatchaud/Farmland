@@ -17,7 +17,8 @@ Statut : à faire
 ## À traiter
 
 ### Menu plot visit plus stylisé
-Statut : attend validation
+Statut : fait
+Validé le 2026-11-08 : plan accepté, plots privés grisés, 45 par page. Fait comme prévu ; le titre a aussi été unifié dans `Plotcommands.java` (une chaîne).
 Refaire le menu plot visit en mode plus stylisé.
 
 Notes de l'agent (2026-11-08) : "plus stylisé" est ambigu, aucun code modifié.

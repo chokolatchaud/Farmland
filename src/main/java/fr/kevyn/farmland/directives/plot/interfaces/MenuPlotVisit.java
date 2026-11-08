@@ -1,7 +1,9 @@
 package fr.kevyn.farmland.directives.plot.interfaces;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import fr.kevyn.farmland.directives.infrastructure.MessageColor;
 import fr.kevyn.farmland.doonees.menus.GameMenu;
 import fr.kevyn.farmland.doonees.menus.TypeMenu;
 import org.bukkit.Bukkit;
@@ -16,11 +18,12 @@ import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
 import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
 
 public class MenuPlotVisit {
-	
+
 	public static Inventory createmenuplotvisit(String name, int page) {
         if (page < 1) page = 1;
 
-        Inventory inv = Bukkit.createInventory(null, 54, name + " | Page " + page);
+        String titre = MessageColor.DARK_GREEN.apply(name) + MessageColor.DARK_GRAY.apply(" | Page " + page);
+        Inventory inv = Bukkit.createInventory(null, 54, titre);
         GameMenu plotvisit = new GameMenu(inv, TypeMenu.PLOTVISIT);
 
         int playersPerPage = 45; // slots 0 à 44
@@ -31,22 +34,19 @@ public class MenuPlotVisit {
                 .filter(ps -> ps.getPlotdata() != null)
                 .toList();
 
+        // Dernière ligne (slots 45 à 53) : vitre décorative, flèches et numéro de page par-dessus
+        for (int i = 45; i < 54; i++) {
+            inv.setItem(i, creerVitreDecorative());
+        }
+        inv.setItem(49, creerNumeroPage(page));
+
         if (startIndex >= allPlayers.size()) return inv;
 
         int endIndex = Math.min(startIndex + playersPerPage, allPlayers.size());
         List<PlayerServer> playersToShow = allPlayers.subList(startIndex, endIndex);
 
         for (PlayerServer ps : playersToShow) {
-            ItemStack head = new ItemStack(Material.PLAYER_HEAD);
-            SkullMeta meta = (SkullMeta) head.getItemMeta();
-
-            if (meta != null) {
-                meta.setOwningPlayer(Bukkit.getOfflinePlayer(ps.getUuid()));
-                meta.setDisplayName(ps.getName());
-                head.setItemMeta(meta);
-            }
-
-            inv.setItem(slot++, head);
+            inv.setItem(slot++, creerTetePlot(ps));
         }
 
         // NAVIGATION - Page précédente
@@ -54,7 +54,7 @@ public class MenuPlotVisit {
             ItemStack prev = CustomItemType.ARROW_PREV.create();
             ItemMeta prevMeta = prev.getItemMeta();
             if (prevMeta != null) {
-                prevMeta.setDisplayName("Page précédente");
+                prevMeta.setDisplayName(MessageColor.YELLOW.apply("« Page précédente"));
             }
             prev.setItemMeta(prevMeta);
             inv.setItem(45, prev);
@@ -65,13 +65,65 @@ public class MenuPlotVisit {
             ItemStack next = CustomItemType.ARROW_NEXT.create();
             ItemMeta nextMeta = next.getItemMeta();
             if (nextMeta != null) {
-                nextMeta.setDisplayName("Page suivante");
+                nextMeta.setDisplayName(MessageColor.YELLOW.apply("Page suivante »"));
             }
             next.setItemMeta(nextMeta);
             inv.setItem(53, next);
         }
 
         return inv;
+    }
+
+    // Tête du propriétaire : nom coloré et description. Un plot privé est affiché en gris.
+    private static ItemStack creerTetePlot(PlayerServer ps) {
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+        SkullMeta meta = (SkullMeta) head.getItemMeta();
+        if (meta == null) return head;
+
+        // Le clic sur la tête retrouve le plot grâce à ce propriétaire : ne pas l'enlever.
+        meta.setOwningPlayer(Bukkit.getOfflinePlayer(ps.getUuid()));
+
+        boolean prive = ps.getPlotdata().getPrivateplot();
+        List<String> lore = new ArrayList<>();
+        lore.add("");
+        lore.add(MessageColor.GRAY.apply("Propriétaire : ") + MessageColor.WHITE.apply(ps.getName()));
+        lore.add(MessageColor.GRAY.apply("Bordure : ") + MessageColor.AQUA.apply(ps.getPlotdata().getWorldborder() + " blocs"));
+
+        if (prive) {
+            meta.setDisplayName(MessageColor.DARK_GRAY.apply("Plot de " + ps.getName()));
+            lore.add(MessageColor.GRAY.apply("Accès : ") + MessageColor.RED.apply("Privé"));
+            lore.add("");
+            lore.add(MessageColor.DARK_GRAY.apply("Ce plot ne peut pas être visité"));
+        } else {
+            meta.setDisplayName(MessageColor.GREEN.apply("Plot de " + ps.getName()));
+            lore.add(MessageColor.GRAY.apply("Accès : ") + MessageColor.GREEN.apply("Public"));
+            lore.add("");
+            lore.add(MessageColor.YELLOW.apply("Clique pour visiter"));
+        }
+
+        meta.setLore(lore);
+        head.setItemMeta(meta);
+        return head;
+    }
+
+    private static ItemStack creerVitreDecorative() {
+        ItemStack vitre = new ItemStack(Material.GREEN_STAINED_GLASS_PANE);
+        ItemMeta meta = vitre.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(" ");
+            vitre.setItemMeta(meta);
+        }
+        return vitre;
+    }
+
+    private static ItemStack creerNumeroPage(int page) {
+        ItemStack papier = new ItemStack(Material.PAPER);
+        ItemMeta meta = papier.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(MessageColor.GOLD.apply("Page " + page));
+            papier.setItemMeta(meta);
+        }
+        return papier;
     }
 
 }

@@ -293,7 +293,7 @@ public final class Plotcommands implements CommandExecutor {
                 return true;
             }
 
-            Inventory inventaire0 = MenuPlotVisit.createmenuplotvisit("plotvisit", 0);
+            Inventory inventaire0 = MenuPlotVisit.createmenuplotvisit("Visiter un plot", 0);
             if (inventaire0 == null) {
                 player.sendMessage(MessageColor.RED.apply("Erreur du côté serveur."));
                 return true;
