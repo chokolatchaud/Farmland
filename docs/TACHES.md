@@ -17,8 +17,21 @@ Statut : à faire
 ## À traiter
 
 ### Menu plot visit plus stylisé
-Statut : à faire
+Statut : attend validation
 Refaire le menu plot visit en mode plus stylisé.
+
+Notes de l'agent (2026-11-08) : "plus stylisé" est ambigu, aucun code modifié.
+Aujourd'hui (`MenuPlotVisit.createmenuplotvisit`) : 54 cases, une tête de joueur par plot (nom seul, sans couleur ni description), flèches en 45 et 53, titre "plotvisit | Page 1" puis "Visite | Page 2".
+Plan proposé (fichiers : `MenuPlotVisit.java`, et `Plotinventory.java` seulement pour le titre) :
+1. Titre unique et coloré, par exemple "Visiter un plot | Page X".
+2. Têtes : nom coloré via `MessageColor`, avec une description (propriétaire, public ou privé, taille de la bordure).
+3. Dernière ligne en vitre teintée décorative, flèches gardées en 45 et 53, numéro de page au milieu (slot 49).
+4. Les plots privés restent affichés mais grisés, avec "Privé" dans la description.
+Risque : faible, affichage seulement. Le clic sur une tête utilise `SkullMeta.getOwningPlayer` : à garder intact. Pas de test JUnit (pas de calcul). Tout est "à vérifier en jeu".
+Questions :
+- Ce plan te va-t-il ? Sinon, que veux-tu voir (couleurs, ordre de tri, autres infos sur les plots) ?
+- Les plots privés : affichés grisés, ou cachés ?
+- Combien de plots par page : 45 comme aujourd'hui, ou 28 avec un cadre en vitre tout autour ?
 
 ## Propositions de l'agent
 
