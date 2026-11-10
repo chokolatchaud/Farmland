@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.plot.evenement;
 
 import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.directives.cosmetic.CosmeticShop;
 import fr.kevyn.farmland.directives.gameplay.objet.CustomItemType;
 import fr.kevyn.farmland.directives.infrastructure.MessageColor;
@@ -90,6 +91,7 @@ public final class Plotinventory implements Listener {
 
             playerServer.setMoney(playerServer.getMoney() - cosmetic.price);
             playerServer.getCosmeticsOwned().add(cosmetic.id);
+            JournalEvenements.enregistrer("achat_cosmetique", player.getName(), cosmetic.id + " -" + cosmetic.price + " $FB, solde " + playerServer.getMoney() + " $FB");
             player.getInventory().setHelmet(cosmetic.createItem());
             player.sendMessage(MessageColor.GREEN.apply("✔ " + cosmetic.name + " acheté et équipé ! (-" + cosmetic.price + " $FB)"));
             player.closeInventory();
@@ -126,6 +128,7 @@ public final class Plotinventory implements Listener {
                 playerServer.setMoney(playerServer.getMoney() - cost);
                 playerServer.setUpgrade(playerServer.getUpgrade() + 1);
                 playerServer.getPlotdata().setWorldborder(playerServer.getPlotdata().getWorldborder() + 5);
+                JournalEvenements.enregistrer("achat_upgrade", player.getName(), "-" + cost + " $FB, rang " + playerServer.getUpgrade() + ", bordure " + playerServer.getPlotdata().getWorldborder() + ", solde " + playerServer.getMoney() + " $FB");
                 player.sendMessage(MessageColor.GREEN.apply("Upgrade acheté ! (-" + cost + " $FB, +5 de bordure)"));
 
                 // nouveau palier atteint : prevenir le joueur que les prix montent
@@ -158,6 +161,7 @@ public final class Plotinventory implements Listener {
                     player.sendMessage(MessageColor.YELLOW.apply("Le jour approche"));
                     plot.setTime(1000);
                 }
+                JournalEvenements.enregistrerDetail("plot_meteo", player.getName(), playerServer.getPlotdata().getMeteoTime());
                 player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", playerServer));
             }
             if (customItemType == CustomItemType.RAIN_TOGGLE) {
@@ -174,6 +178,7 @@ public final class Plotinventory implements Listener {
 
                     player.sendMessage(MessageColor.BLUE.apply("La pluie s'éloigne"));
                 }
+                JournalEvenements.enregistrerDetail("plot_meteo", player.getName(), playerServer.getPlotdata().getMeteoRain());
                 player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", playerServer));
             }
             if (customItemType == CustomItemType.TIME_FREEZE) {
@@ -186,21 +191,25 @@ public final class Plotinventory implements Listener {
                     plot.setGameRule(GameRules.ADVANCE_TIME, false);
                     player.sendMessage(MessageColor.GOLD.apply("La météo se fige"));
                 }
+                JournalEvenements.enregistrerDetail("plot_meteo", player.getName(), playerServer.getPlotdata().getMeteoActive());
                 player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", playerServer));
             }
             if (customItemType == CustomItemType.WATERLAVASELECTION) {
                 playerServer.getPlotdata().setwaterlava(!playerServer.getPlotdata().getwaterlava());
+                JournalEvenements.enregistrer("plot_config", player.getName(), "eau/lave " + (playerServer.getPlotdata().getwaterlava() ? "interdite" : "autorisée"));
                 player.sendMessage(MessageColor.YELLOW.apply("Option eau/lave modifiée"));
                 player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", playerServer));
             }
             if (customItemType == CustomItemType.DOOR_PRIVACY) {
                 playerServer.getPlotdata().setPrivateplot(!playerServer.getPlotdata().getPrivateplot());
+                JournalEvenements.enregistrer("plot_config", player.getName(), playerServer.getPlotdata().getPrivateplot() ? "privé" : "public");
                 player.sendMessage(MessageColor.YELLOW.apply("Visibilité du plot modifiée"));
                 player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", playerServer));
             }
 
             if (customItemType == CustomItemType.MOB_SPAWN) {
                 playerServer.getPlotdata().setMobSpawn(!playerServer.getPlotdata().getMobSpawn());
+                JournalEvenements.enregistrer("plot_config", player.getName(), "spawn des mobs " + (playerServer.getPlotdata().getMobSpawn() ? "activé" : "désactivé"));
                 player.sendMessage(MessageColor.YELLOW.apply("Spawn des mobs modifié"));
                 player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", playerServer));
             }

@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.gameplay.recompense;
 
 import fr.kevyn.farmland.directives.gameplay.menus.Outils;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.directives.infrastructure.JobType;
 import fr.kevyn.farmland.directives.metiers.farmeur.HoueFarmeur;
 import fr.kevyn.farmland.directives.metiers.mineur.PiocheFarm;
@@ -247,6 +248,7 @@ public class RecompenseUtil {
         ps.setMoney(
                 ps.getMoney() + montant
         );
+        JournalEvenements.enregistrer("recompense_niveau", joueur.getName(), "+" + montant + " $FB, solde " + ps.getMoney() + " $FB");
 
         joueur.sendMessage(
                 "§6★ Récompense de niveau : §e+"

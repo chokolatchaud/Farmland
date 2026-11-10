@@ -43,3 +43,13 @@ annonces:
 
 # Logs de diagnostic en console (Historique, autosave, hologrammes...) : false par defaut
 debug: false
+
+# Journal des evenements de jeu : plugins/Farmland/evenements.log (une ligne : date;type;joueur;valeur)
+journal:
+  actif: true
+  # normal = argent, marche, course, plot ; detail = + meteo du plot et point de spawn
+  niveau: normal
+  # les evenements frequents (bonus de blocs) sont additionnes sur cette duree
+  regroupement-minutes: 5
+  # les archives evenements-AAAA-MM-JJ.log plus vieilles sont supprimees
+  retention-jours: 30

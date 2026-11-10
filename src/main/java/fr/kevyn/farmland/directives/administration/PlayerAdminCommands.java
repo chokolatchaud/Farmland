@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.administration;
 
 import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotUpgrade;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
 import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
 import fr.kevyn.farmland.persistance.joueurs.PlayerSave;
@@ -109,6 +110,7 @@ public class PlayerAdminCommands implements CommandExecutor {
         PlayerSave.saveOnePlayerServerFile(plugin, ps);
         sender.sendMessage("§aArgent de " + ps.getName() + " : §f" + ps.getMoney() + " $FB");
         plugin.getLogger().info("[PsAdmin] " + sender.getName() + " -> money " + args[2] + " " + montant + " sur " + ps.getName() + " (nouveau solde : " + ps.getMoney() + ")");
+        JournalEvenements.enregistrer("admin_argent", ps.getName(), args[2].toLowerCase() + " " + montant + " $FB par " + sender.getName() + ", solde " + ps.getMoney() + " $FB");
 
         Player online = Bukkit.getPlayerExact(ps.getName());
         if (online != null) {
@@ -149,6 +151,7 @@ public class PlayerAdminCommands implements CommandExecutor {
         PlayerSave.saveOnePlayerServerFile(plugin, ps);
         sender.sendMessage("§aUpgrade de " + ps.getName() + " : " + ancienRang + " → " + rang + " (bordure ajustée)");
         plugin.getLogger().info("[PsAdmin] " + sender.getName() + " -> upgrade " + ancienRang + " -> " + rang + " sur " + ps.getName());
+        JournalEvenements.enregistrer("admin_rang", ps.getName(), "rang " + ancienRang + " -> " + rang + " par " + sender.getName());
         return true;
     }
 

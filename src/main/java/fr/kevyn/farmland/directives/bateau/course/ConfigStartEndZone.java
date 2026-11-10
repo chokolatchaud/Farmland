@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.bateau.course;
 
 import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.directives.gameplay.commands.HubCommand;
 import fr.kevyn.farmland.doonees.bateaux.BoatGameHashMap;
 import fr.kevyn.farmland.doonees.bateaux.StatutBoatGame;
@@ -238,6 +239,7 @@ public class ConfigStartEndZone {
                         int tempsCourse = game.getTimegame() - game.racestarttime;
                         boolean record = BoatTimeSave.recordTime(plugin, player.getName(), tempsCourse);
                         DailyBoatTimeSave.recordDailyTime(plugin, player.getName(), tempsCourse);
+                        JournalEvenements.enregistrer("course_resultat", player.getName(), tempsCourse + "s" + (record ? ", record personnel" : ""));
 
                         player.sendMessage("§6§lVICTOIRE ! §fTemps : §b" + tempsCourse + "s");
                         if (record) {

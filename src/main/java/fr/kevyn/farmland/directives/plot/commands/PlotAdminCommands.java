@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.plot.commands;
 
 import java.util.UUID;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 
 import fr.kevyn.farmland.doonees.plots.PlotData;
 import fr.kevyn.farmland.persistance.joueurs.PlayerSave;
@@ -163,6 +164,7 @@ public final class PlotAdminCommands implements CommandExecutor {
         PlayerSave.saveOnePlayerServerFile(plugin, ps);
         sender.sendMessage("§aBordure du plot de " + ps.getName() + " forcée à " + value + " !");
         plugin.getLogger().info("[PlotAdmin] " + sender.getName() + " -> border " + value + " sur " + ps.getName());
+        JournalEvenements.enregistrer("admin_plot", ps.getName(), "bordure " + value + " par " + sender.getName());
         return true;
     }
 
@@ -194,6 +196,7 @@ public final class PlotAdminCommands implements CommandExecutor {
         PlayerSave.saveOnePlayerServerFile(plugin, ps);
         sender.sendMessage("§aRang d'upgrade de " + ps.getName() + " : " + ancienRang + " → " + rang + " (bordure ajustée)");
         plugin.getLogger().info("[PlotAdmin] " + sender.getName() + " -> upgrade " + ancienRang + " -> " + rang + " sur " + ps.getName());
+        JournalEvenements.enregistrer("admin_rang", ps.getName(), "rang " + ancienRang + " -> " + rang + " par " + sender.getName());
         return true;
     }
 
@@ -215,6 +218,7 @@ public final class PlotAdminCommands implements CommandExecutor {
         PlayerSave.saveOnePlayerServerFile(plugin, ps);
         sender.sendMessage("§aConfidentialité du plot de " + ps.getName() + " : " + value);
         plugin.getLogger().info("[PlotAdmin] " + sender.getName() + " -> privacy " + value + " sur " + ps.getName());
+        JournalEvenements.enregistrer("admin_plot", ps.getName(), (value ? "privé" : "public") + " par " + sender.getName());
         return true;
     }
 
@@ -236,6 +240,7 @@ public final class PlotAdminCommands implements CommandExecutor {
         new Plot(UUID.fromString(plotName), plugin);
         sender.sendMessage("§aRechargement du plot de " + ps.getName() + " lancé !");
         plugin.getLogger().info("[PlotAdmin] " + sender.getName() + " a recharge le plot de " + ps.getName());
+        JournalEvenements.enregistrer("admin_plot", ps.getName(), "rechargement par " + sender.getName());
         return true;
     }
 
@@ -271,6 +276,7 @@ public final class PlotAdminCommands implements CommandExecutor {
                 reloadedWorld.getWorldBorder().setSize(bordureActuelle);
                 sender.sendMessage("§aTerrain de " + ps.getName() + " reinitialise ! Bordure (" + bordureActuelle + ") et upgrade (rang " + ps.getUpgrade() + ") conserves.");
                 plugin.getLogger().info("[PlotAdmin] " + sender.getName() + " a reset le terrain de " + ps.getName() + " (bordure conservee : " + bordureActuelle + ")");
+                JournalEvenements.enregistrer("admin_plot", ps.getName(), "terrain réinitialisé par " + sender.getName() + ", bordure " + bordureActuelle);
             } else {
                 sender.sendMessage("§cLe monde ne s'est pas encore regenere, reessaie /plotadmin border " + ps.getName() + " " + bordureActuelle + " dans quelques secondes si besoin.");
             }

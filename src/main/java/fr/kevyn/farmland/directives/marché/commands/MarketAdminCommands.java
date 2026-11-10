@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.marché.commands;
 
 import fr.kevyn.farmland.directives.marché.affichage.MarketHolograms;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.directives.marché.calcul.MarketCalc;
 import fr.kevyn.farmland.directives.marché.calcul.MarketCalcTask;
 import fr.kevyn.farmland.doonees.marche.Market;
@@ -152,6 +153,8 @@ public class MarketAdminCommands implements CommandExecutor {
         MarketSave.saveMarket(plugin, market);
         MarketHolograms.updateAll(plugin);
         sender.sendMessage("§a" + args[1] + " fixé à " + valeur + "% !");
+        plugin.getLogger().info("[MarketAdmin] " + sender.getName() + " -> " + args[1].toLowerCase() + " fixé à " + valeur);
+        JournalEvenements.enregistrer("admin_marche", sender.getName(), args[1].toLowerCase() + " fixé à " + valeur);
         return true;
     }
 
@@ -167,6 +170,8 @@ public class MarketAdminCommands implements CommandExecutor {
         MarketSave.saveMarket(plugin, market);
         MarketHolograms.updateAll(plugin);
         sender.sendMessage("§aTous les coefficients remis à 100% !");
+        plugin.getLogger().info("[MarketAdmin] " + sender.getName() + " -> coefficients remis à 100");
+        JournalEvenements.enregistrer("admin_marche", sender.getName(), "coefficients remis à 100");
         return true;
     }
 

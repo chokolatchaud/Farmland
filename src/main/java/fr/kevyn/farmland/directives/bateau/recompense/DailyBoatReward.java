@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.bateau.recompense;
 
 import java.io.File;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.directives.infrastructure.DebugLog;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -54,6 +55,7 @@ public class DailyBoatReward {
             PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(entry.playerName);
             if (ps != null) {
                 ps.setMoney(ps.getMoney() + reward);
+                JournalEvenements.enregistrer("course_podium", entry.playerName, "#" + (i + 1) + " +" + reward + " $FB, solde " + ps.getMoney() + " $FB");
             }
 
             String medaille = i == 0 ? "🥇" : i == 1 ? "🥈" : "🥉";

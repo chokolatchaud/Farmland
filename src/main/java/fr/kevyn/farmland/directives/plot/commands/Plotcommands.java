@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.plot.commands;
 
 import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.directives.infrastructure.MessageColor;
 import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotConfig;
 import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotUpgrade;
@@ -89,6 +90,7 @@ public final class Plotcommands implements CommandExecutor {
                 if (isNotAddedToPlot(targetPlayer, targetServer, worldName)
                         && isNotTrustedOnPlot(targetPlayer, targetServer, worldName)) {
                     targetServer.getPlotdata().AddAllplotadd(worldName);
+                    JournalEvenements.enregistrer("plot_membre", player.getName(), "add " + targetServer.getName());
                     if (targetPlayer != null && targetPlayer.isOnline()) {
                         targetPlayer.sendMessage(MessageColor.GREEN.apply(
                                 "Tu viens d'être add sur le plot de " + player.getName()));
@@ -123,6 +125,7 @@ public final class Plotcommands implements CommandExecutor {
                 Player targetPlayer = Bukkit.getPlayer(targetServer.getUuid());
                 if (!isNotAddedToPlot(targetPlayer, targetServer, worldName)) {
                     targetServer.getPlotdata().RemoveAllplotadd(worldName);
+                    JournalEvenements.enregistrer("plot_membre", player.getName(), "unadd " + targetServer.getName());
                     if (targetPlayer != null && targetPlayer.isOnline()) {
                         targetPlayer.sendMessage(MessageColor.RED.apply(
                                 "Tu viens d'être unadd du plot de " + player.getName()));
@@ -168,6 +171,7 @@ public final class Plotcommands implements CommandExecutor {
                     }
 
                     targetServer.getPlotdata().AddAllplottrust(worldName);
+                    JournalEvenements.enregistrer("plot_membre", player.getName(), "trust " + targetServer.getName());
                     if (targetPlayer != null && targetPlayer.isOnline()) {
                         targetPlayer.sendMessage(MessageColor.GREEN.apply(
                                 "Tu viens d'être trust sur le plot de " + player.getName()));
@@ -202,6 +206,7 @@ public final class Plotcommands implements CommandExecutor {
                 Player targetPlayer = Bukkit.getPlayer(targetServer.getUuid());
                 if (!isNotTrustedOnPlot(targetPlayer, targetServer, worldName)) {
                     targetServer.getPlotdata().RemoveAllplottrust(worldName);
+                    JournalEvenements.enregistrer("plot_membre", player.getName(), "untrust " + targetServer.getName());
                     if (targetPlayer != null && targetPlayer.isOnline()) {
                         targetPlayer.sendMessage(MessageColor.RED.apply(
                                 "Tu viens d'être untrust du plot de " + player.getName()));
@@ -366,6 +371,7 @@ public final class Plotcommands implements CommandExecutor {
             playerServer.getPlotdata().setLocationspawnX(player.getLocation().getBlockX());
             playerServer.getPlotdata().setLocationspawnY(player.getLocation().getBlockY());
             playerServer.getPlotdata().setLocationspawnZ(player.getLocation().getBlockZ());
+            JournalEvenements.enregistrerDetail("plot_spawn", player.getName(), "point de spawn modifié");
 
             player.sendMessage(MessageColor.GREEN.apply("Zone de spawn définie !"));
             return true;

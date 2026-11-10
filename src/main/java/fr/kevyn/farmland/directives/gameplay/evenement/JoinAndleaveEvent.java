@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.gameplay.evenement;
 
 import fr.kevyn.farmland.directives.administration.messagediscord;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.directives.infrastructure.MessageColor;
 import fr.kevyn.farmland.directives.gameplay.chat.ChatListener;
@@ -75,6 +76,7 @@ public final class JoinAndleaveEvent implements Listener {
                 return;
             }
             PlayerSave.saveOnePlayerServerFile(plugin, newPlayerServer);
+            JournalEvenements.enregistrer("plot_creation", newPlayerServer.getName(), "nouveau joueur, bordure " + plotData.getWorldborder());
             messagediscord.sendmessage("Nouveau joueur " + newPlayerServer.getName() + " a rejoint", "statut");
 
             ChatListener.updateTab(event.getPlayer());

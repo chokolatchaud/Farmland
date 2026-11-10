@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.marché.calcul;
 
 import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.directives.infrastructure.DebugLog;
 import fr.kevyn.farmland.directives.marché.affichage.MarketFlavor;
 import fr.kevyn.farmland.directives.marché.affichage.MarketHolograms;
@@ -43,6 +44,12 @@ public final class MarketCalcTask {
         }
         Market market = MarketHolder.get();
         Map<String, Integer> ventes = MarketCalc.getVentesParMetier();
+        // anciens coefficients, lus seulement pour le journal (aucun effet sur le calcul)
+        int ancienMineur = market.getMoneyforcoefMineur();
+        int ancienFarmeur = market.getMoneyforcoefFarmeur();
+        int ancienAgriculteur = market.getMoneyforcoefAgriculteur();
+        int ancienPecheur = market.getMoneyforcoefPecheur();
+        int ancienTueur = market.getMoneyforcoefTueur();
 
         market.setMoneyforcoefMineur(recalculer(market.getMoneyforcoefMineur(), ventes.getOrDefault("Mineur", 0)));
         market.setMoneyforcoefFarmeur(recalculer(market.getMoneyforcoefFarmeur(), ventes.getOrDefault("Farmeur", 0)));
@@ -63,6 +70,12 @@ public final class MarketCalcTask {
             + " Agriculteur:" + market.getMoneyforcoefAgriculteur()
             + " Pecheur:" + market.getMoneyforcoefPecheur()
             + " Tueur:" + market.getMoneyforcoefTueur());
+        JournalEvenements.enregistrer("marche_recalcul", null,
+                "Mineur " + ancienMineur + "->" + market.getMoneyforcoefMineur()
+                + ", Farmeur " + ancienFarmeur + "->" + market.getMoneyforcoefFarmeur()
+                + ", Agriculteur " + ancienAgriculteur + "->" + market.getMoneyforcoefAgriculteur()
+                + ", Pecheur " + ancienPecheur + "->" + market.getMoneyforcoefPecheur()
+                + ", Tueur " + ancienTueur + "->" + market.getMoneyforcoefTueur());
     }
 
     private static void genererEvenementMarche(Market market, Map<String, Integer> ventes) {

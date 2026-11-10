@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.infrastructure;
 
 import org.bukkit.Bukkit;
+import fr.kevyn.farmland.modules.coeur.JournalModule;
 
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.modules.gameplay.GameModule;
@@ -28,6 +29,7 @@ public final class ModuleLoader {
 
     public static void load(FarmlandMain plugin) {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            loadJournal(plugin);
             loadModeration(plugin);
             loadPlot(plugin);
             loadPlaceholder(plugin);
@@ -37,6 +39,10 @@ public final class ModuleLoader {
 
             loadMetier(plugin);
         }, LOAD_DELAY_TICKS);
+    }
+
+    private static void loadJournal(FarmlandMain plugin) {
+        new JournalModule(plugin).register();
     }
 
     private static void loadModeration(FarmlandMain plugin) {

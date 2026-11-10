@@ -3,6 +3,7 @@ package fr.kevyn.farmland.directives.gameplay.chat;
 
 
 import java.util.Random;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -71,6 +72,7 @@ public class ChatCalcListener implements Listener {
         reponseAttendue = null; // ferme le calcul immediatement (evite plusieurs gagnants)
 
         ps.setMoney(ps.getMoney() + recompense);
+        JournalEvenements.enregistrer("gain_calcul", player.getName(), "+" + recompense + " $FB, solde " + ps.getMoney() + " $FB");
         event.setCancelled(true); // n'affiche pas la reponse brute dans le chat
         Bukkit.broadcastMessage("§a✔ " + player.getName() + " a trouvé la bonne réponse ! §e+" + recompense + " $FB");
     }

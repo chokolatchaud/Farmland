@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.gameplay.commands;
 
 import java.util.ArrayList;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -270,6 +271,7 @@ public final class GameCommands implements CommandExecutor {
         // Transaction
         senderServer.setMoney(senderServer.getMoney() - montant);
         targetServer.setMoney(targetServer.getMoney() + montant);
+        JournalEvenements.enregistrer("pay", senderServer.getName(), "-" + montant + " $FB vers " + targetServer.getName() + ", soldes " + senderServer.getMoney() + " / " + targetServer.getMoney() + " $FB");
 
         messagediscord.sendmessage(senderServer.getName() + " a envoyé " + montant + " à " + targetServer.getName(),"statut");
         player.sendMessage("§aVous avez envoyé §e" + montant + " §aà §e" + targetServer.getName());

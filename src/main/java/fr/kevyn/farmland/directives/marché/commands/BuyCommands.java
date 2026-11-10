@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.marché.commands;
 
 import fr.kevyn.farmland.directives.gameplay.menus.MenuCosmetics;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.directives.gameplay.scoreboard.CreativePlotScoreboard;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -175,6 +176,7 @@ public final class BuyCommands implements CommandExecutor {
     private void activateWorldEdit(Player player, PlayerServer ps) {
         ps.setMoney(ps.getMoney() - WE_COST);
         grantWorldEditTime(player, ps, plugin, WE_DURATION_HOURS);
+        JournalEvenements.enregistrer("achat_worldedit", player.getName(), "-" + WE_COST + " $FB, " + WE_DURATION_HOURS + "h, solde " + ps.getMoney() + " $FB");
         player.sendMessage(MessageColor.GREEN.apply("✔ WorldEdit activé pour 1 heure ! (-" + WE_COST + " $FB)"));
         player.sendMessage(MessageColor.GRAY.apply("Solde restant : " + ps.getMoney() + " $FB"));
     }

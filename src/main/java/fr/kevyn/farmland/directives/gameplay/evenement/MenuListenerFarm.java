@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.gameplay.evenement;
 
 import org.bukkit.entity.Player;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -61,6 +62,7 @@ public class MenuListenerFarm implements Listener {
 		for (int i = 0; i < quantite; i++) {
 			MarketCalc.enregistrerVente(metier);
 		}
+		JournalEvenements.enregistrer("vente_jetons", player.getName(), quantite + "x " + metier + " +" + gain + " $FB, solde " + ps.getMoney() + " $FB");
 
 		player.sendMessage("§aVendu : " + quantite + "x Jeton " + metier + " pour " + PRIX_FORMAT.format(prixUnitaire) + " $FB/unité, soit " + gain + " $FB !");
 		player.closeInventory();

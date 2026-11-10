@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.infrastructure;
 
 import com.vexsoftware.votifier.model.VotifierEvent;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.directives.marché.commands.BuyCommands;
 import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
@@ -41,6 +42,7 @@ public class VoteListener implements Listener {
                 pending.set(username.toLowerCase(), count);
                 savePending();
                 DebugLog.debug(plugin, "[Vote] " + username + " a voté (hors ligne) — " + count + " récompense(s) en attente");
+                JournalEvenements.enregistrer("vote", username, "hors ligne, " + count + " récompense(s) en attente");
             }
         });
     }
@@ -73,6 +75,7 @@ public class VoteListener implements Listener {
             p.sendMessage(MessageColor.YELLOW.apply("✦ " + player.getName() + " a voté pour le serveur ! Merci !"));
         }
         DebugLog.debug(plugin, "[Vote] " + player.getName() + " → +" + votes + "h WorldEdit accordées (" + votes + " vote(s))");
+        JournalEvenements.enregistrer("vote", player.getName(), "+" + votes + "h WorldEdit (" + votes + " vote(s))");
     }
 
     private void savePending() {

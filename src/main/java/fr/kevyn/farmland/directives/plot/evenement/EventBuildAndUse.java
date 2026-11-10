@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.plot.evenement;
 
 import dev.rosewood.rosestacker.event.EntityStackEvent;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.directives.administration.messagediscord;
 import fr.kevyn.farmland.directives.infrastructure.MessageColor;
@@ -320,6 +321,7 @@ public final class EventBuildAndUse implements Listener {
         if (playerServer.getBlocpose() >= 150) {
             playerServer.setBlocpose(playerServer.getBlocpose() - 150);
             playerServer.setMoney(playerServer.getMoney() + 25);
+            JournalEvenements.cumuler("bonus_blocs", player.getName(), 25, 150, "blocs");
             player.sendMessage(MessageColor.AQUA.apply("+25FB pour 150 blocs placés !"));
         }
     }

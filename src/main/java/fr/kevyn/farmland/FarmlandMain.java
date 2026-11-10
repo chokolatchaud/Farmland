@@ -1,6 +1,7 @@
 package fr.kevyn.farmland;
 
 import fr.kevyn.farmland.directives.administration.messagediscord;
+import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import java.util.logging.Level;
 import fr.kevyn.farmland.directives.gameplay.evenement.JoinAndleaveEvent;
 import fr.kevyn.farmland.infrastructure.ModuleLoader;
@@ -46,6 +47,7 @@ public final class FarmlandMain extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        JournalEvenements.arreter(); // écrit les derniers événements (ne lève jamais d'erreur)
         try {
             PlayerSave.verifyallPlayerSaves(this);
             PlayerSave.saveAllPlayerServerFile(this);
