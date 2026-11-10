@@ -125,6 +125,11 @@ public final class MarketHolograms {
     /** Fait apparaître les hologrammes manquants et rafraîchit leur texte.
      *  À appeler à chaque changement du marché (thread principal uniquement !) */
     public static void updateAll(JavaPlugin plugin) {
+        // une seule lecture de l'historique par cycle, partagée par tous les hologrammes,
+        // et seulement si au moins un hologramme est chargé
+        List<MarketSave.MarketSnapshot> history = null;
+        Market actuel = null;
+
         for (Map.Entry<String, HoloLoc> entry : emplacements.entrySet()) {
             String coef = entry.getKey();
             HoloLoc holo = entry.getValue();
@@ -132,6 +137,11 @@ public final class MarketHolograms {
             World world = Bukkit.getWorld(holo.world);
             if (world == null) continue;
             if (!world.isChunkLoaded(((int) holo.x) >> 4, ((int) holo.z) >> 4)) continue;
+
+            if (history == null) {
+                history = MarketSave.getFullHistory(plugin);
+                actuel = history.isEmpty() ? null : history.getLast().market;
+            }
 
             Location loc = new Location(world, holo.x, holo.y, holo.z);
             TextDisplay display = getSpawned(coef, world);
@@ -153,7 +163,7 @@ public final class MarketHolograms {
                 entites.put(coef, display.getUniqueId());
             }
 
-            display.text(LegacyComponentSerializer.legacySection().deserialize(buildText(plugin, coef)));
+            display.text(LegacyComponentSerializer.legacySection().deserialize(buildText(coef, actuel, history)));
         }
     }
 
@@ -172,14 +182,12 @@ public final class MarketHolograms {
     }
 
     // ===== TEXTE DE L'HOLOGRAMME =====
-    private static String buildText(JavaPlugin plugin, String coef) {
-        Market actuel = MarketSave.loadMarket(plugin);
+    private static String buildText(String coef, Market actuel, List<MarketSave.MarketSnapshot> history) {
         if (actuel == null) {
             return "§6✦ Marché ✦\n§7En attente de données...";
         }
 
         int valeur = getCoefValue(actuel, coef);
-        List<MarketSave.MarketSnapshot> history = MarketSave.getFullHistory(plugin);
 
         String evenement = "";
         if (coef.equalsIgnoreCase(actuel.getLastEventMetier())
