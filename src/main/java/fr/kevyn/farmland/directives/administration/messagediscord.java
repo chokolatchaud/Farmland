@@ -43,7 +43,7 @@ public class messagediscord {
 	        }
 	        
 	        if (webhookUrl.isEmpty()) {
-	        	plugin.getLogger().info("⚠ Webhook Discord non configuré pour le salon \"" + salon + "\" (voir config.yml)");
+	        	AlerteDiscord.signaler(plugin, "non-configure:" + salon, "⚠ Webhook Discord non configuré pour le salon \"" + salon + "\" (voir config.yml)");
 	        	return;
 	        }
 	        
@@ -75,7 +75,7 @@ public class messagediscord {
 	        // Lecture du code de réponse 
 	        int responseCode = connection.getResponseCode();
 	        if (responseCode != 204 && responseCode != 200) {
-	            plugin.getLogger().info("⚠ Erreur envoi Discord : code HTTP " + responseCode);
+	            AlerteDiscord.signaler(plugin, "http:" + salon + ":" + responseCode, "⚠ Erreur envoi Discord (salon \"" + salon + "\") : code HTTP " + responseCode);
 	        }
 	        
 	    } catch (Exception _) {

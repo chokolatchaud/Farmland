@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.persistance.marché;
 
 import java.io.File;
+import fr.kevyn.farmland.directives.infrastructure.DebugLog;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -67,7 +68,7 @@ public final class MarketSave {
         // 4. Sauvegarder l'historique
         saveMarketHistory(plugin,marketHistory);
         
-        plugin.getLogger().info("Market sauvegardé ! (Historique: " + marketHistory.history.size() + "/" + MAX_HISTORY + ")");
+        DebugLog.debug(plugin, "Market sauvegardé ! (Historique: " + marketHistory.history.size() + "/" + MAX_HISTORY + ")");
     }
 
     // ===== SAUVEGARDER L'HISTORIQUE DANS LE FICHIER =====
@@ -97,7 +98,7 @@ public final class MarketSave {
         try (FileReader reader = new FileReader(file)) {
             MarketHistory marketHistory = gson.fromJson(reader, MarketHistory.class);
             if (marketHistory != null && marketHistory.history != null) {
-                plugin.getLogger().info("Historique chargé ! (" + marketHistory.history.size() + " entrées)");
+                DebugLog.debug(plugin, "Historique chargé ! (" + marketHistory.history.size() + " entrées)");
                 return marketHistory;
             }
         } catch (IOException e) {

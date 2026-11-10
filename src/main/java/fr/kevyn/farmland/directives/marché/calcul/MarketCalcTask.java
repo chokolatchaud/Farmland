@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.marché.calcul;
 
 import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.directives.infrastructure.DebugLog;
 import fr.kevyn.farmland.directives.marché.affichage.MarketFlavor;
 import fr.kevyn.farmland.directives.marché.affichage.MarketHolograms;
 import fr.kevyn.farmland.doonees.marche.Market;
@@ -57,7 +58,7 @@ public final class MarketCalcTask {
 
 
 
-        plugin.getLogger().info("[Market] Recalcul effectue - Mineur:" + market.getMoneyforcoefMineur()
+        DebugLog.debug(plugin, "[Market] Recalcul effectue - Mineur:" + market.getMoneyforcoefMineur()
             + " Farmeur:" + market.getMoneyforcoefFarmeur()
             + " Agriculteur:" + market.getMoneyforcoefAgriculteur()
             + " Pecheur:" + market.getMoneyforcoefPecheur()

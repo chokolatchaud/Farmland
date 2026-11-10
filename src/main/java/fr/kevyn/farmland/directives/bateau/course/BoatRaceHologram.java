@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.bateau.course;
 
 import java.io.File;
+import fr.kevyn.farmland.directives.infrastructure.DebugLog;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.List;
@@ -46,7 +47,7 @@ public class BoatRaceHologram {
         try (FileReader reader = new FileReader(file)) {
             emplacement = gson.fromJson(reader, HoloLoc.class);
             if (emplacement != null) {
-                plugin.getLogger().info("[BoatRace][Holo] Hologramme des temps charge");
+                DebugLog.debug(plugin, "[BoatRace][Holo] Hologramme des temps charge");
             }
         } catch (Exception e) {// IOException + JsonSyntaxException si le fichier est corrompu
             plugin.getLogger().warning("[BoatRace][Holo] Impossible de charger " + HOLO_FILE + " : " + e.getMessage());

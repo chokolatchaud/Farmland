@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.bateau.recompense;
 
 import java.io.File;
+import fr.kevyn.farmland.directives.infrastructure.DebugLog;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.LocalDate;
@@ -40,7 +41,7 @@ public class DailyBoatReward {
         List<BoatTimeSave.BoatTimeEntry> daily = DailyBoatTimeSave.loadDailyTimes(plugin);
 
         if (daily.isEmpty()) {
-            plugin.getLogger().info("[BoatRace] Aucune course aujourd'hui, pas de podium a distribuer");
+            DebugLog.debug(plugin, "[BoatRace] Aucune course aujourd'hui, pas de podium a distribuer");
             return;
         }
 
@@ -57,7 +58,7 @@ public class DailyBoatReward {
 
             String medaille = i == 0 ? "🥇" : i == 1 ? "🥈" : "🥉";
             Bukkit.broadcastMessage("§e" + medaille + " " + entry.playerName + " §7— " + entry.seconds + "s §a+" + reward + " $FB");
-            plugin.getLogger().info("[BoatRace] Podium quotidien : " + entry.playerName + " (#" + (i + 1) + ") +" + reward + " $FB");
+            DebugLog.debug(plugin, "[BoatRace] Podium quotidien : " + entry.playerName + " (#" + (i + 1) + ") +" + reward + " $FB");
         }
 
         Bukkit.broadcastMessage("§6§l═══════════════════════════════════════");

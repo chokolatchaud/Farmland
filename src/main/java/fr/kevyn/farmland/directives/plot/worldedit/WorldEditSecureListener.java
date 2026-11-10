@@ -44,7 +44,6 @@ public final class WorldEditSecureListener implements Listener {
     public WorldEditSecureListener() {
         WorldEdit.getInstance().getEventBus().register(this);
         Bukkit.getPluginManager().registerEvents(this, Bukkit.getPluginManager().getPlugin("Farmland"));
-        Bukkit.getLogger().info("[WorldEditSecure] ✅ Listener WorldEdit/FAWE activé !");
     }
 
     @EventHandler

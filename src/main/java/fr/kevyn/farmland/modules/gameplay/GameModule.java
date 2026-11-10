@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.modules.gameplay;
 
 import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.directives.infrastructure.DebugLog;
 import fr.kevyn.farmland.directives.administration.PlayerAdminCommands;
 import fr.kevyn.farmland.directives.administration.messagediscord;
 import fr.kevyn.farmland.directives.bateau.course.BoatRaceHologram;
@@ -182,7 +183,7 @@ public final class GameModule {
                 () -> {
                     try {
                         PlayerSave.saveAllPlayerServerFile(plugin);
-                        plugin.getLogger().info("[Autosave] Joueurs sauvegardés");
+                        DebugLog.debug(plugin, "[Autosave] Joueurs sauvegardés");
                     } catch (Exception e) {
                         plugin.getLogger().severe(
                                 "[Autosave] Erreur lors de la sauvegarde des joueurs : "

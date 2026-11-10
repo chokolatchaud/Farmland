@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.gameplay.classement;
 
 import com.google.gson.Gson;
+import fr.kevyn.farmland.directives.infrastructure.DebugLog;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
@@ -57,7 +58,7 @@ public final class LeaderboardHolograms {
             if (data != null) {
                 emplacements = data;
             }
-            plugin.getLogger().info("[Holo] " + emplacements.size() + " hologramme(s) de classement chargé(s)");
+            DebugLog.debug(plugin, "[Holo] " + emplacements.size() + " hologramme(s) de classement chargé(s)");
         } catch (IOException e) {
             plugin.getLogger().warning("[Holo] Impossible de charger " + HOLO_FILE + " : " + e.getMessage());
         }

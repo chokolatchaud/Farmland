@@ -40,7 +40,7 @@ public class VoteListener implements Listener {
                 int count = pending.getInt(username.toLowerCase(), 0) + 1;
                 pending.set(username.toLowerCase(), count);
                 savePending();
-                plugin.getLogger().info("[Vote] " + username + " a voté (hors ligne) — " + count + " récompense(s) en attente");
+                DebugLog.debug(plugin, "[Vote] " + username + " a voté (hors ligne) — " + count + " récompense(s) en attente");
             }
         });
     }
@@ -72,7 +72,7 @@ public class VoteListener implements Listener {
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.sendMessage(MessageColor.YELLOW.apply("✦ " + player.getName() + " a voté pour le serveur ! Merci !"));
         }
-        plugin.getLogger().info("[Vote] " + player.getName() + " → +" + votes + "h WorldEdit accordées (" + votes + " vote(s))");
+        DebugLog.debug(plugin, "[Vote] " + player.getName() + " → +" + votes + "h WorldEdit accordées (" + votes + " vote(s))");
     }
 
     private void savePending() {

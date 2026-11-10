@@ -40,3 +40,6 @@ annonces:
     - "Le podium quotidien de la course de bateaux rapporte jusqu'a 500 $FB !"
     - "Personnalise ton look avec /buy cosmetic !"
     - "Construis, vends, grimpe dans le classement sur mine.farm-land.fr"
+
+# Logs de diagnostic en console (Historique, autosave, hologrammes...) : false par defaut
+debug: false

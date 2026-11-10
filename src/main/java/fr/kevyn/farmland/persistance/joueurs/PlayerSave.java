@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.persistance.joueurs;
 
 import com.google.gson.Gson;
+import fr.kevyn.farmland.directives.infrastructure.DebugLog;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -291,7 +292,7 @@ public class PlayerSave {
                     CorrecteurJson.MigrationJson(json, configuredVersion);
                     changed = true;
                 } else if (fileVersion > configuredVersion) {
-                    logVerification(plugin,
+                    plugin.getLogger().warning("[PlayerSave] " +
                             "Version GsonSave " + fileVersion
                                     + " supérieure à la version configurée "
                                     + configuredVersion + " pour " + file.getName()
@@ -300,7 +301,7 @@ public class PlayerSave {
 
                 PlayerServer player = GSON.fromJson(json, PlayerServer.class);
                 if (player == null || player.getUuid() == null) {
-                    logVerification(plugin,
+                    plugin.getLogger().warning("[PlayerSave] " +
                             "Fichier non réécrit car les données joueur sont invalides : "
                                     + file.getName());
                     continue;
@@ -309,7 +310,7 @@ public class PlayerSave {
                 JsonElement plotJson = json.get("plotData");
                 if (plotJson != null && !plotJson.isJsonNull()
                         && player.getPlotdata() == null) {
-                    logVerification(plugin,
+                    plugin.getLogger().warning("[PlayerSave] " +
                             "Protection PlotData : fichier NON réécrit car plotData "
                                     + "n'a pas pu être désérialisé : " + file.getName());
                     continue;
@@ -326,7 +327,7 @@ public class PlayerSave {
                             "Fichier réparé : " + file.getName()
                                     + " (" + getPlayerName(json) + ")");
                 } else {
-                    logVerification(plugin,
+                    DebugLog.debug(plugin, "[PlayerSave] " +
                             "Aucun changement sur le fichier " + file.getName()
                                     + " (" + getPlayerName(json) + ")");
                 }
