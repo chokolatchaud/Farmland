@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.doonees.menus;
 
 import java.util.Arrays;
+import java.util.List;
 
 
 import org.bukkit.Material;
@@ -42,6 +43,15 @@ public class GameMenu {
         item.setItemMeta(itemMeta);
         inv.setItem(slot, item);
 	}
-	
+
+	/** Comme set_oneitem_menu, avec une description (lore) sous le nom */
+	public static void set_oneitem_menu(ItemStack item, String name, List<String> lore, int slot, Inventory inv) {
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(name);
+        itemMeta.setLore(lore);
+        item.setItemMeta(itemMeta);
+        inv.setItem(slot, item);
+	}
+
 
 }

@@ -158,6 +158,7 @@ public final class Plotinventory implements Listener {
                     player.sendMessage(MessageColor.YELLOW.apply("Le jour approche"));
                     plot.setTime(1000);
                 }
+                player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", playerServer));
             }
             if (customItemType == CustomItemType.RAIN_TOGGLE) {
                 if (playerServer.getPlotdata().getMeteoRain() == Meteo.RAINSTOP) {
@@ -173,6 +174,7 @@ public final class Plotinventory implements Listener {
 
                     player.sendMessage(MessageColor.BLUE.apply("La pluie s'éloigne"));
                 }
+                player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", playerServer));
             }
             if (customItemType == CustomItemType.TIME_FREEZE) {
                 if (playerServer.getPlotdata().getMeteoActive() == Meteo.TIMEFALSE){
@@ -184,6 +186,7 @@ public final class Plotinventory implements Listener {
                     plot.setGameRule(GameRules.ADVANCE_TIME, false);
                     player.sendMessage(MessageColor.GOLD.apply("La météo se fige"));
                 }
+                player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", playerServer));
             }
             if (customItemType == CustomItemType.WATERLAVASELECTION) {
                 playerServer.getPlotdata().setwaterlava(!playerServer.getPlotdata().getwaterlava());
