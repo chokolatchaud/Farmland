@@ -133,14 +133,7 @@ public final class JoinAndleaveEvent implements Listener {
             }, PLOT_CREATION_DELAY);
         }
 
-        // Pousse le statut du serveur vers farm-land.fr.
-        if (plugin.getWebApi() != null) {
-            plugin.getWebApi().pushServerStatus(
-                plugin.getServer().getOnlinePlayers().size(),
-                plugin.getServer().getMaxPlayers(),
-                plugin.getServer().getBukkitVersion()
-            );
-        }
+
     }
 
     @EventHandler
@@ -159,13 +152,7 @@ public final class JoinAndleaveEvent implements Listener {
         BuyCommands.removeAttachment(event.getPlayer().getUniqueId());
         
         // pousse le statut du serveur vers farm-land.fr
-        if (plugin.getWebApi() != null) {
-            plugin.getWebApi().pushServerStatus(
-                plugin.getServer().getOnlinePlayers().size() - 1,
-                plugin.getServer().getMaxPlayers(),
-                plugin.getServer().getBukkitVersion()
-            );
-        }
+
         
         event.setQuitMessage("");
     }

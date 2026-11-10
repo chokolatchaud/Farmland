@@ -3,7 +3,6 @@ package fr.kevyn.farmland.infrastructure;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.modules.coeur.PlaceholderModule;
 import fr.kevyn.farmland.modules.coeur.SaveModule;
-import fr.kevyn.farmland.modules.coeur.WebApiModule;
 import fr.kevyn.farmland.modules.gameplay.MetierModule;
 import fr.kevyn.farmland.modules.moderation.ModerationModule;
 import fr.kevyn.farmland.modules.monde.PlotModule;
@@ -54,12 +53,6 @@ public final class MicroPluginManager {
         ModuleLoaderFacade.loadPlaceholder(plugin);
     }
 
-    /**
-     * Compatibilité avec l'ancien chargement de la WebAPI.
-     */
-    public static void moduleWebApi(FarmlandMain plugin) {
-        ModuleLoaderFacade.loadWebApi(plugin);
-    }
 
     /**
      * Compatibilité avec l'ancien chargement du module métiers.
@@ -97,9 +90,7 @@ public final class MicroPluginManager {
             new PlaceholderModule(plugin).register();
         }
 
-        private static void loadWebApi(FarmlandMain plugin) {
-            new WebApiModule(plugin).register();
-        }
+
 
         private static void loadMetier(FarmlandMain plugin) {
             new MetierModule(plugin).register();

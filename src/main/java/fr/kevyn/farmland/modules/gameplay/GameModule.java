@@ -1,33 +1,25 @@
 package fr.kevyn.farmland.modules.gameplay;
 
-import fr.kevyn.farmland.directives.plot.commands.PlotAdminCommands;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import fr.kevyn.farmland.directives.administration.messagediscord;
-import fr.kevyn.farmland.directives.gameplay.chat.ChatListener;
 import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.directives.administration.PlayerAdminCommands;
+import fr.kevyn.farmland.directives.administration.messagediscord;
 import fr.kevyn.farmland.directives.bateau.course.BoatRaceHologram;
 import fr.kevyn.farmland.directives.bateau.course.RaceAdminCommands;
-import fr.kevyn.farmland.directives.gameplay.commands.GameCommands;
-import fr.kevyn.farmland.directives.gameplay.commands.HubCommand;
+import fr.kevyn.farmland.directives.gameplay.chat.ChatListener;
+import fr.kevyn.farmland.directives.gameplay.classement.LeaderboardHolograms;
+import fr.kevyn.farmland.directives.gameplay.commands.*;
+import fr.kevyn.farmland.directives.gameplay.evenement.MenuListenerFarm;
+import fr.kevyn.farmland.directives.gameplay.scoreboard.CreativePlotScoreboard;
+import fr.kevyn.farmland.directives.infrastructure.VoteListener;
+import fr.kevyn.farmland.directives.marché.affichage.MarketHolograms;
 import fr.kevyn.farmland.directives.marché.commands.BuyCommands;
 import fr.kevyn.farmland.directives.marché.commands.MarketAdminCommands;
-import fr.kevyn.farmland.directives.marché.affichage.MarketHolograms;
 import fr.kevyn.farmland.directives.marché.commands.MarketCommand;
-import fr.kevyn.farmland.directives.gameplay.commands.BagCommands;
-import fr.kevyn.farmland.directives.gameplay.commands.ClassementAdminCommands;
-import fr.kevyn.farmland.directives.gameplay.commands.ClassementCommand;
-import fr.kevyn.farmland.directives.gameplay.classement.LeaderboardHolograms;
-import fr.kevyn.farmland.directives.gameplay.evenement.MenuListenerFarm;
-import fr.kevyn.farmland.directives.administration.PlayerAdminCommands;
-import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
-import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
-import fr.kevyn.farmland.persistance.joueurs.PlayerSave;
-import fr.kevyn.farmland.directives.gameplay.scoreboard.CreativePlotScoreboard;
+import fr.kevyn.farmland.directives.plot.commands.PlotAdminCommands;
 import fr.kevyn.farmland.directives.plot.commands.TpaCommand;
-import fr.kevyn.farmland.directives.gameplay.commands.VoteCommand;
-import fr.kevyn.farmland.directives.infrastructure.VoteListener;
+import fr.kevyn.farmland.persistance.joueurs.PlayerSave;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 /**
  * Enregistre les commandes, listeners et tâches du gameplay général.
@@ -36,7 +28,6 @@ public final class GameModule {
 
     private static final long TAB_UPDATE_TICKS = 200L;
     private static final long SCOREBOARD_UPDATE_TICKS = 40L;
-    private static final long BALANCE_PUSH_TICKS = 20L * 60;
     private static final long LEADERBOARD_UPDATE_TICKS = 20L * 60;
     private static final long MARKET_HOLOGRAM_UPDATE_TICKS = 20L * 10;
     private static final long BOAT_HOLOGRAM_UPDATE_TICKS = 20L * 60;
@@ -55,7 +46,6 @@ public final class GameModule {
             registerMarket();
             registerVote();
             registerChatAndScoreboard();
-            registerWebApiBalancePush();
             registerBoatRace();
             registerAutosave();
 
@@ -164,38 +154,7 @@ public final class GameModule {
         );
     }
 
-    private void registerWebApiBalancePush() {
-        Bukkit.getScheduler().runTaskTimer(
-                plugin,
-                () -> {
-                    if (!plugin.getConfig().getBoolean("webapi.enabled", false)
-                            || plugin.getWebApi() == null) {
-                        return;
-                    }
 
-                    for (PlayerServer playerServer
-                            : PlayerserverHashMap.getInstance().getHashMapPlayer().values()) {
-                        if (playerServer == null || playerServer.getName() == null
-                                || playerServer.getName().isBlank()) {
-                            continue;
-                        }
-
-                        plugin.getWebApi().pushPlayerBalance(
-                                playerServer.getName(),
-                                playerServer.getMoney(),
-                                playerServer.getBlocposetotal(),
-                                playerServer.getCobblestonegeneratorlevel(),
-                                playerServer.getHoueLevel(),
-                                playerServer.getCanneLevel(),
-                                playerServer.getHacheLevel(),
-                                playerServer.getEpeeLevel()
-                        );
-                    }
-                },
-                100L,
-                BALANCE_PUSH_TICKS
-        );
-    }
 
     private void registerBoatRace() {
         try {

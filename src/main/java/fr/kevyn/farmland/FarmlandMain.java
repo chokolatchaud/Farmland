@@ -4,21 +4,14 @@ import fr.kevyn.farmland.directives.administration.messagediscord;
 import fr.kevyn.farmland.directives.gameplay.evenement.JoinAndleaveEvent;
 import fr.kevyn.farmland.infrastructure.ModuleLoader;
 import fr.kevyn.farmland.persistance.joueurs.PlayerSave;
-import fr.kevyn.farmland.persistance.webapi.WebApiClient;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class FarmlandMain extends JavaPlugin {
 
-    private WebApiClient webApi;
 
 
-    public WebApiClient getWebApi() {
-        return webApi;
-    }
 
-    public void initWebApi(String baseUrl, String apiKey) {
-        this.webApi = new WebApiClient(this, baseUrl, apiKey);
-    }
+
 
 
     @Override

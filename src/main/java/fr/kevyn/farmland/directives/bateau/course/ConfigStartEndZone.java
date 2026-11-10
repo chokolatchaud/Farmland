@@ -1,12 +1,12 @@
 package fr.kevyn.farmland.directives.bateau.course;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
+import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.directives.gameplay.commands.HubCommand;
 import fr.kevyn.farmland.doonees.bateaux.BoatGameHashMap;
 import fr.kevyn.farmland.doonees.bateaux.StatutBoatGame;
+import fr.kevyn.farmland.doonees.regions.GameRegion;
+import fr.kevyn.farmland.doonees.regions.GameRegionHashMap;
+import fr.kevyn.farmland.doonees.regions.TypeRegion;
 import fr.kevyn.farmland.persistance.bateaux.BoatTimeSave;
 import fr.kevyn.farmland.persistance.bateaux.DailyBoatTimeSave;
 import org.bukkit.Bukkit;
@@ -16,11 +16,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import fr.kevyn.farmland.FarmlandMain;
-import fr.kevyn.farmland.directives.gameplay.commands.HubCommand;
-import fr.kevyn.farmland.doonees.regions.GameRegion;
-import fr.kevyn.farmland.doonees.regions.GameRegionHashMap;
-import fr.kevyn.farmland.doonees.regions.TypeRegion;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class ConfigStartEndZone {
     World world = Bukkit.getWorld("world");
@@ -236,13 +235,7 @@ public class ConfigStartEndZone {
 
                         BoatRaceHologram.update(plugin);
 
-                        // pousse le classement complet vers le site (si le module WebAPI est actif)
-                        if (plugin instanceof FarmlandMain) {
-                            FarmlandMain main = (FarmlandMain) plugin;
-                            if (main.getWebApi() != null) {
-                                main.getWebApi().pushBoatTimes(BoatTimeSave.getTop(plugin, 10));
-                            }
-                        }
+
 
                         vainqueurs.add(player);
                     } else {

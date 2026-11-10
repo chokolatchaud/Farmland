@@ -1,15 +1,14 @@
 package fr.kevyn.farmland.directives.marché.calcul;
 
-import java.util.Map;
-
+import fr.kevyn.farmland.FarmlandMain;
+import fr.kevyn.farmland.directives.marché.affichage.MarketFlavor;
 import fr.kevyn.farmland.directives.marché.affichage.MarketHolograms;
 import fr.kevyn.farmland.doonees.marche.Market;
-import fr.kevyn.farmland.directives.marché.affichage.MarketFlavor;
 import fr.kevyn.farmland.doonees.marche.MarketHolder;
+import fr.kevyn.farmland.persistance.marché.MarketSave;
 import org.bukkit.Bukkit;
 
-import fr.kevyn.farmland.FarmlandMain;
-import fr.kevyn.farmland.persistance.marché.MarketSave;
+import java.util.Map;
 
 /**
  * Planifie et exécute les recalculs périodiques du marché.
@@ -56,10 +55,7 @@ public final class MarketCalcTask {
         MarketSave.saveMarket(plugin, market);
         MarketHolograms.updateAll(plugin);
 
-        // pousse aussi vers le site, si le module WebAPI est actif
-        if (plugin.getConfig().getBoolean("webapi.enabled", false) && plugin.getWebApi() != null) {
-            plugin.getWebApi().pushMarketMetiers(market);
-        }
+
 
         plugin.getLogger().info("[Market] Recalcul effectue - Mineur:" + market.getMoneyforcoefMineur()
             + " Farmeur:" + market.getMoneyforcoefFarmeur()

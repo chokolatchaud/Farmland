@@ -10,7 +10,7 @@ import fr.kevyn.farmland.modules.monde.PlotModule;
 import fr.kevyn.farmland.modules.coeur.PlaceholderModule;
 import fr.kevyn.farmland.modules.coeur.SaveModule;
 import fr.kevyn.farmland.modules.monde.SecureWorldEditModule;
-import fr.kevyn.farmland.modules.coeur.WebApiModule;
+
 
 /**
  * Centralise le chargement des modules du plugin.
@@ -34,7 +34,7 @@ public final class ModuleLoader {
             loadSave(plugin);
             loadGame(plugin);
             loadSecureWorldEdit(plugin);
-            loadWebApi(plugin);
+
             loadMetier(plugin);
         }, LOAD_DELAY_TICKS);
     }
@@ -61,10 +61,6 @@ public final class ModuleLoader {
 
     private static void loadSecureWorldEdit(FarmlandMain plugin) {
         new SecureWorldEditModule(plugin).register();
-    }
-
-    private static void loadWebApi(FarmlandMain plugin) {
-        new WebApiModule(plugin).register();
     }
 
     private static void loadMetier(FarmlandMain plugin) {
