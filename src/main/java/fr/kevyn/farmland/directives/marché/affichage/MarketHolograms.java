@@ -290,7 +290,7 @@ public final class MarketHolograms {
             case "mineur": return "Mineur";
             case "farmeur": return "Farmeur";
             case "agriculteur": return "Agriculteur";
-            case "pecheur": return "Pécheur";
+            case "pecheur": return "Pêcheur";
             case "tueur": return "Tueur";
             default: return coef;
         }

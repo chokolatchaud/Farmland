@@ -48,9 +48,9 @@ public class MetiersLevelsMenu {
         }
 
         if (safePage > 0) {
-            inv.setItem(PREVIOUS_SLOT, createButton(Material.ARROW, "\u00A7ePage precedente"));
+            inv.setItem(PREVIOUS_SLOT, createButton(Material.ARROW, "\u00A7ePage précédente"));
         }
-        inv.setItem(BACK_SLOT, createButton(Material.BARRIER, "\u00A7cRetour aux metiers"));
+        inv.setItem(BACK_SLOT, createButton(Material.BARRIER, "\u00A7cRetour aux métiers"));
         if (safePage < maxPage) {
             inv.setItem(NEXT_SLOT, createButton(Material.ARROW, "\u00A7ePage suivante"));
         }
@@ -83,7 +83,7 @@ public class MetiersLevelsMenu {
         meta.setDisplayName(getStatusColor(level, playerLevel) + "Niveau " + level);
 
         List<String> lore = new ArrayList<>();
-        lore.add("\u00A77Metier : \u00A7f" + getDisplayName(job));
+        lore.add("\u00A77Métier : \u00A7f" + getDisplayName(job));
         lore.add("\u00A77Statut : " + getStatusLabel(level, playerLevel));
         lore.add("");
         lore.addAll(

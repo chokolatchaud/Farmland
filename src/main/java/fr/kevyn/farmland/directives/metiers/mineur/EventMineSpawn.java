@@ -84,7 +84,7 @@ public class EventMineSpawn implements Listener {
 
 		if (isMineur(type)) {
 			event.setCancelled(true);
-			event.getPlayer().sendMessage("§cSeul un cobblegenerator peut generer ce minerai!");
+			event.getPlayer().sendMessage("§cSeul un cobblegenerator peut générer ce minerai !");
 		}
 	}
     
