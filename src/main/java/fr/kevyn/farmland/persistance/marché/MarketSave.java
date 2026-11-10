@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.persistance.marché;
 
 import java.io.File;
+import java.util.logging.Level;
 import fr.kevyn.farmland.directives.infrastructure.DebugLog;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -81,8 +82,7 @@ public final class MarketSave {
             writer.write(gson.toJson(marketHistory));
             writer.flush();
         } catch (IOException e) {
-            plugin.getLogger().severe("Erreur lors de la sauvegarde de l'historique !");
-            e.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "Erreur lors de la sauvegarde de l'historique !", e);
         }
     }
 
@@ -102,8 +102,7 @@ public final class MarketSave {
                 return marketHistory;
             }
         } catch (IOException e) {
-            plugin.getLogger().severe("Erreur lors du chargement de l'historique !");
-            e.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "Erreur lors du chargement de l'historique !", e);
         }
         
         return null;

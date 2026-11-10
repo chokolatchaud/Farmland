@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.modules.moderation;
 
 import fr.kevyn.farmland.directives.administration.messagediscord;
+import java.util.logging.Level;
 import fr.kevyn.farmland.directives.gameplay.evenement.LuckpermGrade;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.directives.administration.ModerationCommands;
@@ -29,9 +30,8 @@ public final class ModerationModule {
 
             messagediscord.sendmessage("Module Modération bien lancé", "statut");
         } catch (Exception e) {
-            plugin.getLogger().severe("Erreur lors du chargement du module Modération !");
+            plugin.getLogger().log(Level.SEVERE, "Erreur lors du chargement du module Modération !", e);
             messagediscord.sendmessage("Module Modération erreur: " + e, "statut");
-            e.printStackTrace();
         }
     }
 }

@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.modules.gameplay;
 
 import fr.kevyn.farmland.FarmlandMain;
+import java.util.logging.Level;
 import fr.kevyn.farmland.directives.infrastructure.DebugLog;
 import fr.kevyn.farmland.directives.administration.PlayerAdminCommands;
 import fr.kevyn.farmland.directives.administration.messagediscord;
@@ -53,9 +54,8 @@ public final class GameModule {
             plugin.getLogger().info("[Game] Module Game activé");
             messagediscord.sendmessage("Module Game bien lancé", "statut");
         } catch (Exception e) {
-            plugin.getLogger().severe("Erreur lors du chargement du module Game !");
+            plugin.getLogger().log(Level.SEVERE, "Erreur lors du chargement du module Game !", e);
             messagediscord.sendmessage("Module Game erreur: " + e, "statut");
-            e.printStackTrace();
         }
     }
 
@@ -169,11 +169,9 @@ public final class GameModule {
                     BOAT_HOLOGRAM_UPDATE_TICKS
             );
         } catch (Exception e) {
-            plugin.getLogger().severe(
+            plugin.getLogger().log(Level.SEVERE,
                     "[BoatRace] Erreur au chargement du module course de bateaux : "
-                            + e.getMessage()
-            );
-            e.printStackTrace();
+                            + e.getMessage(), e);
         }
     }
 
@@ -185,11 +183,9 @@ public final class GameModule {
                         PlayerSave.saveAllPlayerServerFile(plugin);
                         DebugLog.debug(plugin, "[Autosave] Joueurs sauvegardés");
                     } catch (Exception e) {
-                        plugin.getLogger().severe(
+                        plugin.getLogger().log(Level.SEVERE,
                                 "[Autosave] Erreur lors de la sauvegarde des joueurs : "
-                                        + e.getMessage()
-                        );
-                        e.printStackTrace();
+                                        + e.getMessage(), e);
                     }
                 },
                 AUTOSAVE_TICKS,

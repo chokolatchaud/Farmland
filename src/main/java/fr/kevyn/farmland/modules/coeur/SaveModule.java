@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.modules.coeur;
 
 import fr.kevyn.farmland.directives.administration.messagediscord;
+import java.util.logging.Level;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.directives.administration.Savecomands;
 
@@ -26,9 +27,8 @@ public final class SaveModule {
 
             messagediscord.sendmessage("Module SaveCommand bien lancé", "statut");
         } catch (Exception e) {
-            plugin.getLogger().severe("Erreur lors du chargement du module SaveCommand !");
+            plugin.getLogger().log(Level.SEVERE, "Erreur lors du chargement du module SaveCommand !", e);
             messagediscord.sendmessage("Module SaveCommand erreur: " + e, "statut");
-            e.printStackTrace();
         }
     }
 }

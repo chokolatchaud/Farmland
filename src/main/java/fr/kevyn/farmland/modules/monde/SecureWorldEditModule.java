@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.modules.monde;
 
 import fr.kevyn.farmland.directives.administration.messagediscord;
+import java.util.logging.Level;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.directives.plot.worldedit.WorldEditSecureListener;
 
@@ -27,9 +28,8 @@ public final class SecureWorldEditModule {
             plugin.getLogger().info("[WorldEdit] Module chargé avec succès.");
             messagediscord.sendmessage("Module WorldEditSecure bien lancé", "statut");
         } catch (Exception e) {
-            plugin.getLogger().severe("Erreur lors du chargement du module WorldEditSecure !");
+            plugin.getLogger().log(Level.SEVERE, "Erreur lors du chargement du module WorldEditSecure !", e);
             messagediscord.sendmessage("Module WorldEditSecure erreur: " + e, "statut");
-            e.printStackTrace();
         }
     }
 }

@@ -1,6 +1,10 @@
 package fr.kevyn.farmland.persistance;
 
+import fr.kevyn.farmland.FarmlandMain;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.*;
+import java.util.logging.Level;
 
 public class FileManager {
 
@@ -41,7 +45,7 @@ public class FileManager {
             return text.toString();
 
         }catch (IOException E) {
-            E.printStackTrace();
+            JavaPlugin.getPlugin(FarmlandMain.class).getLogger().log(Level.SEVERE, "Impossible de lire " + file.getName(), E);
         }
 
         return "";

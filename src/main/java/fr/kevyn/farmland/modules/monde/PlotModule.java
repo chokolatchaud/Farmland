@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.modules.monde;
 
 import fr.kevyn.farmland.directives.administration.messagediscord;
+import java.util.logging.Level;
 import fr.kevyn.farmland.directives.plot.evenement.EventBuildAndUse;
 import fr.kevyn.farmland.directives.gameplay.chat.ChatCalcListener;
 import fr.kevyn.farmland.directives.plot.evenement.Plotinventory;
@@ -34,9 +35,8 @@ public final class PlotModule {
 
             messagediscord.sendmessage("Module Plot bien lancé", "statut");
         } catch (Exception e) {
-            plugin.getLogger().severe("Erreur lors du chargement du module Plot !");
+            plugin.getLogger().log(Level.SEVERE, "Erreur lors du chargement du module Plot !", e);
             messagediscord.sendmessage("Module Plot erreur: " + e, "statut");
-            e.printStackTrace();
         }
     }
 

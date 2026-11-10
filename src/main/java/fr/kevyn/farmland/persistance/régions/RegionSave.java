@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.persistance.régions;
 
 import java.io.File;
+import java.util.logging.Level;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class RegionSave {
             writer.write(gson.toJson(region));
             writer.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            plugin.getLogger().log(Level.SEVERE, "[Region] Impossible de sauvegarder " + file.getName(), e);
         }
     }
 
@@ -47,7 +48,7 @@ public class RegionSave {
                 GameRegion region = gson.fromJson(reader, GameRegion.class);
                 GameRegionHashMap.getInstance().addregion(region);
             } catch (IOException e) {
-                e.printStackTrace();
+                plugin.getLogger().log(Level.SEVERE, "[Region] Impossible de charger " + file.getName(), e);
             }
         }
     }
