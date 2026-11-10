@@ -157,6 +157,15 @@ public class ConfigStartEndZone {
         setBarriere(game, org.bukkit.Material.AIR);
     }
 
+    /** Message du compte à rebours pour les secondes restantes,
+     *  ou null s'il ne faut rien annoncer (annonces à 30, 20, 10, puis de 5 à 1). */
+    static String messageDecompte(int secondes) {
+        boolean annonce = secondes == 30 || secondes == 20 || secondes == 10
+                || (secondes >= 1 && secondes <= 5);
+        if (!annonce) return null;
+        return "§eDépart dans " + secondes + (secondes == 1 ? " seconde" : " secondes");
+    }
+
     public static void starttime(JavaPlugin plugin, ConfigStartEndZone game) {
 
         // boucle minuteur : 1x/seconde, gere le decompte, le depart et la sortie de bateau
@@ -183,8 +192,11 @@ public class ConfigStartEndZone {
 
             if (game.getStatus() == StatutBoatGame.waitplayer) {
                 game.timetolaunch -= 1;
-                for (Player player : playeringame.values()) {
-                    player.sendMessage("§eDepart dans " + game.timetolaunch + " secondes");
+                String message = messageDecompte(game.timetolaunch);
+                if (message != null) {
+                    for (Player player : playeringame.values()) {
+                        player.sendMessage(message);
+                    }
                 }
 
                 if (game.timetolaunch <= 0) {
