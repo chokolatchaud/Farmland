@@ -31,8 +31,12 @@ public final class JournalEvenements {
     private static final long TICKS_ECRITURE = 100L; // 5 secondes
     private static final long INTERVALLE_ALERTE_MS = 60L * 60 * 1000;
     private static final int MAX_LIGNES_EN_ATTENTE = 10_000;
+    /** Taille maximale de la file en mémoire : au-delà, les lignes les plus anciennes sont jetées. */
+    static final int MAX_FILE = 10_000;
 
     private static final ConcurrentLinkedQueue<String> file = new ConcurrentLinkedQueue<>();
+    private static final AtomicInteger tailleFile = new AtomicInteger();
+    private static final AtomicInteger jetees = new AtomicInteger();
     private static final Regroupement regroupement = new Regroupement();
     private static final AtomicInteger erreurs = new AtomicInteger();
     private static final Object VERROU = new Object();
@@ -48,6 +52,7 @@ public final class JournalEvenements {
     private static LocalDate dateFichier;
     private static long dernierRegroupement = System.currentTimeMillis();
     private static long derniereAlerte;
+    private static long derniereAlerteFilePleine;
     private static final List<String> nonEcrites = new ArrayList<>();
     private static int perdues;
 
@@ -60,7 +65,7 @@ public final class JournalEvenements {
     public static void enregistrer(String type, String joueur, Object valeur) {
         try {
             if (!actif) return;
-            file.add(FormatJournal.ligne(LocalDateTime.now(), type, joueur, valeur));
+            ajouterFile(FormatJournal.ligne(LocalDateTime.now(), type, joueur, valeur));
         } catch (Throwable t) {
             erreurs.incrementAndGet();
         }
@@ -108,7 +113,7 @@ public final class JournalEvenements {
             dossier = p.getDataFolder();
             dateFichier = null;
             if (!actif) {
-                file.clear();
+                viderFile();
                 regroupement.vider();
             }
         }
@@ -144,16 +149,53 @@ public final class JournalEvenements {
                 }
                 ecrire();
                 signalerErreurs(maintenant);
+                String filePleine = messageFilePleine(maintenant);
+                JavaPlugin p = plugin;
+                if (filePleine != null && p != null) p.getLogger().warning(filePleine);
             }
         } catch (Throwable t) {
             erreurs.incrementAndGet();
         }
     }
 
+    /** Ajoute une ligne ; si la file dépasse MAX_FILE, jette les plus anciennes. */
+    private static void ajouterFile(String ligne) {
+        file.add(ligne);
+        if (tailleFile.incrementAndGet() > MAX_FILE && file.poll() != null) {
+            tailleFile.decrementAndGet();
+            jetees.incrementAndGet();
+        }
+    }
+
+    private static String retirerFile() {
+        String l = file.poll();
+        if (l != null) tailleFile.decrementAndGet();
+        return l;
+    }
+
+    private static void viderFile() {
+        while (retirerFile() != null) {
+            // vide
+        }
+    }
+
+    /**
+     * Message de WARN si des lignes ont été jetées, au plus une fois par heure ;
+     * null sinon. Remet le compteur à zéro quand le message est produit.
+     */
+    static String messageFilePleine(long maintenant) {
+        int nb = jetees.get();
+        if (nb <= 0) return null;
+        if (derniereAlerteFilePleine != 0 && maintenant - derniereAlerteFilePleine < INTERVALLE_ALERTE_MS) return null;
+        derniereAlerteFilePleine = maintenant;
+        jetees.addAndGet(-nb);
+        return "[Journal] File pleine (" + MAX_FILE + " lignes) : " + nb + " ligne(s) les plus anciennes jetée(s)";
+    }
+
     private static void transferer(List<Regroupement.Ligne> lignes) {
         LocalDateTime maintenant = LocalDateTime.now();
         for (Regroupement.Ligne l : lignes) {
-            file.add(FormatJournal.ligne(maintenant, l.type(), l.joueur(), l.valeur()));
+            ajouterFile(FormatJournal.ligne(maintenant, l.type(), l.joueur(), l.valeur()));
         }
     }
 
@@ -165,7 +207,7 @@ public final class JournalEvenements {
         List<String> lignes = new ArrayList<>(nonEcrites);
         nonEcrites.clear();
         String l;
-        while ((l = file.poll()) != null) lignes.add(l);
+        while ((l = retirerFile()) != null) lignes.add(l);
         if (lignes.isEmpty()) return;
 
         File courant = new File(dossier, FormatJournal.FICHIER_COURANT);
@@ -254,13 +296,19 @@ public final class JournalEvenements {
     // ===== POUR LES TESTS =====
 
     static String prochaineLigneEnAttente() {
-        return file.poll();
+        return retirerFile();
+    }
+
+    static int tailleFilePourTest() {
+        return tailleFile.get();
     }
 
     static void viderPourTest() {
-        file.clear();
+        viderFile();
         regroupement.vider();
         erreurs.set(0);
+        jetees.set(0);
+        derniereAlerteFilePleine = 0;
         actif = true;
         detail = false;
     }

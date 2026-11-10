@@ -78,6 +78,35 @@ class JournalEvenementsTest {
     }
 
     @Test
+    void filePlafonneeJetteLesPlusAnciennes() {
+        int max = JournalEvenements.MAX_FILE;
+        for (int i = 0; i < max + 5; i++) {
+            JournalEvenements.enregistrer("t", "j", i);
+        }
+        assertEquals(max, JournalEvenements.tailleFilePourTest());
+        // les 5 plus anciennes (0 à 4) ont été jetées : la première restante est la n°5
+        assertTrue(JournalEvenements.prochaineLigneEnAttente().endsWith(";t;j;5"));
+        assertEquals(max - 1, JournalEvenements.tailleFilePourTest());
+    }
+
+    @Test
+    void warnFilePleineAuPlusUneFoisParHeure() {
+        long heure = 60L * 60 * 1000;
+        assertNull(JournalEvenements.messageFilePleine(1_000), "rien de jeté : pas de WARN");
+
+        for (int i = 0; i < JournalEvenements.MAX_FILE + 3; i++) {
+            JournalEvenements.enregistrer("t", "j", i);
+        }
+        String warn = JournalEvenements.messageFilePleine(1_000);
+        assertTrue(warn.contains("3 ligne(s)"), warn);
+
+        JournalEvenements.enregistrer("t", "j", "encore"); // 1 de plus jetée
+        assertNull(JournalEvenements.messageFilePleine(1_000 + heure - 1), "moins d'une heure : silence");
+        String rappel = JournalEvenements.messageFilePleine(1_000 + heure);
+        assertTrue(rappel.contains("1 ligne(s)"), rappel);
+    }
+
+    @Test
     void purgeNeSupprimeQueLesVieillesArchives(@TempDir Path dossier) throws IOException {
         String[] aSupprimer = { "evenements-2026-09-01.log", "evenements-2026-10-10.log" };
         String[] aGarder = { "evenements-2026-10-11.log", "evenements-2026-11-09.log", "evenements.log",
