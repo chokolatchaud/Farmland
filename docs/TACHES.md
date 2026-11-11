@@ -63,9 +63,41 @@ Statut : fait
 Notes de l'agent (2026-11-11) : fait dans `ed183f5` (branche `agent/messagediscord`). Envoi asynchrone, délais 5 s / 5 s (3 s pendant l'arrêt), erreurs en WARN avec le type d'erreur seulement (jamais l'URL), test `MessageDiscordTest`. Testé avec un faux Discord local muet : démarrage normal, `/spawn` en ~70 ms, arrêt de Farmland en 3 s.
 À vérifier en prod : un message arrive dans chaque salon. Non traité : les `@everyone` écrits par les joueurs passent toujours.
 
+### Outils : erreur "Unexpected value: BOW" avec un objet hors métier
+Statut : fait
+Erreur vue en prod : `Outils.CleOutils` levait une erreur pour tout objet enchanté, renommé ou usé qui n'est pas un outil de métier (clic droit, casse, kill, pêche).
+Notes de l'agent (2026-11-11) : corrigé dans `9f6cbb7` (branche `agent/outils-non-metier`) : le type est comparé d'abord, `isOutils` répond "non" sans erreur. Sur le serveur de test : 7 erreurs avec l'ancien jar, 0 avec le nouveau.
+
+### Houe du Farmeur : choisir et planter des graines
+Statut : à faire
+Le message de la houe annonce "clic droit dans le vide pour choisir une graine, clic droit sur de la terre labourée pour planter", mais `HarvestFarmEvent.onClicHoue` est vide : la fonction n'existe pas. La coder, ou retirer le message en attendant.
+
+### Reproduction des animaux sur les plots
+Statut : à faire
+Aujourd'hui `onSpawnMob` bloque toute apparition non naturelle sur les plots (reproduction, œufs, spawners), même si "spawn des mobs" est activé. Réfléchir à autoriser la reproduction. Touche aux protections des plots : plan avant de modifier.
+
+### Discord : bloquer les @everyone venant des joueurs
+Statut : à faire
+Certains messages envoyés à Discord contiennent du texte des joueurs (pseudo, chat relayé dans `GameCommands`) : un joueur peut y glisser `@everyone`. Bloquer les mentions (`allowed_mentions`) sauf pour les messages voulus (ex. `JoinAndleaveEvent` ligne 75).
+
+### Calcul automatique : résultats négatifs
+Statut : à faire
+Le calcul automatique du chat propose parfois un résultat négatif (ex. "1 - 48"). Vérifier si c'est voulu ; sinon, ne proposer que des résultats positifs. Gain en $FB : zone sensible, test JUnit.
+
+### /plot visit : skins des têtes redemandés à Mojang
+Statut : à faire
+À chaque ouverture, les têtes du menu redemandent les skins à Mojang ; si Mojang est lent, la console affiche "Couldn't look up profile properties ... Read timed out" (WARN, sans gravité). Éviter de redemander les profils à chaque ouverture (cache).
+
+### Salons Discord `status` / `statut` : un seul nom
+Statut : à faire
+Ancienne proposition 1. `messagediscord` accepte les deux noms pour le même webhook (`webhook-status`) et le code utilise surtout `statut`. Garder un seul nom (peu urgent).
+
+### Tests JUnit sur les récompenses et multiplicateurs
+Statut : à faire
+Ancienne proposition 2. Tests sur d'autres calculs (récompenses, multiplicateurs) : zone sensible, plan et validation avant.
+
 ## Propositions de l'agent
 
 À recopier dans "À traiter" si je suis d'accord.
 
-1. Salons Discord `status` / `statut` : origine trouvée, `messagediscord` accepte les deux noms pour le même webhook (`webhook-status`) et le code utilise `statut`. Reste à garder un seul nom (peu urgent).
-2. Tests sur d'autres calculs (récompenses, multiplicateurs) : zone sensible, avec validation.
+(aucune pour l'instant)
