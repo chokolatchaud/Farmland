@@ -7,17 +7,24 @@ import fr.kevyn.farmland.FarmlandMain;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 public class messagediscord {
-	
+
 	private static FarmlandMain plugin;
-	
+
+	// Délais maximaux de l'appel HTTP vers Discord (en millisecondes)
+	static final int DELAI_CONNEXION_MS = 5000;
+	static final int DELAI_LECTURE_MS = 5000;
+	// Pendant l'arrêt du serveur, l'envoi bloque l'arrêt : délai plus court
+	static final int DELAI_ARRET_MS = 3000;
+
 	// a appeler une fois au demarrage du plugin (dans FarmlandMain.onEnable), avant tout sendmessage
 	public static void init(FarmlandMain pluginInstance) {
 		plugin = pluginInstance;
 		plugin.saveDefaultConfig();
 	}
-	
+
 	public static void sendmessage(String content, String salon) {
 	    try {
 	    	if (plugin == null) {
@@ -25,13 +32,13 @@ public class messagediscord {
 	    		Bukkit.getLogger().info("⚠ messagediscord.init() pas appelé, message ignoré : " + content);
 	    		return;
 	    	}
-	    	
-	        // Récupération des URLs de webhook depuis config.yml 
+
+	        // Récupération des URLs de webhook depuis config.yml
 	        String webhookUrlStatue = plugin.getConfig().getString("discord.webhook-status", "");
 	        String webhookUrlMSG = plugin.getConfig().getString("discord.webhook-message", "");
 	        String webhookUrlModeration = plugin.getConfig().getString("discord.webhook-moderation", "");
 
-	    
+
 	        // Sélection du webhook selon le salon
 	        String webhookUrl = webhookUrlStatue;
 	        if (salon.equalsIgnoreCase("message")) {
@@ -41,45 +48,78 @@ public class messagediscord {
 	        } else if (salon.equalsIgnoreCase("moderation")) {
 	        	webhookUrl = webhookUrlModeration;
 	        }
-	        
+
 	        if (webhookUrl.isEmpty()) {
 	        	AlerteDiscord.signaler(plugin, "non-configure:" + salon, "⚠ Webhook Discord non configuré pour le salon \"" + salon + "\" (voir config.yml)");
 	        	return;
 	        }
-	        
-	        // Connexion HTTP
-	        
-	        URL url = new URL(webhookUrl);
-	        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-	        connection.setRequestMethod("POST");
-	        connection.setDoOutput(true);
-	        connection.setRequestProperty("Content-Type", "application/json");
-	        
-	        // Échappement correct pour JSON 
+
+	        // Échappement correct pour JSON
 	        String escapedContent = content
 	            .replace("\\", "\\\\")  // Échappe les backslashes
 	            .replace("\"", "\\\"")  // Échappe les guillemets
 	            .replace("\n", "\\n")   // Échappe les retours à la ligne
 	            .replace("\r", "\\r")   // Échappe les retours chariot
 	            .replace("\t", "\\t");  // Échappe les tabulations
-	        
+
 	        // Format JSON du message
 	        String jsonPayload = String.format("{\"content\":\"%s\"}", escapedContent);
-	        
+
+	        final String url = webhookUrl;
+	        if (plugin.isEnabled()) {
+	            // L'appel HTTP part en arrière-plan : le serveur ne se fige jamais en attendant Discord
+	            Bukkit.getScheduler().runTaskAsynchronously(plugin,
+	                    () -> envoyer(url, jsonPayload, salon, DELAI_CONNEXION_MS, DELAI_LECTURE_MS));
+	        } else {
+	            // Arrêt du serveur : Bukkit refuse les nouvelles tâches, envoi direct avec un délai court
+	            envoyer(url, jsonPayload, salon, DELAI_ARRET_MS, DELAI_ARRET_MS);
+	        }
+
+	    } catch (Exception e) {
+	        AlerteDiscord.signaler(plugin, "exception:" + salon + ":" + nomErreur(e), messageErreur(salon, e));
+	    }
+	}
+
+	// Appel HTTP vers Discord. Ne lève jamais d'erreur : tout échec est signalé par AlerteDiscord.
+	private static void envoyer(String webhookUrl, String jsonPayload, String salon, int delaiConnexion, int delaiLecture) {
+	    HttpURLConnection connection = null;
+	    try {
+	        connection = (HttpURLConnection) new URL(webhookUrl).openConnection();
+	        connection.setConnectTimeout(delaiConnexion);
+	        connection.setReadTimeout(delaiLecture);
+	        connection.setRequestMethod("POST");
+	        connection.setDoOutput(true);
+	        connection.setRequestProperty("Content-Type", "application/json");
+
 	        // Envoi du contenu
 	        try (OutputStream os = connection.getOutputStream()) {
-	            byte[] input = jsonPayload.getBytes("utf-8");
+	            byte[] input = jsonPayload.getBytes(StandardCharsets.UTF_8);
 	            os.write(input, 0, input.length);
 	        }
-	        
-	        // Lecture du code de réponse 
+
+	        // Lecture du code de réponse
 	        int responseCode = connection.getResponseCode();
 	        if (responseCode != 204 && responseCode != 200) {
 	            AlerteDiscord.signaler(plugin, "http:" + salon + ":" + responseCode, "⚠ Erreur envoi Discord (salon \"" + salon + "\") : code HTTP " + responseCode);
 	        }
-	        
-	    } catch (Exception _) {
-
+	    } catch (Exception e) {
+	        AlerteDiscord.signaler(plugin, "exception:" + salon + ":" + nomErreur(e), messageErreur(salon, e));
+	    } finally {
+	        if (connection != null) {
+	            connection.disconnect();
+	        }
 	    }
+	}
+
+	/**
+	 * Message de console pour un envoi échoué : le salon et le TYPE d'erreur seulement.
+	 * Jamais e.getMessage() : certaines erreurs recopient l'URL du webhook, qui est secrète.
+	 */
+	static String messageErreur(String salon, Throwable e) {
+	    return "⚠ Erreur envoi Discord (salon \"" + salon + "\") : " + nomErreur(e);
+	}
+
+	private static String nomErreur(Throwable e) {
+	    return e == null ? "inconnue" : e.getClass().getSimpleName();
 	}
 }
