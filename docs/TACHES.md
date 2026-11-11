@@ -34,6 +34,22 @@ Questions :
 - Les plots privés : affichés grisés, ou cachés ?
 - Combien de plots par page : 45 comme aujourd'hui, ou 28 avec un cadre en vitre tout autour ?
 
+### Logs : printStackTrace remplacés par le logger
+Statut : fait
+Ancienne proposition 2. Fait dans `e6e5192` (branche `agent/journal-logs`, fusionnée) : plus aucun `printStackTrace()` dans `src/main`.
+
+### Menu plot visit : pagination, titre, téléportation, plot privé du propriétaire
+Statut : fait
+Anciennes propositions 5 à 8. Branche `agent/menu-plot-visit` :
+- `2e0ef42` : page tenue par le menu ouvert (repart de la page 1), un seul titre "Visiter un plot", clic sur une tête via `Plotcommands.visiterPlot` (même règle "privé" que la commande, `teleportSafe`), le propriétaire visite son plot privé ("Ton plot (privé)").
+- `96989e5` : `teleportSafe` pose le joueur au sol sur les mondes de plot plats (avant : arrivée à y=65 puis chute).
+À vérifier en jeu : flèches de page avec plus de 45 plots, arrivée sans dégâts en survie.
+
+### Protections des plots indépendantes de RoseStacker
+Statut : fait
+Ancienne proposition 4. `c5da790` (branche `agent/rosestacker`) : sans RoseStacker, Paper refusait toute la classe `EventBuildAndUse` (casse/pose permises sur les plots des autres, prouvé sur le serveur de test). La règle d'empilement passe dans `RoseStackerListener`, enregistré seulement si RoseStacker est présent.
+À vérifier en prod : pas de "Failed to register events ... EventBuildAndUse" au démarrage.
+
 ### onSpawnMob hors des mondes de plot
 Statut : à faire
 Dans `EventBuildAndUse.onSpawnMob`, `UUID.fromString(world.getName())` lève une erreur dans un monde dont le nom n'est pas un UUID (ex. hub `world`) : vérifier si ça arrive (console), puis ignorer ces mondes sans erreur. Touche aux protections des plots : plan avant de modifier.
@@ -42,11 +58,5 @@ Dans `EventBuildAndUse.onSpawnMob`, `UUID.fromString(world.getName())` lève une
 
 À recopier dans "À traiter" si je suis d'accord.
 
-1. Chercher l'origine des salons Discord `status` / `statut` (lecture seule).
-2. Remplacer les `printStackTrace()` par le logger du plugin : plusieurs fichiers sensibles (sauvegardes, WebAPI, WorldEdit), validation fichier par fichier.
-3. Tests sur d'autres calculs (récompenses, multiplicateurs) : zone sensible, avec validation.
-4. Corriger la dépendance du listener de protection des plots à RoseStacker : zone sensible.
-5. Menu plot visit : remettre la page à 1 à chaque ouverture de `/plot visit`. Aujourd'hui `playerPageById` (`Plotinventory`) garde l'ancienne page, et la flèche "suivante" peut sauter une page.
-6. Menu plot visit : un seul titre pour toutes les pages ("plotvisit" dans `Plotcommands`, "Visite" dans `Plotinventory`).
-7. Menu plot visit : téléporter avec `teleportSafe` (`Plotcommands`) au lieu de `teleportToPlot` et `findSafeLocation`, recopiées dans `Plotinventory`.
-8. Menu plot visit : laisser le propriétaire visiter son propre plot privé depuis le menu, comme avec `/plot visit <nom>`.
+1. Salons Discord `status` / `statut` : origine trouvée, `messagediscord` accepte les deux noms pour le même webhook (`webhook-status`) et le code utilise `statut`. Reste à garder un seul nom (peu urgent).
+2. Tests sur d'autres calculs (récompenses, multiplicateurs) : zone sensible, avec validation.
