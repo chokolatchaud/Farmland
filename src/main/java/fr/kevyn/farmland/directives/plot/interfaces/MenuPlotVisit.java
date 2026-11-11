@@ -8,6 +8,7 @@ import fr.kevyn.farmland.doonees.menus.GameMenu;
 import fr.kevyn.farmland.doonees.menus.TypeMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -19,12 +20,14 @@ import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
 
 public class MenuPlotVisit {
 
-	public static Inventory createmenuplotvisit(String name, int page) {
+	// viewer : le joueur qui ouvre le menu (son propre plot privé reste visitable).
+	public static Inventory createmenuplotvisit(String name, int page, Player viewer) {
         if (page < 1) page = 1;
 
         String titre = MessageColor.DARK_GREEN.apply(name) + MessageColor.DARK_GRAY.apply(" | Page " + page);
         Inventory inv = Bukkit.createInventory(null, 54, titre);
         GameMenu plotvisit = new GameMenu(inv, TypeMenu.PLOTVISIT);
+        plotvisit.setPage(page);
 
         int playersPerPage = 45; // slots 0 à 44
         int startIndex = (page - 1) * playersPerPage;
@@ -46,7 +49,7 @@ public class MenuPlotVisit {
         List<PlayerServer> playersToShow = allPlayers.subList(startIndex, endIndex);
 
         for (PlayerServer ps : playersToShow) {
-            inv.setItem(slot++, creerTetePlot(ps));
+            inv.setItem(slot++, creerTetePlot(ps, viewer));
         }
 
         // NAVIGATION - Page précédente
@@ -75,7 +78,7 @@ public class MenuPlotVisit {
     }
 
     // Tête du propriétaire : nom coloré et description. Un plot privé est affiché en gris.
-    private static ItemStack creerTetePlot(PlayerServer ps) {
+    private static ItemStack creerTetePlot(PlayerServer ps, Player viewer) {
         ItemStack head = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) head.getItemMeta();
         if (meta == null) return head;
@@ -89,7 +92,14 @@ public class MenuPlotVisit {
         lore.add(MessageColor.GRAY.apply("Propriétaire : ") + MessageColor.WHITE.apply(ps.getName()));
         lore.add(MessageColor.GRAY.apply("Bordure : ") + MessageColor.AQUA.apply(ps.getPlotdata().getWorldborder() + " blocs"));
 
-        if (prive) {
+        boolean proprietaire = viewer != null && viewer.getUniqueId().equals(ps.getUuid());
+
+        if (prive && proprietaire) {
+            meta.setDisplayName(MessageColor.GOLD.apply("Ton plot (privé)"));
+            lore.add(MessageColor.GRAY.apply("Accès : ") + MessageColor.RED.apply("Privé"));
+            lore.add("");
+            lore.add(MessageColor.YELLOW.apply("Clique pour visiter"));
+        } else if (prive) {
             meta.setDisplayName(MessageColor.DARK_GRAY.apply("Plot de " + ps.getName()));
             lore.add(MessageColor.GRAY.apply("Accès : ") + MessageColor.RED.apply("Privé"));
             lore.add("");

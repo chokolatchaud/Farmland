@@ -28,6 +28,16 @@ public class GameMenu {
 	public TypeMenu getTypemenu() {
 		return typemenu;
 	}
+
+	// Numéro de la page affichée, pour les menus à plusieurs pages (ex. visite des plots).
+	int page = 1;
+
+	public int getPage() {
+		return page;
+	}
+	public void setPage(int page) {
+		this.page = page;
+	}
 	
 	
 	public static void fillmenu(Material material, Inventory inv) {

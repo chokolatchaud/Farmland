@@ -258,47 +258,11 @@ public final class Plotcommands implements CommandExecutor {
                     return true;
                 }
 
-                String plotName = target.getPlotdata().getPlotProprety();
-                if (plotName == null || plotName.isBlank()) {
-                    player.sendMessage(MessageColor.RED.apply("Erreur : nom du plot introuvable."));
-                    return true;
-                }
-
-                if (target.getPlotdata().getPrivateplot()
-                        && !target.getUuid().equals(player.getUniqueId())) {
-                    player.sendMessage(MessageColor.RED.apply("Ce plot est privé !"));
-                    return true;
-                }
-
-                World targetPlotWorld = Plot.getWorldforname(plotName);
-
-                if (targetPlotWorld == null) {
-                    player.sendMessage(MessageColor.GRAY.apply("Chargement du plot en cours..."));
-                    try {
-                        new Plot(UUID.fromString(plotName), plugin);
-                    } catch (IllegalArgumentException e) {
-                        player.sendMessage(MessageColor.RED.apply("Erreur : identifiant du plot invalide."));
-                        return true;
-                    }
-
-                    final PlayerServer finalTarget = target;
-                    Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                        World loaded = Plot.getWorldforname(plotName);
-                        if (loaded == null) {
-                            player.sendMessage(MessageColor.RED.apply(
-                                    "Erreur : impossible de charger le plot !"));
-                            return;
-                        }
-                        teleportSafe(player, finalTarget, loaded);
-                    }, 60L);
-                    return true;
-                }
-
-                teleportSafe(player, target, targetPlotWorld);
+                visiterPlot(plugin, player, target);
                 return true;
             }
 
-            Inventory inventaire0 = MenuPlotVisit.createmenuplotvisit("Visiter un plot", 0);
+            Inventory inventaire0 = MenuPlotVisit.createmenuplotvisit("Visiter un plot", 1, player);
             if (inventaire0 == null) {
                 player.sendMessage(MessageColor.RED.apply("Erreur du côté serveur."));
                 return true;
@@ -418,7 +382,57 @@ public final class Plotcommands implements CommandExecutor {
                 && listtrust.contains(worldName);
     }
 
-    private void teleportSafe(Player player, PlayerServer target, World world) {
+    /**
+     * Visite du plot de target : utilisée par /plot visit <nom> et par le menu de visite.
+     * Un plot privé n'est visitable que par son propriétaire.
+     * Retourne true si la téléportation est lancée (ou le plot en cours de chargement).
+     */
+    public static boolean visiterPlot(FarmlandMain plugin, Player player, PlayerServer target) {
+        if (target == null || target.getPlotdata() == null) {
+            player.sendMessage(MessageColor.RED.apply("Erreur : plot introuvable !"));
+            return false;
+        }
+
+        String plotName = target.getPlotdata().getPlotProprety();
+        if (plotName == null || plotName.isBlank()) {
+            player.sendMessage(MessageColor.RED.apply("Erreur : nom du plot introuvable."));
+            return false;
+        }
+
+        if (target.getPlotdata().getPrivateplot()
+                && !target.getUuid().equals(player.getUniqueId())) {
+            player.sendMessage(MessageColor.RED.apply("Ce plot est privé !"));
+            return false;
+        }
+
+        World targetPlotWorld = Plot.getWorldforname(plotName);
+
+        if (targetPlotWorld == null) {
+            player.sendMessage(MessageColor.GRAY.apply("Chargement du plot en cours..."));
+            try {
+                new Plot(UUID.fromString(plotName), plugin);
+            } catch (IllegalArgumentException e) {
+                player.sendMessage(MessageColor.RED.apply("Erreur : identifiant du plot invalide."));
+                return false;
+            }
+
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                World loaded = Plot.getWorldforname(plotName);
+                if (loaded == null) {
+                    player.sendMessage(MessageColor.RED.apply(
+                            "Erreur : impossible de charger le plot !"));
+                    return;
+                }
+                teleportSafe(plugin, player, target, loaded);
+            }, 60L);
+            return true;
+        }
+
+        teleportSafe(plugin, player, target, targetPlotWorld);
+        return true;
+    }
+
+    private static void teleportSafe(FarmlandMain plugin, Player player, PlayerServer target, World world) {
         if (target == null || target.getPlotdata() == null || world == null) {
             player.sendMessage(MessageColor.RED.apply("Erreur : données du plot introuvables."));
             return;

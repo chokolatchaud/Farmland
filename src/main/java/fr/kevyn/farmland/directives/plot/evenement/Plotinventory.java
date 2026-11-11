@@ -6,7 +6,7 @@ import fr.kevyn.farmland.directives.cosmetic.CosmeticShop;
 import fr.kevyn.farmland.directives.gameplay.objet.CustomItemType;
 import fr.kevyn.farmland.directives.infrastructure.MessageColor;
 import fr.kevyn.farmland.directives.plot.gestion.Meteo;
-import fr.kevyn.farmland.directives.plot.gestion.Plot;
+import fr.kevyn.farmland.directives.plot.commands.Plotcommands;
 import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotConfig;
 import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotUpgrade;
 import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotVisit;
@@ -25,12 +25,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public final class Plotinventory implements Listener {
-    private final Map<UUID, Integer> playerPageById = new HashMap<>();
     private final FarmlandMain plugin;
 
     public Plotinventory(FarmlandMain plugin) {
@@ -217,18 +213,14 @@ public final class Plotinventory implements Listener {
 
         // ── PLOTVISIT navigation ──────────────────────────────────────────────
         else if (gameMenu.getTypemenu() == TypeMenu.PLOTVISIT) {
+            // La page vient du menu ouvert : chaque ouverture de /plot visit repart de la page 1.
+            int p = gameMenu.getPage();
             if (customItemType == CustomItemType.ARROW_NEXT) {
-                int p = playerPageById.getOrDefault(player.getUniqueId(), 1);
-                playerPageById.put(player.getUniqueId(), p + 1);
-                Inventory newInventory = MenuPlotVisit.createmenuplotvisit("Visiter un plot", p + 1);
+                Inventory newInventory = MenuPlotVisit.createmenuplotvisit("Visiter un plot", p + 1, player);
                 if (newInventory != null) player.openInventory(newInventory);
-            } else if (customItemType == CustomItemType.ARROW_PREV) {
-                int p = playerPageById.getOrDefault(player.getUniqueId(), 1);
-                if (p > 1) {
-                    playerPageById.put(player.getUniqueId(), p - 1);
-                    Inventory newInventory = MenuPlotVisit.createmenuplotvisit("Visiter un plot", p - 1);
-                    if (newInventory != null) player.openInventory(newInventory);
-                }
+            } else if (customItemType == CustomItemType.ARROW_PREV && p > 1) {
+                Inventory newInventory = MenuPlotVisit.createmenuplotvisit("Visiter un plot", p - 1, player);
+                if (newInventory != null) player.openInventory(newInventory);
             }
         }
     }
@@ -247,83 +239,11 @@ public final class Plotinventory implements Listener {
 
         PlayerServer targetServer =
                 PlayerserverHashMap.getInstance().getplayerHaspMaps(owningPlayer.getUniqueId());
-        if (targetServer == null || targetServer.getPlotdata() == null) {
-            player.sendMessage(MessageColor.RED.apply("Erreur : plot introuvable !"));
-            return;
+        // Même logique que /plot visit <nom> : contrôle "privé", chargement du plot, teleportSafe.
+        if (Plotcommands.visiterPlot(plugin, player, targetServer)) {
+            // Fermeture au tick suivant : on ne ferme pas un inventaire pendant son propre clic.
+            Bukkit.getScheduler().runTask(plugin, () -> player.closeInventory());
         }
-
-        if (targetServer.getPlotdata().getPrivateplot()) {
-            player.sendMessage(MessageColor.RED.apply("Ce plot est privé"));
-            return;
-        }
-
-        String plotName = targetServer.getPlotdata().getPlotProprety();
-        World plotWorld = Plot.getWorldforname(plotName);
-        if (plotWorld == null) {
-            loadPlotForVisit(player, targetServer, plotName);
-            return;
-        }
-
-        teleportToPlot(player, targetServer, plotWorld);
-    }
-
-    private void loadPlotForVisit(Player player, PlayerServer targetServer, String plotName) {
-        player.sendMessage(MessageColor.GRAY.apply("Chargement du plot en cours..."));
-        new Plot(UUID.fromString(plotName), plugin);
-
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            World loadedWorld = Plot.getWorldforname(plotName);
-            if (loadedWorld == null) {
-                player.sendMessage(MessageColor.RED.apply("Impossible de charger le plot !"));
-                return;
-            }
-
-            teleportToPlot(player, targetServer, loadedWorld);
-        }, 60L);
-    }
-
-    // ── TP vers un plot avec position sûre ───────────────────────────────────
-    private void teleportToPlot(Player player, PlayerServer targetServer, World targetPlotWorld) {
-        int spawnX = targetServer.getPlotdata().getLocationspawnX();
-        int spawnY = targetServer.getPlotdata().getLocationspawnY();
-        int spawnZ = targetServer.getPlotdata().getLocationspawnZ();
-
-        int tx = (spawnX == 0 && spawnY == 0 && spawnZ == 0) ? 0 : spawnX;
-        int tz = (spawnX == 0 && spawnY == 0 && spawnZ == 0) ? 0 : spawnZ;
-        int ty = (spawnX == 0 && spawnY == 0 && spawnZ == 0) ? 64 : spawnY;
-
-        targetPlotWorld.loadChunk(tx >> 4, tz >> 4, true);
-
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            Location start = new Location(targetPlotWorld, tx + 0.5, ty, tz + 0.5);
-            Location safe = findSafeLocation(start);
-            player.teleport(safe);
-            player.closeInventory();
-            player.sendMessage(MessageColor.GREEN.apply("Téléportation vers le plot de " + targetServer.getName()));
-        }, 10L);
-    }
-
-    private Location findSafeLocation(Location loc) {
-        World world = loc.getWorld();
-        if (world == null) return loc;
-        int x = loc.getBlockX();
-        int z = loc.getBlockZ();
-
-        // Point de départ : bloc le plus haut de la colonne
-        int highY = world.getHighestBlockYAt(x, z);
-        if (highY < world.getMinHeight() + 5) highY = 64;
-
-        int startY = Math.max(loc.getBlockY(), highY);
-        int maxY = world.getMaxHeight() - 2;
-
-        for (int y = startY; y <= maxY; y++) {
-            if (!world.getBlockAt(x, y, z).getType().isSolid()
-                && !world.getBlockAt(x, y + 1, z).getType().isSolid()
-                && world.getBlockAt(x, y - 1, z).getType().isSolid()) {
-                return new Location(world, x + 0.5, y, z + 0.5, loc.getYaw(), loc.getPitch());
-            }
-        }
-        return new Location(world, x + 0.5, highY + 1, z + 0.5, loc.getYaw(), loc.getPitch());
     }
 
     @EventHandler
