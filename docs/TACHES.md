@@ -51,12 +51,17 @@ Ancienne proposition 4. `c5da790` (branche `agent/rosestacker`) : sans RoseStack
 À vérifier en prod : pas de "Failed to register events ... EventBuildAndUse" au démarrage.
 
 ### onSpawnMob hors des mondes de plot
-Statut : à faire
+Statut : fait
 Dans `EventBuildAndUse.onSpawnMob`, `UUID.fromString(world.getName())` lève une erreur dans un monde dont le nom n'est pas un UUID (ex. hub `world`) : vérifier si ça arrive (console), puis ignorer ces mondes sans erreur. Touche aux protections des plots : plan avant de modifier.
 
+Notes de l'agent (2026-11-11) : bug prouvé sur le serveur de test (`/summon` dans le hub → "Invalid UUID string: world"). Corrigé dans `beed5e3` (branche `agent/onspawnmob`) : ces mondes sont ignorés sans erreur. Règle des plots inchangée ; la reproduction reste bloquée sur les plots (choix du propriétaire, à revoir plus tard peut-être).
+
 ### messagediscord : envoi bloquant et erreurs avalées
-Statut : à faire
+Statut : fait
 `messagediscord.sendmessage` fait l'appel HTTP vers Discord sur le fil appelant (souvent le fil principal : connexion, `/pay`...), sans délai maximal : si Discord est lent, le serveur peut geler. Et `catch (Exception _) {}` cache toute erreur réseau. À faire : envoi en tâche asynchrone, délais de connexion et de lecture, erreurs signalées via `AlerteDiscord` (rappel horaire). Jamais d'URL de webhook dans le dépôt.
+
+Notes de l'agent (2026-11-11) : fait dans `ed183f5` (branche `agent/messagediscord`). Envoi asynchrone, délais 5 s / 5 s (3 s pendant l'arrêt), erreurs en WARN avec le type d'erreur seulement (jamais l'URL), test `MessageDiscordTest`. Testé avec un faux Discord local muet : démarrage normal, `/spawn` en ~70 ms, arrêt de Farmland en 3 s.
+À vérifier en prod : un message arrive dans chaque salon. Non traité : les `@everyone` écrits par les joueurs passent toujours.
 
 ## Propositions de l'agent
 
