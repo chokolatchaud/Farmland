@@ -1,6 +1,5 @@
 package fr.kevyn.farmland.directives.plot.evenement;
 
-import dev.rosewood.rosestacker.event.EntityStackEvent;
 import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.directives.administration.messagediscord;
@@ -13,7 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -135,18 +133,6 @@ public final class EventBuildAndUse implements Listener {
         }
 
         if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL) {
-            return;
-        }
-
-        event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void onEntityStack(EntityStackEvent event) {
-
-        LivingEntity entity = event.getStack().getEntity();
-
-        if (!canBreed(entity.getType())) {
             return;
         }
 
@@ -403,27 +389,5 @@ public final class EventBuildAndUse implements Listener {
                 "Erreur comptage blocs pour " + player.getName(),
                 "statut"
         );
-    }
-
-    private boolean canBreed(EntityType type) {
-        return switch (type) {
-            case COW,
-                 SHEEP,
-                 PIG,
-                 CHICKEN,
-                 RABBIT,
-                 GOAT,
-                 HORSE,
-                 DONKEY,
-                 LLAMA,
-                 CAMEL,
-                 FOX,
-                 PANDA,
-                 TURTLE,
-                 BEE,
-                 CAT,
-                 WOLF -> true;
-            default -> false;
-        };
     }
 }

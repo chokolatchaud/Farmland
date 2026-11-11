@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import fr.kevyn.farmland.directives.plot.evenement.EventBuildAndUse;
 import fr.kevyn.farmland.directives.gameplay.chat.ChatCalcListener;
 import fr.kevyn.farmland.directives.plot.evenement.Plotinventory;
+import fr.kevyn.farmland.directives.plot.evenement.RoseStackerListener;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.directives.bateau.course.BoatRaceListener;
 import fr.kevyn.farmland.directives.bateau.recompense.DailyBoatReward;
@@ -43,6 +44,12 @@ public final class PlotModule {
     private void registerListeners() {
         messagediscord.sendmessage("Module Plotlistener bien lancé", "statut");
         plugin.getServer().getPluginManager().registerEvents(new EventBuildAndUse(plugin), plugin);
+        // Enregistré seulement si RoseStacker est là : sinon Paper refuserait la classe entière.
+        if (plugin.getServer().getPluginManager().getPlugin("RoseStacker") != null) {
+            plugin.getServer().getPluginManager().registerEvents(new RoseStackerListener(), plugin);
+        } else {
+            plugin.getLogger().info("RoseStacker absent : les animaux d'élevage ne sont plus protégés du regroupement.");
+        }
         plugin.getServer().getPluginManager().registerEvents(new Plotinventory(plugin), plugin);
         plugin.getServer().getPluginManager().registerEvents(new BoatRaceListener(plugin), plugin);
         plugin.getServer().getPluginManager().registerEvents(new ChatCalcListener(), plugin);
