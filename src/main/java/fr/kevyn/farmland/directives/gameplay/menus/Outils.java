@@ -21,13 +21,24 @@ public class Outils {
 
 		    public static boolean isOutils(ItemStack item) {
 		        if (item == null || !item.hasItemMeta()) return false;
-		        return item.getItemMeta().getPersistentDataContainer().has(CleOutils(item), PersistentDataType.BYTE);
+		        NamespacedKey cle = cleOutilsOuNull(item);
+		        if (cle == null) return false; // pas un outil de métier (arc, pioche en fer...) : réponse "non", sans erreur
+		        return item.getItemMeta().getPersistentDataContainer().has(cle, PersistentDataType.BYTE);
 		    }
 
-		 
+
 		    public static boolean isOutilsAttendu(ItemStack item, Material materielAttendu) {
 		        if (item == null) return false;
-		        return isOutils(item) && item.getType() == materielAttendu;
+		        // Le type d'abord : un objet d'un autre type est écarté tout de suite
+		        return item.getType() == materielAttendu && isOutils(item);
+		    }
+
+		    // Clé de l'outil de métier pour ce matériau, ou null si ce n'est pas un outil de métier
+		    private static NamespacedKey cleOutilsOuNull(ItemStack item) {
+		        return switch (item.getType()) {
+		            case NETHERITE_HOE, NETHERITE_SWORD, NETHERITE_PICKAXE, NETHERITE_AXE, FISHING_ROD -> CleOutils(item);
+		            default -> null;
+		        };
 		    }
 		    
 		    
