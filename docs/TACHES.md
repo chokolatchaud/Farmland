@@ -54,6 +54,10 @@ Ancienne proposition 4. `c5da790` (branche `agent/rosestacker`) : sans RoseStack
 Statut : à faire
 Dans `EventBuildAndUse.onSpawnMob`, `UUID.fromString(world.getName())` lève une erreur dans un monde dont le nom n'est pas un UUID (ex. hub `world`) : vérifier si ça arrive (console), puis ignorer ces mondes sans erreur. Touche aux protections des plots : plan avant de modifier.
 
+### messagediscord : envoi bloquant et erreurs avalées
+Statut : à faire
+`messagediscord.sendmessage` fait l'appel HTTP vers Discord sur le fil appelant (souvent le fil principal : connexion, `/pay`...), sans délai maximal : si Discord est lent, le serveur peut geler. Et `catch (Exception _) {}` cache toute erreur réseau. À faire : envoi en tâche asynchrone, délais de connexion et de lecture, erreurs signalées via `AlerteDiscord` (rappel horaire). Jamais d'URL de webhook dans le dépôt.
+
 ## Propositions de l'agent
 
 À recopier dans "À traiter" si je suis d'accord.
