@@ -119,7 +119,12 @@ public final class EventBuildAndUse implements Listener {
     public void onSpawnMob(CreatureSpawnEvent event) {
 
         World world = event.getLocation().getWorld();
-        UUID uuidworld = UUID.fromString(world.getName());
+        UUID uuidworld;
+        try {
+            uuidworld = UUID.fromString(world.getName());
+        } catch (IllegalArgumentException e) {
+            return; // pas un monde de plot (ex. hub "world") : cette règle ne le concerne pas
+        }
 
         PlayerServer playerServer = PlayerserverHashMap.getInstance().getplayerHaspMaps(uuidworld);
 
