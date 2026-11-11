@@ -450,7 +450,9 @@ public final class Plotcommands implements CommandExecutor {
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             int highY = world.getHighestBlockYAt(tx, tz);
-            if (highY < world.getMinHeight() + 5) {
+            // Colonne vide (aucun bloc) : on vise y=64. Sinon on garde le vrai sol,
+            // même très bas : les mondes de plot sont plats, sol vers y=-61.
+            if (highY <= world.getMinHeight()) {
                 highY = 64;
             }
 
