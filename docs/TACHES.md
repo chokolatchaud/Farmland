@@ -34,6 +34,10 @@ Questions :
 - Les plots privés : affichés grisés, ou cachés ?
 - Combien de plots par page : 45 comme aujourd'hui, ou 28 avec un cadre en vitre tout autour ?
 
+### onSpawnMob hors des mondes de plot
+Statut : à faire
+Dans `EventBuildAndUse.onSpawnMob`, `UUID.fromString(world.getName())` lève une erreur dans un monde dont le nom n'est pas un UUID (ex. hub `world`) : vérifier si ça arrive (console), puis ignorer ces mondes sans erreur. Touche aux protections des plots : plan avant de modifier.
+
 ## Propositions de l'agent
 
 À recopier dans "À traiter" si je suis d'accord.
