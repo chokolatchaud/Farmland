@@ -8,6 +8,7 @@ import fr.kevyn.farmland.directives.metiers.mineur.PiocheFarm;
 import fr.kevyn.farmland.directives.metiers.pecheur.PecheurFarm;
 import fr.kevyn.farmland.directives.metiers.tueur.epeeFarm;
 import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -283,5 +284,48 @@ public class LevelRewardManager {
             case TUEUR ->
                     "du Tueur";
         };
+    }
+
+    private void giveItem(
+            Player player,
+            Map<?, ?> reward
+    ) {
+
+        Object materialObject = reward.get("material");
+
+        if (materialObject == null) {
+            return;
+        }
+
+        Material material;
+
+        try {
+            material = Material.valueOf(
+                    materialObject
+                            .toString()
+                            .toUpperCase()
+            );
+        } catch (IllegalArgumentException e) {
+            return;
+        }
+
+        int amount = 1;
+
+        Object amountObject = reward.get("amount");
+
+        if (amountObject instanceof Number number) {
+            amount = number.intValue();
+        }
+
+        player.give(
+                new ItemStack(material, amount)
+        );
+
+        player.sendMessage(
+                "§6★ Récompense de niveau : §e"
+                        + amount
+                        + "x "
+                        + material.name()
+        );
     }
 }
