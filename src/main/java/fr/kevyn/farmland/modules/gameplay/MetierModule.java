@@ -1,6 +1,8 @@
 package fr.kevyn.farmland.modules.gameplay;
 
 import fr.kevyn.farmland.directives.administration.messagediscord;
+import fr.kevyn.farmland.directives.gameplay.recompense.LevelRewardManager;
+import fr.kevyn.farmland.directives.gameplay.recompense.RecompenseUtil;
 import fr.kevyn.farmland.directives.metiers.MetiersCommands;
 import fr.kevyn.farmland.directives.metiers.MetiersMenuListener;
 import fr.kevyn.farmland.directives.metiers.farmeur.BlockFertilizeListener;
@@ -19,6 +21,10 @@ import fr.kevyn.farmland.doonees.marche.Market;
 import fr.kevyn.farmland.doonees.marche.MarketHolder;
 import fr.kevyn.farmland.directives.marché.calcul.MarketCalcTask;
 import fr.kevyn.farmland.persistance.marché.MarketSave;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
 
 /**
  * Enregistre les éléments liés aux métiers et au marché.
@@ -26,12 +32,21 @@ import fr.kevyn.farmland.persistance.marché.MarketSave;
 public final class MetierModule {
 
     private final FarmlandMain plugin;
+    private FileConfiguration rewardsConfig;
+    private LevelRewardManager levelRewardManager;
 
     public MetierModule(FarmlandMain plugin) {
         this.plugin = plugin;
     }
 
     public void register() {
+        loadRewardsConfig();
+
+        levelRewardManager =
+                new LevelRewardManager(rewardsConfig);
+
+        RecompenseUtil.init(levelRewardManager);
+
         loadMarket();
         registerMarketTask();
         registerJobListeners();
@@ -39,6 +54,23 @@ public final class MetierModule {
 
         plugin.getLogger().info("[Metier] Module Metier activé");
         messagediscord.sendmessage("Module Metier bien lancé", "statut");
+    }
+
+    private void loadRewardsConfig() {
+        File rewardsFile =
+                new File(plugin.getDataFolder(), "rewards.yml");
+
+        if (!rewardsFile.exists()) {
+            plugin.saveResource("rewards.yml", false);
+        }
+
+        rewardsConfig =
+                YamlConfiguration.loadConfiguration(rewardsFile);
+    }
+
+
+    public FileConfiguration getRewardsConfig() {
+        return rewardsConfig;
     }
 
     private void loadMarket() {

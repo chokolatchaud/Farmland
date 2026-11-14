@@ -1,0 +1,47 @@
+rewards:
+
+  # Récompenses communes à tous les métiers
+  all:
+    10:
+      - type: MONEY
+        amount: 1000
+
+    20:
+      - type: MONEY
+        amount: 2500
+
+    40:
+      - type: MONEY
+        amount: 5000
+
+    50:
+      - type: ITEM
+        material: BEACON
+        amount: 1
+
+
+  # Récompenses spécifiques
+  MINEUR:
+    30:
+      - type: JOB_ITEM
+        item: PICKAXE
+
+  FARMEUR:
+    30:
+      - type: JOB_ITEM
+        item: HOE
+
+  PECHEUR:
+    30:
+      - type: JOB_ITEM
+        item: FISHING_ROD
+
+  AGRICULTEUR:
+    30:
+      - type: JOB_ITEM
+        item: AXE
+
+  TUEUR:
+    30:
+      - type: JOB_ITEM
+        item: SWORD
