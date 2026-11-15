@@ -8,6 +8,12 @@ softdepend: [ Votifier, NuVotifier, RoseStacker ]
 
 commands:
 
+  testreward:
+    description: Teste une récompense de métier
+    usage: /testreward <metier> <niveau>
+    permission: farmland.gamecommands
+
+
   metiers:
     description: permet d'ouvrir les stats de métiers
     usage: /metiers
@@ -255,3 +261,5 @@ permissions:
   farmland.market.admin:
     description: Accès aux commandes admin du marché (refresh)
     default: op
+
+

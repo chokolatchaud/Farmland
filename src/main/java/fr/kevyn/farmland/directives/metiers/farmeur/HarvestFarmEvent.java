@@ -87,9 +87,10 @@ public class HarvestFarmEvent implements Listener {
 
 		int rewardLevel = Outils.getRewardLevel(mainPrincipale);
 
-		if (rewardLevel == 100) {
+		if (rewardLevel >= 100) {
 
 			event.setCancelled(true);
+
 
 			harvestCulture(blockCentre, player, ps, mainPrincipale);
 			harvestCulture(coteGauche, player, ps, mainPrincipale);

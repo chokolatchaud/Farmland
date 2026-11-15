@@ -5,6 +5,7 @@ import fr.kevyn.farmland.directives.gameplay.menus.Outils;
 import fr.kevyn.farmland.directives.infrastructure.JobType;
 
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,6 +23,28 @@ public class RecompenseUtil {
 
     public static void init(LevelRewardManager manager) {
         rewardManager = manager;
+    }
+
+    public static double getBreakSpeedFarmeur(int level) {
+        return 1.0 + (level * 0.01);
+    }
+
+    public static void updateFarmerBreakSpeed(
+            Player player,
+            PlayerServer ps
+    ) {
+
+        var attribute =
+                player.getAttribute(Attribute.BLOCK_BREAK_SPEED);
+
+        if (attribute == null) {
+            return;
+        }
+
+        double speed =
+                getBreakSpeedFarmeur(ps.getHoueLevel());
+
+        attribute.setBaseValue(speed);
     }
 
     public static void donnerRecompenseMineur(Player joueur, PlayerServer ps, int xp) {
@@ -62,6 +85,10 @@ public class RecompenseUtil {
                     JobType.FARMEUR,
                     niveauAvant,
                     nouveauNiveau
+            );
+            updateFarmerBreakSpeed(
+                    joueur,
+                    ps
             );
         }
     }

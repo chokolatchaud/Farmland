@@ -1,5 +1,6 @@
 package fr.kevyn.farmland.directives.gameplay.recompense;
 
+import fr.kevyn.farmland.directives.gameplay.menus.Outils;
 import fr.kevyn.farmland.directives.infrastructure.JobType;
 import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.directives.metiers.agriculteur.HacheFarm;
@@ -12,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,6 +151,27 @@ public class LevelRewardManager {
                     epeeFarm.create();
         };
 
+        // Marque l'outil comme récompense du niveau atteint
+        Outils.setRewardLevel(item, level);
+
+        ItemMeta meta = item.getItemMeta();
+
+        meta.setDisplayName(
+                "§6★ " + getJobItemName(job)
+        );
+
+        List<String> lore = new ArrayList<>();
+
+        lore.add("");
+        lore.add("§7Récompense de métier");
+        lore.add("§eNiveau " + level);
+        lore.add("");
+        lore.add("§6Objet spécial");
+
+        meta.setLore(lore);
+
+        item.setItemMeta(meta);
+
         player.give(item);
 
         player.sendMessage(
@@ -158,6 +181,27 @@ public class LevelRewardManager {
                         + level
                         + " !"
         );
+    }
+
+    private String getJobItemName(JobType job) {
+
+        return switch (job) {
+
+            case MINEUR ->
+                    "Pioche du Mineur Maître";
+
+            case FARMEUR ->
+                    "Houe du Farmeur Maître";
+
+            case PECHEUR ->
+                    "Canne du Pêcheur Maître";
+
+            case AGRICULTEUR ->
+                    "Hache de l'Agriculteur Maître";
+
+            case TUEUR ->
+                    "Lame du Tueur Maître";
+        };
     }
 
     public List<String> getRewardLore(
