@@ -72,7 +72,7 @@ public final class JoinAndleaveEvent implements Listener {
             if (newPlayerServer.getUuid() == null || newPlayerServer.getName() == null) {
                 event.getPlayer().kickPlayer("Erreur de Sécurité, veuillez tenter une reconnexion.");
                 plugin.getLogger().warning("Player " + event.getPlayer().getUniqueId() + " kick : SavePlayer incomplet.");
-                messagediscord.sendmessage("Joueur kick pour cause newplayer... == null @everyone", "statut");
+                messagediscord.sendmessage("Joueur kick pour cause newplayer... == null @everyone", "statut", true); // alerte voulue : notifie tout le monde
                 return;
             }
             PlayerSave.saveOnePlayerServerFile(plugin, newPlayerServer);

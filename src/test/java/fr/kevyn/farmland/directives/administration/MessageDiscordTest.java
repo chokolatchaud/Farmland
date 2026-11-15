@@ -42,4 +42,25 @@ class MessageDiscordTest {
         assertTrue(messagediscord.DELAI_LECTURE_MS > 0 && messagediscord.DELAI_LECTURE_MS <= 5000);
         assertTrue(messagediscord.DELAI_ARRET_MS > 0 && messagediscord.DELAI_ARRET_MS <= 3000);
     }
+
+    @Test
+    void mentionsBloqueesParDefaut() {
+        String json = messagediscord.construireJson("🚨 REPORT | Message : @everyone <@&123> <@456> @here", false);
+        assertTrue(json.endsWith(",\"allowed_mentions\":{\"parse\":[]}}"), json);
+        // le texte reste visible tel quel, seulement il ne fait sonner personne
+        assertTrue(json.contains("@everyone <@&123> <@456> @here"), json);
+    }
+
+    @Test
+    void everyoneAutoriseSeulementSiDemande() {
+        String json = messagediscord.construireJson("Alerte @everyone", true);
+        assertEquals("{\"content\":\"Alerte @everyone\",\"allowed_mentions\":{\"parse\":[\"everyone\"]}}", json);
+    }
+
+    @Test
+    void echappementJsonConserve() {
+        String json = messagediscord.construireJson("a\"b\\c\nd", false);
+        assertTrue(json.startsWith("{\"content\":\"a\\\"b\\\\c\\nd\""), json);
+        assertTrue(messagediscord.construireJson(null, false).startsWith("{\"content\":\"\""));
+    }
 }

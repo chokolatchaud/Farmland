@@ -26,6 +26,15 @@ public class messagediscord {
 	}
 
 	public static void sendmessage(String content, String salon) {
+	    sendmessage(content, salon, false);
+	}
+
+	/**
+	 * autoriserEveryone : true seulement pour un message du serveur qui doit vraiment notifier tout le monde.
+	 * Sinon, Discord ne fait sonner personne : un "@everyone", "@here" ou une mention écrite par un joueur
+	 * (pseudo, /report...) reste du simple texte.
+	 */
+	public static void sendmessage(String content, String salon, boolean autoriserEveryone) {
 	    try {
 	    	if (plugin == null) {
 	    		// plugin est null ici : on passe par le logger general du serveur
@@ -54,16 +63,8 @@ public class messagediscord {
 	        	return;
 	        }
 
-	        // Échappement correct pour JSON
-	        String escapedContent = content
-	            .replace("\\", "\\\\")  // Échappe les backslashes
-	            .replace("\"", "\\\"")  // Échappe les guillemets
-	            .replace("\n", "\\n")   // Échappe les retours à la ligne
-	            .replace("\r", "\\r")   // Échappe les retours chariot
-	            .replace("\t", "\\t");  // Échappe les tabulations
-
-	        // Format JSON du message
-	        String jsonPayload = String.format("{\"content\":\"%s\"}", escapedContent);
+	        // Format JSON du message (avec le blocage des mentions)
+	        String jsonPayload = construireJson(content, autoriserEveryone);
 
 	        final String url = webhookUrl;
 	        if (plugin.isEnabled()) {
@@ -109,6 +110,23 @@ public class messagediscord {
 	            connection.disconnect();
 	        }
 	    }
+	}
+
+	/**
+	 * Corps JSON envoyé à Discord. "allowed_mentions" dit à Discord qui il a le droit de notifier :
+	 * personne par défaut, ou seulement @everyone/@here si autoriserEveryone (jamais les rôles ni les joueurs).
+	 */
+	static String construireJson(String content, boolean autoriserEveryone) {
+	    String texte = content == null ? "" : content;
+	    // Échappement correct pour JSON
+	    String escapedContent = texte
+	        .replace("\\", "\\\\")  // Échappe les backslashes
+	        .replace("\"", "\\\"")  // Échappe les guillemets
+	        .replace("\n", "\\n")   // Échappe les retours à la ligne
+	        .replace("\r", "\\r")   // Échappe les retours chariot
+	        .replace("\t", "\\t");  // Échappe les tabulations
+	    String mentions = autoriserEveryone ? "[\"everyone\"]" : "[]";
+	    return "{\"content\":\"" + escapedContent + "\",\"allowed_mentions\":{\"parse\":" + mentions + "}}";
 	}
 
 	/**
