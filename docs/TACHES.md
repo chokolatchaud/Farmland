@@ -109,6 +109,11 @@ Ancienne proposition 2. Tests sur d'autres calculs (récompenses, multiplicateur
 
 Notes de l'agent (2026-11-15) : fait dans `7ab050e` (branche `agent/tests-recompenses`), sans changer le code de production. 19 tests : `MultiplicateurUtil`, `ArmesUtil`, `RecompenseUtil.getXpNeeded`, `LevelRewardManager` + `rewards.yml` livré, prix `/plot buy`. Pour le développeur : dans `ArmesUtil`, le commentaire annonce un plafond de 20 dégâts au niveau 15, mais le code plafonne au niveau 13, soit 18 dégâts (le test vérifie 18). Non couverts (code privé ou joueur réel nécessaire) : `ajouterXp`, `giveRewards`.
 
+### Mineur : plus de jetons donnés
+Statut : fait
+Problème signalé par le propriétaire : casser un minerai avec la pioche de mineur ne donnait plus de jetons.
+Notes de l'agent (2026-11-15) : cause : depuis `ef13f09` (27/09), `RecompenseUtil.donnerRecompenseMineur` n'ajoutait plus les jetons, et `EventMineSpawn.onMine` tirait le nombre de jetons sans jamais l'ajouter. Corrigé dans `c121b08` (branche `agent/jetons-mineur`) : jeton ajouté dans `onMine` (comme le Farmeur), message "+10 XP | +N Jeton Mineur" remis ; tirage, XP et niveaux inchangés. Serveur de test : 3 minerais -> +3 jetons, +30 XP. Les jetons non reçus depuis le 27/09 ne peuvent pas être rendus automatiquement.
+
 ## Propositions de l'agent
 
 À recopier dans "À traiter" si je suis d'accord.
