@@ -77,8 +77,10 @@ Statut : à faire
 Aujourd'hui `onSpawnMob` bloque toute apparition non naturelle sur les plots (reproduction, œufs, spawners), même si "spawn des mobs" est activé. Réfléchir à autoriser la reproduction. Touche aux protections des plots : plan avant de modifier.
 
 ### Discord : bloquer les @everyone venant des joueurs
-Statut : à faire
+Statut : fait
 Certains messages envoyés à Discord contiennent du texte des joueurs (pseudo, chat relayé dans `GameCommands`) : un joueur peut y glisser `@everyone`. Bloquer les mentions (`allowed_mentions`) sauf pour les messages voulus (ex. `JoinAndleaveEvent` ligne 75).
+
+Notes de l'agent (2026-11-15) : fait dans `16ace8c` (branche `agent/discord-mentions`). Chaque message part avec `"allowed_mentions":{"parse":[]}` (le texte reste visible, personne n'est notifié) ; seule l'alerte de `JoinAndleaveEvent` garde `@everyone`. Serveur de test, faux Discord local : `/reportmsg` avec `@everyone @here <@&123> <@456>` envoyé avec `parse` vide. 3 tests JUnit. À vérifier en prod : un `/reportmsg` avec `@everyone` ne notifie personne. Repéré : espace manquante dans "Le joueur Xn'est plus en ligne !".
 
 ### Calcul automatique : résultats négatifs
 Statut : à faire
