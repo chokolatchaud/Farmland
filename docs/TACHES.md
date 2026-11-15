@@ -83,8 +83,10 @@ Certains messages envoyés à Discord contiennent du texte des joueurs (pseudo, 
 Notes de l'agent (2026-11-15) : fait dans `16ace8c` (branche `agent/discord-mentions`). Chaque message part avec `"allowed_mentions":{"parse":[]}` (le texte reste visible, personne n'est notifié) ; seule l'alerte de `JoinAndleaveEvent` garde `@everyone`. Serveur de test, faux Discord local : `/reportmsg` avec `@everyone @here <@&123> <@456>` envoyé avec `parse` vide. 3 tests JUnit. À vérifier en prod : un `/reportmsg` avec `@everyone` ne notifie personne. Repéré : espace manquante dans "Le joueur Xn'est plus en ligne !".
 
 ### Calcul automatique : résultats négatifs
-Statut : à faire
+Statut : fait
 Le calcul automatique du chat propose parfois un résultat négatif (ex. "1 - 48"). Vérifier si c'est voulu ; sinon, ne proposer que des résultats positifs. Gain en $FB : zone sensible, test JUnit.
+
+Notes de l'agent (2026-11-15) : fait dans `c6bde03` (branche `agent/calcul-chat`). Décision du propriétaire : résultats négatifs voulus, multiplications négatives ajoutées ("7 × (-8)"). Bug corrigé au passage : deux joueurs répondant en même temps pouvaient être payés tous les deux (chat traité en parallèle) ; vérification + fermeture atomiques, paiement de 75 $FB sur le fil principal. 6 tests JUnit (20 joueurs simultanés × 200 essais : un seul gagnant). Serveur de test : +75 $FB une seule fois, journal `gain_calcul` cohérent.
 
 ### /plot visit : skins des têtes redemandés à Mojang
 Statut : fait
@@ -102,8 +104,10 @@ Statut : à faire
 Ancienne proposition 1. `messagediscord` accepte les deux noms pour le même webhook (`webhook-status`) et le code utilise surtout `statut`. Garder un seul nom (peu urgent).
 
 ### Tests JUnit sur les récompenses et multiplicateurs
-Statut : à faire
+Statut : fait
 Ancienne proposition 2. Tests sur d'autres calculs (récompenses, multiplicateurs) : zone sensible, plan et validation avant.
+
+Notes de l'agent (2026-11-15) : fait dans `7ab050e` (branche `agent/tests-recompenses`), sans changer le code de production. 19 tests : `MultiplicateurUtil`, `ArmesUtil`, `RecompenseUtil.getXpNeeded`, `LevelRewardManager` + `rewards.yml` livré, prix `/plot buy`. Pour le développeur : dans `ArmesUtil`, le commentaire annonce un plafond de 20 dégâts au niveau 15, mais le code plafonne au niveau 13, soit 18 dégâts (le test vérifie 18). Non couverts (code privé ou joueur réel nécessaire) : `ajouterXp`, `giveRewards`.
 
 ## Propositions de l'agent
 
