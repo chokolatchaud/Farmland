@@ -32,6 +32,7 @@ public class EventPeche implements Listener {
 			int niveauCanne = Math.max(1, ps.getCanneLevel());
 			int jeton = MultiplicateurUtil.tirerMultiplicateur(niveauCanne);
 			RecompenseUtil.donnerRecompensePecheur(player, ps, 10);
+			ps.addJetonPecheur(jeton);
 
 			event.setCancelled(true);
 

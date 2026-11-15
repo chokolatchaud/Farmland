@@ -28,7 +28,7 @@ public class HarvestFarmEvent implements Listener {
 			
 			return; // deja refuse par un autre handler (protection de plot, etc.)
 		}
-
+		event.setDropItems(false);
 		Player player = event.getPlayer();
 		ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
 		if (!Outils.isOutilsAttendu(mainPrincipale, Material.NETHERITE_HOE)) {
@@ -49,7 +49,7 @@ public class HarvestFarmEvent implements Listener {
 		if (ps == null) {
 			return;
 		}
-		event.setDropItems(false);
+
 
 		Block blockCentre = event.getBlock();
 
