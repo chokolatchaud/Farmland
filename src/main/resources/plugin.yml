@@ -11,8 +11,8 @@ commands:
   testreward:
     description: Teste une récompense de métier
     usage: /testreward <metier> <niveau>
-    permission: farmland.gamecommands
-
+    permission: farmland.admin
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
   metiers:
     description: permet d'ouvrir les stats de métiers
