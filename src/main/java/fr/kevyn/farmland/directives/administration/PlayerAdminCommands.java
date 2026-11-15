@@ -1,6 +1,7 @@
 package fr.kevyn.farmland.directives.administration;
 
 import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotUpgrade;
+import fr.kevyn.farmland.directives.plot.gestion.PlotBordure;
 import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
 import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
@@ -142,10 +143,15 @@ public class PlayerAdminCommands implements CommandExecutor {
 
         // ajuste la bordure du plot en fonction du changement de rang (+5 par upgrade)
         int ancienRang = ps.getUpgrade();
+        if (ps.getPlotdata() != null && ps.getPlotdata().getWorldborder() + (rang - ancienRang) * 5 < 1) {
+            sender.sendMessage("§cCe rang donnerait une bordure de " + (ps.getPlotdata().getWorldborder() + (rang - ancienRang) * 5) + " : refusé (minimum 1).");
+            return true;
+        }
         ps.setUpgrade(rang);
         if (ps.getPlotdata() != null) {
             int delta = (rang - ancienRang) * 5;
             ps.getPlotdata().setWorldborder(ps.getPlotdata().getWorldborder() + delta);
+            PlotBordure.appliquer(plugin, ps); // bordure réelle mise à jour tout de suite
         }
 
         PlayerSave.saveOnePlayerServerFile(plugin, ps);

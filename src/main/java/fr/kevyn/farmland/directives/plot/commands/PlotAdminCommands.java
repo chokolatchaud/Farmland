@@ -6,6 +6,7 @@ import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.doonees.plots.PlotData;
 import fr.kevyn.farmland.persistance.joueurs.PlayerSave;
 import fr.kevyn.farmland.directives.plot.gestion.Plot;
+import fr.kevyn.farmland.directives.plot.gestion.PlotBordure;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -161,6 +162,7 @@ public final class PlotAdminCommands implements CommandExecutor {
         }
 
         ps.getPlotdata().setWorldborder(value);
+        PlotBordure.appliquer(plugin, ps); // bordure réelle mise à jour tout de suite
         PlayerSave.saveOnePlayerServerFile(plugin, ps);
         sender.sendMessage("§aBordure du plot de " + ps.getName() + " forcée à " + value + " !");
         plugin.getLogger().info("[PlotAdmin] " + sender.getName() + " -> border " + value + " sur " + ps.getName());
@@ -189,9 +191,14 @@ public final class PlotAdminCommands implements CommandExecutor {
         }
 
         int ancienRang = ps.getUpgrade();
-        ps.setUpgrade(rang);
         int delta = (rang - ancienRang) * 5;
+        if (ps.getPlotdata().getWorldborder() + delta < 1) {
+            sender.sendMessage("§cCe rang donnerait une bordure de " + (ps.getPlotdata().getWorldborder() + delta) + " : refusé (minimum 1).");
+            return true;
+        }
+        ps.setUpgrade(rang);
         ps.getPlotdata().setWorldborder(ps.getPlotdata().getWorldborder() + delta);
+        PlotBordure.appliquer(plugin, ps); // bordure réelle mise à jour tout de suite
 
         PlayerSave.saveOnePlayerServerFile(plugin, ps);
         sender.sendMessage("§aRang d'upgrade de " + ps.getName() + " : " + ancienRang + " → " + rang + " (bordure ajustée)");

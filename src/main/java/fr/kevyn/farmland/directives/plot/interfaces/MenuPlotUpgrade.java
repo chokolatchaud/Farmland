@@ -3,6 +3,7 @@ package fr.kevyn.farmland.directives.plot.interfaces;
 import java.util.Arrays;
 import java.util.List;
 
+import fr.kevyn.farmland.directives.infrastructure.MessageColor;
 import fr.kevyn.farmland.doonees.menus.GameMenu;
 import fr.kevyn.farmland.doonees.menus.TypeMenu;
 import org.bukkit.Bukkit;
@@ -39,13 +40,15 @@ public class MenuPlotUpgrade {
 	
 	public static Inventory createmenuplotUpgrade(String name, int page, PlayerServer playerserver) {
 
-        Inventory inv = Bukkit.createInventory(null, 54);
-        GameMenu plotupgrade = new GameMenu(inv, TypeMenu.PLOTUPGRADE);
-        
-        GameMenu.fillmenu(Material.BLACK_STAINED_GLASS_PANE, inv);
-
         int rankPlayer = playerserver.getUpgrade();
         int currentPage = rankPlayer / UPGRADES_PER_PAGE;
+
+        String titre = MessageColor.DARK_GREEN.apply(name) + MessageColor.DARK_GRAY.apply(" | Palier " + (currentPage + 1));
+        Inventory inv = Bukkit.createInventory(null, 54, titre);
+        GameMenu plotupgrade = new GameMenu(inv, TypeMenu.PLOTUPGRADE);
+
+        GameMenu.fillmenu(Material.BLACK_STAINED_GLASS_PANE, inv);
+
         int rankPlayerInPage = rankPlayer % UPGRADES_PER_PAGE;
 
         List<Integer> slots = Arrays.asList(

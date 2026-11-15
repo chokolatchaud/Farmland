@@ -6,6 +6,8 @@ import fr.kevyn.farmland.directives.cosmetic.CosmeticShop;
 import fr.kevyn.farmland.directives.gameplay.objet.CustomItemType;
 import fr.kevyn.farmland.directives.infrastructure.MessageColor;
 import fr.kevyn.farmland.directives.plot.gestion.Meteo;
+import fr.kevyn.farmland.directives.plot.gestion.PlotBordure;
+import fr.kevyn.farmland.directives.infrastructure.DebugLog;
 import fr.kevyn.farmland.directives.plot.commands.Plotcommands;
 import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotConfig;
 import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotUpgrade;
@@ -121,11 +123,21 @@ public final class Plotinventory implements Listener {
                 int cost = MenuPlotUpgrade.getCost(rank);
                 if (playerServer.getMoney() < cost) { player.sendMessage(MessageColor.RED.apply("Tu n'as pas assez d'argent (" + cost + " $FB)")); return; }
 
+                int soldeAvant = playerServer.getMoney();
+                int bordureAvant = playerServer.getPlotdata().getWorldborder();
+
                 playerServer.setMoney(playerServer.getMoney() - cost);
                 playerServer.setUpgrade(playerServer.getUpgrade() + 1);
                 playerServer.getPlotdata().setWorldborder(playerServer.getPlotdata().getWorldborder() + 5);
                 JournalEvenements.enregistrer("achat_upgrade", player.getName(), "-" + cost + " $FB, rang " + playerServer.getUpgrade() + ", bordure " + playerServer.getPlotdata().getWorldborder() + ", solde " + playerServer.getMoney() + " $FB");
                 player.sendMessage(MessageColor.GREEN.apply("Upgrade acheté ! (-" + cost + " $FB, +5 de bordure)"));
+
+                // Applique la nouvelle bordure au monde tout de suite (avant : seulement à la reconnexion)
+                int bordureReelle = PlotBordure.appliquer(plugin, playerServer);
+                DebugLog.debug(plugin, "[PlotBuy] " + player.getName() + " rang " + rank + " -> " + playerServer.getUpgrade()
+                        + ", coût " + cost + ", solde " + soldeAvant + " -> " + playerServer.getMoney()
+                        + ", bordure enregistrée " + bordureAvant + " -> " + playerServer.getPlotdata().getWorldborder()
+                        + ", bordure réelle " + bordureReelle);
 
                 // nouveau palier atteint : prevenir le joueur que les prix montent
                 if ((rank + 1) % upgradesPerPage == 0) {

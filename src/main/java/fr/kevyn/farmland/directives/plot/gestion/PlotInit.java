@@ -34,7 +34,9 @@ public class PlotInit {
             }else if (plotData.getMeteoTime() == Meteo.NIGHT) {
                 world.setTime(13000);  // Pleine nuit
             }
-        world.getWorldBorder().setSize(plotData.getWorldborder());
+        if (plotData.getWorldborder() >= 1) { // une taille < 1 ferait planter setSize
+            world.getWorldBorder().setSize(plotData.getWorldborder());
+        }
 
     }
 }

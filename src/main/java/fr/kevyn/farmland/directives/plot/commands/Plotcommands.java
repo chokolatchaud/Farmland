@@ -3,6 +3,7 @@ package fr.kevyn.farmland.directives.plot.commands;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.directives.infrastructure.MessageColor;
+import fr.kevyn.farmland.directives.infrastructure.DebugLog;
 import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotConfig;
 import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotUpgrade;
 import fr.kevyn.farmland.directives.plot.interfaces.MenuPlotVisit;
@@ -281,15 +282,19 @@ public final class Plotcommands implements CommandExecutor {
             String plotWorldName = playerServer.getPlotdata().getNameWorld();
             if (plotWorldName == null || !plotWorldName.equalsIgnoreCase(player.getWorld().getName())) {
                 player.sendMessage(MessageColor.RED.apply(
-                        "Merci d'étre sur votre Plot pour effectuée cette commande"));
+                        "Merci d'être sur votre plot pour effectuer cette commande"));
                 return true;
             }
 
-            Inventory inventaire0 = MenuPlotUpgrade.createmenuplotUpgrade("plotupgrade", 0, playerServer);
+            Inventory inventaire0 = MenuPlotUpgrade.createmenuplotUpgrade("Agrandir le plot", 0, playerServer);
             if (inventaire0 == null) {
                 player.sendMessage(MessageColor.RED.apply("Erreur du côté serveur."));
                 return true;
             }
+            DebugLog.debug(plugin, "[PlotBuy] menu ouvert par " + player.getName() + " : rang " + playerServer.getUpgrade()
+                    + ", palier " + (playerServer.getUpgrade() / MenuPlotUpgrade.getMaxUpgrades() + 1)
+                    + ", bordure enregistrée " + playerServer.getPlotdata().getWorldborder()
+                    + ", bordure réelle " + (int) player.getWorld().getWorldBorder().getSize());
 
             player.openInventory(inventaire0);
             return true;
@@ -304,7 +309,7 @@ public final class Plotcommands implements CommandExecutor {
             String plotWorldName = playerServer.getPlotdata().getNameWorld();
             if (plotWorldName == null || !plotWorldName.equalsIgnoreCase(player.getWorld().getName())) {
                 player.sendMessage(MessageColor.RED.apply(
-                        "Merci d'étre sur votre Plot pour effectuée cette commande"));
+                        "Merci d'être sur votre plot pour effectuer cette commande"));
                 return true;
             }
 
