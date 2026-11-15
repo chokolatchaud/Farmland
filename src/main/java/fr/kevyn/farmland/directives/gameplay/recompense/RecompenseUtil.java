@@ -4,6 +4,8 @@ import fr.kevyn.farmland.directives.gameplay.menus.Outils;
 
 import fr.kevyn.farmland.directives.infrastructure.JobType;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -66,6 +68,7 @@ public class RecompenseUtil {
                     nouveauNiveau
             );
         }
+        afficherProgression(joueur, ps, JobType.MINEUR, xp);
     }
 
     public static void donnerRecompenseFarmeur(Player joueur, PlayerServer ps, int xp) {
@@ -91,6 +94,7 @@ public class RecompenseUtil {
                     ps
             );
         }
+        afficherProgression(joueur, ps, JobType.FARMEUR, xp);
     }
 
     public static void donnerRecompensePecheur(
@@ -120,6 +124,7 @@ public class RecompenseUtil {
                     nouveauNiveau
             );
         }
+        afficherProgression(joueur, ps, JobType.PECHEUR, xp);
     }
 
     public static void donnerRecompenseAgriculteur(Player joueur, PlayerServer ps, int xp) {
@@ -148,6 +153,7 @@ public class RecompenseUtil {
                 niveauAvant,
                 nouveauNiveau
         );
+        afficherProgression(joueur, ps, JobType.AGRICULTEUR, xp);
     }
 
     public static void donnerRecompenseTueur(Player joueur, PlayerServer ps, int xp) {
@@ -176,8 +182,43 @@ public class RecompenseUtil {
         int jeton = (niveauExcedent > 0 ? MultiplicateurUtil.tirerMultiplicateur(niveauExcedent) : 1);
         ps.addJetonTueur(jeton);
         joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Tueur");
+        afficherProgression(joueur, ps, JobType.TUEUR, xp);
     }
 
+
+    /**
+     * Affiche la progression du metier en ActionBar lors d'un gain d'XP.
+     * L'XP stockee correspond a la progression du niveau actuel,
+     * y compris lorsqu'un gain vient de faire monter le joueur de niveau.
+     */
+    private static void afficherProgression(Player joueur, PlayerServer ps, JobType metier, int xpGagne) {
+        int niveau = getLevel(ps, metier);
+        String cleXp = switch (metier) {
+            case MINEUR -> "Mineur";
+            case FARMEUR -> "Farmeur";
+            case PECHEUR -> "Pecheur";
+            case AGRICULTEUR -> "Agriculteur";
+            case TUEUR -> "Tueur";
+        };
+        String nom = switch (metier) {
+            case MINEUR -> "Mineur";
+            case FARMEUR -> "Farmeur";
+            case PECHEUR -> "Pêcheur";
+            case AGRICULTEUR -> "Agriculteur";
+            case TUEUR -> "Tueur";
+        };
+        int xpActuelle = ps.getXp(cleXp);
+        int xpRequise = getXpNeeded(niveau);
+        int segments = Math.min(20, Math.max(0, (int) ((long) xpActuelle * 20 / xpRequise)));
+
+        String progression = "▰".repeat(segments) + "▱".repeat(20 - segments);
+        joueur.sendActionBar(
+                Component.text(nom + " Niv. " + niveau + "  ", NamedTextColor.GOLD)
+                        .append(Component.text(progression, NamedTextColor.GREEN))
+                        .append(Component.text("  " + xpActuelle + "/" + xpRequise, NamedTextColor.GRAY))
+                        .append(Component.text("  +" + xpGagne + " XP", NamedTextColor.YELLOW))
+        );
+    }
 
     private static int ajouterXp(PlayerServer ps, String metier, int niveauActuel, int xpGagne) {
         int xpTotal = ps.getXp(metier) + xpGagne;
