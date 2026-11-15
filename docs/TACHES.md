@@ -16,6 +16,100 @@ Statut : à faire
 
 ## À traiter
 
+Tâches issues de l'audit complet du 2026-11-15 (version `b2fff2b`), classées par gravité. Détail : rapport d'audit du 15/11.
+
+### [Critique] WorldEdit gratuit à vie après un redémarrage
+Statut : à faire
+`/buy worldedit` (et les votes) ajoutent les permissions WorldEdit dans LuckPerms (permanent) ; elles ne sont retirées que par une tâche planifiée, perdue au redémarrage. Confirmé sur le serveur de test : temps expiré + redémarrage → `farmland.worldedit` et `worldedit.region.*` restent à true. Retirer les permissions à l'expiration de façon fiable (au démarrage et à la connexion si le temps est écoulé). Zone sensible (permissions, WorldEdit sécurisé) : plan avant de modifier.
+
+### [Critique] /bag : vente de jetons en cliquant dans son propre inventaire
+Statut : à faire
+Avec `/bag` ouvert, un clic dans l'inventaire du joueur (index 10, 12, 13, 14, 16) vend tout le stock d'un métier. Confirmé en jeu. Cause : `MenuListenerFarm` utilise `event.getSlot()` sans vérifier l'inventaire cliqué. Zone sensible (argent).
+
+### [Critique] /buy cosmetic : achat en cliquant dans sa barre rapide
+Statut : à faire
+Avec `/buy cosmetic` ouvert, un clic dans la barre rapide (cases 0 à 6) achète le cosmétique correspondant. Confirmé en jeu (-300 $FB). Cause : `Plotinventory` (cosmétiques) utilise `event.getSlot()`. Vérifier aussi les autres menus qui utilisent `getSlot()`. Zone sensible (argent).
+
+### [Critique] Pêcheur : aucun jeton donné
+Statut : à faire
+`EventPeche` tire le nombre de jetons sans jamais l'ajouter (`addJetonPecheur` n'est appelé nulle part), et la prise est annulée : le joueur n'a ni poisson ni jeton, seulement l'XP. Même bug que le Mineur. Vu dans le code (le bot ne sait pas pêcher) : à vérifier avec un vrai joueur. Zone sensible (économie).
+
+### [Important] Droits des modérateurs sur l'argent et les plots
+Statut : à faire
+`/psadmin money` (créer de l'argent), `/marketadmin set` (prix du marché) et `/plotadmin reset` (efface un plot) n'exigent que `farmland.moderation`. Décider si ces actions doivent être réservées à `farmland.admin`. Zone sensible (permissions, `plugin.yml`).
+
+### [Important] Œuf d'apparition utilisable dans le hub
+Statut : à faire
+Un œuf d'apparition fait apparaître un mob au hub (confirmé en jeu). Bloquer les œufs hors du plot du joueur.
+
+### [Important] Sauvegardes des joueurs plus sûres
+Statut : à faire
+`FileManager.savefile` réécrit le fichier directement, avec l'encodage par défaut du système : un arrêt brutal pendant l'écriture peut vider ou corrompre le fichier d'un joueur. La sauvegarde à la déconnexion tourne en parallèle du serveur. Écrire dans un fichier temporaire puis le renommer, en UTF-8. Zone sensible (sauvegardes Gson).
+
+### [Important] Chat : erreur possible si les données ne sont pas chargées
+Statut : à faire
+`ChatListener.onChat` plante (NullPointerException) si le joueur n'a pas de données, et appelle `kickPlayer` depuis le fil du chat (interdit par Paper).
+
+### [Important] /buy worldedit : une ancienne confirmation annule la nouvelle
+Statut : à faire
+Le délai de 30 s d'une demande précédente affiche « Confirmation expirée » et efface la nouvelle demande (vu en jeu). Annuler l'ancien délai ou vérifier l'heure de la demande.
+
+### [Important] Outils de métier illimités
+Statut : à faire
+`/peche`, `/epee`, `/hache`, `/pioche`, `/houe` donnent un nouvel outil en netherite à chaque appel. Décider d'une limite (un seul, ou délai).
+
+### [Important] Bannissement vérifié trop tard
+Statut : à faire
+Le ban est vérifié dans `PlayerJoinEvent` (le banni entre une fraction de seconde) ; le message de kick affiche « &c » en clair. Vérifier à la connexion (login) et convertir les couleurs.
+
+### [Moyen] Messages de modération illisibles
+Statut : à faire
+`ModerationCommands` concatène `MessageColor.RED + "..."` : le joueur voit « REDSeul un joueur… » (confirmé). `/warnf` affiche « &cAvertissement ». Utiliser `MessageColor.X.apply(...)`.
+
+### [Moyen] /shop ne fait rien
+Statut : à faire
+La commande est déclarée dans `plugin.yml` mais aucune classe ne la gère. La coder ou la retirer.
+
+### [Moyen] Prix WorldEdit faux dans les messages
+Statut : à faire
+`/vote` et le message de blocage WorldEdit annoncent 15 $FB, alors que `/buy worldedit` coûte 200 $FB ; `/vote` annonce « +15 $FB par vote » alors que le vote donne 1 h de WorldEdit.
+
+### [Moyen] Course de bateaux : messages et sortie
+Statut : à faire
+Pas de message de départ après « Départ dans 1 seconde » ; quitter avec `/joinboat` laisse le joueur sur place ; premier message 10 s après la commande.
+
+### [Moyen] Flèche perdue quand le tir est refusé
+Statut : à faire
+Dans le hub ou sur le plot d'un autre, le tir est refusé mais la flèche disparaît.
+
+### [Moyen] Agriculteur : jetons pour n'importe quel animal
+Statut : à faire
+Tuer n'importe quelle vache avec la hache donne des jetons, pas seulement les mobs des spawners (le commentaire du code dit le contraire). Décider du comportement voulu.
+
+### [Moyen] /msgf et /reportmsg sur soi-même
+Statut : à faire
+Les deux commandes acceptent le joueur lui-même comme cible. Les refuser.
+
+### [Moyen] /tpa et plots privés
+Statut : à faire
+Après `/tpaccept`, le joueur arrive là où est la cible, même dans le plot privé d'un tiers, sans recherche de position sûre.
+
+### [Moyen] Dégâts max des armes : 18 au lieu de 20
+Statut : à faire
+`ArmesUtil` : le commentaire annonce 20 dégâts au niveau 15, le code plafonne à 18 (niveau 13). Corriger le code ou le commentaire (à voir avec le développeur).
+
+### [Mineur] Textes et cohérence
+Statut : à faire
+- Fautes : « Chaque poisson pêché avec ira… » (mot manquant), « Canne à Péche », « Veuillez Pechez grace a la canne a péche », « Hache D'Agriculteur », « épée du Tueur », « Le joueur Xn'est plus en ligne ! », « Tes metiers », « Pecheur ».
+- Nom du message différent de l'objet : « Pioche du Mineur » / « Pioche ».
+- `/plot config` « Temps qui passe » répond « La météo se fige / se met à bouger ».
+- `/money` sans « $FB » ; messages « joueur introuvable » différents selon les commandes.
+- Usage `/reportmsg` différent entre `plugin.yml` et le chat ; `setspawn` non documenté.
+- `/plot home` téléporte au coin du bloc, `/plot visit` au centre.
+- Farmeur : pas de message « +10 XP | +1 Jeton » à la récolte.
+- Emojis de `/market` à vérifier dans un vrai client.
+- Avant la prod : retirer les messages « DEBUG path=… » et `/testreward` (code du développeur).
+
 ### Menu plot visit plus stylisé
 Statut : fait
 Validé le 2026-11-08 : plan accepté, plots privés grisés, 45 par page. Fait comme prévu ; le titre a aussi été unifié dans `Plotcommands.java` (une chaîne).
