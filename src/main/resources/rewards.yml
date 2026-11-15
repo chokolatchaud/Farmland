@@ -22,26 +22,26 @@ rewards:
 
   # Récompenses spécifiques
   MINEUR:
-    30:
+    100:
       - type: JOB_ITEM
         item: PICKAXE
 
   FARMEUR:
-    30:
+    100:
       - type: JOB_ITEM
         item: HOE
 
   PECHEUR:
-    30:
+    100:
       - type: JOB_ITEM
         item: FISHING_ROD
 
   AGRICULTEUR:
-    30:
+    100:
       - type: JOB_ITEM
         item: AXE
 
   TUEUR:
-    30:
+    100:
       - type: JOB_ITEM
         item: SWORD
