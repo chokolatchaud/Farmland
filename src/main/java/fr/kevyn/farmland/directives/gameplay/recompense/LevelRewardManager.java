@@ -62,10 +62,7 @@ public class LevelRewardManager {
         List<Map<?, ?>> rewards =
                 rewardsConfig.getMapList(path);
 
-        player.sendMessage(
-                "§cDEBUG path=" + path
-                        + " | rewards=" + rewards.size()
-        );
+
 
         for (Map<?, ?> reward : rewards) {
 
