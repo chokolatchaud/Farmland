@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import fr.kevyn.farmland.directives.plot.evenement.EventBuildAndUse;
 import fr.kevyn.farmland.directives.gameplay.chat.ChatCalcListener;
 import fr.kevyn.farmland.directives.plot.evenement.Plotinventory;
+import fr.kevyn.farmland.directives.plot.interfaces.CacheProfils;
 import fr.kevyn.farmland.directives.plot.evenement.RoseStackerListener;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.directives.bateau.course.BoatRaceListener;
@@ -51,6 +52,9 @@ public final class PlotModule {
             plugin.getLogger().info("RoseStacker absent : les animaux d'élevage ne sont plus protégés du regroupement.");
         }
         plugin.getServer().getPluginManager().registerEvents(new Plotinventory(plugin), plugin);
+        // Profils (skins) des têtes du menu /plot visit
+        CacheProfils.demarrer(plugin);
+        plugin.getServer().getPluginManager().registerEvents(new CacheProfils(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new BoatRaceListener(plugin), plugin);
         plugin.getServer().getPluginManager().registerEvents(new ChatCalcListener(), plugin);
     }

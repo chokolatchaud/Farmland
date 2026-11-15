@@ -6,6 +6,7 @@ import java.util.List;
 import fr.kevyn.farmland.directives.infrastructure.MessageColor;
 import fr.kevyn.farmland.doonees.menus.GameMenu;
 import fr.kevyn.farmland.doonees.menus.TypeMenu;
+import com.destroystokyo.paper.profile.PlayerProfile;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -84,7 +85,13 @@ public class MenuPlotVisit {
         if (meta == null) return head;
 
         // Le clic sur la tête retrouve le plot grâce à ce propriétaire : ne pas l'enlever.
-        meta.setOwningPlayer(Bukkit.getOfflinePlayer(ps.getUuid()));
+        // Profil en cache (skin compris) si connu : évite de redemander le skin à Mojang à chaque ouverture.
+        PlayerProfile profil = CacheProfils.profilAvecSkin(ps.getUuid(), ps.getName());
+        if (profil != null) {
+            meta.setPlayerProfile(profil);
+        } else {
+            meta.setOwningPlayer(Bukkit.getOfflinePlayer(ps.getUuid()));
+        }
 
         boolean prive = ps.getPlotdata().getPrivateplot();
         List<String> lore = new ArrayList<>();
