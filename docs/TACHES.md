@@ -85,8 +85,15 @@ Statut : à faire
 Le calcul automatique du chat propose parfois un résultat négatif (ex. "1 - 48"). Vérifier si c'est voulu ; sinon, ne proposer que des résultats positifs. Gain en $FB : zone sensible, test JUnit.
 
 ### /plot visit : skins des têtes redemandés à Mojang
-Statut : à faire
+Statut : fait
 À chaque ouverture, les têtes du menu redemandent les skins à Mojang ; si Mojang est lent, la console affiche "Couldn't look up profile properties ... Read timed out" (WARN, sans gravité). Éviter de redemander les profils à chaque ouverture (cache).
+
+Notes de l'agent (2026-11-15) : fait dans `9385ae9` (branche `agent/skins-plot-visit`). `CacheProfils` garde le profil avec skin : celui des joueurs connectés sans demande à Mojang, les autres demandés une fois en arrière-plan (6 h ; 30 min d'attente après un échec). Serveur de test : 7 têtes sur 7 avec skin dès la 2e ouverture, 0 "Couldn't look up profile properties", clic sur une tête inchangé.
+
+### Bordure des plots appliquée après achat et commandes admin
+Statut : fait
+Demande du propriétaire : tester les bordures des plots et `/plot buy`, avec des logs de debug.
+Notes de l'agent (2026-11-15) : fait dans `9ee5106` (branche `agent/bordure-plot`). Avant : l'achat d'un upgrade, `/plotadmin border` et `/plotadmin upgrade` ne changeaient que la bordure enregistrée, la vraie bordure ne bougeait qu'à la reconnexion. Maintenant `PlotBordure.appliquer` la règle tout de suite (prix et paiement inchangés). Garde-fou : bordure < 1 refusée. Menu "Agrandir le plot | Palier N", fautes du message corrigées, logs `[PlotBuy]` / `[Bordure]` si `debug: true`. Serveur de test : 160 -> 165 -> 170 sans reconnexion.
 
 ### Salons Discord `status` / `statut` : un seul nom
 Statut : à faire
