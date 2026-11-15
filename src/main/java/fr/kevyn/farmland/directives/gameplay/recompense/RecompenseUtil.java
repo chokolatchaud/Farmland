@@ -209,9 +209,9 @@ public class RecompenseUtil {
         };
         int xpActuelle = ps.getXp(cleXp);
         int xpRequise = getXpNeeded(niveau);
-        int segments = Math.min(20, Math.max(0, (int) ((long) xpActuelle * 20 / xpRequise)));
+        int segments = Math.min(6, Math.max(0, (int) ((long) xpActuelle * 6 / xpRequise)));
 
-        String progression = "▰".repeat(segments) + "▱".repeat(20 - segments);
+        String progression = "▰".repeat(segments) + "▱".repeat(6 - segments);
         joueur.sendActionBar(
                 Component.text(nom + " Niv. " + niveau + "  ", NamedTextColor.GOLD)
                         .append(Component.text(progression, NamedTextColor.GREEN))
