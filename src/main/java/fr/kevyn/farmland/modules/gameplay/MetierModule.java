@@ -9,6 +9,7 @@ import fr.kevyn.farmland.directives.metiers.TestRewardCommand;
 import fr.kevyn.farmland.directives.metiers.farmeur.BlockFertilizeListener;
 import fr.kevyn.farmland.directives.metiers.farmeur.FarmCommands;
 import fr.kevyn.farmland.directives.metiers.farmeur.HarvestFarmEvent;
+import fr.kevyn.farmland.directives.metiers.farmeur.VitesseCasseListener;
 import fr.kevyn.farmland.FarmlandMain;
 import fr.kevyn.farmland.directives.metiers.agriculteur.HacheCommands;
 import fr.kevyn.farmland.directives.metiers.agriculteur.KillEventAgriculteur;
@@ -88,6 +89,7 @@ public final class MetierModule {
     private void registerJobListeners() {
         plugin.getServer().getPluginManager().registerEvents(new EventMineSpawn(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new HarvestFarmEvent(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new VitesseCasseListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new EventPeche(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new KillEventAgriculteur(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new KillEventTueur(), plugin);
