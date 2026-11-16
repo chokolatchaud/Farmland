@@ -6,6 +6,7 @@ import fr.kevyn.farmland.directives.gameplay.recompense.RecompenseUtil;
 import fr.kevyn.farmland.directives.metiers.MetiersCommands;
 import fr.kevyn.farmland.directives.metiers.MetiersMenuListener;
 import fr.kevyn.farmland.directives.metiers.TestRewardCommand;
+import fr.kevyn.farmland.directives.metiers.farmeur.BeaconFarmeurListener;
 import fr.kevyn.farmland.directives.metiers.farmeur.BlockFertilizeListener;
 import fr.kevyn.farmland.directives.metiers.farmeur.FarmCommands;
 import fr.kevyn.farmland.directives.metiers.farmeur.FarmRapideListener;
@@ -90,6 +91,7 @@ public final class MetierModule {
     private void registerJobListeners() {
         plugin.getServer().getPluginManager().registerEvents(new EventMineSpawn(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new HarvestFarmEvent(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new BeaconFarmeurListener(plugin), plugin);
         plugin.getServer().getPluginManager().registerEvents(new FarmRapideListener(plugin), plugin);
         plugin.getServer().getPluginManager().registerEvents(new VitesseCasseListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new EventPeche(), plugin);
