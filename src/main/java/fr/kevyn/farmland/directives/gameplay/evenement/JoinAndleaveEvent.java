@@ -111,12 +111,11 @@ public final class JoinAndleaveEvent implements Listener {
             LuckpermGrade.updateGrade(event.getPlayer());
             ChatListener.updateTab(event.getPlayer());
 
-            // Restaurer les permissions WorldEdit si encore actif
-            if (playerServer.isWeActive()) {
-                Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                    BuyCommands.restoreAttachment(event.getPlayer(), playerServer, plugin);
-                }, WORLD_EDIT_RESTORE_DELAY);
-            }
+            // Synchroniser WorldEdit à chaque reconnexion : restauration si actif,
+            // nettoyage LuckPerms si le temps a expiré pendant un redémarrage/offline.
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                BuyCommands.restoreAttachment(event.getPlayer(), playerServer, plugin);
+            }, WORLD_EDIT_RESTORE_DELAY);
 
             // ✅ Création du plot + application de la bordure après chargement
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
