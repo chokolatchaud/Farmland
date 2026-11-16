@@ -4,6 +4,7 @@ import fr.kevyn.farmland.directives.gameplay.menus.Outils;
 import fr.kevyn.farmland.directives.infrastructure.JobType;
 import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.directives.metiers.agriculteur.HacheFarm;
+import fr.kevyn.farmland.directives.metiers.farmeur.BeaconFarmeur;
 import fr.kevyn.farmland.directives.metiers.farmeur.HoueFarmeur;
 import fr.kevyn.farmland.directives.metiers.mineur.PiocheFarm;
 import fr.kevyn.farmland.directives.metiers.pecheur.PecheurFarm;
@@ -85,6 +86,9 @@ public class LevelRewardManager {
 
                 case "JOB_ITEM" ->
                         giveJobItem(player, job, level);
+
+                case "FARM_BEACON" ->
+                        giveFarmBeacon(player, reward);
 
                 default ->
                         player.sendMessage(
@@ -206,6 +210,36 @@ public class LevelRewardManager {
         };
     }
 
+    private void giveFarmBeacon(
+            Player player,
+            Map<?, ?> reward
+    ) {
+
+        double bonus = 0.20;
+        int rayon = 16;
+
+        Object bonusObject = reward.get("growth-bonus");
+        if (bonusObject instanceof Number number) {
+            bonus = number.doubleValue();
+        }
+
+        Object rayonObject = reward.get("radius");
+        if (rayonObject instanceof Number number) {
+            rayon = number.intValue();
+        }
+
+        player.give(
+                BeaconFarmeur.create(
+                        bonus,
+                        rayon
+                )
+        );
+
+        player.sendMessage(
+                "§a✦ Tu as reçu le Beacon du Farmeur !"
+        );
+    }
+
     public List<String> getRewardLore(
             JobType job,
             int level
@@ -307,6 +341,25 @@ public class LevelRewardManager {
                                 "§dObjet spécial "
                                         + getJobDisplayName(job)
                         );
+
+                case "FARM_BEACON" -> {
+                    double bonus = 0.20;
+                    int rayon = 16;
+
+                    Object bonusObject = reward.get("growth-bonus");
+                    if (bonusObject instanceof Number number) {
+                        bonus = number.doubleValue();
+                    }
+
+                    Object rayonObject = reward.get("radius");
+                    if (rayonObject instanceof Number number) {
+                        rayon = number.intValue();
+                    }
+
+                    lore.add("§aBeacon du Farmeur");
+                    lore.add("§7Croissance : §a+" + (int) Math.round(bonus * 100.0) + "%");
+                    lore.add("§7Rayon : §f" + rayon + " blocs");
+                }
             }
         }
     }

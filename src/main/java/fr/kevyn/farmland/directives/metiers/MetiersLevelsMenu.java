@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class MetiersLevelsMenu {
 
-    private static final int MAX_LEVEL = 100;
+    private static final int MAX_LEVEL = 150;
     private static final int LEVELS_PER_PAGE = 45;
     private static final int PREVIOUS_SLOT = 45;
     private static final int BACK_SLOT = 49;

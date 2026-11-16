@@ -6,6 +6,7 @@ import fr.kevyn.farmland.directives.gameplay.recompense.RecompenseUtil;
 import fr.kevyn.farmland.directives.metiers.MetiersCommands;
 import fr.kevyn.farmland.directives.metiers.MetiersMenuListener;
 import fr.kevyn.farmland.directives.metiers.TestRewardCommand;
+import fr.kevyn.farmland.directives.metiers.farmeur.BeaconFarmeurListener;
 import fr.kevyn.farmland.directives.metiers.farmeur.BlockFertilizeListener;
 import fr.kevyn.farmland.directives.metiers.farmeur.FarmCommands;
 import fr.kevyn.farmland.directives.metiers.farmeur.FarmRapideListener;
@@ -28,6 +29,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Enregistre les éléments liés aux métiers et au marché.
@@ -69,6 +73,23 @@ public final class MetierModule {
 
         rewardsConfig =
                 YamlConfiguration.loadConfiguration(rewardsFile);
+
+        // Le fichier du serveur reste prioritaire, mais les nouvelles récompenses
+        // ajoutées dans le JAR deviennent disponibles comme valeurs par défaut.
+        // Cela évite d'avoir à supprimer rewards.yml à chaque nouveau palier.
+        try (InputStream defaultsStream = plugin.getResource("rewards.yml")) {
+            if (defaultsStream != null) {
+                YamlConfiguration defaults = YamlConfiguration.loadConfiguration(
+                        new InputStreamReader(defaultsStream, StandardCharsets.UTF_8)
+                );
+                rewardsConfig.setDefaults(defaults);
+            }
+        } catch (Exception e) {
+            plugin.getLogger().warning(
+                    "[Metier] Impossible de charger les valeurs par défaut de rewards.yml : "
+                            + e.getMessage()
+            );
+        }
     }
 
 
@@ -90,6 +111,7 @@ public final class MetierModule {
     private void registerJobListeners() {
         plugin.getServer().getPluginManager().registerEvents(new EventMineSpawn(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new HarvestFarmEvent(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new BeaconFarmeurListener(plugin), plugin);
         plugin.getServer().getPluginManager().registerEvents(new FarmRapideListener(plugin), plugin);
         plugin.getServer().getPluginManager().registerEvents(new VitesseCasseListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new EventPeche(), plugin);
