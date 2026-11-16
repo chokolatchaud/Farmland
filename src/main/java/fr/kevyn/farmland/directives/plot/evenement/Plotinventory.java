@@ -61,7 +61,11 @@ public final class Plotinventory implements Listener {
 
         // ── COSMETICS : achat/equipement d'un chapeau ─────────────────────────
         if (gameMenu.getTypemenu() == TypeMenu.COSMETICS) {
-            int slot = event.getSlot();
+            // Les slots 0-8 existent aussi dans la hotbar : seuls les clics du menu sont valides.
+            int slot = event.getRawSlot();
+            if (slot < 0 || slot >= event.getView().getTopInventory().getSize()) {
+                return;
+            }
             if (slot < 0 || slot >= CosmeticShop.COSMETICS.size()) {
                 return;
             }
