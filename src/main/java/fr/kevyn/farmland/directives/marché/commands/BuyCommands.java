@@ -88,17 +88,7 @@ public final class BuyCommands implements CommandExecutor {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             PlayerServer psNow = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
             if (psNow != null && !psNow.isWeActive()) {
-                removeAttachment(player.getUniqueId());
-                lp.getUserManager().loadUser(player.getUniqueId()).thenAcceptAsync(user -> {
-                    if (user != null) {
-                        for (String perm : WE_PERMISSIONS) {
-                            user.data().remove(net.luckperms.api.node.Node.builder(perm).value(true).build());
-                        }
-                        lp.getUserManager().saveUser(user).thenRun(() ->
-                            lp.getMessagingService().ifPresent(ms -> ms.pushUserUpdate(user))
-                        );
-                    }
-                });
+                revokeWorldEditPermissions(player.getUniqueId());
                 if (player.isOnline()) {
                     player.sendMessage(MessageColor.RED.apply("Ton WorldEdit a expiré. Tape /buy worldedit pour renouveler."));
                 }
@@ -189,9 +179,35 @@ public final class BuyCommands implements CommandExecutor {
         }
     }
 
-    // Restaure les permissions à la reconnexion si WE encore actif
+    /**
+     * Retire WorldEdit côté Bukkit ET LuckPerms.
+     * Les noeuds LuckPerms sont persistants : sans ce nettoyage, un redémarrage
+     * du serveur peut laisser les permissions actives après l'expiration.
+     */
+    private static void revokeWorldEditPermissions(UUID uuid) {
+        removeAttachment(uuid);
+
+        net.luckperms.api.LuckPerms lp = net.luckperms.api.LuckPermsProvider.get();
+        lp.getUserManager().loadUser(uuid).thenAcceptAsync(user -> {
+            if (user == null) {
+                return;
+            }
+
+            for (String perm : WE_PERMISSIONS) {
+                user.data().remove(net.luckperms.api.node.Node.builder(perm).value(true).build());
+            }
+
+            lp.getUserManager().saveUser(user).thenRun(() ->
+                lp.getMessagingService().ifPresent(ms -> ms.pushUserUpdate(user))
+            );
+        });
+    }
+
+    // Restaure les permissions à la reconnexion si WE encore actif,
+    // ou nettoie les permissions persistantes si le temps est expiré.
     public static void restoreAttachment(Player player, PlayerServer ps, FarmlandMain plugin) {
         if (!ps.isWeActive()) {
+            revokeWorldEditPermissions(player.getUniqueId());
             return;
         }
 
@@ -218,15 +234,7 @@ public final class BuyCommands implements CommandExecutor {
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
             PlayerServer psNow = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
             if (psNow != null && !psNow.isWeActive()) {
-                removeAttachment(player.getUniqueId());
-                lp.getUserManager().loadUser(player.getUniqueId()).thenAcceptAsync(user -> {
-                    if (user != null) {
-                        for (String perm : WE_PERMISSIONS) {
-                            user.data().remove(net.luckperms.api.node.Node.builder(perm).value(true).build());
-                        }
-                        lp.getUserManager().saveUser(user);
-                    }
-                });
+                revokeWorldEditPermissions(player.getUniqueId());
                 if (player.isOnline()) {
                     player.sendMessage(MessageColor.RED.apply("Ton WorldEdit a expiré. Tape /buy worldedit pour renouveler."));
                 }
