@@ -41,12 +41,13 @@ public class MenuListenerFarm implements Listener {
 		if (gamemenu.getTypemenu() != TypeMenu.BAG) return;
 
 		// Ne jamais interpréter un clic dans l'inventaire du joueur comme un clic du /bag.
-		if (event.getClickedInventory() != event.getView().getTopInventory()) return;
+		int rawSlot = event.getRawSlot();
+		if (rawSlot < 0 || rawSlot >= event.getView().getTopInventory().getSize()) return;
 
 		PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
 		if (ps == null) return;
 
-		String metier = metierDuSlot(event.getRawSlot());
+		String metier = metierDuSlot(rawSlot);
 		if (metier == null) return; // clic sur la deco ou un slot vide
 
 		int quantite = getQuantiteJeton(ps, metier);
