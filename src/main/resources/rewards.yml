@@ -31,6 +31,11 @@ rewards:
       - type: JOB_ITEM
         item: HOE
 
+    150:
+      - type: FARM_BEACON
+        growth-bonus: 0.20
+        radius: 16
+
   PECHEUR:
     100:
       - type: JOB_ITEM
