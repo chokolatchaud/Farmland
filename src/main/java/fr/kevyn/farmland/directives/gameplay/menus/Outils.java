@@ -27,6 +27,14 @@ public class Outils {
 		    }
 
 
+		    /** Vrai si le joueur a deja un outil de metier de ce type dans son inventaire (main secondaire comprise). */
+		    public static boolean possedeOutil(org.bukkit.entity.Player joueur, Material materielAttendu) {
+		        for (ItemStack item : joueur.getInventory().getContents()) {
+		            if (isOutilsAttendu(item, materielAttendu)) return true;
+		        }
+		        return false;
+		    }
+
 		    public static boolean isOutilsAttendu(ItemStack item, Material materielAttendu) {
 		        if (item == null) return false;
 		        // Le type d'abord : un objet d'un autre type est écarté tout de suite

@@ -19,6 +19,11 @@ public class FarmCommands implements CommandExecutor {
 		}
 
 		Player player = (Player) sender;
+		// Un seul outil de metier de chaque type dans l'inventaire (avant : un nouveau a chaque commande)
+		if (fr.kevyn.farmland.directives.gameplay.menus.Outils.possedeOutil(player, org.bukkit.Material.NETHERITE_HOE)) {
+			player.sendMessage("§cTu as déjà ta Houe du Farmeur dans ton inventaire !");
+			return true;
+		}
 		player.give(HoueFarmeur.create());
 
 		player.sendMessage("§aTu as reçu ta Houe du Farmeur !");
