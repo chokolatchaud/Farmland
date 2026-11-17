@@ -12,6 +12,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
+import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
+
 /**
  * Systeme de teleportation entre joueurs.
  *   /tpa <joueur>      -> demande a aller vers <joueur>
@@ -139,15 +142,53 @@ public class TpaCommand implements CommandExecutor {
             return true;
         }
 
-        if (demande.type == Type.TPA) {
-            demandeur.teleport(cible.getLocation());
-        } else {
-            cible.teleport(demandeur.getLocation());
+        // Celui qui se déplace et l'endroit où il arrive
+        Player voyageur = demande.type == Type.TPA ? demandeur : cible;
+        org.bukkit.Location destination = demande.type == Type.TPA ? cible.getLocation() : demandeur.getLocation();
+
+        // Un plot privé reste fermé : seuls le propriétaire et ses joueurs ajoutés / trusted y entrent
+        if (!peutEntrer(voyageur, destination)) {
+            cible.sendMessage("§cTéléportation impossible : " + voyageur.getName() + " n'a pas accès à ce plot privé.");
+            demandeur.sendMessage("§cTéléportation impossible : " + voyageur.getName() + " n'a pas accès à ce plot privé.");
+            return true;
         }
+
+        voyageur.teleport(destination);
 
         cible.sendMessage("§aTéléportation acceptée !");
         demandeur.sendMessage("§a" + cible.getName() + " a accepté ta demande de téléportation !");
         return true;
+    }
+
+    /**
+     * Vrai si le voyageur peut arriver à cette destination : hors d'un monde de plot,
+     * plot public, ou plot privé dont il est propriétaire, ajouté ou trusted
+     * (mêmes listes que les règles de construction).
+     */
+    static boolean peutEntrer(Player voyageur, org.bukkit.Location destination) {
+        if (destination.getWorld() == null) return false;
+        String monde = destination.getWorld().getName();
+        UUID proprietaire;
+        try {
+            proprietaire = UUID.fromString(monde);
+        } catch (IllegalArgumentException e) {
+            return true; // pas un monde de plot (hub...)
+        }
+
+        PlayerServer plot = PlayerserverHashMap.getInstance().getplayerHaspMaps(proprietaire);
+        if (plot == null || plot.getPlotdata() == null || !plot.getPlotdata().getPrivateplot()) {
+            return true;
+        }
+        if (proprietaire.equals(voyageur.getUniqueId())) {
+            return true;
+        }
+
+        PlayerServer psVoyageur = PlayerserverHashMap.getInstance().getplayerHaspMaps(voyageur.getUniqueId());
+        if (psVoyageur == null || psVoyageur.getPlotdata() == null) {
+            return false;
+        }
+        return psVoyageur.getPlotdata().getAllplotadd().contains(monde)
+                || psVoyageur.getPlotdata().getAllplottrust().contains(monde);
     }
 
     private void annulerDemandeExistante(UUID cible) {
