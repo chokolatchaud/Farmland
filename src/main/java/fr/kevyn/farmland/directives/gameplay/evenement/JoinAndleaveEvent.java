@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.ArrayList;
@@ -36,6 +37,25 @@ public final class JoinAndleaveEvent implements Listener {
         this.plugin = plugin;
     }
 
+    /**
+     * Bannissement vérifié AVANT l'entrée sur le serveur : le banni ne rejoint jamais le monde.
+     * (Le contrôle dans onPlayerJoin reste en sécurité.)
+     */
+    @EventHandler
+    public void onPlayerLogin(PlayerLoginEvent event) {
+        PlayerServer playerServer = PlayerserverHashMap.getInstance()
+                .getplayerHaspMaps(event.getPlayer().getUniqueId());
+        if (playerServer != null && playerServer.getBan()) {
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, messageBan(playerServer));
+        }
+    }
+
+    /** Message de bannissement, couleurs converties (avant : « &c » affiché en clair). */
+    static String messageBan(PlayerServer playerServer) {
+        return MessageColor.RED.apply("Vous êtes banni définitivement !")
+                + "\n" + MessageColor.GRAY.apply("Raison : " + playerServer.getRaison());
+    }
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.setJoinMessage("");
@@ -44,8 +64,7 @@ public final class JoinAndleaveEvent implements Listener {
 
         // ✅ Vérif ban
         if (playerServer != null && playerServer.getBan()) {
-            event.getPlayer().kickPlayer("&cVous êtes banni définitivement !" +
-                    "\nRaison : " + playerServer.getRaison());
+            event.getPlayer().kickPlayer(messageBan(playerServer));
             return;
         }
 
