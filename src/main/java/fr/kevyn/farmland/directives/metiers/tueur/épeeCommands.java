@@ -19,6 +19,11 @@ public class épeeCommands implements CommandExecutor {
 		}
 
 		Player player = (Player) sender;
+		// Un seul outil de metier de chaque type dans l'inventaire (avant : un nouveau a chaque commande)
+		if (fr.kevyn.farmland.directives.gameplay.menus.Outils.possedeOutil(player, org.bukkit.Material.NETHERITE_SWORD)) {
+			player.sendMessage("§cTu as déjà ton Épée du Tueur dans ton inventaire !");
+			return true;
+		}
 		player.give(epeeFarm.create());
 
 		player.sendMessage("§aTu as reçu ton épée du Tueur !");

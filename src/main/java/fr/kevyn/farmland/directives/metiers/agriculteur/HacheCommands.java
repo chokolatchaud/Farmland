@@ -19,6 +19,11 @@ public class HacheCommands implements CommandExecutor {
 			return true;
 		}
 
+        // Un seul outil de metier de chaque type dans l'inventaire (avant : un nouveau a chaque commande)
+        if (fr.kevyn.farmland.directives.gameplay.menus.Outils.possedeOutil(player, org.bukkit.Material.NETHERITE_AXE)) {
+        	player.sendMessage("§cTu as déjà ta Hache de l'Agriculteur dans ton inventaire !");
+        	return true;
+        }
         player.give(HacheFarm.createHache());
 
 		player.sendMessage("§aTu as reçu ta Hache D'Agriculteur !");

@@ -19,6 +19,11 @@ public class FishingCommands implements CommandExecutor {
 		}
 
 		Player player = (Player) sender;
+		// Un seul outil de metier de chaque type dans l'inventaire (avant : un nouveau a chaque commande)
+		if (fr.kevyn.farmland.directives.gameplay.menus.Outils.possedeOutil(player, org.bukkit.Material.FISHING_ROD)) {
+			player.sendMessage("§cTu as déjà ta Canne à Pêche du Pêcheur dans ton inventaire !");
+			return true;
+		}
 		player.give(PecheurFarm.create());
 
 		player.sendMessage("§aTu as reçu ta Canne à Pêche du Pêcheur !");

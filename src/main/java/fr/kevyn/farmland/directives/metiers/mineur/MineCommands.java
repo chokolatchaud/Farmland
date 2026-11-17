@@ -16,6 +16,11 @@ public class MineCommands implements CommandExecutor {
 		}
 
 		Player player = (Player) sender;
+		// Un seul outil de metier de chaque type dans l'inventaire (avant : un nouveau a chaque commande)
+		if (fr.kevyn.farmland.directives.gameplay.menus.Outils.possedeOutil(player, org.bukkit.Material.NETHERITE_PICKAXE)) {
+			player.sendMessage("§cTu as déjà ta Pioche du Mineur dans ton inventaire !");
+			return true;
+		}
 		player.give(PiocheFarm.create());
 
 		player.sendMessage("§aTu as reçu ta Pioche du Mineur !");
