@@ -10,30 +10,43 @@ import fr.kevyn.farmland.doonees.marche.MarketHolder;
 import fr.kevyn.farmland.persistance.marché.MarketSave;
 import org.bukkit.Bukkit;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Planifie et exécute les recalculs périodiques du marché.
+ * Fait vivre le marché : à chaque cycle (5 minutes par défaut), la demande
+ * simulée absorbe le volume normal de chaque métier (voir MarketCalc.appliquerDemande) ;
+ * une fois par heure, le volume normal est réappris à partir des ventes (MarketCalc.apprendreVolume) ;
+ * puis le marché est sauvegardé et les hologrammes rafraîchis.
  *
- * Toutes les 30 minutes, les ventes du dernier cycle sont utilisées pour
- * ajuster les coefficients des métiers.
+ * Toutes les 30 minutes, un bulletin économique annonce le métier dont le prix
+ * a le plus baissé (surproduction) ou, à défaut, le plus remonté.
  */
 public final class MarketCalcTask {
 
-    private static final int SEUIL_SURPRODUCTION = 20; // au dela, le marche s'effondre
-    private static final int SEUIL_RECUPERATION = 5;    // en dessous, le marche remonte
-    private static final int VARIATION_POURCENT = 2;
-    private static final int COEF_MIN = 50;
-    private static final int COEF_MAX = 150;
-    private static final long RECALC_INTERVAL_TICKS = 20L * 60 * 30;
+    /** Variation minimale du coefficient (en points de %) pour mériter un bulletin. */
+    static final int SEUIL_BULLETIN = 5;
+    private static final long MINUTES_ENTRE_BULLETINS = 30;
 
-    public static void demarrer(FarmlandMain plugin) {
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> effectuerRecalcul(plugin),
-            RECALC_INTERVAL_TICKS, RECALC_INTERVAL_TICKS); // toutes les 30 minutes
+    private static long intervalleMinutes = 5;
+    private static int cyclesDepuisBulletin = 0;
+    private static long minutesDepuisApprentissage = 0;
+    // coefficients au dernier bulletin, pour mesurer la variation sur 30 minutes
+    private static final Map<String, Integer> coefsAuDernierBulletin = new HashMap<>();
+
+    public static void demarrer(FarmlandMain plugin, long minutes) {
+        intervalleMinutes = Math.max(1, minutes);
+        Market market = MarketHolder.get();
+        MarketCalc.initialiser(market);
+        memoriserCoefficients(market);
+
+        long ticks = 20L * 60 * intervalleMinutes;
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> effectuerRecalcul(plugin), ticks, ticks);
     }
 
-    /** Force un recalcul immediat, sans attendre le prochain cycle - utile pour /marketadmin recalc */
+    /** Force un cycle immédiat (demande + sauvegarde + bulletin) - utile pour /marketadmin recalc */
     public static void forcerRecalcul(FarmlandMain plugin) {
+        cyclesDepuisBulletin = Integer.MAX_VALUE - 1; // le bulletin sort tout de suite
         effectuerRecalcul(plugin);
     }
 
@@ -43,140 +56,93 @@ public final class MarketCalcTask {
             return;
         }
         Market market = MarketHolder.get();
-        Map<String, Integer> ventes = MarketCalc.getVentesParMetier();
-        // anciens coefficients, lus seulement pour le journal (aucun effet sur le calcul)
-        int ancienMineur = market.getMoneyforcoefMineur();
-        int ancienFarmeur = market.getMoneyforcoefFarmeur();
-        int ancienAgriculteur = market.getMoneyforcoefAgriculteur();
-        int ancienPecheur = market.getMoneyforcoefPecheur();
-        int ancienTueur = market.getMoneyforcoefTueur();
+        double heures = intervalleMinutes / 60.0;
 
-        market.setMoneyforcoefMineur(recalculer(market.getMoneyforcoefMineur(), ventes.getOrDefault("Mineur", 0)));
-        market.setMoneyforcoefFarmeur(recalculer(market.getMoneyforcoefFarmeur(), ventes.getOrDefault("Farmeur", 0)));
-        market.setMoneyforcoefAgriculteur(recalculer(market.getMoneyforcoefAgriculteur(), ventes.getOrDefault("Agriculteur", 0)));
-        market.setMoneyforcoefPecheur(recalculer(market.getMoneyforcoefPecheur(), ventes.getOrDefault("Pecheur", 0)));
-        market.setMoneyforcoefTueur(recalculer(market.getMoneyforcoefTueur(), ventes.getOrDefault("Tueur", 0)));
+        // apprentissage du volume normal, une fois par heure pleine
+        minutesDepuisApprentissage += intervalleMinutes;
+        boolean apprendre = minutesDepuisApprentissage >= 60;
 
-        genererEvenementMarche(market, ventes);
+        StringBuilder journal = new StringBuilder();
+        for (String metier : MarketCalc.METIERS) {
+            int avant = market.getCoefficient(metier);
+            if (apprendre) {
+                long vendus = MarketCalc.prendreVentesApprentissage(metier);
+                double volume = MarketCalc.apprendreVolume(MarketCalc.getVolume(metier, market), vendus, minutesDepuisApprentissage / 60.0);
+                MarketCalc.setVolume(metier, market, volume);
+            }
+            double surplus = MarketCalc.getSurplus(metier, market);
+            MarketCalc.setSurplus(metier, market, MarketCalc.appliquerDemande(surplus, heures, MarketCalc.getVolume(metier, market)));
+            if (journal.length() > 0) journal.append(", ");
+            journal.append(metier).append(' ').append(avant).append("->").append(market.getCoefficient(metier))
+                    .append(" (volume ").append(Math.round(MarketCalc.getVolume(metier, market))).append("/h)");
+        }
+        if (apprendre) minutesDepuisApprentissage = 0;
 
-        MarketCalc.resetVentes();
+        cyclesDepuisBulletin++;
+        if (cyclesDepuisBulletin * intervalleMinutes >= MINUTES_ENTRE_BULLETINS) {
+            genererEvenementMarche(market, MarketCalc.getVentesParMetier());
+            MarketCalc.resetVentes();
+            memoriserCoefficients(market);
+            cyclesDepuisBulletin = 0;
+        }
+
         MarketSave.saveMarket(plugin, market);
         MarketHolograms.updateAll(plugin);
 
-
-
-        DebugLog.debug(plugin, "[Market] Recalcul effectue - Mineur:" + market.getMoneyforcoefMineur()
-            + " Farmeur:" + market.getMoneyforcoefFarmeur()
-            + " Agriculteur:" + market.getMoneyforcoefAgriculteur()
-            + " Pecheur:" + market.getMoneyforcoefPecheur()
-            + " Tueur:" + market.getMoneyforcoefTueur());
-        JournalEvenements.enregistrer("marche_recalcul", null,
-                "Mineur " + ancienMineur + "->" + market.getMoneyforcoefMineur()
-                + ", Farmeur " + ancienFarmeur + "->" + market.getMoneyforcoefFarmeur()
-                + ", Agriculteur " + ancienAgriculteur + "->" + market.getMoneyforcoefAgriculteur()
-                + ", Pecheur " + ancienPecheur + "->" + market.getMoneyforcoefPecheur()
-                + ", Tueur " + ancienTueur + "->" + market.getMoneyforcoefTueur());
+        DebugLog.debug(plugin, "[Market] Cycle : " + journal);
+        JournalEvenements.enregistrer("marche_recalcul", null, journal.toString());
     }
 
-    private static void genererEvenementMarche(Market market, Map<String, Integer> ventes) {
-        String[] metiers = {
-            MarketCalc.MINEUR, MarketCalc.FARMEUR, MarketCalc.AGRICULTEUR,
-            MarketCalc.PECHEUR, MarketCalc.TUEUR
-        };
+    private static void memoriserCoefficients(Market market) {
+        for (String metier : MarketCalc.METIERS) {
+            coefsAuDernierBulletin.put(metier, market.getCoefficient(metier));
+        }
+    }
 
-        String metierSurproduction = null;
-        int maxVentes = SEUIL_SURPRODUCTION;
-        int coefficientAvantMineur = 0;
-        int coefficientAvantFarmeur = 0;
-        int coefficientAvantAgriculteur = 0;
-        int coefficientAvantPecheur = 0;
-        int coefficientAvantTueur = 0;
-
-        for (String metier : metiers) {
-            int nombreDeVentes = ventes.getOrDefault(metier, 0);
-            if (nombreDeVentes > maxVentes) {
-                maxVentes = nombreDeVentes;
-                metierSurproduction = metier;
-            }
+    private static void genererEvenementMarche(Market market, Map<String, Long> ventes) {
+        Map<String, Integer> variations = new HashMap<>();
+        for (String metier : MarketCalc.METIERS) {
+            int avant = coefsAuDernierBulletin.getOrDefault(metier, market.getCoefficient(metier));
+            variations.put(metier, market.getCoefficient(metier) - avant);
         }
 
-        if (metierSurproduction != null) {
-            market.setLastEventMetier(metierSurproduction);
-            market.setLastEventMessage(MarketFlavor.getMessage(metierSurproduction, false));
-            Bukkit.broadcastMessage("");
-            Bukkit.broadcastMessage("§6§l📊 Bulletin économique");
-            Bukkit.broadcastMessage("§c▼ " + metierSurproduction + " : surproduction (" + maxVentes + " ventes)");
-            Bukkit.broadcastMessage("§7" + market.getLastEventMessage());
-            Bukkit.broadcastMessage("");
+        String metier = choisirMetierBulletin(variations);
+        if (metier == null) {
+            market.setLastEventMetier("");
+            market.setLastEventMessage("");
             return;
         }
 
-        // En récupération, on ne sélectionne un métier que si son coefficient
-        // a réellement augmenté pendant ce recalcul. Puis on choisit celui
-        // dont le marché a le plus progressé.
-        String metierRecuperation = null;
-        int meilleurGain = 0;
-        int moinsDeVentes = Integer.MAX_VALUE;
-
-        for (String metier : metiers) {
-            int nombreDeVentes = ventes.getOrDefault(metier, 0);
-            if (nombreDeVentes >= SEUIL_RECUPERATION) {
-                continue;
-            }
-
-            int coefficientAvant;
-            int coefficientApres;
-
-            switch (metier) {
-                case MarketCalc.MINEUR -> coefficientAvant = market.getMoneyforcoefMineur();
-                case MarketCalc.FARMEUR -> coefficientAvant = market.getMoneyforcoefFarmeur();
-                case MarketCalc.AGRICULTEUR -> coefficientAvant = market.getMoneyforcoefAgriculteur();
-                case MarketCalc.PECHEUR -> coefficientAvant = market.getMoneyforcoefPecheur();
-                case MarketCalc.TUEUR -> coefficientAvant = market.getMoneyforcoefTueur();
-                default -> {
-                    continue;
-                }
-            }
-
-            // Ce recalcul est appelé avant l'écriture du snapshot, donc pour
-            // connaître le vrai changement il faut comparer avec 2% de la
-            // valeur actuelle, comme le ferait recalculer().
-            coefficientApres = recalculer(coefficientAvant, nombreDeVentes);
-            int gain = coefficientApres - coefficientAvant;
-
-            if (gain > meilleurGain || (gain == meilleurGain && gain > 0 && nombreDeVentes < moinsDeVentes)) {
-                meilleurGain = gain;
-                moinsDeVentes = nombreDeVentes;
-                metierRecuperation = metier;
-            }
+        boolean hausse = variations.get(metier) > 0;
+        long jetonsVendus = ventes.getOrDefault(metier, 0L);
+        market.setLastEventMetier(metier);
+        market.setLastEventMessage(MarketFlavor.getMessage(metier, hausse));
+        Bukkit.broadcastMessage("");
+        Bukkit.broadcastMessage("§6§l📊 Bulletin économique");
+        if (hausse) {
+            Bukkit.broadcastMessage("§a▲ " + MarketCalc.nomAffiche(metier) + " : le marché se redresse (" + market.getCoefficient(metier) + "%)");
+        } else {
+            Bukkit.broadcastMessage("§c▼ " + MarketCalc.nomAffiche(metier) + " : surproduction (" + jetonsVendus + " jetons vendus, " + market.getCoefficient(metier) + "%)");
         }
-
-        if (metierRecuperation != null && meilleurGain > 0) {
-            int ventesRecuperation = ventes.getOrDefault(metierRecuperation, 0);
-            market.setLastEventMetier(metierRecuperation);
-            market.setLastEventMessage(MarketFlavor.getMessage(metierRecuperation, true));
-            Bukkit.broadcastMessage("");
-            Bukkit.broadcastMessage("§6§l📊 Bulletin économique");
-            Bukkit.broadcastMessage("§a▲ " + metierRecuperation + " : le marché se redresse (" + ventesRecuperation + " ventes)");
-            Bukkit.broadcastMessage("§7" + market.getLastEventMessage());
-            Bukkit.broadcastMessage("");
-            return;
-        }
-
-        market.setLastEventMetier("");
-        market.setLastEventMessage("");
+        Bukkit.broadcastMessage("§7" + market.getLastEventMessage());
+        Bukkit.broadcastMessage("");
     }
 
-    // Visibilite package (pas private) pour pouvoir etre testee par MarketCalcTaskTest
-    static int recalculer(int coefficientActuel, int nombreDeVentes) {
-        int nouveauCoefficient = coefficientActuel;
-
-        if (nombreDeVentes > SEUIL_SURPRODUCTION) {
-            nouveauCoefficient = coefficientActuel - (coefficientActuel * VARIATION_POURCENT / 100);
-        } else if (nombreDeVentes < SEUIL_RECUPERATION && coefficientActuel < 100) {
-            nouveauCoefficient = coefficientActuel + (coefficientActuel * VARIATION_POURCENT / 100);
+    /**
+     * Métier du bulletin : la plus forte BAISSE d'au moins SEUIL_BULLETIN points,
+     * sinon la plus forte HAUSSE d'au moins SEUIL_BULLETIN points, sinon aucun (null).
+     * Visibilité package : testé par MarketCalcTaskTest.
+     */
+    static String choisirMetierBulletin(Map<String, Integer> variations) {
+        String pireBaisse = null;
+        int baisse = -SEUIL_BULLETIN + 1;
+        String meilleureHausse = null;
+        int hausse = SEUIL_BULLETIN - 1;
+        for (String metier : MarketCalc.METIERS) {
+            int v = variations.getOrDefault(metier, 0);
+            if (v < baisse) { baisse = v; pireBaisse = metier; }
+            if (v > hausse) { hausse = v; meilleureHausse = metier; }
         }
-
-        return Math.max(COEF_MIN, Math.min(COEF_MAX, nouveauCoefficient));
+        return pireBaisse != null ? pireBaisse : meilleureHausse;
     }
 }

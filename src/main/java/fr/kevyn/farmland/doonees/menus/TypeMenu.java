@@ -6,6 +6,7 @@ public enum TypeMenu {
 	PLOTUPGRADE,
 	COSMETICS,
 	BAG,
+	BAG_VENTE,
 	SEEDS,
 	SHOP, 
 	PASSIF_MOB, 

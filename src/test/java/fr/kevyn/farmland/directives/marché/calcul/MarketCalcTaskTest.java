@@ -1,108 +1,63 @@
 package fr.kevyn.farmland.directives.marché.calcul;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests de MarketCalcTask.recalculer(coefficientActuel, nombreDeVentes).
+ * Tests de MarketCalcTask.choisirMetierBulletin(variations).
  *
- * Rappel des regles :
- * - plus de 20 ventes : coefficient - 2% (division entiere, donc tronquee)
- * - moins de 5 ventes et coefficient < 100 : coefficient + 2% (tronque)
- * - sinon : inchange
- * - resultat toujours ramene entre 50 et 150
+ * Le bulletin economique (toutes les 30 min) annonce :
+ * - le metier dont le coefficient a le plus BAISSE d'au moins 5 points (surproduction) ;
+ * - sinon celui qui a le plus MONTE d'au moins 5 points (redressement) ;
+ * - sinon aucun bulletin.
+ * (L'ancienne regle "+/-2 % selon 20 / 5 ventes" a ete remplacee par l'offre et la demande, voir MarcheOffreDemandeTest.)
  */
 class MarketCalcTaskTest {
 
-    // ===== SURPRODUCTION (plus de 20 ventes) =====
-
-    @Test
-    void plusDe20Ventes_leCoefficientBaisse() {
-        assertEquals(98, MarketCalcTask.recalculer(100, 21));
+    private static Map<String, Integer> variations(int mineur, int farmeur, int agriculteur, int pecheur, int tueur) {
+        Map<String, Integer> v = new HashMap<>();
+        v.put(MarketCalc.MINEUR, mineur);
+        v.put(MarketCalc.FARMEUR, farmeur);
+        v.put(MarketCalc.AGRICULTEUR, agriculteur);
+        v.put(MarketCalc.PECHEUR, pecheur);
+        v.put(MarketCalc.TUEUR, tueur);
+        return v;
     }
 
     @Test
-    void exactement20Ventes_leCoefficientNeChangePas() {
-        assertEquals(100, MarketCalcTask.recalculer(100, 20));
-    }
-
-    // ===== RECUPERATION (moins de 5 ventes) =====
-
-    @Test
-    void moinsDe5Ventes_coefficientSous100_leCoefficientMonte() {
-        // 80 * 2 / 100 = 1,6 -> tronque a 1
-        assertEquals(81, MarketCalcTask.recalculer(80, 0));
+    void aucuneVariationAucunBulletin() {
+        assertNull(MarketCalcTask.choisirMetierBulletin(variations(0, 0, 0, 0, 0)));
     }
 
     @Test
-    void exactement5Ventes_coefficientSous100_leCoefficientNeChangePas() {
-        assertEquals(80, MarketCalcTask.recalculer(80, 5));
+    void variationsSousLeSeuilAucunBulletin() {
+        assertNull(MarketCalcTask.choisirMetierBulletin(variations(4, -4, 3, -1, 2)));
     }
 
     @Test
-    void moinsDe5Ventes_coefficientA100_leCoefficientNeChangePas() {
-        assertEquals(100, MarketCalcTask.recalculer(100, 0));
+    void baisseDe5PointsDonneUnBulletin() {
+        assertEquals(MarketCalc.FARMEUR, MarketCalcTask.choisirMetierBulletin(variations(0, -5, 0, 0, 0)));
     }
 
     @Test
-    void moinsDe5Ventes_coefficientAuDessusDe100_leCoefficientNeChangePas() {
-        assertEquals(130, MarketCalcTask.recalculer(130, 2));
-    }
-
-    // ===== ZONE STABLE (entre 5 et 20 ventes) =====
-
-    @Test
-    void entre5Et20Ventes_coefficientSous100_leCoefficientNeChangePas() {
-        assertEquals(80, MarketCalcTask.recalculer(80, 10));
+    void laPlusForteBaissePasseAvantLesHausses() {
+        assertEquals(MarketCalc.TUEUR, MarketCalcTask.choisirMetierBulletin(variations(30, -6, 0, 0, -40)));
     }
 
     @Test
-    void entre5Et20Ventes_coefficientAuDessusDe100_leCoefficientNeChangePas() {
-        assertEquals(120, MarketCalcTask.recalculer(120, 10));
-    }
-
-    // ===== BORNES 50 ET 150 =====
-
-    @Test
-    void borneBasse_leCoefficientNeDescendPasSous50() {
-        // 50 - 1 = 49 -> ramene a 50
-        assertEquals(50, MarketCalcTask.recalculer(50, 21));
+    void sansBaisseLaPlusForteHausse() {
+        assertEquals(MarketCalc.PECHEUR, MarketCalcTask.choisirMetierBulletin(variations(6, 0, 2, 12, 0)));
     }
 
     @Test
-    void justeAuDessusDeLaBorneBasse_leCoefficientArriveA50() {
-        assertEquals(50, MarketCalcTask.recalculer(51, 21));
-    }
-
-    @Test
-    void coefficientSous50_estRemonteA50() {
-        // 40 * 2 / 100 = 0 -> 40, puis ramene a 50
-        assertEquals(50, MarketCalcTask.recalculer(40, 0));
-    }
-
-    @Test
-    void borneHaute_unCoefficientAuDessusDe150_estRameneA150() {
-        assertEquals(150, MarketCalcTask.recalculer(160, 10));
-    }
-
-    @Test
-    void borneHaute_coefficientA150_baisseDe3Points() {
-        // 150 * 2 / 100 = 3
-        assertEquals(147, MarketCalcTask.recalculer(150, 21));
-    }
-
-    // ===== TRONCATURE DES ENTIERS =====
-
-    @Test
-    void troncature_hausse_99DevientCent() {
-        // 99 * 2 / 100 = 1,98 -> tronque a 1
-        assertEquals(100, MarketCalcTask.recalculer(99, 0));
-    }
-
-    @Test
-    void troncature_baisse_149Devient147() {
-        // 149 * 2 / 100 = 2,98 -> tronque a 2
-        assertEquals(147, MarketCalcTask.recalculer(149, 21));
+    void metierAbsentCompteCommeZero() {
+        Map<String, Integer> v = new HashMap<>();
+        v.put(MarketCalc.MINEUR, -10);
+        assertEquals(MarketCalc.MINEUR, MarketCalcTask.choisirMetierBulletin(v));
     }
 }

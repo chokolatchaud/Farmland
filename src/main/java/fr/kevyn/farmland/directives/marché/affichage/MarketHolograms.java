@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import fr.kevyn.farmland.directives.infrastructure.DebugLog;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import fr.kevyn.farmland.directives.marché.calcul.MarketCalc;
 import fr.kevyn.farmland.doonees.marche.Market;
 import fr.kevyn.farmland.persistance.marché.MarketSave;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -205,8 +206,8 @@ public final class MarketHolograms {
             if (precedent != 0 && diff != 0) {
                 float pct = (diff * 100f) / precedent;
                 String pctStr = String.format("%.1f", Math.abs(pct));
-                if (diff > 0) tendance = "§a▲ +" + diff + "$ §2(+" + pctStr + "%)";
-                else tendance = "§c▼ " + diff + "$ §4(-" + pctStr + "%)";
+                if (diff > 0) tendance = "§a▲ +" + diff + " pts §2(+" + pctStr + "%)";
+                else tendance = "§c▼ " + diff + " pts §4(-" + pctStr + "%)";
             }
         }
 
@@ -223,7 +224,7 @@ public final class MarketHolograms {
 
         return "§8§m                              \n"
              + "§6✦ §e§l" + getDisplayName(coef).toUpperCase() + " §6✦\n"
-             + "§f§l" + valeur + " $FB  " + tendance + "\n"
+             + "§f§l" + prixAffiche(coef, actuel) + " $FB §7(" + valeur + "%)  " + tendance + "\n"
              + courbe + "\n"
              + stats + evenement + "\n"
              + "§8Marché mis à jour : " + heure + " §8— §7/market\n"
@@ -272,7 +273,20 @@ public final class MarketHolograms {
             somme += v;
         }
         int moyenne = somme / history.size();
-        return "§7Min §f" + min + "$ §8│ §7Max §f" + max + "$ §8│ §7Moy §f" + moyenne + "$";
+        return "§7Min §f" + min + "% §8│ §7Max §f" + max + "% §8│ §7Moy §f" + moyenne + "%";
+    }
+
+    /** Prix d'un jeton (avant, le coefficient s'affichait comme un prix en $FB). */
+    private static String prixAffiche(String coef, Market market) {
+        String metier = switch (coef.toLowerCase()) {
+            case "mineur" -> MarketCalc.MINEUR;
+            case "farmeur" -> MarketCalc.FARMEUR;
+            case "agriculteur" -> MarketCalc.AGRICULTEUR;
+            case "pecheur" -> MarketCalc.PECHEUR;
+            case "tueur" -> MarketCalc.TUEUR;
+            default -> coef;
+        };
+        return String.format(java.util.Locale.FRANCE, "%.2f", MarketCalc.getPrixActuel(metier, market));
     }
 
     private static int getCoefValue(Market market, String coef) {
