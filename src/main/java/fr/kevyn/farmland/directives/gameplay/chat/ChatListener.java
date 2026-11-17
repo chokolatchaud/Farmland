@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import fr.kevyn.farmland.directives.infrastructure.MessageColor;
 import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
@@ -26,11 +27,18 @@ public class ChatListener implements Listener {
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
-        Player playerevent = event.getPlayer();
-        PlayerServer playerserver = PlayerserverHashMap.getInstance().getplayerHaspMaps(playerevent.getUniqueId());
-        Player player = Bukkit.getPlayer(playerserver.getUuid());
-        if(!playerevent.equals(player)) {
-        	playerevent.kickPlayer("Erreur 23 Rapprocher vous d'un modérateur/admin");
+        Player player = event.getPlayer();
+        PlayerServer playerserver = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
+        if (playerserver == null || !player.getUniqueId().equals(playerserver.getUuid())) {
+            // Données du joueur absentes ou incohérentes : message bloqué, exclusion
+            // sur le fil principal (le chat est traité en parallèle, kickPlayer y est interdit).
+            event.setCancelled(true);
+            Bukkit.getScheduler().runTask(JavaPlugin.getProvidingPlugin(ChatListener.class), () -> {
+                if (player.isOnline()) {
+                    player.kickPlayer("Erreur 23 : rapproche-toi d'un modérateur ou d'un admin");
+                }
+            });
+            return;
         }
 
 
