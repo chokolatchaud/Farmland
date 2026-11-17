@@ -197,11 +197,11 @@ public final class Plotinventory implements Listener {
                 if (playerServer.getPlotdata().getMeteoActive() == Meteo.TIMEFALSE){
                     playerServer.getPlotdata().setMeteoActive(Meteo.TIMETRUE);
                     plot.setGameRule(GameRules.ADVANCE_TIME, true);
-                    player.sendMessage(MessageColor.GOLD.apply("La météo se met à bouger"));
+                    player.sendMessage(MessageColor.GOLD.apply("Le temps se remet à passer"));
                 } else {
                     playerServer.getPlotdata().setMeteoActive(Meteo.TIMEFALSE);
                     plot.setGameRule(GameRules.ADVANCE_TIME, false);
-                    player.sendMessage(MessageColor.GOLD.apply("La météo se fige"));
+                    player.sendMessage(MessageColor.GOLD.apply("Le temps se fige"));
                 }
                 JournalEvenements.enregistrerDetail("plot_meteo", player.getName(), playerServer.getPlotdata().getMeteoActive());
                 player.openInventory(MenuPlotConfig.createmenuplotconfig("Plot Configuration", playerServer));

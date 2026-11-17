@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * /peche - donne la Canne du Pêcheur (chaque poisson pêché avec va
+ * /peche - donne la Canne du Pêcheur (chaque poisson pêché avec elle va
  * directement dans ton /bag, plus de vrai drop dans l'eau).
  */
 public class FishingCommands implements CommandExecutor {
@@ -22,7 +22,7 @@ public class FishingCommands implements CommandExecutor {
 		player.give(PecheurFarm.create());
 
 		player.sendMessage("§aTu as reçu ta Canne à Pêche du Pêcheur !");
-		player.sendMessage("§7Chaque poisson pêché avec ira directement dans ton /bag.");
+		player.sendMessage("§7Chaque poisson pêché avec cette canne te rapporte des jetons dans ton /bag.");
 		return true;
 	}
 

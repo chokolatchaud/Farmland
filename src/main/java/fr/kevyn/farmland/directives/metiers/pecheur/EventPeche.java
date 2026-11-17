@@ -32,7 +32,7 @@ public class EventPeche implements Listener {
 			if (ps == null) return;
 			ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
 			if (!Outils.isOutilsAttendu(mainPrincipale, Material.FISHING_ROD)) {
-				player.sendMessage("Veuillez Pechez grace a la canne a péche /peche");
+				player.sendMessage("§cPêche avec la canne du Pêcheur (/peche) pour gagner des jetons !");
 				event.setCancelled(true);
 				return;
 

@@ -21,7 +21,7 @@ public class MetiersMenu {
     }
 
     public static Inventory createMetiersMenu(PlayerServer ps) {
-        Inventory inv = Bukkit.createInventory(null, 36, "\u00A78Tes metiers");
+        Inventory inv = Bukkit.createInventory(null, 36, "\u00A78Tes métiers");
         new GameMenu(inv, TypeMenu.METIERS);
         GameMenu.fillmenu(Material.LIGHT_BLUE_STAINED_GLASS_PANE, inv);
 
@@ -62,7 +62,7 @@ public class MetiersMenu {
                 21,
                 createJobItem(
                         Material.FISHING_ROD,
-                        "§aPecheur",
+                        "§aPêcheur",
                         ps.getCanneLevel(),
                         ps.getXp("Pecheur"),
                         ps.getJetonPecheur()

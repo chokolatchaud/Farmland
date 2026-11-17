@@ -17,7 +17,7 @@ public class epeeFarm {
 
 
 	public static ItemStack create() {
-		ItemStack item = Outils.create(Material.NETHERITE_SWORD, "§cépée du Tueur");
+		ItemStack item = Outils.create(Material.NETHERITE_SWORD, "§cÉpée du Tueur");
 		appliquerDegats(item, ArmesUtil.calculerDegats(0));
 		return item;
 	}
