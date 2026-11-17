@@ -22,7 +22,7 @@ import java.util.UUID;
 
 public final class BuyCommands implements CommandExecutor {
 
-    private static final int WE_COST = 200;
+    public static final int WE_COST = 200;
     private static final int WE_DURATION_HOURS = 1;
     private static final long WE_DURATION_MS = 60L * 60 * 1000;
     private static final long CONFIRMATION_TIMEOUT_MS = 30_000L;
