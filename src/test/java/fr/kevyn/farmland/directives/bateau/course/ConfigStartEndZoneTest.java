@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ConfigStartEndZoneTest {
 
@@ -31,5 +32,17 @@ class ConfigStartEndZoneTest {
             if (ConfigStartEndZone.messageDecompte(s) != null) annoncees.append(s).append(' ');
         }
         assertEquals("30 20 10 5 4 3 2 1 ", annoncees.toString());
+    }
+
+    @Test
+    void messageDeDepartApresLeDecompte() {
+        assertTrue(ConfigStartEndZone.MESSAGE_DEPART.contains("PARTEZ"));
+    }
+
+    @Test
+    void messageImmediatQuandOnRejoint() {
+        assertTrue(ConfigStartEndZone.messageArrivee(30).contains("Départ dans 30 secondes"));
+        assertTrue(ConfigStartEndZone.messageArrivee(1).contains("Départ dans 1 seconde."));
+        assertTrue(ConfigStartEndZone.messageArrivee(12).contains("/joinboat pour quitter"));
     }
 }

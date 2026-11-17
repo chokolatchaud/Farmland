@@ -158,6 +158,15 @@ public class ConfigStartEndZone {
         setBarriere(game, org.bukkit.Material.AIR);
     }
 
+    /** Annonce du vrai départ (avant : rien après « Départ dans 1 seconde »). */
+    static final String MESSAGE_DEPART = "§a§lPARTEZ ! §fPasse les 3 points de contrôle puis la ligne d'arrivée.";
+
+    /** Message envoyé à un joueur qui rejoint pendant le décompte (avant : rien jusqu'à la prochaine annonce). */
+    public static String messageArrivee(int secondesRestantes) {
+        return "§aTu as rejoint la course ! §eDépart dans " + secondesRestantes
+                + (secondesRestantes == 1 ? " seconde." : " secondes.") + " §7(/joinboat pour quitter)";
+    }
+
     /** Message du compte à rebours pour les secondes restantes,
      *  ou null s'il ne faut rien annoncer (annonces à 30, 20, 10, puis de 5 à 1). */
     static String messageDecompte(int secondes) {
@@ -201,6 +210,9 @@ public class ConfigStartEndZone {
                 }
 
                 if (game.timetolaunch <= 0) {
+                    for (Player player : playeringame.values()) {
+                        player.sendMessage(MESSAGE_DEPART);
+                    }
                     ouvrirBarriere(game); // retire la barriere en verre pour laisser passer les bateaux
                     game.setStatus(StatutBoatGame.race);
                     game.racestarttime = game.getTimegame(); // depart reel, exclut les secondes du decompte
