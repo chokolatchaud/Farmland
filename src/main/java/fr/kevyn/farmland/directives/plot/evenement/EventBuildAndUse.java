@@ -22,6 +22,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.TNTPrimeEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -192,6 +193,47 @@ public final class EventBuildAndUse implements Listener {
         if (!canBuild(player, region, block, false, bucket)) {
             event.setCancelled(true);
         }
+    }
+
+    /**
+     * Arc et arbalète : le tir est refusé dès le départ (EntityShootBowEvent), ce qui
+     * rend la flèche au joueur. Avant, seul ProjectileLaunchEvent était annulé et la
+     * flèche était déjà consommée.
+     */
+    @EventHandler
+    public void onShootBow(EntityShootBowEvent event) {
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
+
+        GameRegion region = GameRegionHashMap.getInstance().Playerwhatistregion(player);
+        if (!canBuild(player, region, null, false, null)) {
+            // Paper retire déjà la flèche de l'inventaire avant cet événement : l'annuler
+            // ne la rend pas (vu sur le serveur de test : 16 -> 13 après 3 tirs refusés).
+            ItemStack fleche = event.getConsumable();
+            event.setCancelled(true);
+            if (flecheVraimentRetiree(player, event.getBow(), fleche)) {
+                player.getInventory().addItem(fleche.asOne());
+            }
+            player.updateInventory();
+        }
+    }
+
+    /**
+     * Vrai si un tir à l'arc a réellement retiré une flèche de l'inventaire.
+     * shouldConsumeItem() répond "oui" même avec Infinité ou en créatif (vérifié sur le
+     * serveur de test : rendre la flèche dans ces cas en créait une à chaque tir).
+     * - créatif : rien n'est retiré ;
+     * - arc Infinité + flèche simple : rien n'est retiré (Infinité ne protège pas les
+     *   flèches à effet ni spectrales) ;
+     * - arbalète : la flèche est chargée à l'avance, on ne rend rien (risque de doublon).
+     */
+    static boolean flecheVraimentRetiree(Player player, ItemStack arme, ItemStack fleche) {
+        if (fleche == null || fleche.getType().isAir()) return false;
+        if (player.getGameMode() == org.bukkit.GameMode.CREATIVE) return false;
+        if (arme == null || arme.getType() != Material.BOW) return false;
+        boolean infinite = arme.containsEnchantment(org.bukkit.enchantments.Enchantment.INFINITY);
+        return !(infinite && fleche.getType() == Material.ARROW);
     }
 
     @EventHandler
