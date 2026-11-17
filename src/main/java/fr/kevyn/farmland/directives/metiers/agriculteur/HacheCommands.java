@@ -26,7 +26,7 @@ public class HacheCommands implements CommandExecutor {
         }
         player.give(HacheFarm.createHache());
 
-		player.sendMessage("§aTu as reçu ta Hache D'Agriculteur !");
+		player.sendMessage("§aTu as reçu ta Hache de l'Agriculteur !");
 		player.sendMessage("§7Tue les mobs passifs de tes spawners pour récupérer leurs ressources dans ton /bag.");
 		return true;
 	}

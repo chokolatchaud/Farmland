@@ -241,10 +241,12 @@ public final class Plotcommands implements CommandExecutor {
                 return true;
             }
 
+            // Centre du bloc, comme /plot visit (avant : coin du bloc). La hauteur reste
+            // celle du point de spawn choisi par le joueur (ex. dans une maison).
             Location location = new Location(plotWorld,
-                    playerServer.getPlotdata().getLocationspawnX(),
+                    playerServer.getPlotdata().getLocationspawnX() + 0.5,
                     playerServer.getPlotdata().getLocationspawnY(),
-                    playerServer.getPlotdata().getLocationspawnZ());
+                    playerServer.getPlotdata().getLocationspawnZ() + 0.5);
             player.teleport(location);
             player.sendMessage(MessageColor.GREEN.apply("Téléportation vers votre plot !"));
             return true;

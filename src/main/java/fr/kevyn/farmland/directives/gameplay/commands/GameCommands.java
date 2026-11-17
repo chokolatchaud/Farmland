@@ -212,7 +212,7 @@ public final class GameCommands implements CommandExecutor {
     // =========================
     private boolean handleMoneyCommand(Player player, PlayerServer playerServer, String[] args) {
         if (args.length == 0) {
-            player.sendMessage("§aVous avez §e" + playerServer.getMoney() + "§a d'argent.");
+            player.sendMessage("§aVous avez §e" + playerServer.getMoney() + " $FB§a.");
             return true;
         }
 
@@ -228,7 +228,7 @@ public final class GameCommands implements CommandExecutor {
             return true;
         }
 
-        player.sendMessage("§e" + targetPlayer.getName() + " a §e" + targetServer.getMoney() + "§a sur son compte.");
+        player.sendMessage("§e" + targetPlayer.getName() + " a §e" + targetServer.getMoney() + " $FB§a sur son compte.");
         return true;
     }
 

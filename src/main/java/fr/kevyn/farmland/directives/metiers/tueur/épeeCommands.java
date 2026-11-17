@@ -26,7 +26,7 @@ public class épeeCommands implements CommandExecutor {
 		}
 		player.give(epeeFarm.create());
 
-		player.sendMessage("§aTu as reçu ton épée du Tueur !");
+		player.sendMessage("§aTu as reçu ton Épée du Tueur !");
 		return true;
 	}
 

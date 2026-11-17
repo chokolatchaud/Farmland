@@ -9,7 +9,7 @@ public class PecheurFarm {
 	
 
     public static ItemStack create() {
-    	ItemStack item = Outils.create(Material.FISHING_ROD, "§aCanne à Péche");
+    	ItemStack item = Outils.create(Material.FISHING_ROD, "§aCanne à Pêche du Pêcheur");
         return item;
     }
 
