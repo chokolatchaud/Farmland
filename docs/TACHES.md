@@ -43,10 +43,11 @@ Statut : fait
 Notes de l'agent (2026-11-17) : corrigé par le développeur (PR #11 et commit `2ae1d2c`, sur master le 16/11), relu par l'agent le 17/11. Puis bonus ×7 par prise (`5caa790`) : vérifié en jeu, « +70 XP | +7 Jeton Pêcheur ».
 
 ### [Important] Droits des modérateurs sur l'argent et les plots
-Statut : attend validation
+Statut : fait
 `/psadmin money` (créer de l'argent), `/marketadmin set` (prix du marché) et `/plotadmin reset` (efface un plot) n'exigent que `farmland.moderation`. Décider si ces actions doivent être réservées à `farmland.admin`. Zone sensible (permissions, `plugin.yml`).
 
 Notes de l'agent (2026-11-17) : plan, rien modifié (zone sensible : permissions, `plugin.yml`). Proposition : `/psadmin money`, `/marketadmin set/reset` et `/plotadmin reset` réservés à `farmland.admin` (vérification dans chaque sous-commande, `plugin.yml` inchangé) ; les modérateurs gardent `info` et ban/kick/warn. À décider par le propriétaire.
+Décision du propriétaire (2026-11-17) : réserver aux admins. Fait dans `297c1f1` : /psadmin money, /marketadmin set et reset, /plotadmin reset vérifient farmland.admin (plugin.yml inchangé). Serveur de test : les 4 actions refusées à un modérateur, info OK. Incident : ce commit a été créé directement sur master (le dossier avait changé de branche pendant une fusion du propriétaire) ; contenu validé et testé, gardé tel quel.
 
 ### [Important] Œuf d'apparition utilisable dans le hub
 Statut : fait
@@ -55,10 +56,11 @@ Un œuf d'apparition fait apparaître un mob au hub (confirmé en jeu). Bloquer 
 Notes de l'agent (2026-11-17) : `agent/oeuf-hub`. Les œufs (sur un bloc, dans le vide ou sur un mob) suivent `canBuild`. Serveur de test : œuf au hub refusé, aucune vache apparue.
 
 ### [Important] Sauvegardes des joueurs plus sûres
-Statut : attend validation
+Statut : bloqué : reporté par le propriétaire
 `FileManager.savefile` réécrit le fichier directement, avec l'encodage par défaut du système : un arrêt brutal pendant l'écriture peut vider ou corrompre le fichier d'un joueur. La sauvegarde à la déconnexion tourne en parallèle du serveur. Écrire dans un fichier temporaire puis le renommer, en UTF-8. Zone sensible (sauvegardes Gson).
 
 Notes de l'agent (2026-11-17) : plan, rien modifié (zone sensible : sauvegardes Gson). Proposition : `FileManager.savefile` écrit en UTF-8 dans `<fichier>.tmp` puis le renomme (`Files.move` ATOMIC_MOVE, repli REPLACE_EXISTING) ; lecture en UTF-8 ; à la déconnexion, le JSON est préparé sur le fil principal et seule l'écriture part en arrière-plan. Test JUnit : fichier toujours complet, ancien contenu gardé si l'écriture échoue.
+Décision du propriétaire (2026-11-17) : pas maintenant. Le plan ci-dessus reste valable.
 
 ### [Important] Chat : erreur possible si les données ne sont pas chargées
 Statut : fait
@@ -115,10 +117,11 @@ Dans le hub ou sur le plot d'un autre, le tir est refusé mais la flèche dispar
 Notes de l'agent (2026-11-17) : `agent/fleche-refusee`. Paper retire la flèche avant l'événement : le plugin la rend seulement si elle a vraiment été retirée. Serveur de test : survie, Infinité, créatif, flèches spectrales, sans perte ni duplication. Non testé : arbalète (rien n'est rendu, par prudence).
 
 ### [Moyen] Agriculteur : jetons pour n'importe quel animal
-Statut : attend validation
+Statut : fait
 Tuer n'importe quelle vache avec la hache donne des jetons, pas seulement les mobs des spawners (le commentaire du code dit le contraire). Décider du comportement voulu.
 
 Notes de l'agent (2026-11-17) : plan, rien modifié (zone sensible : économie). Proposition : jetons seulement pour un animal tué dans un monde de plot (pas au hub), spawners compris. À décider par le propriétaire.
+Décision du propriétaire (2026-11-17) : laisser comme aujourd'hui (n'importe quel animal, n'importe où). Aucun changement.
 
 ### [Moyen] /msgf et /reportmsg sur soi-même
 Statut : fait
@@ -205,16 +208,18 @@ Erreur vue en prod : `Outils.CleOutils` levait une erreur pour tout objet enchan
 Notes de l'agent (2026-11-11) : corrigé dans `9f6cbb7` (branche `agent/outils-non-metier`) : le type est comparé d'abord, `isOutils` répond "non" sans erreur. Sur le serveur de test : 7 erreurs avec l'ancien jar, 0 avec le nouveau.
 
 ### Houe du Farmeur : choisir et planter des graines
-Statut : attend validation
+Statut : fait
 Le message de la houe annonce "clic droit dans le vide pour choisir une graine, clic droit sur de la terre labourée pour planter", mais `HarvestFarmEvent.onClicHoue` est vide : la fonction n'existe pas. La coder, ou retirer le message en attendant.
 
 Notes de l'agent (2026-11-17) : choix du propriétaire : coder la fonction (clic droit dans le vide = graine suivante, clic droit sur la terre labourée = planter en consommant la graine de l'inventaire) ou retirer le message de /houe en attendant.
+Décision du propriétaire (2026-11-17) : retirer le message. Fait dans `97d2746` (branche agent/houe-message). La fonction pourra être codée plus tard.
 
 ### Reproduction des animaux sur les plots
-Statut : attend validation
+Statut : fait
 Aujourd'hui `onSpawnMob` bloque toute apparition non naturelle sur les plots (reproduction, œufs, spawners), même si "spawn des mobs" est activé. Réfléchir à autoriser la reproduction. Touche aux protections des plots : plan avant de modifier.
 
 Notes de l'agent (2026-11-17) : plan, rien modifié (protections des plots). Proposition : dans `onSpawnMob`, autoriser `BREEDING` (et `EGG` pour les poules) quand « spawn des mobs » est activé sur le plot ; spawners et œufs d'apparition restent bloqués. Effet sur l'économie (plus d'animaux pour l'Agriculteur) à observer avec le marché.
+Décision du propriétaire (2026-11-17) : garder la reproduction bloquée sur les plots. Aucun changement.
 
 ### Discord : bloquer les @everyone venant des joueurs
 Statut : fait
