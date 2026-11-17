@@ -252,6 +252,10 @@ public final class PlotAdminCommands implements CommandExecutor {
     }
 
     private boolean resetCommand(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("farmland.admin")) { // effacement d'un plot : réservé aux admins (avant : farmland.moderation suffisait)
+            sender.sendMessage("§cCette commande est réservée aux administrateurs.");
+            return true;
+        }
         if (args.length < 2) {
             sender.sendMessage("§cUsage : /plotadmin reset <joueur>");
             return true;

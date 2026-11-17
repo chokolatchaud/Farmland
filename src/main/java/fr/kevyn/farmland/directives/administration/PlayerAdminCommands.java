@@ -74,6 +74,10 @@ public class PlayerAdminCommands implements CommandExecutor {
     }
 
     private boolean moneyCommand(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("farmland.admin")) { // argent : réservé aux admins (avant : farmland.moderation suffisait)
+            sender.sendMessage("§cCette commande est réservée aux administrateurs.");
+            return true;
+        }
         if (args.length < 4) {
             sender.sendMessage("§cUsage : /psadmin money <joueur> <set|add|remove> <montant>");
             return true;

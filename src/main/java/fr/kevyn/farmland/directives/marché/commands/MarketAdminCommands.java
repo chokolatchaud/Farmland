@@ -125,6 +125,10 @@ public class MarketAdminCommands implements CommandExecutor {
     }
 
     private boolean setCommand(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("farmland.admin")) { // prix du marché : réservé aux admins (avant : farmland.moderation suffisait)
+            sender.sendMessage("§cCette commande est réservée aux administrateurs.");
+            return true;
+        }
         if (args.length < 3) {
             sender.sendMessage("§cUsage : /marketadmin set <metier> <valeur>");
             return true;
@@ -165,6 +169,10 @@ public class MarketAdminCommands implements CommandExecutor {
     }
 
     private boolean resetCommand(CommandSender sender) {
+        if (!sender.hasPermission("farmland.admin")) { // prix du marché : réservé aux admins (avant : farmland.moderation suffisait)
+            sender.sendMessage("§cCette commande est réservée aux administrateurs.");
+            return true;
+        }
         Market market = MarketHolder.get();
         for (String metier : MarketCalc.METIERS) {
             MarketCalc.setSurplus(metier, market, 0.0);
