@@ -27,6 +27,7 @@ import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
@@ -87,6 +88,54 @@ public final class EventBuildAndUse implements Listener {
         if (!canBuild(player, region, block, false, null)) {
             event.setCancelled(true);
         }
+    }
+
+    /**
+     * Œufs d'apparition : mêmes droits que pour construire (refusés au hub et sur le plot d'un autre).
+     * Sur les plots, onSpawnMob annule déjà l'apparition ; au hub rien ne l'empêchait.
+     */
+    @EventHandler
+    public void onSpawnEgg(PlayerInteractEvent event) {
+        if (event.getHand() != EquipmentSlot.HAND
+                || (event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_AIR)) {
+            return;
+        }
+
+        ItemStack item = event.getItem();
+        if (item == null || !isSpawnEgg(item.getType())) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        Block block = event.getClickedBlock();
+        GameRegion region = block == null ? null : getRegion(block);
+
+        if (!canBuild(player, region, block, false, null)) {
+            event.setCancelled(true);
+        }
+    }
+
+    /** Œuf utilisé sur un mob (fait apparaître un bébé) : même règle. */
+    @EventHandler
+    public void onSpawnEggEntity(PlayerInteractEntityEvent event) {
+        if (event.getHand() != EquipmentSlot.HAND) {
+            return;
+        }
+
+        ItemStack item = event.getPlayer().getInventory().getItemInMainHand();
+        if (!isSpawnEgg(item.getType())) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        Block block = event.getRightClicked().getLocation().getBlock();
+        if (!canBuild(player, getRegion(block), block, false, null)) {
+            event.setCancelled(true);
+        }
+    }
+
+    private static boolean isSpawnEgg(Material type) {
+        return type.name().endsWith("_SPAWN_EGG");
     }
 
     @EventHandler
