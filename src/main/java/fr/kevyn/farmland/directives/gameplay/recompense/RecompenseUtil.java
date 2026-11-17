@@ -141,8 +141,7 @@ public class RecompenseUtil {
             joueur.sendMessage("§b⭐ Agriculteur niveau " + nouveauNiveau + " !");
         }
 
-        int niveauExcedent = ArmesUtil.niveauExcedentaire(nouveauNiveau);
-        int jeton = (niveauExcedent > 0 ? MultiplicateurUtil.tirerMultiplicateur(niveauExcedent) : 1);
+        int jeton = tirerJetonsArme(nouveauNiveau);
         ps.addJetonAgriculteur(jeton);
         joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Agriculteur");
 
@@ -178,11 +177,19 @@ public class RecompenseUtil {
             );
         }
 
-        int niveauExcedent = ArmesUtil.niveauExcedentaire(nouveauNiveau);
-        int jeton = (niveauExcedent > 0 ? MultiplicateurUtil.tirerMultiplicateur(niveauExcedent) : 1);
+        int jeton = tirerJetonsArme(nouveauNiveau);
         ps.addJetonTueur(jeton);
         joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Tueur");
         afficherProgression(joueur, ps, JobType.TUEUR, xp);
+    }
+
+    /**
+     * Jetons de l'Agriculteur et du Tueur : même tirage que les autres métiers,
+     * selon le niveau du métier dès le niveau 1 (avant : 1 jeton fixe jusqu'au niveau 13).
+     * Les dégâts de l'arme restent gérés à part par ArmesUtil.
+     */
+    public static int tirerJetonsArme(int niveau) {
+        return MultiplicateurUtil.tirerMultiplicateur(Math.max(1, niveau));
     }
 
 

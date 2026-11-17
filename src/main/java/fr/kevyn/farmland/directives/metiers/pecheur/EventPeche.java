@@ -16,30 +16,49 @@ import java.util.Random;
 
 public class EventPeche implements Listener {
 	Random random = new Random();
-	
+
+	/**
+	 * Une prise compte comme 7 actions : la pêche est ~7 fois plus lente que les
+	 * autres métiers (mesuré sur le serveur de test : ~230 prises/h contre ~1 700 minerais/h).
+	 */
+	static final int MULTIPLICATEUR_PECHE = 7;
+	static final int XP_PAR_ACTION = 10;
+
 	@EventHandler
 	public void onfish(PlayerFishEvent event) {
 		if (event.getState() == PlayerFishEvent.State.CAUGHT_FISH) {
 			Player player = event.getPlayer();
 			PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(player.getUniqueId());
+			if (ps == null) return;
 			ItemStack mainPrincipale = player.getInventory().getItemInMainHand();
 			if (!Outils.isOutilsAttendu(mainPrincipale, Material.FISHING_ROD)) {
 				player.sendMessage("Veuillez Pechez grace a la canne a péche /peche");
 				event.setCancelled(true);
 				return;
-				
+
 			}
-			int niveauCanne = Math.max(1, ps.getCanneLevel());
-			int jeton = MultiplicateurUtil.tirerMultiplicateur(niveauCanne);
-			RecompenseUtil.donnerRecompensePecheur(player, ps, 10);
+			int jeton = jetonsPeche(ps.getCanneLevel());
+			int xp = XP_PAR_ACTION * MULTIPLICATEUR_PECHE;
 			ps.addJetonPecheur(jeton);
+			RecompenseUtil.donnerRecompensePecheur(player, ps, xp);
+			player.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Pêcheur");
 
 			event.setCancelled(true);
 
         }
-		
-		
 
+
+
+	}
+
+	/** Jetons d'une prise : somme de MULTIPLICATEUR_PECHE tirages au niveau de la canne. */
+	static int jetonsPeche(int niveauCanne) {
+		int niveau = Math.max(1, niveauCanne);
+		int total = 0;
+		for (int i = 0; i < MULTIPLICATEUR_PECHE; i++) {
+			total += MultiplicateurUtil.tirerMultiplicateur(niveau);
+		}
+		return total;
 	}
 
 }
