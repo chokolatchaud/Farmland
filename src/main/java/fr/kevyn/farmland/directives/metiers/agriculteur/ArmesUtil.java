@@ -3,10 +3,10 @@ package fr.kevyn.farmland.directives.metiers.agriculteur;
 /**
  * Formule de degats PARTAGEE entre l'Epee (Tueur) et la Hache (Agriculteur).
  * Niveaux INFINIS. Les degats montent de +1 par niveau (5 au niveau 0)
- * jusqu'a un plafond de 20 (atteint au niveau 15) - au-dela, le niveau
- * continue de monter mais n'ajoute plus de degats : il alimente a la place
- * les chances de "duplique" (voir RecompenseUtil, meme systeme de
- * multiplicateur que Farmeur/Pecheur/Mineur).
+ * jusqu'au niveau NIVEAU_PLAFOND_DEGATS (13), soit 18 degats au maximum :
+ * DEGATS_MAX (20) n'est jamais atteint (verifie par ArmesUtilTest).
+ * Au-dela, le niveau continue de monter sans ajouter de degats.
+ * Pour viser 20 degats, il faudrait NIVEAU_PLAFOND_DEGATS = 15 (choix du developpeur).
  */
 public class ArmesUtil {
 
