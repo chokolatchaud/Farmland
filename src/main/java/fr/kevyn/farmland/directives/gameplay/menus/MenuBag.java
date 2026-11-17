@@ -8,6 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.List;
 import java.util.Locale;
 
 import fr.kevyn.farmland.directives.marché.calcul.MarketCalc;
@@ -39,6 +40,18 @@ public class MenuBag {
 		return inv;
 	}
 
+	/** Icône du jeton d'un métier (même disposition que createmenu). */
+	public static Material iconeDe(String metier) {
+		return switch (metier) {
+			case MarketCalc.MINEUR -> Material.IRON_NUGGET;
+			case MarketCalc.FARMEUR -> Material.WHEAT;
+			case MarketCalc.PECHEUR -> Material.PRISMARINE_SHARD;
+			case MarketCalc.AGRICULTEUR -> Material.LEATHER;
+			case MarketCalc.TUEUR -> Material.GUNPOWDER;
+			default -> Material.PAPER;
+		};
+	}
+
 	private static void placerJeton(Inventory inv, int slot, Material icone, String metier, String nom, int quantite) {
 		int prixNormal = MarketCalc.getPrixDeBase(metier);
 		double prixMarche = MarketCalc.getPrixActuel(metier, MarketHolder.get());
@@ -46,6 +59,7 @@ public class MenuBag {
 		ItemStack item = new ItemStack(icone);
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(nom + " §7x " + quantite + " §7(§f" + prixNormal + "$ §7→ §e" + PRIX_FORMAT.format(prixMarche) + "$§7)");
+		meta.setLore(List.of("§eClique pour choisir combien vendre"));
 		item.setItemMeta(meta);
 
 		inv.setItem(slot, item);

@@ -22,6 +22,7 @@ import fr.kevyn.farmland.directives.metiers.tueur.KillEventTueur;
 import fr.kevyn.farmland.directives.metiers.tueur.épeeCommands;
 import fr.kevyn.farmland.doonees.marche.Market;
 import fr.kevyn.farmland.doonees.marche.MarketHolder;
+import fr.kevyn.farmland.directives.marché.calcul.MarketCalc;
 import fr.kevyn.farmland.directives.marché.calcul.MarketCalcTask;
 import fr.kevyn.farmland.persistance.marché.MarketSave;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -84,7 +85,16 @@ public final class MetierModule {
     }
 
     private void registerMarketTask() {
-        MarketCalcTask.demarrer(plugin);
+        // marche par offre et demande : reglages dans config.yml, section "marche"
+        // (MarketCalcTask.demarrer initialise aussi le surplus d'une ancienne sauvegarde)
+        MarketCalc.configurer(
+                plugin.getConfig().getDouble("marche.volume-min", 2000.0),
+                plugin.getConfig().getDouble("marche.apprentissage-heures", 72.0),
+                plugin.getConfig().getDouble("marche.plafond-apprentissage", 3.0),
+                plugin.getConfig().getDouble("marche.echelle-heures", 24.0),
+                plugin.getConfig().getDouble("marche.demi-vie-heures", 12.0),
+                plugin.getConfig().getDouble("marche.penurie-max", 4.0));
+        MarketCalcTask.demarrer(plugin, plugin.getConfig().getLong("marche.intervalle-minutes", 5));
     }
 
     private void registerJobListeners() {

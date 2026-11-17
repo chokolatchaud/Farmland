@@ -9,7 +9,8 @@ import fr.kevyn.farmland.doonees.marche.Market;
 /**
  * Tests de MarketCalc.getPrixActuel(metier, market).
  *
- * Prix actuel = prix de base * coefficient / 100, minimum 0,01.
+ * Marche au format ancien (sans surplus) : prix = prix de base * coefficient / 100, minimum 0,01.
+ * Prix de base calibres le 17/11 : Mineur 15, Farmeur 8, Pecheur 16, Agriculteur 23, Tueur 17.
  * Les prix sont des double : on compare avec une petite tolerance (DELTA)
  * car 9,9 peut etre stocke comme 9,900000000001.
  */
@@ -32,19 +33,19 @@ class MarketCalcTest {
     @Test
     void tueur_coefficient150_prixPlus50Pourcent() {
         Market market = new Market(100, 100, 100, 100, 150);
-        assertEquals(30.0, MarketCalc.getPrixActuel(MarketCalc.TUEUR, market), DELTA);
+        assertEquals(25.5, MarketCalc.getPrixActuel(MarketCalc.TUEUR, market), DELTA);
     }
 
     @Test
     void pecheur_coefficient99_prixAvecVirgule() {
         Market market = new Market(100, 100, 100, 99, 100);
-        assertEquals(9.9, MarketCalc.getPrixActuel(MarketCalc.PECHEUR, market), DELTA);
+        assertEquals(15.84, MarketCalc.getPrixActuel(MarketCalc.PECHEUR, market), DELTA);
     }
 
     @Test
     void agriculteur_coefficient75() {
         Market market = new Market(100, 100, 75, 100, 100);
-        assertEquals(9.0, MarketCalc.getPrixActuel(MarketCalc.AGRICULTEUR, market), DELTA);
+        assertEquals(17.25, MarketCalc.getPrixActuel(MarketCalc.AGRICULTEUR, market), DELTA);
     }
 
     @Test

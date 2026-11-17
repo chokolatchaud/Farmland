@@ -20,9 +20,9 @@ import fr.kevyn.farmland.FarmlandMain;
  *   /marketadmin holo set <metier>       -> pose l'hologramme de ce métier à ta position
  *   /marketadmin holo remove <metier>    -> le supprime
  *   /marketadmin holo list               -> liste les hologrammes posés
- *   /marketadmin set <metier> <valeur>   -> force manuellement un coefficient (50-150)
- *   /marketadmin reset                   -> remet tous les coefficients à 100
- *   /marketadmin recalc                  -> force un recalcul immédiat (sans attendre 30 min)
+ *   /marketadmin set <metier> <valeur>   -> force manuellement un coefficient (11-189), via le surplus du marché
+ *   /marketadmin reset                   -> remet tous les surplus à 0 (coefficients à 100)
+ *   /marketadmin recalc                  -> force un cycle immédiat (demande + bulletin)
  *
  * Métiers valides : Mineur, Farmeur, Agriculteur, Pecheur, Tueur
  */
@@ -41,7 +41,7 @@ public class MarketAdminCommands implements CommandExecutor {
             sender.sendMessage("§6/marketadmin holo set <metier> §7- pose l'hologramme à ta position");
             sender.sendMessage("§6/marketadmin holo remove <metier> §7- le supprime");
             sender.sendMessage("§6/marketadmin holo list §7- liste les hologrammes posés");
-            sender.sendMessage("§6/marketadmin set <metier> <valeur> §7- force un coefficient (50-150)");
+            sender.sendMessage("§6/marketadmin set <metier> <valeur> §7- force un coefficient (11-189)");
             sender.sendMessage("§6/marketadmin reset §7- remet tout à 100");
             sender.sendMessage("§6/marketadmin recalc §7- force un recalcul immédiat");
             sender.sendMessage("§7Métiers : Mineur, Farmeur, Agriculteur, Pecheur, Tueur");
@@ -63,11 +63,13 @@ public class MarketAdminCommands implements CommandExecutor {
     private boolean infoCommand(CommandSender sender) {
         Market market = MarketHolder.get();
         sender.sendMessage("§6═══ Marché actuel ═══");
-        sender.sendMessage("§7Mineur : §f" + market.getMoneyforcoefMineur() + "%");
-        sender.sendMessage("§7Farmeur : §f" + market.getMoneyforcoefFarmeur() + "%");
-        sender.sendMessage("§7Agriculteur : §f" + market.getMoneyforcoefAgriculteur() + "%");
-        sender.sendMessage("§7Pecheur : §f" + market.getMoneyforcoefPecheur() + "%");
-        sender.sendMessage("§7Tueur : §f" + market.getMoneyforcoefTueur() + "%");
+        for (String metier : MarketCalc.METIERS) {
+            sender.sendMessage("§7" + metier + " : §f" + market.getCoefficient(metier) + "%"
+                    + " §7(prix " + String.format(java.util.Locale.FRANCE, "%.2f", MarketCalc.getPrixActuel(metier, market))
+                    + " / base " + MarketCalc.getPrixDeBase(metier) + " $FB, surplus "
+                    + Math.round(MarketCalc.getSurplus(metier, market)) + " jetons, volume normal "
+                    + Math.round(MarketCalc.getVolume(metier, market)) + " jetons/h)");
+        }
         return true;
     }
 
@@ -139,16 +141,20 @@ public class MarketAdminCommands implements CommandExecutor {
             sender.sendMessage("§cValeur invalide, entre un nombre entier !");
             return true;
         }
-        valeur = Math.max(50, Math.min(150, valeur));
+        valeur = Math.max(11, Math.min(189, valeur));
 
         Market market = MarketHolder.get();
-        switch (args[1].toLowerCase()) {
-            case "mineur": market.setMoneyforcoefMineur(valeur); break;
-            case "farmeur": market.setMoneyforcoefFarmeur(valeur); break;
-            case "agriculteur": market.setMoneyforcoefAgriculteur(valeur); break;
-            case "pecheur": market.setMoneyforcoefPecheur(valeur); break;
-            case "tueur": market.setMoneyforcoefTueur(valeur); break;
+        String metier = null;
+        for (String m : MarketCalc.METIERS) {
+            if (m.equalsIgnoreCase(args[1])) metier = m;
         }
+        if (metier == null) {
+            sender.sendMessage("§cMétier inconnu ! (Mineur, Farmeur, Agriculteur, Pecheur, Tueur)");
+            return true;
+        }
+        // le coefficient découle du surplus : on fixe le surplus qui donne cette valeur
+        MarketCalc.setSurplus(metier, market, MarketCalc.surplusPourCoefficient(valeur, MarketCalc.echelle(metier, market)));
+        valeur = market.getCoefficient(metier);
 
         MarketSave.saveMarket(plugin, market);
         MarketHolograms.updateAll(plugin);
@@ -160,11 +166,9 @@ public class MarketAdminCommands implements CommandExecutor {
 
     private boolean resetCommand(CommandSender sender) {
         Market market = MarketHolder.get();
-        market.setMoneyforcoefMineur(100);
-        market.setMoneyforcoefFarmeur(100);
-        market.setMoneyforcoefAgriculteur(100);
-        market.setMoneyforcoefPecheur(100);
-        market.setMoneyforcoefTueur(100);
+        for (String metier : MarketCalc.METIERS) {
+            MarketCalc.setSurplus(metier, market, 0.0);
+        }
 
         MarketCalc.resetVentes();
         MarketSave.saveMarket(plugin, market);

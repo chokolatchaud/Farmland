@@ -41,6 +41,24 @@ annonces:
     - "Personnalise ton look avec /buy cosmetic !"
     - "Construis, vends, grimpe dans le classement sur mine.farm-land.fr"
 
+# Marche par offre et demande (prix des jetons du /bag)
+# Le marche apprend le volume normal vendu de chaque metier et le prix reagit aux ecarts.
+marche:
+  # volume normal minimal (jetons/heure) : un metier peu joue reste reactif
+  volume-min: 2000
+  # l'apprentissage suit la moyenne des ventes sur cette duree (72 = 3 jours)
+  apprentissage-heures: 72
+  # une heure de ventes compte au plus N fois le volume normal (protection anti-dump)
+  plafond-apprentissage: 3
+  # echelle du prix = N heures de volume normal (plus grand = marche plus tolerant aux grosses ventes)
+  echelle-heures: 24
+  # un surplus de jetons fond de moitie toutes les N heures
+  demi-vie-heures: 12
+  # penurie maximale, en echelles (4 = prix jusqu'a ~ +90 %)
+  penurie-max: 4
+  # frequence de la demande et de la sauvegarde du marche (bulletin toutes les 30 min)
+  intervalle-minutes: 5
+
 # Logs de diagnostic en console (Historique, autosave, hologrammes...) : false par defaut
 debug: false
 
