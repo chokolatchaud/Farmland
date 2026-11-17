@@ -42,6 +42,18 @@ public class boatgame {
 		player.sendMessage("§7Vous avez quitté la partie");
 	}
 
+	/** Quitte la partie avec /joinboat : retire le bateau, renvoie au hub. */
+	public static void quitterPartie(Player player, ConfigStartEndZone game, JavaPlugin plugin) {
+		Entity bateau = player.getVehicle();
+		game.removeplayeringame(game, player); // avant leaveVehicle : BoatRaceListener ne la retraite pas
+		if (bateau != null) {
+			player.leaveVehicle();
+			bateau.remove();
+		}
+		teleportToHubOrDock(player, game, plugin);
+		player.sendMessage("§7Vous avez quitté la partie");
+	}
+
 	/** Renvoie au hub si configure, sinon repli sur le ponton de depart (jamais laisser le joueur bloque) */
 	private static void teleportToHubOrDock(Player player, ConfigStartEndZone game, JavaPlugin plugin) {
 		Location hub = null;
