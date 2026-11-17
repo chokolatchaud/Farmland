@@ -19,87 +19,127 @@ Statut : à faire
 Tâches issues de l'audit complet du 2026-11-15 (version `b2fff2b`), classées par gravité. Détail : rapport d'audit du 15/11.
 
 ### [Critique] WorldEdit gratuit à vie après un redémarrage
-Statut : à faire
+Statut : fait
 `/buy worldedit` (et les votes) ajoutent les permissions WorldEdit dans LuckPerms (permanent) ; elles ne sont retirées que par une tâche planifiée, perdue au redémarrage. Confirmé sur le serveur de test : temps expiré + redémarrage → `farmland.worldedit` et `worldedit.region.*` restent à true. Retirer les permissions à l'expiration de façon fiable (au démarrage et à la connexion si le temps est écoulé). Zone sensible (permissions, WorldEdit sécurisé) : plan avant de modifier.
 
+Notes de l'agent (2026-11-17) : corrigé par le développeur (PR #11 et commit `2ae1d2c`, sur master le 16/11), relu par l'agent le 17/11. Permissions LuckPerms retirées à chaque connexion si le temps est écoulé. À vérifier en jeu : temps expiré + redémarrage.
+
 ### [Critique] /bag : vente de jetons en cliquant dans son propre inventaire
-Statut : à faire
+Statut : fait
 Avec `/bag` ouvert, un clic dans l'inventaire du joueur (index 10, 12, 13, 14, 16) vend tout le stock d'un métier. Confirmé en jeu. Cause : `MenuListenerFarm` utilise `event.getSlot()` sans vérifier l'inventaire cliqué. Zone sensible (argent).
 
+Notes de l'agent (2026-11-17) : corrigé par le développeur (PR #11 et commit `2ae1d2c`, sur master le 16/11), relu par l'agent le 17/11. Vérifié en jeu avec le nouveau menu de vente : un clic dans l'inventaire du bas ne vend rien.
+
 ### [Critique] /buy cosmetic : achat en cliquant dans sa barre rapide
-Statut : à faire
+Statut : fait
 Avec `/buy cosmetic` ouvert, un clic dans la barre rapide (cases 0 à 6) achète le cosmétique correspondant. Confirmé en jeu (-300 $FB). Cause : `Plotinventory` (cosmétiques) utilise `event.getSlot()`. Vérifier aussi les autres menus qui utilisent `getSlot()`. Zone sensible (argent).
 
+Notes de l'agent (2026-11-17) : corrigé par le développeur (PR #11 et commit `2ae1d2c`, sur master le 16/11), relu par l'agent le 17/11.
+
 ### [Critique] Pêcheur : aucun jeton donné
-Statut : à faire
+Statut : fait
 `EventPeche` tire le nombre de jetons sans jamais l'ajouter (`addJetonPecheur` n'est appelé nulle part), et la prise est annulée : le joueur n'a ni poisson ni jeton, seulement l'XP. Même bug que le Mineur. Vu dans le code (le bot ne sait pas pêcher) : à vérifier avec un vrai joueur. Zone sensible (économie).
 
+Notes de l'agent (2026-11-17) : corrigé par le développeur (PR #11 et commit `2ae1d2c`, sur master le 16/11), relu par l'agent le 17/11. Puis bonus ×7 par prise (`5caa790`) : vérifié en jeu, « +70 XP | +7 Jeton Pêcheur ».
+
 ### [Important] Droits des modérateurs sur l'argent et les plots
-Statut : à faire
+Statut : attend validation
 `/psadmin money` (créer de l'argent), `/marketadmin set` (prix du marché) et `/plotadmin reset` (efface un plot) n'exigent que `farmland.moderation`. Décider si ces actions doivent être réservées à `farmland.admin`. Zone sensible (permissions, `plugin.yml`).
 
+Notes de l'agent (2026-11-17) : plan, rien modifié (zone sensible : permissions, `plugin.yml`). Proposition : `/psadmin money`, `/marketadmin set/reset` et `/plotadmin reset` réservés à `farmland.admin` (vérification dans chaque sous-commande, `plugin.yml` inchangé) ; les modérateurs gardent `info` et ban/kick/warn. À décider par le propriétaire.
+
 ### [Important] Œuf d'apparition utilisable dans le hub
-Statut : à faire
+Statut : fait
 Un œuf d'apparition fait apparaître un mob au hub (confirmé en jeu). Bloquer les œufs hors du plot du joueur.
 
+Notes de l'agent (2026-11-17) : `agent/oeuf-hub`. Les œufs (sur un bloc, dans le vide ou sur un mob) suivent `canBuild`. Serveur de test : œuf au hub refusé, aucune vache apparue.
+
 ### [Important] Sauvegardes des joueurs plus sûres
-Statut : à faire
+Statut : attend validation
 `FileManager.savefile` réécrit le fichier directement, avec l'encodage par défaut du système : un arrêt brutal pendant l'écriture peut vider ou corrompre le fichier d'un joueur. La sauvegarde à la déconnexion tourne en parallèle du serveur. Écrire dans un fichier temporaire puis le renommer, en UTF-8. Zone sensible (sauvegardes Gson).
 
+Notes de l'agent (2026-11-17) : plan, rien modifié (zone sensible : sauvegardes Gson). Proposition : `FileManager.savefile` écrit en UTF-8 dans `<fichier>.tmp` puis le renomme (`Files.move` ATOMIC_MOVE, repli REPLACE_EXISTING) ; lecture en UTF-8 ; à la déconnexion, le JSON est préparé sur le fil principal et seule l'écriture part en arrière-plan. Test JUnit : fichier toujours complet, ancien contenu gardé si l'écriture échoue.
+
 ### [Important] Chat : erreur possible si les données ne sont pas chargées
-Statut : à faire
+Statut : fait
 `ChatListener.onChat` plante (NullPointerException) si le joueur n'a pas de données, et appelle `kickPlayer` depuis le fil du chat (interdit par Paper).
 
+Notes de l'agent (2026-11-17) : `agent/chat-donnees`. Message bloqué et exclusion planifiée sur le fil principal. Serveur de test : chat normal OK, aucune erreur. Le cas « données absentes » n'a pas pu être provoqué en jeu.
+
 ### [Important] /buy worldedit : une ancienne confirmation annule la nouvelle
-Statut : à faire
+Statut : fait
 Le délai de 30 s d'une demande précédente affiche « Confirmation expirée » et efface la nouvelle demande (vu en jeu). Annuler l'ancien délai ou vérifier l'heure de la demande.
 
+Notes de l'agent (2026-11-17) : `agent/confirmation-worldedit`. Chaque délai ne retire que sa propre demande. Serveur de test : demande, achat à +5 s, nouvelle demande à +10 s, « Confirmation expirée » une seule fois, à +40 s.
+
 ### [Important] Outils de métier illimités
-Statut : à faire
+Statut : fait
 `/peche`, `/epee`, `/hache`, `/pioche`, `/houe` donnent un nouvel outil en netherite à chaque appel. Décider d'une limite (un seul, ou délai).
 
+Notes de l'agent (2026-11-17) : `agent/outils-limites`. Décision de l'agent : un seul outil de chaque type dans l'inventaire (Houe du Maître comprise). Serveur de test : 2e /pioche, /peche, /epee refusés. Un joueur peut encore ranger l'outil dans un coffre et en redemander un : à durcir si les outils prennent de la valeur.
+
 ### [Important] Bannissement vérifié trop tard
-Statut : à faire
+Statut : fait
 Le ban est vérifié dans `PlayerJoinEvent` (le banni entre une fraction de seconde) ; le message de kick affiche « &c » en clair. Vérifier à la connexion (login) et convertir les couleurs.
 
+Notes de l'agent (2026-11-17) : `agent/ban-connexion`. Refus dès `PlayerLoginEvent` (KICK_BANNED), message en couleur. À vérifier en jeu : impossible de bannir avec le bot.
+
 ### [Moyen] Messages de modération illisibles
-Statut : à faire
+Statut : fait
 `ModerationCommands` concatène `MessageColor.RED + "..."` : le joueur voit « REDSeul un joueur… » (confirmé). `/warnf` affiche « &cAvertissement ». Utiliser `MessageColor.X.apply(...)`.
 
+Notes de l'agent (2026-11-17) : `agent/messages-moderation`. Tous les messages passent par `MessageColor.X.apply`, `/warnf` sans « &c » ni titre noir. À vérifier en jeu avec un modérateur (le bot n'a pas la permission).
+
 ### [Moyen] /shop ne fait rien
-Statut : à faire
+Statut : fait
 La commande est déclarée dans `plugin.yml` mais aucune classe ne la gère. La coder ou la retirer.
 
+Notes de l'agent (2026-11-17) : `agent/commande-shop`. Décision de l'agent : `/shop` liste les achats (/buy worldedit avec le vrai prix, /buy cosmetic, /plot buy) et les ventes (/bag, /market), sans achat direct. Vérifié en jeu.
+
 ### [Moyen] Prix WorldEdit faux dans les messages
-Statut : à faire
+Statut : fait
 `/vote` et le message de blocage WorldEdit annoncent 15 $FB, alors que `/buy worldedit` coûte 200 $FB ; `/vote` annonce « +15 $FB par vote » alors que le vote donne 1 h de WorldEdit.
 
+Notes de l'agent (2026-11-17) : `agent/prix-worldedit`. Les messages lisent `BuyCommands.WE_COST` (200 $FB) ; /vote annonce 1 h de WorldEdit par vote. Vérifié en jeu.
+
 ### [Moyen] Course de bateaux : messages et sortie
-Statut : à faire
+Statut : fait
 Pas de message de départ après « Départ dans 1 seconde » ; quitter avec `/joinboat` laisse le joueur sur place ; premier message 10 s après la commande.
 
+Notes de l'agent (2026-11-17) : `agent/course-bateaux`. « PARTEZ ! » au départ, /joinboat pendant la partie = quitter (retour au hub), message immédiat en rejoignant, impossible de rejoindre une course partie. Vérifié en jeu. Non testé : course complète jusqu'à l'arrivée.
+
 ### [Moyen] Flèche perdue quand le tir est refusé
-Statut : à faire
+Statut : fait
 Dans le hub ou sur le plot d'un autre, le tir est refusé mais la flèche disparaît.
 
+Notes de l'agent (2026-11-17) : `agent/fleche-refusee`. Paper retire la flèche avant l'événement : le plugin la rend seulement si elle a vraiment été retirée. Serveur de test : survie, Infinité, créatif, flèches spectrales, sans perte ni duplication. Non testé : arbalète (rien n'est rendu, par prudence).
+
 ### [Moyen] Agriculteur : jetons pour n'importe quel animal
-Statut : à faire
+Statut : attend validation
 Tuer n'importe quelle vache avec la hache donne des jetons, pas seulement les mobs des spawners (le commentaire du code dit le contraire). Décider du comportement voulu.
 
+Notes de l'agent (2026-11-17) : plan, rien modifié (zone sensible : économie). Proposition : jetons seulement pour un animal tué dans un monde de plot (pas au hub), spawners compris. À décider par le propriétaire.
+
 ### [Moyen] /msgf et /reportmsg sur soi-même
-Statut : à faire
+Statut : fait
 Les deux commandes acceptent le joueur lui-même comme cible. Les refuser.
 
+Notes de l'agent (2026-11-17) : `agent/message-soi-meme`. Refus sur soi-même, espace corrigée dans « X n'est plus en ligne ». Vérifié en jeu.
+
 ### [Moyen] /tpa et plots privés
-Statut : à faire
+Statut : fait
 Après `/tpaccept`, le joueur arrive là où est la cible, même dans le plot privé d'un tiers, sans recherche de position sûre.
 
+Notes de l'agent (2026-11-17) : `agent/tpa-plots-prives`. Destination vérifiée (`TpaCommand.peutEntrer`) : plot privé accessible seulement au propriétaire, aux ajoutés et aux trusted. Non fait : recherche de position sûre (la destination est la position de l'autre joueur). À vérifier en jeu à 2 joueurs.
+
 ### [Moyen] Dégâts max des armes : 18 au lieu de 20
-Statut : à faire
+Statut : fait
 `ArmesUtil` : le commentaire annonce 20 dégâts au niveau 15, le code plafonne à 18 (niveau 13). Corriger le code ou le commentaire (à voir avec le développeur).
 
+Notes de l'agent (2026-11-17) : `agent/commentaire-degats`. Le commentaire décrit le vrai plafond (18) ; aucun changement de jeu. Pour 20 dégâts : `NIVEAU_PLAFOND_DEGATS = 15`, au choix du développeur.
+
 ### [Mineur] Textes et cohérence
-Statut : à faire
+Statut : fait
 - Fautes : « Chaque poisson pêché avec ira… » (mot manquant), « Canne à Péche », « Veuillez Pechez grace a la canne a péche », « Hache D'Agriculteur », « épée du Tueur », « Le joueur Xn'est plus en ligne ! », « Tes metiers », « Pecheur ».
 - Nom du message différent de l'objet : « Pioche du Mineur » / « Pioche ».
 - `/plot config` « Temps qui passe » répond « La météo se fige / se met à bouger ».
@@ -109,6 +149,8 @@ Statut : à faire
 - Farmeur : pas de message « +10 XP | +1 Jeton » à la récolte.
 - Emojis de `/market` à vérifier dans un vrai client.
 - Avant la prod : retirer les messages « DEBUG path=… » et `/testreward` (code du développeur).
+
+Notes de l'agent (2026-11-17) : `agent/textes`. Fautes corrigées, objet « Pioche du Mineur », « Le temps se fige », /money en $FB, /plot home au centre du bloc (vérifié : x et z en .5). Non faits : `plugin.yml` (usage /reportmsg, setspawn, /testreward : zone sensible), message Farmeur à chaque récolte (spam, la barre d'action affiche déjà l'XP), emojis de /market (vrai client).
 
 ### Menu plot visit plus stylisé
 Statut : fait
@@ -163,12 +205,16 @@ Erreur vue en prod : `Outils.CleOutils` levait une erreur pour tout objet enchan
 Notes de l'agent (2026-11-11) : corrigé dans `9f6cbb7` (branche `agent/outils-non-metier`) : le type est comparé d'abord, `isOutils` répond "non" sans erreur. Sur le serveur de test : 7 erreurs avec l'ancien jar, 0 avec le nouveau.
 
 ### Houe du Farmeur : choisir et planter des graines
-Statut : à faire
+Statut : attend validation
 Le message de la houe annonce "clic droit dans le vide pour choisir une graine, clic droit sur de la terre labourée pour planter", mais `HarvestFarmEvent.onClicHoue` est vide : la fonction n'existe pas. La coder, ou retirer le message en attendant.
 
+Notes de l'agent (2026-11-17) : choix du propriétaire : coder la fonction (clic droit dans le vide = graine suivante, clic droit sur la terre labourée = planter en consommant la graine de l'inventaire) ou retirer le message de /houe en attendant.
+
 ### Reproduction des animaux sur les plots
-Statut : à faire
+Statut : attend validation
 Aujourd'hui `onSpawnMob` bloque toute apparition non naturelle sur les plots (reproduction, œufs, spawners), même si "spawn des mobs" est activé. Réfléchir à autoriser la reproduction. Touche aux protections des plots : plan avant de modifier.
+
+Notes de l'agent (2026-11-17) : plan, rien modifié (protections des plots). Proposition : dans `onSpawnMob`, autoriser `BREEDING` (et `EGG` pour les poules) quand « spawn des mobs » est activé sur le plot ; spawners et œufs d'apparition restent bloqués. Effet sur l'économie (plus d'animaux pour l'Agriculteur) à observer avec le marché.
 
 ### Discord : bloquer les @everyone venant des joueurs
 Statut : fait
@@ -194,8 +240,10 @@ Demande du propriétaire : tester les bordures des plots et `/plot buy`, avec de
 Notes de l'agent (2026-11-15) : fait dans `9ee5106` (branche `agent/bordure-plot`). Avant : l'achat d'un upgrade, `/plotadmin border` et `/plotadmin upgrade` ne changeaient que la bordure enregistrée, la vraie bordure ne bougeait qu'à la reconnexion. Maintenant `PlotBordure.appliquer` la règle tout de suite (prix et paiement inchangés). Garde-fou : bordure < 1 refusée. Menu "Agrandir le plot | Palier N", fautes du message corrigées, logs `[PlotBuy]` / `[Bordure]` si `debug: true`. Serveur de test : 160 -> 165 -> 170 sans reconnexion.
 
 ### Salons Discord `status` / `statut` : un seul nom
-Statut : à faire
+Statut : fait
 Ancienne proposition 1. `messagediscord` accepte les deux noms pour le même webhook (`webhook-status`) et le code utilise surtout `statut`. Garder un seul nom (peu urgent).
+
+Notes de l'agent (2026-11-17) : `agent/salon-statut`. Tout le code utilise « statut » ; la clé `webhook-status` ne change pas. Serveur de test : une seule alerte au démarrage au lieu de deux.
 
 ### Tests JUnit sur les récompenses et multiplicateurs
 Statut : fait
