@@ -52,7 +52,7 @@ public class messagediscord {
 	        String webhookUrl = webhookUrlStatue;
 	        if (salon.equalsIgnoreCase("message")) {
 	            webhookUrl = webhookUrlMSG;
-	        } else if (salon.equalsIgnoreCase("statut") || salon.equalsIgnoreCase("status")) {
+	        } else if (salon.equalsIgnoreCase("statut")) { // un seul nom pour ce salon (avant : "status" et "statut")
 	            webhookUrl = webhookUrlStatue;
 	        } else if (salon.equalsIgnoreCase("moderation")) {
 	        	webhookUrl = webhookUrlModeration;

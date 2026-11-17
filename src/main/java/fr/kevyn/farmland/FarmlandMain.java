@@ -26,7 +26,7 @@ public final class FarmlandMain extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        messagediscord.sendmessage("Le plugin vient de s'allumer", "status");
+        messagediscord.sendmessage("Le plugin vient de s'allumer", "statut");
         ModuleLoader.load(this);
     }
 
@@ -53,7 +53,7 @@ public final class FarmlandMain extends JavaPlugin {
             PlayerSave.saveAllPlayerServerFile(this);
 
             getLogger().info("----- Plugin désactivé -----");
-            messagediscord.sendmessage("Le plugin vient de s'éteindre", "status");
+            messagediscord.sendmessage("Le plugin vient de s'éteindre", "statut");
         } catch (Exception e) {
             getLogger().log(Level.SEVERE, "Erreur lors de la sauvegarde finale !", e);
         }
