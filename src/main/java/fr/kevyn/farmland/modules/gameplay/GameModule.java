@@ -15,6 +15,7 @@ import fr.kevyn.farmland.directives.gameplay.scoreboard.CreativePlotScoreboard;
 import fr.kevyn.farmland.directives.infrastructure.VoteListener;
 import fr.kevyn.farmland.directives.marché.affichage.MarketHolograms;
 import fr.kevyn.farmland.directives.marché.commands.BuyCommands;
+import fr.kevyn.farmland.directives.marché.commands.ShopCommand;
 import fr.kevyn.farmland.directives.marché.commands.MarketAdminCommands;
 import fr.kevyn.farmland.directives.marché.commands.MarketCommand;
 import fr.kevyn.farmland.directives.plot.commands.PlotAdminCommands;
@@ -68,6 +69,7 @@ public final class GameModule {
         plugin.getCommand("reportmsg").setExecutor(gameCommands);
 
         plugin.getCommand("buy").setExecutor(new BuyCommands(plugin));
+        plugin.getCommand("shop").setExecutor(new ShopCommand());
 
         HubCommand hubCommand = new HubCommand(plugin);
         plugin.getCommand("hub").setExecutor(hubCommand);
