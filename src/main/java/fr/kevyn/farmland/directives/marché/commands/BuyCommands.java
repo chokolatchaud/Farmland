@@ -149,11 +149,12 @@ public final class BuyCommands implements CommandExecutor {
         player.sendMessage(MessageColor.GRAY.apply("Durée : ") + MessageColor.WHITE.apply("1 heure" + tempsActuel));
         player.sendMessage(MessageColor.YELLOW.apply("Tape /buy worldedit à nouveau pour confirmer."));
 
-        pendingConfirm.put(player.getUniqueId(), System.currentTimeMillis());
+        long demande = System.currentTimeMillis();
+        pendingConfirm.put(player.getUniqueId(), demande);
 
         Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            if (pendingConfirm.containsKey(player.getUniqueId())) {
-                pendingConfirm.remove(player.getUniqueId());
+            // N'expire que CETTE demande : une demande plus récente garde son propre délai.
+            if (pendingConfirm.remove(player.getUniqueId(), demande)) {
                 if (player.isOnline()) {
                     player.sendMessage(MessageColor.RED.apply("Confirmation expirée."));
                 }
