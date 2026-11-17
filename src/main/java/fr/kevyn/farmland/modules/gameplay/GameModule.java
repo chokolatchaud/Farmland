@@ -116,7 +116,7 @@ public final class GameModule {
 
         if (votifierPresent) {
             plugin.getServer().getPluginManager().registerEvents(new VoteListener(plugin), plugin);
-            plugin.getLogger().info("[Vote] Module NuVotifier activé — WorldEdit 30min par vote");
+            plugin.getLogger().info("[Vote] Module NuVotifier activé — WorldEdit 1h par vote");
         } else {
             plugin.getLogger().warning(
                     "[Vote] NuVotifier non trouvé — les votes ne donneront pas de récompense"

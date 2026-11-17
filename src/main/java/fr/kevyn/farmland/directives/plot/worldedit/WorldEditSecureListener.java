@@ -1,5 +1,6 @@
 package fr.kevyn.farmland.directives.plot.worldedit;
 
+import fr.kevyn.farmland.directives.marché.commands.BuyCommands;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -61,7 +62,7 @@ public final class WorldEditSecureListener implements Listener {
                 return; // laisse passer — nécessaire pour /define
             }
             if (!player.hasPermission("farmland.worldedit")) {
-                player.sendMessage(MessageColor.RED.apply("❌ Tu n'as pas le WorldEdit ! Tape /buy worldedit (15 $FB / 1h)"));
+                player.sendMessage(MessageColor.RED.apply("❌ Tu n'as pas le WorldEdit ! Tape /buy worldedit (" + BuyCommands.WE_COST + " $FB / 1h) ou vote (/vote)"));
                 event.setCancelled(true);
                 return;
             }

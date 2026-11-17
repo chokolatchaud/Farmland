@@ -1,5 +1,6 @@
 package fr.kevyn.farmland.directives.gameplay.commands;
 
+import fr.kevyn.farmland.directives.marché.commands.BuyCommands;
 import java.util.List;
 
 import org.bukkit.command.Command;
@@ -57,8 +58,8 @@ public class VoteCommand implements CommandExecutor {
 
         player.sendMessage(Component.text(""));
         player.sendMessage(Component.text("  Récompense : ", NamedTextColor.GRAY)
-                .append(Component.text("+15 $FB par vote", NamedTextColor.YELLOW)));
-        player.sendMessage(Component.text("  (Tape /buy worldedit pour 1h de WorldEdit — 15 $FB)", NamedTextColor.DARK_GRAY));
+                .append(Component.text("+1 h de WorldEdit gratuit par vote", NamedTextColor.YELLOW)));
+        player.sendMessage(Component.text("  (Ou /buy worldedit : 1 h de WorldEdit pour " + BuyCommands.WE_COST + " $FB)", NamedTextColor.DARK_GRAY));
         player.sendMessage(Component.text(""));
         return true;
     }
