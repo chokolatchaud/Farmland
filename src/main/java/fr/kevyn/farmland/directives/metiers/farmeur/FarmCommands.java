@@ -27,7 +27,6 @@ public class FarmCommands implements CommandExecutor {
 		player.give(HoueFarmeur.create());
 
 		player.sendMessage("§aTu as reçu ta Houe du Farmeur !");
-		player.sendMessage("§7Clic droit dans le vide pour choisir une graine, clic droit sur de la terre labourée pour planter.");
 		return true;
 	}
 
