@@ -78,7 +78,12 @@ public final class GameCommands implements CommandExecutor {
         Player reportedPlayer = Bukkit.getPlayer(reportedName);
 
         if (reportedPlayer == null) {
-            player.sendMessage(MessageColor.RED.apply("Le joueur " + reportedName + "n'est plus en ligne !"));
+            player.sendMessage(MessageColor.RED.apply("Le joueur " + reportedName + " n'est plus en ligne !"));
+            return true;
+        }
+
+        if (reportedPlayer.getUniqueId().equals(player.getUniqueId())) {
+            player.sendMessage(MessageColor.RED.apply("Tu ne peux pas te signaler toi-même !"));
             return true;
         }
 
@@ -152,6 +157,11 @@ public final class GameCommands implements CommandExecutor {
             targetPlayer = Bukkit.getPlayer(args[0]);
             if (targetPlayer == null || !targetPlayer.isOnline()) {
                 player.sendMessage(MessageColor.RED.apply("Joueur introuvable !"));
+                return true;
+            }
+
+            if (targetPlayer.getUniqueId().equals(player.getUniqueId())) {
+                player.sendMessage(MessageColor.RED.apply("Tu ne peux pas t'envoyer un message à toi-même !"));
                 return true;
             }
 
