@@ -24,7 +24,7 @@ public class épeeCommands implements CommandExecutor {
 			player.sendMessage("§cTu as déjà ton Épée du Tueur dans ton inventaire !");
 			return true;
 		}
-		player.give(epeeFarm.create());
+		fr.kevyn.farmland.directives.gameplay.objet.ObjetsJoueur.donner(player, epeeFarm.create());
 
 		player.sendMessage("§aTu as reçu ton Épée du Tueur !");
 		return true;

@@ -24,7 +24,7 @@ public class FarmCommands implements CommandExecutor {
 			player.sendMessage("§cTu as déjà ta Houe du Farmeur dans ton inventaire !");
 			return true;
 		}
-		player.give(HoueFarmeur.create());
+		fr.kevyn.farmland.directives.gameplay.objet.ObjetsJoueur.donner(player, HoueFarmeur.create());
 
 		player.sendMessage("§aTu as reçu ta Houe du Farmeur !");
 		return true;

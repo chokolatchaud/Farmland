@@ -24,7 +24,7 @@ public class FishingCommands implements CommandExecutor {
 			player.sendMessage("§cTu as déjà ta Canne à Pêche du Pêcheur dans ton inventaire !");
 			return true;
 		}
-		player.give(PecheurFarm.create());
+		fr.kevyn.farmland.directives.gameplay.objet.ObjetsJoueur.donner(player, PecheurFarm.create());
 
 		player.sendMessage("§aTu as reçu ta Canne à Pêche du Pêcheur !");
 		player.sendMessage("§7Chaque poisson pêché avec cette canne te rapporte des jetons dans ton /bag.");

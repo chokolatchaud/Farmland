@@ -21,7 +21,7 @@ public class MineCommands implements CommandExecutor {
 			player.sendMessage("§cTu as déjà ta Pioche du Mineur dans ton inventaire !");
 			return true;
 		}
-		player.give(PiocheFarm.create());
+		fr.kevyn.farmland.directives.gameplay.objet.ObjetsJoueur.donner(player, PiocheFarm.create());
 
 		player.sendMessage("§aTu as reçu ta Pioche du Mineur !");
 		player.sendMessage("§7Casse le minerai généré par ton Cobblegenerator pour le récupérer dans ton /bag.");

@@ -24,7 +24,7 @@ public class HacheCommands implements CommandExecutor {
         	player.sendMessage("§cTu as déjà ta Hache de l'Agriculteur dans ton inventaire !");
         	return true;
         }
-        player.give(HacheFarm.createHache());
+        fr.kevyn.farmland.directives.gameplay.objet.ObjetsJoueur.donner(player, HacheFarm.createHache());
 
 		player.sendMessage("§aTu as reçu ta Hache de l'Agriculteur !");
 		player.sendMessage("§7Tue les mobs passifs de tes spawners pour récupérer leurs ressources dans ton /bag.");

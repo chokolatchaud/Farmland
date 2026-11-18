@@ -174,7 +174,7 @@ public class LevelRewardManager {
 
         item.setItemMeta(meta);
 
-        player.give(item);
+        fr.kevyn.farmland.directives.gameplay.objet.ObjetsJoueur.donner(player, item);
 
         player.sendMessage(
                 "§6★ §eTu as reçu un objet spécial "
@@ -363,7 +363,7 @@ public class LevelRewardManager {
             amount = number.intValue();
         }
 
-        player.give(
+        fr.kevyn.farmland.directives.gameplay.objet.ObjetsJoueur.donner(player, 
                 new ItemStack(material, amount)
         );
 

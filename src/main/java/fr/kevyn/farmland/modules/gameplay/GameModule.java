@@ -46,6 +46,7 @@ public final class GameModule {
         try {
             registerCommands();
             registerMenus();
+            registerItemsAuSol();
             registerMarket();
             registerVote();
             registerChatAndScoreboard();
@@ -90,6 +91,12 @@ public final class GameModule {
         plugin.getCommand("tpahere").setExecutor(tpaCommand);
         plugin.getCommand("tpaccept").setExecutor(tpaCommand);
         plugin.getCommand("tpdeny").setExecutor(tpaCommand);
+    }
+
+    // Serveur créatif : aucun objet au sol (voir ItemsAuSolListener)
+    private void registerItemsAuSol() {
+        plugin.getServer().getPluginManager().registerEvents(
+                new fr.kevyn.farmland.directives.gameplay.evenement.ItemsAuSolListener(), plugin);
     }
 
     private void registerMenus() {
