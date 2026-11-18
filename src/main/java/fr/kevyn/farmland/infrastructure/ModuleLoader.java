@@ -38,6 +38,7 @@ public final class ModuleLoader {
             loadSecureWorldEdit(plugin);
 
             loadMetier(plugin);
+            loadGuide(plugin);
         }, LOAD_DELAY_TICKS);
     }
 
@@ -71,5 +72,9 @@ public final class ModuleLoader {
 
     private static void loadMetier(FarmlandMain plugin) {
         new MetierModule(plugin).register();
+    }
+
+    private static void loadGuide(FarmlandMain plugin) {
+        new fr.kevyn.farmland.modules.gameplay.GuideModule(plugin).register();
     }
 }

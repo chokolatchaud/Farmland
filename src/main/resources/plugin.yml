@@ -213,6 +213,18 @@ commands:
     permission: farmland.gamecommands
     permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
 
+  guide:
+    description: Guide du serveur (l'essentiel) ; /guide livre pour tout de A à Z
+    usage: /guide [livre]
+    permission: farmland.gamecommands
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
+  guideadmin:
+    description: Pose les hologrammes du guide
+    usage: /guideadmin holo <set|remove|list> [thème]
+    permission: farmland.admin
+    permission-message: "Vous n'avez pas la permission d'utiliser cette commande."
+
 permissions:
   farmland.worldedit:
     description: Donne accès complet à WorldEdit
