@@ -49,7 +49,7 @@ public class RecompenseUtil {
         attribute.setBaseValue(speed);
     }
 
-    public static void donnerRecompenseMineur(Player joueur, PlayerServer ps, int xp) {
+    public static void donnerRecompenseMineur(Player joueur, PlayerServer ps, int xp, int jetons) {
         int niveauAvant = ps.getCobblestonegeneratorlevel();
         int nouveauNiveau = ajouterXp(ps, "Mineur", niveauAvant, xp);
         if (nouveauNiveau > niveauAvant) {
@@ -68,10 +68,10 @@ public class RecompenseUtil {
                     nouveauNiveau
             );
         }
-        afficherProgression(joueur, ps, JobType.MINEUR, xp);
+        afficherProgression(joueur, ps, JobType.MINEUR, xp, jetons);
     }
 
-    public static void donnerRecompenseFarmeur(Player joueur, PlayerServer ps, int xp) {
+    public static void donnerRecompenseFarmeur(Player joueur, PlayerServer ps, int xp, int jetons) {
         int niveauAvant = ps.getHoueLevel();
         int nouveauNiveau = ajouterXp(ps, "Farmeur", niveauAvant, xp);
         if (nouveauNiveau > niveauAvant) {
@@ -94,13 +94,14 @@ public class RecompenseUtil {
                     ps
             );
         }
-        afficherProgression(joueur, ps, JobType.FARMEUR, xp);
+        afficherProgression(joueur, ps, JobType.FARMEUR, xp, jetons);
     }
 
     public static void donnerRecompensePecheur(
             Player joueur,
             PlayerServer ps,
-            int xp
+            int xp,
+            int jetons
     ) {
 
         int niveauAvant = ps.getCanneLevel();
@@ -124,7 +125,7 @@ public class RecompenseUtil {
                     nouveauNiveau
             );
         }
-        afficherProgression(joueur, ps, JobType.PECHEUR, xp);
+        afficherProgression(joueur, ps, JobType.PECHEUR, xp, jetons);
     }
 
     public static void donnerRecompenseAgriculteur(Player joueur, PlayerServer ps, int xp) {
@@ -143,7 +144,6 @@ public class RecompenseUtil {
 
         int jeton = tirerJetonsArme(nouveauNiveau);
         ps.addJetonAgriculteur(jeton);
-        joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Agriculteur");
 
         donnerRecompensesDeNiveaux(
                 joueur,
@@ -152,7 +152,7 @@ public class RecompenseUtil {
                 niveauAvant,
                 nouveauNiveau
         );
-        afficherProgression(joueur, ps, JobType.AGRICULTEUR, xp);
+        afficherProgression(joueur, ps, JobType.AGRICULTEUR, xp, jeton);
     }
 
     public static void donnerRecompenseTueur(Player joueur, PlayerServer ps, int xp) {
@@ -179,8 +179,7 @@ public class RecompenseUtil {
 
         int jeton = tirerJetonsArme(nouveauNiveau);
         ps.addJetonTueur(jeton);
-        joueur.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Tueur");
-        afficherProgression(joueur, ps, JobType.TUEUR, xp);
+        afficherProgression(joueur, ps, JobType.TUEUR, xp, jeton);
     }
 
     /**
@@ -194,11 +193,13 @@ public class RecompenseUtil {
 
 
     /**
-     * Affiche la progression du metier en ActionBar lors d'un gain d'XP.
+     * Affiche la progression du metier en ActionBar lors d'un gain d'XP,
+     * avec les jetons gagnes (plus de message dans le chat : le Farmeur en
+     * mode rapide le saturait). Seuls les passages de niveau restent dans le chat.
      * L'XP stockee correspond a la progression du niveau actuel,
      * y compris lorsqu'un gain vient de faire monter le joueur de niveau.
      */
-    private static void afficherProgression(Player joueur, PlayerServer ps, JobType metier, int xpGagne) {
+    private static void afficherProgression(Player joueur, PlayerServer ps, JobType metier, int xpGagne, int jetonsGagnes) {
         int niveau = getLevel(ps, metier);
         String cleXp = switch (metier) {
             case MINEUR -> "Mineur";
@@ -224,7 +225,14 @@ public class RecompenseUtil {
                         .append(Component.text(progression, NamedTextColor.GREEN))
                         .append(Component.text("  " + xpActuelle + "/" + xpRequise, NamedTextColor.GRAY))
                         .append(Component.text("  +" + xpGagne + " XP", NamedTextColor.YELLOW))
+                        .append(Component.text(texteJetons(jetonsGagnes), NamedTextColor.AQUA))
         );
+    }
+
+    /** Partie « jetons » de la barre d'action : "  +3 Jetons", "  +1 Jeton", rien si 0. */
+    static String texteJetons(int jetons) {
+        if (jetons <= 0) return "";
+        return "  +" + jetons + (jetons > 1 ? " Jetons" : " Jeton");
     }
 
     private static int ajouterXp(PlayerServer ps, String metier, int niveauActuel, int xpGagne) {

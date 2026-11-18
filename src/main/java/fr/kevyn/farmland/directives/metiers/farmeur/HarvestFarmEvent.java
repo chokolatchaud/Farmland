@@ -92,9 +92,20 @@ public class HarvestFarmEvent implements Listener {
 			event.setCancelled(true);
 
 
-			harvestCulture(blockCentre, player, ps, mainPrincipale);
-			harvestCulture(coteGauche, player, ps, mainPrincipale);
-			harvestCulture(coteDroit, player, ps, mainPrincipale);
+			// Les 3 cultures d'un coup : une seule annonce (XP et jetons cumulés)
+			int recoltes = 0;
+			int jetonsTotal = 0;
+			for (Block culture : new Block[] {blockCentre, coteGauche, coteDroit}) {
+				int jetons = harvestCulture(culture, player, ps, mainPrincipale);
+				if (jetons >= 0) {
+					recoltes++;
+					jetonsTotal += jetons;
+				}
+			}
+			if (recoltes > 0) {
+				ps.addJetonFarmeur(jetonsTotal);
+				RecompenseUtil.donnerRecompenseFarmeur(player, ps, 10 * recoltes, jetonsTotal);
+			}
 
 			return;
 		}
@@ -103,11 +114,12 @@ public class HarvestFarmEvent implements Listener {
 		int niveauHoue = Math.max(1, ps.getHoueLevel());
 		int jeton = MultiplicateurUtil.tirerMultiplicateur(niveauHoue);
 		ps.addJetonFarmeur(jeton);
-		RecompenseUtil.donnerRecompenseFarmeur(player, ps, 10);
+		RecompenseUtil.donnerRecompenseFarmeur(player, ps, 10, jeton);
 
 	}
 
-	private void harvestCulture(
+	/** Récolte et replante une culture mûre ; renvoie les jetons tirés, ou -1 si rien n'est récolté. */
+	private int harvestCulture(
 			Block block,
 			Player player,
 			PlayerServer ps,
@@ -115,11 +127,11 @@ public class HarvestFarmEvent implements Listener {
 	) {
 
 		if (!(block.getBlockData() instanceof Ageable ageable)) {
-			return;
+			return -1;
 		}
 
 		if (ageable.getAge() < ageable.getMaximumAge()) {
-			return;
+			return -1;
 		}
 
 
@@ -127,26 +139,13 @@ public class HarvestFarmEvent implements Listener {
 			player.getInventory().addItem(drop);
 		}
 
-
-		RecompenseUtil.donnerRecompenseFarmeur(
-				player,
-				ps,
-				10
-		);
-
-		int niveauHoue =
-				Math.max(1, ps.getHoueLevel());
-
-		int jetons =
-				MultiplicateurUtil.tirerMultiplicateur(
-						niveauHoue
-				);
-
-		ps.addJetonFarmeur(jetons);
+		// Jetons tirés avec le niveau actuel (comme la houe normale) ;
+		// XP et annonce faites une seule fois par onHarvest pour les 3 cultures.
+		int niveauHoue = Math.max(1, ps.getHoueLevel());
+		int jetons = MultiplicateurUtil.tirerMultiplicateur(niveauHoue);
 
 		ageable.setAge(0);
 		block.setBlockData(ageable);
+		return jetons;
 	}
 }
-	
-

@@ -40,8 +40,7 @@ public class EventPeche implements Listener {
 			int jeton = jetonsPeche(ps.getCanneLevel());
 			int xp = XP_PAR_ACTION * MULTIPLICATEUR_PECHE;
 			ps.addJetonPecheur(jeton);
-			RecompenseUtil.donnerRecompensePecheur(player, ps, xp);
-			player.sendMessage("§a+" + xp + " XP §7| §e+" + jeton + " Jeton Pêcheur");
+			RecompenseUtil.donnerRecompensePecheur(player, ps, xp, jeton); // XP et jetons annoncés dans la barre d'action
 
 			event.setCancelled(true);
 

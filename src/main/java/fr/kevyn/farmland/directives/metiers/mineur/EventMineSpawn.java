@@ -77,8 +77,7 @@ public class EventMineSpawn implements Listener {
 		int niveauPioche = Math.max(1, ps.getCobblestonegeneratorlevel());
 		int jeton = MultiplicateurUtil.tirerMultiplicateur(niveauPioche);
 		ps.addJetonMineur(jeton); // jetons du minerai (retirés par erreur de donnerRecompenseMineur le 27/09)
-		RecompenseUtil.donnerRecompenseMineur(player, ps, 10);
-		player.sendMessage("§a+10 XP §7| §e+" + jeton + " Jeton Mineur");
+		RecompenseUtil.donnerRecompenseMineur(player, ps, 10, jeton); // XP et jetons annoncés dans la barre d'action
 	}
     @EventHandler
     public void onMinePlace(BlockPlaceEvent event) {

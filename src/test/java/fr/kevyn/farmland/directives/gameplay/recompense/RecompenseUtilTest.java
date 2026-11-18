@@ -46,4 +46,11 @@ class RecompenseUtilTest {
         // moyenne theorique (niveau + 2) / 3 = 4
         assertEquals(4.0, (double) somme / n, 0.15);
     }
+
+    @Test
+    void texteDesJetonsDansLaBarreDAction() {
+        assertEquals("", RecompenseUtil.texteJetons(0));
+        assertEquals("  +1 Jeton", RecompenseUtil.texteJetons(1));
+        assertEquals("  +7 Jetons", RecompenseUtil.texteJetons(7));
+    }
 }
