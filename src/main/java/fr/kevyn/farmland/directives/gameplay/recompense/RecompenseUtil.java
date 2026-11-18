@@ -283,6 +283,11 @@ public class RecompenseUtil {
             int nouveauNiveau
     ) {
 
+        if (nouveauNiveau > ancienNiveau) {
+            // fanfare de montée de niveau
+            joueur.playSound(joueur.getLocation(), org.bukkit.Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.7f, 1.0f);
+        }
+
         for (int niveau = ancienNiveau + 1;
              niveau <= nouveauNiveau;
              niveau++) {

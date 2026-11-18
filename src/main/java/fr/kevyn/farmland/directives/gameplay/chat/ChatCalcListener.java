@@ -115,6 +115,7 @@ public class ChatCalcListener implements Listener {
             ps.setMoney(ps.getMoney() + recompense);
             JournalEvenements.enregistrer("gain_calcul", player.getName(), "+" + recompense + " $FB, solde " + ps.getMoney() + " $FB");
             Bukkit.broadcastMessage("§a✔ " + player.getName() + " a trouvé la bonne réponse ! §e+" + recompense + " $FB");
+            player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 0.8f, 1.2f);
         });
     }
 }
