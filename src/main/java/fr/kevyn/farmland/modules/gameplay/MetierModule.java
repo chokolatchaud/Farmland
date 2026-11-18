@@ -107,6 +107,7 @@ public final class MetierModule {
         plugin.getServer().getPluginManager().registerEvents(new KillEventTueur(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new BlockFertilizeListener(), plugin);
         plugin.getServer().getPluginManager().registerEvents(new MetiersMenuListener(), plugin);
+        plugin.getServer().getPluginManager().registerEvents(new fr.kevyn.farmland.directives.metiers.OutilsApparenceListener(), plugin);
     }
 
     private void registerJobCommands() {
