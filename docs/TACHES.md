@@ -265,4 +265,20 @@ Notes de l'agent (2026-11-15) : cause : depuis `ef13f09` (27/09), `RecompenseUti
 
 À recopier dans "À traiter" si je suis d'accord.
 
+### Guide des joueurs (fait, demande du propriétaire)
+Statut : fait
+Notes de l'agent (2026-11-18) : commit `422a723` (branche `agent/guide`). `/guide` (8 lignes), `/guide livre` (livre de 24 pages, règles du serveur à la fin), guide + livre à la première connexion, 6 hologrammes posés avec `/guideadmin holo set|remove|list` (farmland.admin). Serveur de test : tout OK, hologrammes recréés après redémarrage. À vérifier en jeu : rendu visuel, première connexion.
+
+### Vérification du 18/11 (tout ce qui a été codé les 17 et 18/11)
+Statut : fait
+Notes de l'agent (2026-11-18) : serveur de test, master `2d7473a` : marché, métiers, outils, objets au sol, protections, commandes, course, droits des modérateurs. Aucune régression, aucune erreur console.
+
+### Petits points relevés le 18/11
+Statut : à faire
+- Œuf d'apparition au hub : bloqué, mais sans message de refus (l'arc en a un).
+- Vente de quelques jetons : « le prix passe de 15,37 à 15,37 » (correct, peu parlant).
+- `/psadmin info` : « Dernière connexion : true » au lieu d'une date.
+- Niveaux d'XP perdus à la mort (aucune orbe ne tombe) : à garder ou non ?
+- Branche `feature/farmer-growth-beacon` du développeur : le Beacon cassé fait tomber un objet, désormais bloqué (perdu) ; duplication via WorldEdit à tester.
+
 (aucune pour l'instant)
