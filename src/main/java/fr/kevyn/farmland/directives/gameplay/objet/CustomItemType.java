@@ -28,7 +28,16 @@ public enum CustomItemType {
     WATERLAVASELECTION("custom:waterlavaselection", "Waterlavaselection", Material.WATER_BUCKET),
     MOB_SPAWN("custom:mob_spawn", "Mob Spawn", Material.SKELETON_SKULL),
     SUNGLASS("custom:sunglass", "Sunglass", Material.CARVED_PUMPKIN),
-    SUGGEST("", "Suggestion", Material.GREEN_WOOL);
+    SUGGEST("", "Suggestion", Material.GREEN_WOOL),
+    // Guide des joueurs (icônes provisoires du resource pack, textures_2d/guide*.png).
+    // Le matériau de base s'affiche si le joueur n'a pas le pack.
+    GUIDE("custom:guide", "Guide FarmLand", Material.BOOK),
+    GUIDE_PLOT("custom:guide_plot", "Ton plot", Material.GRASS_BLOCK),
+    GUIDE_METIERS("custom:guide_metiers", "Les métiers", Material.IRON_PICKAXE),
+    GUIDE_VENDRE("custom:guide_vendre", "Vendre", Material.GOLD_NUGGET),
+    GUIDE_DEPENSER("custom:guide_depenser", "Dépenser", Material.EMERALD),
+    GUIDE_ACTIVITES("custom:guide_activites", "Activités", Material.OAK_BOAT),
+    GUIDE_REGLES("custom:guide_regles", "Règles", Material.PAPER);
 
 
     private final String itemModel;

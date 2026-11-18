@@ -25,63 +25,36 @@ class GuideTextesTest {
     }
 
     @Test
-    void guideDuChatCourt() {
-        assertTrue(GuideTextes.GUIDE_CHAT.size() <= 10, "/guide doit rester court");
+    void messageDuChatCourt() {
+        assertTrue(GuideTextes.GUIDE_CHAT.size() <= 8, "le message de bienvenue doit rester court");
         for (String ligne : GuideTextes.GUIDE_CHAT) {
             assertTrue(sansCouleurs(ligne).length() <= 80, "ligne trop longue : " + ligne);
         }
+        assertFalse(String.join(" ", GuideTextes.GUIDE_CHAT).contains("livre"), "plus de livre : le guide est un menu");
     }
 
     @Test
-    void pagesDuLivreLisibles() {
-        // Un livre Minecraft : 100 pages max ; une page affiche ~14 lignes de ~19 caractères.
-        assertTrue(GuideTextes.PAGES_LIVRE.size() <= 100);
-        for (int i = 0; i < GuideTextes.PAGES_LIVRE.size(); i++) {
-            String page = sansCouleurs(GuideTextes.PAGES_LIVRE.get(i));
-            assertTrue(page.length() <= 300, "page " + (i + 1) + " trop longue : " + page.length() + " caractères");
-            assertFalse(page.isBlank(), "page " + (i + 1) + " vide");
+    void reglesLisiblesDansUneInfobulle() {
+        for (String ligne : GuideTextes.REGLES) {
+            assertTrue(sansCouleurs(ligne).length() <= 50, "ligne de règle trop longue : " + ligne);
         }
-    }
-
-    /**
-     * Estimation des lignes affichées : une page de livre montre 14 lignes
-     * d'environ 19 caractères, avec retour à la ligne entre les mots.
-     */
-    static int lignesAffichees(String page) {
-        int lignes = 0;
-        for (String ligne : sansCouleurs(page).split("\n", -1)) {
-            int largeur = 0;
-            int compte = 1;
-            for (String mot : ligne.split(" ")) {
-                int ajout = mot.length() + (largeur > 0 ? 1 : 0);
-                if (largeur > 0 && largeur + ajout > 19) {
-                    compte++;
-                    largeur = mot.length();
-                } else {
-                    largeur += ajout;
-                }
-            }
-            lignes += compte;
-        }
-        return lignes;
+        assertTrue(String.join(" ", GuideTextes.REGLES).contains("/reportmsg"));
     }
 
     @Test
-    void chaquePageTientDansLeLivre() {
-        StringBuilder tropLongues = new StringBuilder();
-        for (int i = 0; i < GuideTextes.PAGES_LIVRE.size(); i++) {
-            int lignes = lignesAffichees(GuideTextes.PAGES_LIVRE.get(i));
-            if (lignes > 14) tropLongues.append("page ").append(i + 1).append(" : ").append(lignes).append(" lignes ; ");
-        }
-        assertTrue(tropLongues.isEmpty(), "max 14 lignes par page -> " + tropLongues);
+    void prochainObjectifSelonLaSituation() {
+        assertTrue(GuideTextes.prochainObjectif(false, 0, 0, 50).contains("outil"), "nouveau joueur : prendre un outil");
+        assertTrue(GuideTextes.prochainObjectif(true, 120, 0, 50).contains("Vends tes 120 jetons"));
+        assertTrue(GuideTextes.prochainObjectif(false, 5, 0, 50).contains("Vends"), "des jetons à vendre passent avant l'outil");
+        assertTrue(GuideTextes.prochainObjectif(true, 0, 60, 50).contains("Agrandis ton plot pour 50 $FB"));
+        assertTrue(GuideTextes.prochainObjectif(true, 0, 10, 50).contains("Travaille"));
     }
 
     @Test
-    void chiffresDuGuideAlignesSurLeCode() {
-        String livre = String.join("\n", GuideTextes.PAGES_LIVRE);
-        assertTrue(livre.contains("200 $FB"), "prix de /buy worldedit (BuyCommands.WE_COST)");
-        assertTrue(livre.contains("75 $FB"), "gain du calcul du chat");
-        assertTrue(livre.contains("+25 $FB"), "bonus 150 blocs posés");
-        assertTrue(livre.contains("500 / 250 / 100 $FB"), "podium de la course");
+    void barreDeProgression() {
+        assertEquals(10, sansCouleurs(GuideMenu.barre(0, 100)).length());
+        assertEquals("§a" + "■".repeat(5) + "§8" + "■".repeat(5), GuideMenu.barre(50, 100));
+        assertEquals("§a" + "■".repeat(10) + "§8", GuideMenu.barre(500, 100));
+        assertEquals("§a§8" + "■".repeat(10), GuideMenu.barre(5, 0));
     }
 }

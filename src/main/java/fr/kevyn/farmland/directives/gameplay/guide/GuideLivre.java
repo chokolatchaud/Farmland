@@ -1,21 +1,20 @@
 package fr.kevyn.farmland.directives.gameplay.guide;
 
+import fr.kevyn.farmland.directives.gameplay.objet.CustomItemType;
 import fr.kevyn.farmland.directives.gameplay.objet.ObjetsJoueur;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Le livre « Guide FarmLand » (tout de A à Z), reconnu par un tag : le joueur
- * n'en garde qu'un seul dans son inventaire.
+ * L'objet « Guide FarmLand » (icône custom:guide du resource pack, livre
+ * vanilla sans le pack). Clic droit = ouvre le menu du guide.
+ * Reconnu par un tag : le joueur n'en garde qu'un seul dans son inventaire.
+ * (Avant : un livre écrit de 24 pages, remplacé par le menu.)
  */
 public final class GuideLivre {
 
@@ -25,22 +24,22 @@ public final class GuideLivre {
     }
 
     public static ItemStack creer() {
-        ItemStack livre = new ItemStack(Material.WRITTEN_BOOK);
-        BookMeta meta = (BookMeta) livre.getItemMeta();
-        meta.setTitle(GuideTextes.TITRE_LIVRE);
-        meta.setAuthor(GuideTextes.AUTEUR_LIVRE);
-        List<Component> pages = new ArrayList<>();
-        for (String page : GuideTextes.PAGES_LIVRE) {
-            pages.add(LegacyComponentSerializer.legacySection().deserialize(page));
-        }
-        meta.pages(pages);
+        ItemStack guide = CustomItemType.GUIDE.create();
+        ItemMeta meta = guide.getItemMeta();
+        meta.setDisplayName("§6§l✦ Guide FarmLand ✦");
+        meta.setLore(List.of(
+                "§7Tout le serveur, avec tes chiffres :",
+                "§7ton plot, tes métiers, tes jetons...",
+                "",
+                "§eClic droit pour l'ouvrir"
+        ));
         meta.getPersistentDataContainer().set(CLE, PersistentDataType.BYTE, (byte) 1);
-        livre.setItemMeta(meta);
-        return livre;
+        guide.setItemMeta(meta);
+        return guide;
     }
 
     public static boolean estLeGuide(ItemStack item) {
-        return item != null && item.getType() == Material.WRITTEN_BOOK && item.hasItemMeta()
+        return item != null && item.hasItemMeta()
                 && item.getItemMeta().getPersistentDataContainer().has(CLE, PersistentDataType.BYTE);
     }
 
@@ -51,7 +50,7 @@ public final class GuideLivre {
         return false;
     }
 
-    /** Donne le livre s'il ne l'a pas déjà ; vrai si un livre a été donné. */
+    /** Donne le guide s'il ne l'a pas déjà ; vrai si un guide a été donné. */
     public static boolean donnerSiAbsent(Player joueur) {
         if (possede(joueur)) return false;
         return ObjetsJoueur.donner(joueur, creer());

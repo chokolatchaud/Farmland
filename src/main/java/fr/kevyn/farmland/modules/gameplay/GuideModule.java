@@ -12,9 +12,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
- * Guide des joueurs : /guide (court), /guide livre (tout de A à Z),
+ * Guide des joueurs : menu personnalisé (/guide ou clic droit sur l'objet Guide),
  * hologrammes au hub (/guideadmin), et à la première connexion :
- * le livre + le guide dans le chat.
+ * l'objet Guide + un court message dans le chat.
  */
 public final class GuideModule implements Listener {
 
@@ -28,9 +28,11 @@ public final class GuideModule implements Listener {
     }
 
     public void register() {
-        plugin.getCommand("guide").setExecutor(new GuideCommand());
+        plugin.getCommand("guide").setExecutor(new GuideCommand(plugin));
         plugin.getCommand("guideadmin").setExecutor(new GuideAdminCommand(plugin));
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        plugin.getServer().getPluginManager().registerEvents(
+                new fr.kevyn.farmland.directives.gameplay.guide.GuideMenuListener(plugin), plugin);
 
         GuideHolograms.load(plugin);
         GuideHolograms.updateAll();
