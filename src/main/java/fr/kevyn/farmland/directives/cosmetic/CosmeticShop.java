@@ -63,6 +63,10 @@ public class CosmeticShop {
             new Cosmetic(4, "Lunettes Noires",   500,  "custom:lunettesnoires"),
             new Cosmetic(5, "Couronne de Fleurs",500,  "custom:fleurs"),
             new Cosmetic(6, "Pousse",            250,  "custom:sprout"),
+            // Ajoutés le 18/11 (modèles provisoires simples, prix à ajuster)
+            new Cosmetic(7, "Haut-de-forme",     800,  "custom:haut_de_forme"),
+            new Cosmetic(8, "Bonnet",            600,  "custom:bonnet"),
+            new Cosmetic(10, "Casque de mineur", 1000, "custom:casque_mineur"),
             new Cosmetic(9, "A venir",            1000000,  "custom:nul")
     ));
 
