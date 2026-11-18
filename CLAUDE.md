@@ -11,7 +11,7 @@ Plugin Paper du serveur Farmland (Java 25, monnaie $FB). Ce fichier passe avant 
 ## 2. Interdits
 - Vrai serveur : aucun déploiement, aucune commande, aucune modification de ses fichiers. Seul farmland-player peut s'y connecter, pour observer, et seulement si je le demande pour une mission précise.
 - Aucun commit sur `master` : toujours une branche `agent/<sujet>`.
-- Aucun push ni pull request. C'est moi qui pousse et qui fusionne dans `master`, après validation en prod.
+- Par défaut, aucun push ni pull request : c'est moi qui pousse et qui fusionne dans `master`, après validation en prod. Exception : si je l'autorise explicitement dans le chat, l'agent peut fusionner les branches `agent/<sujet>` concernées dans `master` (`git merge --no-edit`, jamais de force-push) et pousser `master`. L'autorisation vaut pour les branches nommées à ce moment-là, pas pour les suivantes.
 - Aucun secret (webhook, clé, jeton, mot de passe) dans le code, la config, un commit ou un message. Le dépôt est public.
 - Sans mon accord : jamais `git reset --hard`, force-push, suppression de branche ou suppression de fichier.
 - Une autorisation vaut pour la tâche où je la donne, pas pour la suivante.
