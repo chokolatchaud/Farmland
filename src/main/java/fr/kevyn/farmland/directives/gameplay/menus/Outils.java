@@ -15,6 +15,7 @@ public class Outils {
 		        meta.setDisplayName(name);
 		        meta.getPersistentDataContainer().set(CleOutils(item), PersistentDataType.BYTE, (byte) 1);
 		        item.setItemMeta(meta);
+		        appliquerModele(item);
 		        return item;
 		        
 		    }
@@ -100,6 +101,38 @@ public class Outils {
 				);
 
 				item.setItemMeta(meta);
+				appliquerModele(item); // outil de Maître : apparence dorée
+			}
+
+			/**
+			 * Apparence du resource pack pour un outil de métier : custom:outil_<métier>,
+			 * ou custom:outil_<métier>_maitre pour l'outil de Maître (récompense niveau 100).
+			 * Sans le pack, l'outil garde son apparence vanilla. Vrai si le modèle a changé.
+			 */
+			public static boolean appliquerModele(ItemStack item) {
+				if (!isOutils(item)) return false;
+				String modele = modeleAttendu(item.getType(), getRewardLevel(item) >= 100);
+				if (modele == null) return false;
+				ItemMeta meta = item.getItemMeta();
+				NamespacedKey cle = NamespacedKey.fromString(modele);
+				if (cle == null || cle.equals(meta.getItemModel())) return false;
+				meta.setItemModel(cle);
+				item.setItemMeta(meta);
+				return true;
+			}
+
+			/** Nom du modèle custom d'un outil de métier, ou null si ce matériau n'en est pas un. */
+			static String modeleAttendu(Material materiau, boolean maitre) {
+				String metier = switch (materiau) {
+					case NETHERITE_PICKAXE -> "mineur";
+					case NETHERITE_HOE -> "farmeur";
+					case FISHING_ROD -> "pecheur";
+					case NETHERITE_AXE -> "agriculteur";
+					case NETHERITE_SWORD -> "tueur";
+					default -> null;
+				};
+				if (metier == null) return null;
+				return "custom:outil_" + metier + (maitre ? "_maitre" : "");
 			}
 
 			public static int getRewardLevel(ItemStack item) {
