@@ -269,6 +269,7 @@ Notes de l'agent (2026-11-15) : cause : depuis `ef13f09` (27/09), `RecompenseUti
 Statut : fait
 Notes de l'agent (2026-11-18) : commit `422a723` (branche `agent/guide`). `/guide` (8 lignes), `/guide livre` (livre de 24 pages, règles du serveur à la fin), guide + livre à la première connexion, 6 hologrammes posés avec `/guideadmin holo set|remove|list` (farmland.admin). Serveur de test : tout OK, hologrammes recréés après redémarrage. À vérifier en jeu : rendu visuel, première connexion.
 
+Notes de l'agent (2026-11-18, suite) : livre jugé trop « règlement » par le propriétaire ; remplacé par un menu personnalisé (branche `agent/guide-menu`) : fiche du joueur avec « Prochain objectif », pages Plot, Métiers, Vendre, Dépenser, Activités, Règles avec boutons d'action ; objet Guide (icône `custom:guide`) donné à la première connexion. 7 icônes provisoires ajoutées au générateur de resource pack (`textures_2d/guide*.png`), pack régénéré : le nouveau `CustomItemsPack.zip` est à mettre en ligne par le propriétaire. Repéré : l'icône des mobs du menu `/plot config` pointe vers `custom:mob_spawn` alors que le pack contient `mob_spawn_toggle`.
 ### Vérification du 18/11 (tout ce qui a été codé les 17 et 18/11)
 Statut : fait
 Notes de l'agent (2026-11-18) : serveur de test, master `2d7473a` : marché, métiers, outils, objets au sol, protections, commandes, course, droits des modérateurs. Aucune régression, aucune erreur console.
