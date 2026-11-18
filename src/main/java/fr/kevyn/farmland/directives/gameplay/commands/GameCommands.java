@@ -212,7 +212,7 @@ public final class GameCommands implements CommandExecutor {
     // =========================
     private boolean handleMoneyCommand(Player player, PlayerServer playerServer, String[] args) {
         if (args.length == 0) {
-            player.sendMessage("§aVous avez §e" + playerServer.getMoney() + " $FB§a.");
+            player.sendMessage("§aVous avez " + fr.kevyn.farmland.directives.infrastructure.Glyphes.argent(playerServer.getMoney(), "§e") + " §7($FB)");
             return true;
         }
 
