@@ -62,7 +62,7 @@ public class MenuVenteJetons extends GameMenu {
 		int coef = market.getCoefficient(metier);
 		String couleur = coef >= 100 ? "§a" : coef >= 75 ? "§e" : "§c";
 
-		GameMenu.set_oneitem_menu(new ItemStack(MenuBag.iconeDe(metier)),
+		GameMenu.set_oneitem_menu(MenuBag.jetonItem(metier),
 			"§6Jeton " + MarketCalc.nomAffiche(metier) + " §7x " + stock,
 			List.of(
 				"§7Prix actuel : §f" + PRIX_FORMAT.format(prix) + " $FB " + couleur + "(" + coef + "%)",

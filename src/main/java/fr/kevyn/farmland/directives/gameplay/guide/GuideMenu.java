@@ -302,6 +302,6 @@ public final class GuideMenu extends GameMenu {
     }
 
     private static ItemStack iconeJeton(String metier) {
-        return new ItemStack(fr.kevyn.farmland.directives.gameplay.menus.MenuBag.iconeDe(metier));
+        return fr.kevyn.farmland.directives.gameplay.menus.MenuBag.jetonItem(metier);
     }
 }

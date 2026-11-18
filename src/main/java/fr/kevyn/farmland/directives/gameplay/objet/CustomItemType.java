@@ -37,7 +37,13 @@ public enum CustomItemType {
     GUIDE_VENDRE("custom:guide_vendre", "Vendre", Material.GOLD_NUGGET),
     GUIDE_DEPENSER("custom:guide_depenser", "Dépenser", Material.EMERALD),
     GUIDE_ACTIVITES("custom:guide_activites", "Activités", Material.OAK_BOAT),
-    GUIDE_REGLES("custom:guide_regles", "Règles", Material.PAPER);
+    GUIDE_REGLES("custom:guide_regles", "Règles", Material.PAPER),
+    // Jetons des métiers (pièce aux couleurs du métier) ; matériau de secours = ancienne icône.
+    JETON_MINEUR("custom:jeton_mineur", "Jeton Mineur", Material.IRON_NUGGET),
+    JETON_FARMEUR("custom:jeton_farmeur", "Jeton Farmeur", Material.WHEAT),
+    JETON_PECHEUR("custom:jeton_pecheur", "Jeton Pêcheur", Material.PRISMARINE_SHARD),
+    JETON_AGRICULTEUR("custom:jeton_agriculteur", "Jeton Agriculteur", Material.LEATHER),
+    JETON_TUEUR("custom:jeton_tueur", "Jeton Tueur", Material.GUNPOWDER);
 
 
     private final String itemModel;

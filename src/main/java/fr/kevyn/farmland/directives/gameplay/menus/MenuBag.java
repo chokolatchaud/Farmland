@@ -40,6 +40,18 @@ public class MenuBag {
 		return inv;
 	}
 
+	/** Jeton du métier avec son icône du resource pack (repli : l'ancienne icône vanilla). */
+	public static ItemStack jetonItem(String metier) {
+		return switch (metier) {
+			case MarketCalc.MINEUR -> fr.kevyn.farmland.directives.gameplay.objet.CustomItemType.JETON_MINEUR.create();
+			case MarketCalc.FARMEUR -> fr.kevyn.farmland.directives.gameplay.objet.CustomItemType.JETON_FARMEUR.create();
+			case MarketCalc.PECHEUR -> fr.kevyn.farmland.directives.gameplay.objet.CustomItemType.JETON_PECHEUR.create();
+			case MarketCalc.AGRICULTEUR -> fr.kevyn.farmland.directives.gameplay.objet.CustomItemType.JETON_AGRICULTEUR.create();
+			case MarketCalc.TUEUR -> fr.kevyn.farmland.directives.gameplay.objet.CustomItemType.JETON_TUEUR.create();
+			default -> new ItemStack(Material.PAPER);
+		};
+	}
+
 	/** Icône du jeton d'un métier (même disposition que createmenu). */
 	public static Material iconeDe(String metier) {
 		return switch (metier) {
@@ -56,7 +68,7 @@ public class MenuBag {
 		int prixNormal = MarketCalc.getPrixDeBase(metier);
 		double prixMarche = MarketCalc.getPrixActuel(metier, MarketHolder.get());
 
-		ItemStack item = new ItemStack(icone);
+		ItemStack item = jetonItem(metier);
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(nom + " §7x " + quantite + " §7(§f" + prixNormal + "$ §7→ §e" + PRIX_FORMAT.format(prixMarche) + "$§7)");
 		meta.setLore(List.of("§eClique pour choisir combien vendre"));
