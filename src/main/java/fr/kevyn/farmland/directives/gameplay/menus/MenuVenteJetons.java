@@ -53,9 +53,10 @@ public class MenuVenteJetons extends GameMenu {
 	}
 
 	public static Inventory createmenu(String metier, int stock) {
-		Inventory inv = Bukkit.createInventory(null, 27, "§6Vendre : Jeton " + MarketCalc.nomAffiche(metier));
+		Inventory inv = Bukkit.createInventory(null, 27,
+				fr.kevyn.farmland.directives.infrastructure.Glyphes.titreAvecFond(fr.kevyn.farmland.directives.infrastructure.Glyphes.FOND_VENTE, "Vendre : Jeton " + MarketCalc.nomAffiche(metier)));
 		new MenuVenteJetons(inv, metier);
-		GameMenu.fillmenu(Material.BLACK_STAINED_GLASS_PANE, inv);
+		// fond illustré : les cases vides restent transparentes (pas de vitres)
 
 		Market market = MarketHolder.get();
 		double prix = MarketCalc.getPrixActuel(metier, market);

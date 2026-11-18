@@ -62,7 +62,7 @@ public final class GuideMenu extends GameMenu {
 
     public static Inventory ouvrir(Player joueur, PlayerServer ps, Page page) {
         int taille = page == Page.ACCUEIL ? 45 : 36;
-        boolean fond = page == Page.ACCUEIL && fondIllustre();
+        boolean fond = page == Page.ACCUEIL;
         Inventory inv = Bukkit.createInventory(null, taille, fond ? TITRE_AVEC_FOND : titre(page));
         GuideMenu menu = new GuideMenu(inv, page);
         if (!fond) {
@@ -84,17 +84,12 @@ public final class GuideMenu extends GameMenu {
     }
 
     /**
-     * Fond illustré de l'accueil (resource pack, glyphes/glyphes.json) :
+     * Fond illustré de l'accueil, toujours affiché (resource pack, glyphes/glyphes.json) :
      * U+F001 recule de 8 px, U+E100 = image 176x110, U+F002 recule de 169 px
      * pour remettre le titre à sa place. Le glyphe prend la couleur du texte : §f.
      */
-    static final String TITRE_AVEC_FOND = "§f\uF001\uE100\uF002§8✦ Guide FarmLand";
-
-    /** Option config.yml « guide.fond-illustre » (désactivée par défaut). */
-    private static boolean fondIllustre() {
-        return org.bukkit.plugin.java.JavaPlugin.getProvidingPlugin(GuideMenu.class)
-                .getConfig().getBoolean("guide.fond-illustre", false);
-    }
+    static final String TITRE_AVEC_FOND = fr.kevyn.farmland.directives.infrastructure.Glyphes.titreAvecFond(
+            fr.kevyn.farmland.directives.infrastructure.Glyphes.FOND_GUIDE, "✦ Guide FarmLand");
 
     private static String titre(Page page) {
         return switch (page) {

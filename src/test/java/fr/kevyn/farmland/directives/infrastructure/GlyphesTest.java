@@ -27,4 +27,14 @@ class GlyphesTest {
         assertEquals(Glyphes.MINEUR, Glyphes.metier(JobType.MINEUR));
         assertEquals(Glyphes.TUEUR, Glyphes.metier(JobType.TUEUR));
     }
+
+    @Test
+    void fondsDesMenusAlignesSurLaPolice() {
+        // Doivent rester alignés sur glyphes.json : fond_guide E100, fond_sac E101, fond_vente E102, espaces F001/F002
+        assertEquals(0xE100, Glyphes.FOND_GUIDE.charAt(0));
+        assertEquals(0xE101, Glyphes.FOND_SAC.charAt(0));
+        assertEquals(0xE102, Glyphes.FOND_VENTE.charAt(0));
+        String titre = Glyphes.titreAvecFond(Glyphes.FOND_SAC, "Sac");
+        assertEquals("§f§8Sac", titre);
+    }
 }

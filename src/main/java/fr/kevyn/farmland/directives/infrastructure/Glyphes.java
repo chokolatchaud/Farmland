@@ -21,6 +21,22 @@ public final class Glyphes {
     public static final String AGRICULTEUR = "";
     public static final String TUEUR = "";
 
+    // ===== Fonds illustrés des menus (images 176 px de large, dans le titre) =====
+    public static final String FOND_GUIDE = ""; // 5 lignes (176x110)
+    public static final String FOND_SAC = "";   // 3 lignes (176x74), /bag
+    public static final String FOND_VENTE = ""; // 3 lignes (176x74), menu de vente d'un jeton
+    /** Reculs du texte : -8 px avant l'image, -169 px après pour replacer le titre. */
+    public static final String RECUL_8 = "";
+    public static final String RECUL_169 = "";
+
+    /**
+     * Titre de menu avec un fond illustré : le fond couvre la partie haute de la
+     * fenêtre (les cases vides du menu ne doivent pas être remplies de vitres).
+     */
+    public static String titreAvecFond(String fond, String titre) {
+        return "§f" + RECUL_8 + fond + RECUL_169 + "§8" + titre;
+    }
+
     /** « 1 234 » suivi de la pièce, en blanc pour garder les couleurs de l'icône. */
     public static String argent(long montant, String couleurTexte) {
         return couleurTexte + montant + " §f" + PIECE + couleurTexte;

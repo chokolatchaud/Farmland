@@ -27,9 +27,10 @@ public class MenuBag {
 	private static final DecimalFormat PRIX_FORMAT = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.FRANCE));
 
 	public static Inventory createmenu(PlayerServer ps) {
-		Inventory inv = Bukkit.createInventory(null, 27, "§6Sac");
+		Inventory inv = Bukkit.createInventory(null, 27,
+				fr.kevyn.farmland.directives.infrastructure.Glyphes.titreAvecFond(fr.kevyn.farmland.directives.infrastructure.Glyphes.FOND_SAC, "Sac"));
 		new GameMenu(inv, TypeMenu.BAG);
-		GameMenu.fillmenu(Material.BLACK_STAINED_GLASS_PANE, inv);
+		// fond illustré : les cases vides restent transparentes (pas de vitres)
 
 		placerJeton(inv, 10, Material.IRON_NUGGET, MarketCalc.MINEUR, "§7Jeton Mineur", ps.getJetonMineur());
 		placerJeton(inv, 12, Material.WHEAT, MarketCalc.FARMEUR, "§aJeton Farmeur", ps.getJetonFarmeur());
