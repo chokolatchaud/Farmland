@@ -26,7 +26,7 @@ public class MenuPlotVisit {
         if (page < 1) page = 1;
 
         String titre = MessageColor.DARK_GREEN.apply(name) + MessageColor.DARK_GRAY.apply(" | Page " + page);
-        Inventory inv = Bukkit.createInventory(null, 54, titre);
+        Inventory inv = Bukkit.createInventory(null, 54, fr.kevyn.farmland.directives.infrastructure.Glyphes.titreAvecFond(fr.kevyn.farmland.directives.infrastructure.Glyphes.FOND_GRILLE, titre));
         GameMenu plotvisit = new GameMenu(inv, TypeMenu.PLOTVISIT);
         plotvisit.setPage(page);
 
@@ -39,9 +39,7 @@ public class MenuPlotVisit {
                 .toList();
 
         // Dernière ligne (slots 45 à 53) : vitre décorative, flèches et numéro de page par-dessus
-        for (int i = 45; i < 54; i++) {
-            inv.setItem(i, creerVitreDecorative());
-        }
+        // fond illustré : plus de vitres décoratives sur la dernière ligne
         inv.setItem(49, creerNumeroPage(page));
 
         if (startIndex >= allPlayers.size()) return inv;

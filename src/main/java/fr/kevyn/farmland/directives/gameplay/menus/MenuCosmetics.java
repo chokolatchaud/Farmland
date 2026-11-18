@@ -13,7 +13,7 @@ import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
 public class MenuCosmetics {
 
     public static Inventory createmenu(PlayerServer playerserver) {
-        Inventory inv = Bukkit.createInventory(null, 18, "§6Boutique cosmétiques"); // 2 lignes : plus de 9 cosmétiques
+        Inventory inv = Bukkit.createInventory(null, 18, fr.kevyn.farmland.directives.infrastructure.Glyphes.titreAvecFond(fr.kevyn.farmland.directives.infrastructure.Glyphes.FOND_COSMETIQUES, "Boutique cosmétiques")); // 2 lignes : plus de 9 cosmétiques
         GameMenu menu = new GameMenu(inv, TypeMenu.COSMETICS);
 
         int slot = 0;

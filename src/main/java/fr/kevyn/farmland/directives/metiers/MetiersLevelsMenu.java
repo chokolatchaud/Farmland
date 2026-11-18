@@ -34,10 +34,10 @@ public class MetiersLevelsMenu {
         int maxPage = getMaxPage();
         int safePage = Math.max(0, Math.min(page, maxPage));
 
-        Inventory inv = Bukkit.createInventory(null, 54,
-                "\u00A78" + getDisplayName(job) + " - niveaux " + (safePage + 1) + "/" + (maxPage + 1));
+        Inventory inv = Bukkit.createInventory(null, 54, fr.kevyn.farmland.directives.infrastructure.Glyphes.titreAvecFond(fr.kevyn.farmland.directives.infrastructure.Glyphes.FOND_GRILLE,
+                getDisplayName(job) + " - niveaux " + (safePage + 1) + "/" + (maxPage + 1)));
         new GameMenu(inv, TypeMenu.METIERS_LEVELS);
-        GameMenu.fillmenu(Material.GRAY_STAINED_GLASS_PANE, inv);
+        // fond illustré : pas de vitres
 
         int playerLevel = RecompenseUtil.getLevel(ps, job);
         int startLevel = safePage * LEVELS_PER_PAGE + 1;

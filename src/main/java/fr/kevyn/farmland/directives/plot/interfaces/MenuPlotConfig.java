@@ -19,9 +19,9 @@ public class MenuPlotConfig {
 	private static final String TITRE = MessageColor.DARK_GREEN.apply("Configuration du plot");
 
 	public static Inventory createmenuplotconfig(String name, PlayerServer playerserver) {
-        Inventory inv = Bukkit.createInventory(null, 27, TITRE);
+        Inventory inv = Bukkit.createInventory(null, 27, fr.kevyn.farmland.directives.infrastructure.Glyphes.titreAvecFond(fr.kevyn.farmland.directives.infrastructure.Glyphes.FOND_CONFIG, TITRE));
         GameMenu plotconfig = new GameMenu(inv, TypeMenu.PLOTCONFIG);
-        GameMenu.fillmenu(Material.GREEN_STAINED_GLASS_PANE, inv);
+        // fond illustré : pas de vitres
         PlotData plot = playerserver.getPlotdata();
 
         // CLOCK - Jour/Nuit

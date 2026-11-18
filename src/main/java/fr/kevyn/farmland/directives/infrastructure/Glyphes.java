@@ -25,6 +25,12 @@ public final class Glyphes {
     public static final String FOND_GUIDE = ""; // 5 lignes (176x110)
     public static final String FOND_SAC = "";   // 3 lignes (176x74), /bag
     public static final String FOND_VENTE = ""; // 3 lignes (176x74), menu de vente d'un jeton
+    public static final String FOND_GUIDE_PAGE = "";  // 4 lignes, pages du guide
+    public static final String FOND_COSMETIQUES = ""; // 2 lignes, /buy cosmetic
+    public static final String FOND_METIERS = "";     // 4 lignes, /metiers
+    public static final String FOND_CONFIG = "";      // 3 lignes, /plot config
+    public static final String FOND_GRILLE = "";      // 6 lignes, niveaux d'un métier et /plot visit
+    public static final String FOND_AGRANDIR = "";    // 6 lignes, /plot buy
     /** Reculs du texte : -8 px avant l'image, -169 px après pour replacer le titre. */
     public static final String RECUL_8 = "";
     public static final String RECUL_169 = "";

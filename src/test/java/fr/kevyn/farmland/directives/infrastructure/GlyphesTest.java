@@ -37,4 +37,15 @@ class GlyphesTest {
         String titre = Glyphes.titreAvecFond(Glyphes.FOND_SAC, "Sac");
         assertEquals("§f§8Sac", titre);
     }
+
+    @Test
+    void fondsDeTousLesMenus() {
+        // Alignés sur glyphes.json : E103 à E108
+        assertEquals(0xE103, Glyphes.FOND_GUIDE_PAGE.charAt(0));
+        assertEquals(0xE104, Glyphes.FOND_COSMETIQUES.charAt(0));
+        assertEquals(0xE105, Glyphes.FOND_METIERS.charAt(0));
+        assertEquals(0xE106, Glyphes.FOND_CONFIG.charAt(0));
+        assertEquals(0xE107, Glyphes.FOND_GRILLE.charAt(0));
+        assertEquals(0xE108, Glyphes.FOND_AGRANDIR.charAt(0));
+    }
 }

@@ -62,12 +62,10 @@ public final class GuideMenu extends GameMenu {
 
     public static Inventory ouvrir(Player joueur, PlayerServer ps, Page page) {
         int taille = page == Page.ACCUEIL ? 45 : 36;
-        boolean fond = page == Page.ACCUEIL;
-        Inventory inv = Bukkit.createInventory(null, taille, fond ? TITRE_AVEC_FOND : titre(page));
+        // fond illustré sur toutes les pages : les cases vides restent transparentes (pas de vitres)
+        Inventory inv = Bukkit.createInventory(null, taille, page == Page.ACCUEIL ? TITRE_AVEC_FOND
+                : fr.kevyn.farmland.directives.infrastructure.Glyphes.titreAvecFond(fr.kevyn.farmland.directives.infrastructure.Glyphes.FOND_GUIDE_PAGE, titre(page)));
         GuideMenu menu = new GuideMenu(inv, page);
-        if (!fond) {
-            GameMenu.fillmenu(Material.BLACK_STAINED_GLASS_PANE, inv); // avec le fond, les cases vides restent transparentes
-        }
         switch (page) {
             case ACCUEIL -> menu.accueil(joueur, ps);
             case PLOT -> menu.plot(ps);

@@ -44,10 +44,10 @@ public class MenuPlotUpgrade {
         int currentPage = rankPlayer / UPGRADES_PER_PAGE;
 
         String titre = MessageColor.DARK_GREEN.apply(name) + MessageColor.DARK_GRAY.apply(" | Palier " + (currentPage + 1));
-        Inventory inv = Bukkit.createInventory(null, 54, titre);
+        Inventory inv = Bukkit.createInventory(null, 54, fr.kevyn.farmland.directives.infrastructure.Glyphes.titreAvecFond(fr.kevyn.farmland.directives.infrastructure.Glyphes.FOND_AGRANDIR, titre));
         GameMenu plotupgrade = new GameMenu(inv, TypeMenu.PLOTUPGRADE);
 
-        GameMenu.fillmenu(Material.BLACK_STAINED_GLASS_PANE, inv);
+        // fond illustré : pas de vitres
 
         int rankPlayerInPage = rankPlayer % UPGRADES_PER_PAGE;
 

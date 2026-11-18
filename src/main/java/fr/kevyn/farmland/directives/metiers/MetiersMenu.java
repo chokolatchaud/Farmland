@@ -21,9 +21,9 @@ public class MetiersMenu {
     }
 
     public static Inventory createMetiersMenu(PlayerServer ps) {
-        Inventory inv = Bukkit.createInventory(null, 36, "\u00A78Tes métiers");
+        Inventory inv = Bukkit.createInventory(null, 36, fr.kevyn.farmland.directives.infrastructure.Glyphes.titreAvecFond(fr.kevyn.farmland.directives.infrastructure.Glyphes.FOND_METIERS, "Tes métiers"));
         new GameMenu(inv, TypeMenu.METIERS);
-        GameMenu.fillmenu(Material.LIGHT_BLUE_STAINED_GLASS_PANE, inv);
+        // fond illustré : pas de vitres
 
         inv.setItem(
                 11,
