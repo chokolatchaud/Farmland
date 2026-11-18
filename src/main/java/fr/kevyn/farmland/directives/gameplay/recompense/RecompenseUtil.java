@@ -221,7 +221,8 @@ public class RecompenseUtil {
 
         String progression = "▰".repeat(segments) + "▱".repeat(6 - segments);
         joueur.sendActionBar(
-                Component.text(nom + " Niv. " + niveau + "  ", NamedTextColor.GOLD)
+                Component.text(fr.kevyn.farmland.directives.infrastructure.Glyphes.metier(metier) + " ", NamedTextColor.WHITE)
+                        .append(Component.text(nom + " Niv. " + niveau + "  ", NamedTextColor.GOLD))
                         .append(Component.text(progression, NamedTextColor.GREEN))
                         .append(Component.text("  " + xpActuelle + "/" + xpRequise, NamedTextColor.GRAY))
                         .append(Component.text("  +" + xpGagne + " XP", NamedTextColor.YELLOW))

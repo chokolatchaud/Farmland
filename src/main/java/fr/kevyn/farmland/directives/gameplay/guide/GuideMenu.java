@@ -123,7 +123,7 @@ public final class GuideMenu extends GameMenu {
         skull.setOwningPlayer(joueur);
         tete.setItemMeta(skull);
         bouton(4, tete, "§e§l" + joueur.getName(), List.of(
-                "§7Argent : §6" + ps.getMoney() + " $FB",
+                "§7Argent : " + fr.kevyn.farmland.directives.infrastructure.Glyphes.argent(ps.getMoney(), "§6"),
                 "§7WorldEdit : " + CreativePlotScoreboard.formatWE(ps),
                 "§7Plot : §f" + bordure(ps) + " blocs",
                 "§7Jetons à vendre : §b" + jetons + (jetons > 0 ? " §7(≈ §6" + Math.round(valeur) + " $FB§7)" : ""),
@@ -221,7 +221,7 @@ public final class GuideMenu extends GameMenu {
 
     private void depenser(PlayerServer ps) {
         bouton(4, CustomItemType.GUIDE_DEPENSER.create(), "§5§lDépenser", List.of(
-                "§7Ton argent : §6" + ps.getMoney() + " $FB",
+                "§7Ton argent : " + fr.kevyn.farmland.directives.infrastructure.Glyphes.argent(ps.getMoney(), "§6"),
                 "",
                 "§7Donner des $FB : §f/pay <joueur> <montant>",
                 "§7Bonus : §6+25 $FB §7tous les 150 blocs posés."
