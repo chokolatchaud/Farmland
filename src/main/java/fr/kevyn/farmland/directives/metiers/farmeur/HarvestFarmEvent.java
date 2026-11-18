@@ -135,9 +135,8 @@ public class HarvestFarmEvent implements Listener {
 		}
 
 
-		for (ItemStack drop : block.getDrops(houe, player)) {
-			player.getInventory().addItem(drop);
-		}
+		// Aucun objet : les métiers ne rapportent que des jetons (avant : blé et
+		// graines ajoutés à l'inventaire avec la Houe du Maître).
 
 		// Jetons tirés avec le niveau actuel (comme la houe normale) ;
 		// XP et annonce faites une seule fois par onHarvest pour les 3 cultures.
