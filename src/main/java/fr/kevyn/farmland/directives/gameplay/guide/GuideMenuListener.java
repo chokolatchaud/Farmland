@@ -62,6 +62,7 @@ public final class GuideMenuListener implements Listener {
         if (slot < 0 || slot >= event.getView().getTopInventory().getSize()) return; // clic dans son inventaire
         String action = menu.actionDuSlot(slot);
         if (action == null) return;
+        joueur.playSound(joueur.getLocation(), org.bukkit.Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
 
         if (action.equals("fermer")) {
             Bukkit.getScheduler().runTask(plugin, () -> joueur.closeInventory());
