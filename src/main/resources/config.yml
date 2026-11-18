@@ -59,6 +59,12 @@ marche:
   # frequence de la demande et de la sauvegarde du marche (bulletin toutes les 30 min)
   intervalle-minutes: 5
 
+# Guide des joueurs
+guide:
+  # Fond illustré du menu d'accueil (nécessite le resource pack avec glyphes/fond_guide.png).
+  # À activer après avoir vérifié l'alignement avec un vrai client.
+  fond-illustre: false
+
 # Logs de diagnostic en console (Historique, autosave, hologrammes...) : false par defaut
 debug: false
 

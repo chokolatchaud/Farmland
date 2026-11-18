@@ -62,9 +62,12 @@ public final class GuideMenu extends GameMenu {
 
     public static Inventory ouvrir(Player joueur, PlayerServer ps, Page page) {
         int taille = page == Page.ACCUEIL ? 45 : 36;
-        Inventory inv = Bukkit.createInventory(null, taille, titre(page));
+        boolean fond = page == Page.ACCUEIL && fondIllustre();
+        Inventory inv = Bukkit.createInventory(null, taille, fond ? TITRE_AVEC_FOND : titre(page));
         GuideMenu menu = new GuideMenu(inv, page);
-        GameMenu.fillmenu(Material.BLACK_STAINED_GLASS_PANE, inv);
+        if (!fond) {
+            GameMenu.fillmenu(Material.BLACK_STAINED_GLASS_PANE, inv); // avec le fond, les cases vides restent transparentes
+        }
         switch (page) {
             case ACCUEIL -> menu.accueil(joueur, ps);
             case PLOT -> menu.plot(ps);
@@ -78,6 +81,19 @@ public final class GuideMenu extends GameMenu {
             menu.bouton(RETOUR, CustomItemType.ARROW_PREV.create(), "§7← Retour au guide", List.of(), "page:ACCUEIL");
         }
         return inv;
+    }
+
+    /**
+     * Fond illustré de l'accueil (resource pack, glyphes/glyphes.json) :
+     * U+F001 recule de 8 px, U+E100 = image 176x110, U+F002 recule de 169 px
+     * pour remettre le titre à sa place. Le glyphe prend la couleur du texte : §f.
+     */
+    static final String TITRE_AVEC_FOND = "§f\uF001\uE100\uF002§8✦ Guide FarmLand";
+
+    /** Option config.yml « guide.fond-illustre » (désactivée par défaut). */
+    private static boolean fondIllustre() {
+        return org.bukkit.plugin.java.JavaPlugin.getProvidingPlugin(GuideMenu.class)
+                .getConfig().getBoolean("guide.fond-illustre", false);
     }
 
     private static String titre(Page page) {

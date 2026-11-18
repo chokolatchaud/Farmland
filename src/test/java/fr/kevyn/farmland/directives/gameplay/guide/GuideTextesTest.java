@@ -57,4 +57,14 @@ class GuideTextesTest {
         assertEquals("§a" + "■".repeat(10) + "§8", GuideMenu.barre(500, 100));
         assertEquals("§a§8" + "■".repeat(10), GuideMenu.barre(5, 0));
     }
+
+    @Test
+    void titreAvecFondAlignéSurLaPolice() {
+        // U+F001 (-8 px), U+E100 (image 176 px), U+F002 (-169 px) : voir glyphes/glyphes.json
+        String t = GuideMenu.TITRE_AVEC_FOND;
+        assertEquals(0xF001, t.charAt(2));
+        assertEquals(0xE100, t.charAt(3));
+        assertEquals(0xF002, t.charAt(4));
+        assertTrue(t.endsWith("Guide FarmLand"));
+    }
 }
