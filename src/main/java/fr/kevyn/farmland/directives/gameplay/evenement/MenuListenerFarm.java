@@ -97,7 +97,14 @@ public class MenuListenerFarm implements Listener {
 				+ PRIX_FORMAT.format(vente.prixAvant()) + " -> " + PRIX_FORMAT.format(vente.prixApres()) + ", solde " + ps.getMoney() + " $FB");
 
 		player.sendMessage("§aVendu : " + quantite + "x Jeton " + nom + " pour " + gain + " $FB §7(prix moyen " + PRIX_FORMAT.format(vente.prixMoyen()) + " $FB/unité)");
-		player.sendMessage("§7Le prix du jeton " + nom + " passe de §f" + PRIX_FORMAT.format(vente.prixAvant()) + " $FB §7à §e" + PRIX_FORMAT.format(vente.prixApres()) + " $FB");
+		String prixAvant = PRIX_FORMAT.format(vente.prixAvant());
+		String prixApres = PRIX_FORMAT.format(vente.prixApres());
+		if (prixAvant.equals(prixApres)) {
+			// petite vente : le prix bouge de moins d'un centime
+			player.sendMessage("§7Petite vente : le prix du jeton " + nom + " reste à §f" + prixApres + " $FB");
+		} else {
+			player.sendMessage("§7Le prix du jeton " + nom + " passe de §f" + prixAvant + " $FB §7à §e" + prixApres + " $FB");
+		}
 		player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.8f, 1.4f); // son de vente
 		fr.kevyn.farmland.directives.gameplay.missions.Missions.avancer(player, fr.kevyn.farmland.directives.gameplay.missions.TypeMission.MARCHE, quantite);
 
