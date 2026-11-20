@@ -40,6 +40,8 @@ public final class ItemsAuSolListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         event.setKeepInventory(true);
         event.getDrops().clear();
+        // les niveaux d'XP sont gardés comme l'inventaire (aucune orbe ne tombe)
+        event.setKeepLevel(true);
         event.setDroppedExp(0);
     }
 
