@@ -16,6 +16,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import fr.kevyn.farmland.directives.gameplay.objet.CustomItemType;
+import fr.kevyn.farmland.directives.plot.jaime.JaimeCalc;
+import fr.kevyn.farmland.directives.plot.jaime.PlotJaime;
 import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
 import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
 
@@ -36,6 +38,9 @@ public class MenuPlotVisit {
 
         List<PlayerServer> allPlayers = PlayerserverHashMap.getInstance().getHashMapPlayer().values().stream()
                 .filter(ps -> ps.getPlotdata() != null)
+                // les plots les plus aimés d'abord
+                .sorted(java.util.Comparator.comparingInt((PlayerServer ps) -> PlotJaime.total(ps.getUuid())).reversed()
+                        .thenComparing(ps -> ps.getName() == null ? "" : ps.getName().toLowerCase()))
                 .toList();
 
         // Dernière ligne (slots 45 à 53) : vitre décorative, flèches et numéro de page par-dessus
@@ -96,6 +101,7 @@ public class MenuPlotVisit {
         lore.add("");
         lore.add(MessageColor.GRAY.apply("Propriétaire : ") + MessageColor.WHITE.apply(ps.getName()));
         lore.add(MessageColor.GRAY.apply("Bordure : ") + MessageColor.AQUA.apply(ps.getPlotdata().getWorldborder() + " blocs"));
+        lore.add(MessageColor.LIGHT_PURPLE.apply(JaimeCalc.texte(PlotJaime.total(ps.getUuid()))));
 
         boolean proprietaire = viewer != null && viewer.getUniqueId().equals(ps.getUuid());
 

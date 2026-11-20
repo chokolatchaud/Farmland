@@ -40,6 +40,7 @@ public final class ModuleLoader {
             loadMetier(plugin);
             loadGuide(plugin);
             loadMissions(plugin);
+            loadPlotJaime(plugin);
         }, LOAD_DELAY_TICKS);
     }
 
@@ -77,6 +78,10 @@ public final class ModuleLoader {
 
     private static void loadGuide(FarmlandMain plugin) {
         new fr.kevyn.farmland.modules.gameplay.GuideModule(plugin).register();
+    }
+
+    private static void loadPlotJaime(FarmlandMain plugin) {
+        new fr.kevyn.farmland.modules.monde.PlotJaimeModule(plugin).register();
     }
 
     private static void loadMissions(FarmlandMain plugin) {

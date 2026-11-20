@@ -49,6 +49,7 @@ public final class FarmlandMain extends JavaPlugin {
     public void onDisable() {
         JournalEvenements.arreter(); // écrit les derniers événements (ne lève jamais d'erreur)
         fr.kevyn.farmland.directives.gameplay.missions.Missions.sauvegarderMaintenant(); // ne lève jamais d'erreur
+        fr.kevyn.farmland.directives.plot.jaime.PlotJaime.sauvegarderMaintenant(); // ne lève jamais d'erreur
         try {
             PlayerSave.verifyallPlayerSaves(this);
             PlayerSave.saveAllPlayerServerFile(this);

@@ -73,7 +73,11 @@ public final class LeaderboardHolograms {
         }
     }
 
+    /** Clé de l'hologramme « Top plots » (classement des j'aime), à côté des métiers. */
+    public static final String PLOTS = "plots";
+
     public static boolean isValidMetier(String metier) {
+        if (PLOTS.equalsIgnoreCase(metier)) return true;
         for (String m : METIERS) {
             if (m.equalsIgnoreCase(metier)) return true;
         }
@@ -157,7 +161,26 @@ public final class LeaderboardHolograms {
         entites.remove(metier);
     }
 
+    private static String buildTextPlots() {
+        StringBuilder sb = new StringBuilder("§d❤ Top plots ❤\n");
+        List<UUID> top = fr.kevyn.farmland.directives.plot.jaime.PlotJaime.classement();
+        if (top.isEmpty()) {
+            return sb.append("§7Aime un plot avec §f/plot like").toString();
+        }
+        String[] medailles = { "§6#1", "§7#2", "§c#3", "§f#4", "§f#5" };
+        int limit = Math.min(TOP_N, top.size());
+        for (int i = 0; i < limit; i++) {
+            PlayerServer ps = PlayerserverHashMap.getInstance().getHashMapPlayer().get(top.get(i));
+            String nom = ps != null && ps.getName() != null ? ps.getName() : "?";
+            sb.append(medailles[i]).append(" §f").append(nom).append(" §7- §d")
+                    .append(fr.kevyn.farmland.directives.plot.jaime.PlotJaime.total(top.get(i))).append(" ❤");
+            if (i < limit - 1) sb.append("\n");
+        }
+        return sb.toString();
+    }
+
     private static String buildText(String metier) {
+        if (PLOTS.equalsIgnoreCase(metier)) return buildTextPlots();
         List<Entree> entrees = new ArrayList<>();
         String metierCapitalise = capitalize(metier);
 

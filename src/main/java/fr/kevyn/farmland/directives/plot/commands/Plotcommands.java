@@ -60,7 +60,7 @@ public final class Plotcommands implements CommandExecutor {
 
         if (args.length == 0) {
             player.sendMessage(MessageColor.YELLOW.apply(
-                    "Sous-commande manquante. Utilise: /plot <add/unadd/trust/untrust/buy/visit/home/config/setspawnpoint>"));
+                    "Sous-commande manquante. Utilise: /plot <add/unadd/trust/untrust/buy/visit/home/config/setspawnpoint/like>"));
             return true;
         }
 
@@ -249,6 +249,12 @@ public final class Plotcommands implements CommandExecutor {
                     playerServer.getPlotdata().getLocationspawnZ() + 0.5);
             player.teleport(location);
             player.sendMessage(MessageColor.GREEN.apply("Téléportation vers votre plot !"));
+            return true;
+        }
+
+        // /plot like : aimer le plot où l'on se trouve (un par plot et par jour)
+        if (args[0].equalsIgnoreCase("like") || args[0].equalsIgnoreCase("jaime")) {
+            fr.kevyn.farmland.directives.plot.jaime.PlotJaime.aimer(player);
             return true;
         }
 
@@ -484,6 +490,7 @@ public final class Plotcommands implements CommandExecutor {
             String targetName = target.getName() != null ? target.getName() : "ce joueur";
             player.sendMessage(MessageColor.GREEN.apply(
                     "Téléportation vers le plot de " + targetName));
+            fr.kevyn.farmland.directives.plot.jaime.PlotJaime.proposerJaime(player, target);
         }, 10L);
     }
 

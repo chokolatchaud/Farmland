@@ -170,7 +170,11 @@ public final class GuideMenu extends GameMenu {
                 "",
                 "§f/plot visit <joueur> §7visiter un plot",
                 "§f/plot add <joueur> §7il peut construire",
-                "§f/plot trust <joueur> §7confiance totale (WorldEdit)"
+                "§f/plot trust <joueur> §7confiance totale (WorldEdit)",
+                "§f/plot like §7aimer le plot où tu es",
+                "",
+                "§7Ton plot : §d" + fr.kevyn.farmland.directives.plot.jaime.JaimeCalc.texte(
+                        fr.kevyn.farmland.directives.plot.jaime.PlotJaime.total(ps.getUuid()))
         ), null);
         bouton(20, new ItemStack(Material.GRASS_BLOCK), "§a§lAller à mon plot", List.of("§7/plot home"), "cmd:plot home");
         bouton(22, CustomItemType.CLOCK_DAYNIGHT.create(), "§e§lConfigurer", List.of("§7Jour, météo, mobs, eau/lave, privé", "§7/plot config"), "cmd:plot config");

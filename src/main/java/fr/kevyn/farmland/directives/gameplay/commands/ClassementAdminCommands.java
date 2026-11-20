@@ -23,7 +23,7 @@ public class ClassementAdminCommands implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1 || !args[0].equalsIgnoreCase("holo")) {
             sender.sendMessage("§6/classementadmin holo <set|remove|list> [metier]");
-            sender.sendMessage("§7Métiers : Mineur, Farmeur, Agriculteur, Pecheur, Tueur");
+            sender.sendMessage("§7Classements : Mineur, Farmeur, Agriculteur, Pecheur, Tueur, Plots (j'aime)");
             return true;
         }
 
@@ -39,7 +39,7 @@ public class ClassementAdminCommands implements CommandExecutor {
                     return true;
                 }
                 if (args.length < 3 || !LeaderboardHolograms.isValidMetier(args[2])) {
-                    sender.sendMessage("§cMétier inconnu ! (Mineur, Farmeur, Agriculteur, Pecheur, Tueur)");
+                    sender.sendMessage("§cClassement inconnu ! (Mineur, Farmeur, Agriculteur, Pecheur, Tueur, Plots)");
                     return true;
                 }
                 LeaderboardHolograms.setHologram(plugin, args[2], player.getLocation());

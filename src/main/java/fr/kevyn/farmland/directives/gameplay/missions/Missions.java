@@ -8,6 +8,7 @@ import fr.kevyn.farmland.directives.infrastructure.Glyphes;
 import fr.kevyn.farmland.directives.infrastructure.journal.JournalEvenements;
 import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
 import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
+import fr.kevyn.farmland.persistance.EcritureAtomique;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
@@ -18,10 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -43,7 +41,6 @@ public final class Missions {
     private static final String FICHIER = "missions.json";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Type TYPE_FICHIER = new TypeToken<Map<String, ProgressionJour>>() { }.getType();
-    private static final Object VERROU_FICHIER = new Object();
 
     private static JavaPlugin plugin;
     private static MissionsCalc.Recompenses recompenses = MissionsCalc.Recompenses.PAR_DEFAUT;
@@ -189,22 +186,12 @@ public final class Missions {
         ecrire(contenu());
     }
 
-    /** Écrit dans un fichier temporaire puis le renomme : un arrêt brutal ne laisse jamais un fichier à moitié écrit. */
+    /** Écrit via un fichier temporaire renommé : un arrêt brutal ne laisse jamais un fichier à moitié écrit. */
     private static void ecrire(String json) {
-        synchronized (VERROU_FICHIER) {
-            try {
-                Path cible = new File(plugin.getDataFolder(), FICHIER).toPath();
-                Path temporaire = new File(plugin.getDataFolder(), FICHIER + ".tmp").toPath();
-                Files.createDirectories(cible.getParent());
-                Files.writeString(temporaire, json, StandardCharsets.UTF_8);
-                try {
-                    Files.move(temporaire, cible, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
-                } catch (AtomicMoveNotSupportedException e) {
-                    Files.move(temporaire, cible, StandardCopyOption.REPLACE_EXISTING);
-                }
-            } catch (IOException e) {
-                plugin.getLogger().log(Level.WARNING, "[Missions] Écriture de " + FICHIER + " impossible", e);
-            }
+        try {
+            EcritureAtomique.ecrire(new File(plugin.getDataFolder(), FICHIER).toPath(), json);
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.WARNING, "[Missions] Écriture de " + FICHIER + " impossible", e);
         }
     }
 }
