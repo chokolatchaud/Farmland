@@ -166,13 +166,8 @@ public class PlayerAdminCommands implements CommandExecutor {
     }
 
     private boolean saveallCommand(CommandSender sender) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                PlayerSave.saveAllPlayerServerFile(plugin);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        // JSON préparés sur le fil principal, fichiers écrits en arrière-plan
+        PlayerSave.saveAllPlayerServerFileAsync(plugin);
         sender.sendMessage("§aSauvegarde de tous les joueurs lancée !");
         plugin.getLogger().info("[PsAdmin] " + sender.getName() + " a lance une sauvegarde globale");
         return true;

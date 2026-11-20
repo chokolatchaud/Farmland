@@ -185,11 +185,13 @@ public final class GameModule {
     }
 
     private void registerAutosave() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(
+        // Fil principal : les JSON sont préparés pendant que personne ne modifie les joueurs,
+        // puis écrits en arrière-plan (PlayerSave.saveAllPlayerServerFileAsync).
+        Bukkit.getScheduler().runTaskTimer(
                 plugin,
                 () -> {
                     try {
-                        PlayerSave.saveAllPlayerServerFile(plugin);
+                        PlayerSave.saveAllPlayerServerFileAsync(plugin);
                         DebugLog.debug(plugin, "[Autosave] Joueurs sauvegardés");
                     } catch (Exception e) {
                         plugin.getLogger().log(Level.SEVERE,

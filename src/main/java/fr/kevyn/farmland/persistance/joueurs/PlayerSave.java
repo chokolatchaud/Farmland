@@ -16,6 +16,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+import org.bukkit.Bukkit;
 
 public class PlayerSave {
 
@@ -39,21 +45,72 @@ public class PlayerSave {
         return GSON.fromJson(json, PlayerServer.class);
     }
 
+    // ===== Sauvegarde =====
+    // Le JSON d'un joueur est toujours préparé sur le fil principal (là où le jeu modifie
+    // ses données) ; seule l'écriture du fichier peut partir en arrière-plan.
+    // Chaque instantané porte un numéro croissant : une écriture en retard ne peut
+    // jamais remplacer un fichier plus récent (déconnexion + sauvegarde automatique).
+
+    private static final AtomicLong NUMEROS = new AtomicLong();
+    private static final Map<String, Long> DERNIER_ECRIT = new HashMap<>();
+
+    /** Contenu d'un fichier joueur à un instant donné, prêt à être écrit. */
+    public record Instantane(File fichier, long numero, String json) { }
+
+    /** À appeler sur le fil principal. */
+    public static Instantane preparer(File dossierPlayers, PlayerServer playerServer) {
+        if (dossierPlayers == null || playerServer == null || playerServer.getUuid() == null) return null;
+        return new Instantane(new File(dossierPlayers, playerServer.getUuid() + ".json"),
+                NUMEROS.incrementAndGet(), GSON.toJson(playerServer));
+    }
+
+    /** Écrit l'instantané, sauf si un instantané plus récent du même fichier est déjà écrit. */
+    public static boolean ecrire(Instantane instantane) {
+        if (instantane == null) return false;
+        synchronized (DERNIER_ECRIT) {
+            String cle = instantane.fichier().getAbsolutePath();
+            Long dernier = DERNIER_ECRIT.get(cle);
+            if (dernier != null && dernier > instantane.numero()) return false; // déjà plus récent sur le disque
+            boolean ecrit = FileManager.savefile(instantane.fichier(), instantane.json());
+            if (ecrit) DERNIER_ECRIT.put(cle, instantane.numero());
+            return ecrit;
+        }
+    }
+
+    private static File dossierPlayers(JavaPlugin plugin) {
+        return new File(plugin.getDataFolder() + "/players");
+    }
+
+    /** Sauvegarde immédiate de tous les joueurs (arrêt du serveur, commandes admin). Fil principal. */
     public static void saveAllPlayerServerFile(JavaPlugin plugin) throws IOException {
         for (PlayerServer joueur : PlayerserverHashMap.getInstance().getHashMapPlayer().values()) {
             saveOnePlayerServerFile(plugin, joueur);
         }
     }
 
-    public static void saveOnePlayerServerFile(JavaPlugin plugin, PlayerServer playerServer) {
-        if (plugin == null || playerServer == null || playerServer.getUuid() == null) {
-            return;
+    /** Sauvegarde automatique : JSON préparés ici (fil principal), écriture en arrière-plan. */
+    public static void saveAllPlayerServerFileAsync(JavaPlugin plugin) {
+        if (plugin == null) return;
+        List<Instantane> lot = new ArrayList<>();
+        for (PlayerServer joueur : PlayerserverHashMap.getInstance().getHashMapPlayer().values()) {
+            Instantane i = preparer(dossierPlayers(plugin), joueur);
+            if (i != null) lot.add(i);
         }
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> lot.forEach(PlayerSave::ecrire));
+    }
 
-        File file = new File(plugin.getDataFolder() + "/players",
-                playerServer.getUuid() + ".json");
+    /** Sauvegarde immédiate d'un joueur. Fil principal. */
+    public static void saveOnePlayerServerFile(JavaPlugin plugin, PlayerServer playerServer) {
+        if (plugin == null) return;
+        ecrire(preparer(dossierPlayers(plugin), playerServer));
+    }
 
-        FileManager.savefile(file, GSON.toJson(playerServer));
+    /** Déconnexion : JSON préparé ici (fil principal), écriture en arrière-plan. */
+    public static void saveOnePlayerServerFileAsync(JavaPlugin plugin, PlayerServer playerServer) {
+        if (plugin == null) return;
+        Instantane i = preparer(dossierPlayers(plugin), playerServer);
+        if (i == null) return;
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> ecrire(i));
     }
 
     public static void LoadPlayerserverFile(JavaPlugin plugin) {

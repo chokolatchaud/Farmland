@@ -31,15 +31,14 @@ public final class Savecomands implements CommandExecutor {
             }
             
             sender.sendMessage(MessageColor.YELLOW.apply("Sauvegarde en cours..."));
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                try {
-                    PlayerSave.saveAllPlayerServerFile(plugin);
-                } catch (IOException e) {
-                    plugin.getLogger().severe("Erreur lors de la sauvegarde manuelle : " + e.getMessage());
-                    sender.sendMessage(MessageColor.RED.apply("La sauvegarde a échoué."));
-                }
+            // Fil principal : les JSON doivent être préparés là où le jeu modifie les joueurs.
+            try {
+                PlayerSave.saveAllPlayerServerFile(plugin);
                 sender.sendMessage(MessageColor.GREEN.apply("Sauvegarde terminée !"));
-            });
+            } catch (IOException e) {
+                plugin.getLogger().severe("Erreur lors de la sauvegarde manuelle : " + e.getMessage());
+                sender.sendMessage(MessageColor.RED.apply("La sauvegarde a échoué."));
+            }
             
             return true;
             
