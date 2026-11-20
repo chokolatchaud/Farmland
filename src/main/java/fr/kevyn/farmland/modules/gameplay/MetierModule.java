@@ -5,7 +5,6 @@ import fr.kevyn.farmland.directives.gameplay.recompense.LevelRewardManager;
 import fr.kevyn.farmland.directives.gameplay.recompense.RecompenseUtil;
 import fr.kevyn.farmland.directives.metiers.MetiersCommands;
 import fr.kevyn.farmland.directives.metiers.MetiersMenuListener;
-import fr.kevyn.farmland.directives.metiers.TestRewardCommand;
 import fr.kevyn.farmland.directives.metiers.farmeur.BlockFertilizeListener;
 import fr.kevyn.farmland.directives.metiers.farmeur.FarmCommands;
 import fr.kevyn.farmland.directives.metiers.farmeur.FarmRapideListener;
@@ -117,10 +116,6 @@ public final class MetierModule {
         plugin.getCommand("epee").setExecutor(new épeeCommands());
         plugin.getCommand("hache").setExecutor(new HacheCommands());
         plugin.getCommand("metiers").setExecutor(new MetiersCommands());
-        plugin.getCommand("testreward")
-                .setExecutor(
-                        new TestRewardCommand(levelRewardManager)
-                );
 
     }
 }
