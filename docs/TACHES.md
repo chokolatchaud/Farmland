@@ -56,11 +56,12 @@ Un œuf d'apparition fait apparaître un mob au hub (confirmé en jeu). Bloquer 
 Notes de l'agent (2026-11-17) : `agent/oeuf-hub`. Les œufs (sur un bloc, dans le vide ou sur un mob) suivent `canBuild`. Serveur de test : œuf au hub refusé, aucune vache apparue.
 
 ### [Important] Sauvegardes des joueurs plus sûres
-Statut : bloqué : reporté par le propriétaire
+Statut : fait
 `FileManager.savefile` réécrit le fichier directement, avec l'encodage par défaut du système : un arrêt brutal pendant l'écriture peut vider ou corrompre le fichier d'un joueur. La sauvegarde à la déconnexion tourne en parallèle du serveur. Écrire dans un fichier temporaire puis le renommer, en UTF-8. Zone sensible (sauvegardes Gson).
 
 Notes de l'agent (2026-11-17) : plan, rien modifié (zone sensible : sauvegardes Gson). Proposition : `FileManager.savefile` écrit en UTF-8 dans `<fichier>.tmp` puis le renomme (`Files.move` ATOMIC_MOVE, repli REPLACE_EXISTING) ; lecture en UTF-8 ; à la déconnexion, le JSON est préparé sur le fil principal et seule l'écriture part en arrière-plan. Test JUnit : fichier toujours complet, ancien contenu gardé si l'écriture échoue.
 Décision du propriétaire (2026-11-17) : pas maintenant. Le plan ci-dessus reste valable.
+Notes de l'agent (2026-11-20) : commit `87a9555` (branche `agent/sauvegardes-sures`, sur master avec l'accord du propriétaire). Écriture via `<fichier>.tmp` renommé (`EcritureAtomique`), lecture UTF-8 tolérante (un vieux fichier mal encodé reste lisible), ancien fichier gardé si l'écriture échoue. JSON préparé sur le fil principal pour la déconnexion, la sauvegarde automatique et `/psadmin saveall` ; instantanés numérotés (une écriture en retard n'écrase pas un fichier plus récent). Format des fichiers inchangé, rien à migrer. Serveur de test : déconnexion, `/saveplayer`, `/psadmin saveall`, arrêt : OK. Avant la prod : sauvegarder `plugins/Farmland/players/`.
 
 ### [Important] Chat : erreur possible si les données ne sont pas chargées
 Statut : fait
@@ -281,5 +282,17 @@ Statut : à faire
 - `/psadmin info` : « Dernière connexion : true » au lieu d'une date.
 - Niveaux d'XP perdus à la mort (aucune orbe ne tombe) : à garder ou non ?
 - Branche `feature/farmer-growth-beacon` du développeur : le Beacon cassé fait tomber un objet, désormais bloqué (perdu) ; duplication via WorldEdit à tester.
+
+### Missions du jour (fait, demande du propriétaire)
+Statut : fait
+Notes de l'agent (2026-11-20) : commit `9aa146b`. 3 missions par jour (facile / moyenne / difficile : 100 / 200 / 350 $FB + 250 de bonus, réglables dans `config.yml`, section `missions`), page « Missions du jour » du guide (`/guide missions`), rappel à la connexion, `missions.json`. Serveur de test : affichage, paiement unique, bonus, sauvegarde : OK. À vérifier en jeu : icônes, clic sur le rappel, passage à minuit, missions course / vente / kills.
+
+### J'aime sur les plots (fait, demande du propriétaire)
+Statut : fait
+Notes de l'agent (2026-11-20) : commit `b3fd7bc`. `/plot like` (un par plot et par jour, pas son propre plot, aucun argent), message cliquable à l'arrivée sur un plot, « ❤ N j'aime » dans `/plot visit`, hologramme `/classementadmin holo set plots`, `plot_jaime.json`. À vérifier en jeu : clic [J'aime], message reçu par le propriétaire, hologramme.
+
+### Boutique, titres et plot à la une (fait, demande du propriétaire)
+Statut : fait
+Notes de l'agent (2026-11-20) : commits `32d3019`, `336e9fe`, `b2e3a85`. `/shop` en menu (WorldEdit, chapeaux, titres, plot à la une, agrandir) avec fonds et icônes du pack ; titres dans le chat avant le grade (6 à acheter de 2 000 à 100 000 $FB, 5 au mérite au niveau 50), `titres.json` ; enchères hebdomadaires du plot à la une (`/plot miser`, mise minimale 1 000 $FB, argent dépensé, remise à zéro le lundi, tri de `/plot visit`), `plot_une.json`. Resource pack régénéré, à mettre en ligne. À vérifier en jeu : ligne de chat vue par un joueur, rendu des fonds et icônes, passage du lundi.
 
 (aucune pour l'instant)
