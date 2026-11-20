@@ -153,6 +153,7 @@ Statut : fait
 - Farmeur : pas de message « +10 XP | +1 Jeton » à la récolte.
 - Emojis de `/market` à vérifier dans un vrai client.
 - Avant la prod : retirer les messages « DEBUG path=… » et `/testreward` (code du développeur).
+  Notes de l'agent (2026-11-20) : `/testreward` retiré (`agent/retrait-testreward`, `07f7e81`, accord du propriétaire) ; les messages « DEBUG path=… » n'existent plus dans le code.
 
 Notes de l'agent (2026-11-17) : `agent/textes`. Fautes corrigées, objet « Pioche du Mineur », « Le temps se fige », /money en $FB, /plot home au centre du bloc (vérifié : x et z en .5). Non faits : `plugin.yml` (usage /reportmsg, setspawn, /testreward : zone sensible), message Farmeur à chaque récolte (spam, la barre d'action affiche déjà l'XP), emojis de /market (vrai client).
 
@@ -276,12 +277,14 @@ Statut : fait
 Notes de l'agent (2026-11-18) : serveur de test, master `2d7473a` : marché, métiers, outils, objets au sol, protections, commandes, course, droits des modérateurs. Aucune régression, aucune erreur console.
 
 ### Petits points relevés le 18/11
-Statut : à faire
+Statut : fait
 - Œuf d'apparition au hub : bloqué, mais sans message de refus (l'arc en a un).
 - Vente de quelques jetons : « le prix passe de 15,37 à 15,37 » (correct, peu parlant).
 - `/psadmin info` : « Dernière connexion : true » au lieu d'une date.
 - Niveaux d'XP perdus à la mort (aucune orbe ne tombe) : à garder ou non ?
 - Branche `feature/farmer-growth-beacon` du développeur : le Beacon cassé fait tomber un objet, désormais bloqué (perdu) ; duplication via WorldEdit à tester.
+
+Notes de l'agent (2026-11-20) : Beacon laissé au développeur (décision du propriétaire). Œuf au hub : le plugin refuse déjà avec « Vous ne pouvez pas modifier ce terrain ! » ; le refus silencieux vient de la protection du spawn de Minecraft (`spawn-protection=16`), qui bloque avant le plugin : rien à changer. Petite vente : « le prix reste à N $FB » (`agent/message-petite-vente`, `a8855d5`). `/psadmin info` : vraie date (`agent/psadmin-derniere-connexion`, `927b2ae`). Niveaux d'XP gardés à la mort, choix laissé à l'agent (`agent/xp-gardee-mort`, `51de390`). Serveur de test : tout vérifié.
 
 ### Missions du jour (fait, demande du propriétaire)
 Statut : fait
