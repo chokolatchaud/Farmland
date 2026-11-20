@@ -33,6 +33,11 @@ public enum CustomItemType {
     // Le matériau de base s'affiche si le joueur n'a pas le pack.
     GUIDE("custom:guide", "Guide FarmLand", Material.BOOK),
     GUIDE_MISSIONS("custom:guide_missions", "Missions du jour", Material.WRITABLE_BOOK),
+    // Boutique (/shop) : icônes du resource pack, textures_2d/boutique_*.png
+    BOUTIQUE_WORLDEDIT("custom:boutique_worldedit", "WorldEdit", Material.WOODEN_AXE),
+    BOUTIQUE_CHAPEAU("custom:boutique_chapeau", "Chapeaux", Material.LEATHER_HELMET),
+    BOUTIQUE_TITRE("custom:boutique_titre", "Titres", Material.NAME_TAG),
+    BOUTIQUE_UNE("custom:boutique_une", "Plot à la une", Material.NETHER_STAR),
     GUIDE_PLOT("custom:guide_plot", "Ton plot", Material.GRASS_BLOCK),
     GUIDE_METIERS("custom:guide_metiers", "Les métiers", Material.IRON_PICKAXE),
     GUIDE_VENDRE("custom:guide_vendre", "Vendre", Material.GOLD_NUGGET),

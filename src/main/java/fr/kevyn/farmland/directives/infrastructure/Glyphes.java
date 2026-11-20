@@ -31,6 +31,9 @@ public final class Glyphes {
     public static final String FOND_CONFIG = "";      // 3 lignes, /plot config
     public static final String FOND_GRILLE = "";      // 6 lignes, niveaux d'un métier et /plot visit
     public static final String FOND_AGRANDIR = "";    // 6 lignes, /plot buy
+    public static final String FOND_BOUTIQUE = "";    // 4 lignes, /shop
+    public static final String FOND_TITRES = "";      // 6 lignes, /shop > Titres
+    public static final String FOND_UNE = "";         // 4 lignes, /shop > Plot à la une
     /** Reculs du texte : -8 px avant l'image, -169 px après pour replacer le titre. */
     public static final String RECUL_8 = "";
     public static final String RECUL_169 = "";

@@ -255,9 +255,11 @@ public final class GuideMenu extends GameMenu {
                 "",
                 "§eClic : acheter (à confirmer)"), "cmd:buy worldedit");
         bouton(22, new ItemStack(Material.LEATHER_HELMET), "§d§lCosmétiques", List.of(
-                "§7Chapeaux et accessoires", "§7de §6250 §7à §6500 $FB§7.", "", "§eClic : voir la boutique"), "cmd:buy cosmetic");
+                "§7Chapeaux et accessoires", "§7de §6250 §7à §61 000 $FB§7.", "", "§eClic : voir la boutique"), "cmd:buy cosmetic");
         bouton(24, CustomItemType.UPGRADE_BOUGHT.create(), "§d§lAgrandir ton plot", List.of(
                 "§7Prochain : §6" + MenuPlotUpgrade.getCost(ps.getUpgrade()) + " $FB §7(+5 blocs)", "", "§eClic : ouvrir"), "cmd:plot buy");
+        bouton(33, CustomItemType.BOUTIQUE_UNE.create(), "§6§lToute la boutique", List.of(
+                "§7WorldEdit, chapeaux, titres, plot à la une", "§7/shop", "", "§eClic : ouvrir"), "cmd:shop");
     }
 
     private void activites() {

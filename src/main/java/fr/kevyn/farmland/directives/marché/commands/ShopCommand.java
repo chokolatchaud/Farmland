@@ -7,15 +7,20 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * /shop - déclarée dans plugin.yml mais sans effet jusqu'ici : affiche ce que
- * le joueur peut acheter ou vendre et les commandes correspondantes.
- * Aucun achat ici : les achats restent dans /buy (avec leur confirmation).
+ * /shop : ouvre la boutique (BoutiqueMenu) pour un joueur ;
+ * depuis la console, affiche la liste des commandes d'achat et de vente.
  */
 public final class ShopCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
                              @NotNull String label, @NotNull String[] args) {
+        if (sender instanceof org.bukkit.entity.Player joueur) {
+            fr.kevyn.farmland.directives.marché.boutique.BoutiqueListener.ouvrir(
+                    org.bukkit.plugin.java.JavaPlugin.getProvidingPlugin(ShopCommand.class), joueur,
+                    fr.kevyn.farmland.directives.marché.boutique.BoutiqueMenu.Page.ACCUEIL, false);
+            return true;
+        }
         sender.sendMessage(MessageColor.GOLD.apply("═══ Boutique FarmLand ═══"));
         sender.sendMessage(MessageColor.YELLOW.apply("Acheter :"));
         sender.sendMessage(MessageColor.WHITE.apply(" /buy worldedit ") + MessageColor.GRAY.apply("- 1 h de WorldEdit pour "

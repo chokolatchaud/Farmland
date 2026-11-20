@@ -87,6 +87,15 @@ public final class PlotUne {
 
     /** /plot miser <montant> : demande une confirmation (même commande dans les 30 s), puis mise. */
     public static void miserAvecConfirmation(Player joueur, long montant) {
+        if (montant < UneCalc.MISE_MINIMALE) {
+            joueur.sendMessage(MessageColor.RED.apply("Mise minimale : " + UneCalc.montant(UneCalc.MISE_MINIMALE) + " $FB."));
+            return;
+        }
+        PlayerServer ps = PlayerserverHashMap.getInstance().getplayerHaspMaps(joueur.getUniqueId());
+        if (ps != null && ps.getMoney() < montant) {
+            joueur.sendMessage(MessageColor.RED.apply("Solde insuffisant : tu as " + UneCalc.montant(ps.getMoney()) + " $FB."));
+            return;
+        }
         long maintenant = System.currentTimeMillis();
         long[] attente = confirmations.get(joueur.getUniqueId());
         if (attente != null && attente[0] == montant && maintenant - attente[1] <= CONFIRMATION_MS) {

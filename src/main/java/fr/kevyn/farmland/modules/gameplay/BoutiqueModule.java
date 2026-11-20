@@ -6,7 +6,8 @@ import fr.kevyn.farmland.directives.plot.une.PlotUne;
 import org.bukkit.Bukkit;
 
 /**
- * Boutique : titres du chat (titres.json) et enchères du plot à la une (plot_une.json).
+ * Boutique (/shop) : WorldEdit, chapeaux, titres du chat (titres.json),
+ * enchères du plot à la une (plot_une.json) et agrandissement du plot.
  */
 public final class BoutiqueModule {
 
@@ -21,6 +22,8 @@ public final class BoutiqueModule {
     public void register() {
         Titres.init(plugin);
         PlotUne.init(plugin);
+        plugin.getServer().getPluginManager().registerEvents(
+                new fr.kevyn.farmland.directives.marché.boutique.BoutiqueListener(plugin), plugin);
         Bukkit.getScheduler().runTaskTimer(plugin, PlotUne::verifierSemaine, VERIF_SEMAINE_TICKS, VERIF_SEMAINE_TICKS);
         plugin.getLogger().info("[Boutique] Module Boutique activé (titres, plot à la une)");
     }
