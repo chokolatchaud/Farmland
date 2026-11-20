@@ -50,8 +50,9 @@ public class ChatListener implements Listener {
         String prefix = metaData.getPrefix() != null ? metaData.getPrefix() : "";
         String suffix = metaData.getSuffix() != null ? metaData.getSuffix() : "";
 
-        // Nouveau format du message
-        String format = ChatColor.translateAlternateColorCodes('&',
+        // Format : [Titre] [Grade] Pseudo : message (titre acheté ou gagné, voir /shop)
+        String titre = fr.kevyn.farmland.directives.cosmetic.titres.Titres.prefixeChat(player.getUniqueId()).replace("%", "");
+        String format = titre + ChatColor.translateAlternateColorCodes('&',
                 prefix + "%1$s" + suffix + " &7: %2$s");
 
         event.setFormat(format);
