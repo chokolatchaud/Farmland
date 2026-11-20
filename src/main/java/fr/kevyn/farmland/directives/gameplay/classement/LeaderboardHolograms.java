@@ -161,20 +161,27 @@ public final class LeaderboardHolograms {
         entites.remove(metier);
     }
 
+    /** Même ordre que /plot visit : plots à la une (mise de la semaine), puis j'aime. */
     private static String buildTextPlots() {
-        StringBuilder sb = new StringBuilder("§d❤ Top plots ❤\n");
-        List<UUID> top = fr.kevyn.farmland.directives.plot.jaime.PlotJaime.classement();
+        StringBuilder sb = new StringBuilder("§6★ Top plots ★\n");
+        List<PlayerServer> top = PlayerserverHashMap.getInstance().getHashMapPlayer().values().stream()
+                .filter(ps -> ps.getPlotdata() != null && ps.getUuid() != null)
+                .filter(ps -> fr.kevyn.farmland.directives.plot.une.PlotUne.mise(ps.getUuid()) > 0
+                        || fr.kevyn.farmland.directives.plot.jaime.PlotJaime.total(ps.getUuid()) > 0)
+                .sorted(fr.kevyn.farmland.directives.plot.interfaces.MenuPlotVisit.ORDRE_VISITE)
+                .limit(TOP_N)
+                .toList();
         if (top.isEmpty()) {
-            return sb.append("§7Aime un plot avec §f/plot like").toString();
+            return sb.append("§7Mise sur ton plot dans §f/shop §7ou aime un plot : §f/plot like").toString();
         }
         String[] medailles = { "§6#1", "§7#2", "§c#3", "§f#4", "§f#5" };
-        int limit = Math.min(TOP_N, top.size());
-        for (int i = 0; i < limit; i++) {
-            PlayerServer ps = PlayerserverHashMap.getInstance().getHashMapPlayer().get(top.get(i));
-            String nom = ps != null && ps.getName() != null ? ps.getName() : "?";
-            sb.append(medailles[i]).append(" §f").append(nom).append(" §7- §d")
-                    .append(fr.kevyn.farmland.directives.plot.jaime.PlotJaime.total(top.get(i))).append(" ❤");
-            if (i < limit - 1) sb.append("\n");
+        for (int i = 0; i < top.size(); i++) {
+            PlayerServer ps = top.get(i);
+            long mise = fr.kevyn.farmland.directives.plot.une.PlotUne.mise(ps.getUuid());
+            sb.append(medailles[i]).append(" §f").append(ps.getName() == null ? "?" : ps.getName()).append(" §7- ");
+            if (mise > 0) sb.append("§6★ ").append(fr.kevyn.farmland.directives.plot.une.UneCalc.montant(mise)).append(" $FB");
+            else sb.append("§d").append(fr.kevyn.farmland.directives.plot.jaime.PlotJaime.total(ps.getUuid())).append(" ❤");
+            if (i < top.size() - 1) sb.append("\n");
         }
         return sb.toString();
     }

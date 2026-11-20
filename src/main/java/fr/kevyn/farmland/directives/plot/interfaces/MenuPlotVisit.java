@@ -18,10 +18,18 @@ import org.bukkit.inventory.meta.SkullMeta;
 import fr.kevyn.farmland.directives.gameplay.objet.CustomItemType;
 import fr.kevyn.farmland.directives.plot.jaime.JaimeCalc;
 import fr.kevyn.farmland.directives.plot.jaime.PlotJaime;
+import fr.kevyn.farmland.directives.plot.une.PlotUne;
+import fr.kevyn.farmland.directives.plot.une.UneCalc;
 import fr.kevyn.farmland.doonees.joueurs.PlayerServer;
 import fr.kevyn.farmland.doonees.joueurs.PlayerserverHashMap;
 
 public class MenuPlotVisit {
+
+	/** Ordre de /plot visit et de l'hologramme Top plots : mise de la semaine, puis j'aime, puis nom. */
+	public static final java.util.Comparator<PlayerServer> ORDRE_VISITE =
+			java.util.Comparator.comparingLong((PlayerServer ps) -> PlotUne.mise(ps.getUuid())).reversed()
+					.thenComparing(java.util.Comparator.comparingInt((PlayerServer ps) -> PlotJaime.total(ps.getUuid())).reversed())
+					.thenComparing(ps -> ps.getName() == null ? "" : ps.getName().toLowerCase());
 
 	// viewer : le joueur qui ouvre le menu (son propre plot privé reste visitable).
 	public static Inventory createmenuplotvisit(String name, int page, Player viewer) {
@@ -38,9 +46,8 @@ public class MenuPlotVisit {
 
         List<PlayerServer> allPlayers = PlayerserverHashMap.getInstance().getHashMapPlayer().values().stream()
                 .filter(ps -> ps.getPlotdata() != null)
-                // les plots les plus aimés d'abord
-                .sorted(java.util.Comparator.comparingInt((PlayerServer ps) -> PlotJaime.total(ps.getUuid())).reversed()
-                        .thenComparing(ps -> ps.getName() == null ? "" : ps.getName().toLowerCase()))
+                // plots à la une (plus grosse mise) d'abord, puis les plus aimés
+                .sorted(ORDRE_VISITE)
                 .toList();
 
         // Dernière ligne (slots 45 à 53) : vitre décorative, flèches et numéro de page par-dessus
@@ -102,6 +109,11 @@ public class MenuPlotVisit {
         lore.add(MessageColor.GRAY.apply("Propriétaire : ") + MessageColor.WHITE.apply(ps.getName()));
         lore.add(MessageColor.GRAY.apply("Bordure : ") + MessageColor.AQUA.apply(ps.getPlotdata().getWorldborder() + " blocs"));
         lore.add(MessageColor.LIGHT_PURPLE.apply(JaimeCalc.texte(PlotJaime.total(ps.getUuid()))));
+        long mise = PlotUne.mise(ps.getUuid());
+        if (mise > 0) {
+            lore.add(MessageColor.GOLD.apply("★ À la une : " + UneCalc.montant(mise) + " $FB (" + PlotUne.rang(ps.getUuid())
+                    + (PlotUne.rang(ps.getUuid()) == 1 ? "er" : "e") + ")"));
+        }
 
         boolean proprietaire = viewer != null && viewer.getUniqueId().equals(ps.getUuid());
 
@@ -116,7 +128,8 @@ public class MenuPlotVisit {
             lore.add("");
             lore.add(MessageColor.DARK_GRAY.apply("Ce plot ne peut pas être visité"));
         } else {
-            meta.setDisplayName(MessageColor.GREEN.apply("Plot de " + ps.getName()));
+            meta.setDisplayName(mise > 0 ? MessageColor.GOLD.apply("★ Plot de " + ps.getName())
+                    : MessageColor.GREEN.apply("Plot de " + ps.getName()));
             lore.add(MessageColor.GRAY.apply("Accès : ") + MessageColor.GREEN.apply("Public"));
             lore.add("");
             lore.add(MessageColor.YELLOW.apply("Clique pour visiter"));

@@ -60,7 +60,7 @@ public final class Plotcommands implements CommandExecutor {
 
         if (args.length == 0) {
             player.sendMessage(MessageColor.YELLOW.apply(
-                    "Sous-commande manquante. Utilise: /plot <add/unadd/trust/untrust/buy/visit/home/config/setspawnpoint/like>"));
+                    "Sous-commande manquante. Utilise: /plot <add/unadd/trust/untrust/buy/visit/home/config/setspawnpoint/like/miser>"));
             return true;
         }
 
@@ -255,6 +255,18 @@ public final class Plotcommands implements CommandExecutor {
         // /plot like : aimer le plot où l'on se trouve (un par plot et par jour)
         if (args[0].equalsIgnoreCase("like") || args[0].equalsIgnoreCase("jaime")) {
             fr.kevyn.farmland.directives.plot.jaime.PlotJaime.aimer(player);
+            return true;
+        }
+
+        // /plot miser <montant> : enchère du plot à la une (confirmation en retapant la commande)
+        if (args[0].equalsIgnoreCase("miser")) {
+            if (!requireOwnPlot(player, playerServer)) return true;
+            long montant = args.length >= 2 ? fr.kevyn.farmland.directives.plot.une.UneCalc.lireMontant(args[1]) : -1;
+            if (montant <= 0) {
+                player.sendMessage(MessageColor.RED.apply("Usage : /plot miser <montant>  (ex. 10000 ou 10k)"));
+                return true;
+            }
+            fr.kevyn.farmland.directives.plot.une.PlotUne.miserAvecConfirmation(player, montant);
             return true;
         }
 
