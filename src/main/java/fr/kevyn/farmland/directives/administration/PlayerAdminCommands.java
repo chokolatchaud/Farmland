@@ -69,8 +69,17 @@ public class PlayerAdminCommands implements CommandExecutor {
         sender.sendMessage("§eUpgrade plot : §f" + ps.getUpgrade());
         sender.sendMessage("§eBlocs posés (total) : §f" + ps.getBlocposetotal());
         sender.sendMessage("§eBordure du plot : §f" + (ps.getPlotdata() != null ? ps.getPlotdata().getWorldborder() : "aucun plot"));
-        sender.sendMessage("§eDernière connexion : §f" + (ps.getLastjoin() != null ? ps.getLastjoin().toString() : "inconnue"));
+        // lastjoin n'est qu'un drapeau (vrai/faux) : la date vient du serveur (Paper)
+        long vuLe = ps.getUuid() == null ? 0 : Bukkit.getOfflinePlayer(ps.getUuid()).getLastSeen();
+        sender.sendMessage("§eDernière connexion : §f" + (online != null ? "en ligne" : derniereConnexion(vuLe)));
         return true;
+    }
+
+    /** « 20/11/2026 à 14:51 », ou « inconnue » si le serveur ne l'a jamais vu. */
+    static String derniereConnexion(long epochMs) {
+        if (epochMs <= 0) return "inconnue";
+        return java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy 'à' HH:mm")
+                .format(java.time.Instant.ofEpochMilli(epochMs).atZone(java.time.ZoneId.systemDefault()));
     }
 
     private boolean moneyCommand(CommandSender sender, String[] args) {
