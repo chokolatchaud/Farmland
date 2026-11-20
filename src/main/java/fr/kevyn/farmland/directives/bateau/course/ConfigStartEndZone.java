@@ -252,6 +252,7 @@ public class ConfigStartEndZone {
                         boolean record = BoatTimeSave.recordTime(plugin, player.getName(), tempsCourse);
                         DailyBoatTimeSave.recordDailyTime(plugin, player.getName(), tempsCourse);
                         JournalEvenements.enregistrer("course_resultat", player.getName(), tempsCourse + "s" + (record ? ", record personnel" : ""));
+                        fr.kevyn.farmland.directives.gameplay.missions.Missions.avancer(player, fr.kevyn.farmland.directives.gameplay.missions.TypeMission.COURSE, 1);
 
                         player.sendMessage("§6§lVICTOIRE ! §fTemps : §b" + tempsCourse + "s");
                         if (record) {

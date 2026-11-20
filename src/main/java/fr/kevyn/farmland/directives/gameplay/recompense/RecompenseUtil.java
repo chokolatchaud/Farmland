@@ -1,6 +1,8 @@
 package fr.kevyn.farmland.directives.gameplay.recompense;
 
 import fr.kevyn.farmland.directives.gameplay.menus.Outils;
+import fr.kevyn.farmland.directives.gameplay.missions.Missions;
+import fr.kevyn.farmland.directives.gameplay.missions.TypeMission;
 
 import fr.kevyn.farmland.directives.infrastructure.JobType;
 
@@ -69,6 +71,7 @@ public class RecompenseUtil {
             );
         }
         afficherProgression(joueur, ps, JobType.MINEUR, xp, jetons);
+        Missions.avancer(joueur, TypeMission.MINEUR, 1);
     }
 
     public static void donnerRecompenseFarmeur(Player joueur, PlayerServer ps, int xp, int jetons) {
@@ -95,6 +98,7 @@ public class RecompenseUtil {
             );
         }
         afficherProgression(joueur, ps, JobType.FARMEUR, xp, jetons);
+        Missions.avancer(joueur, TypeMission.FARMEUR, Math.max(1, xp / 10)); // mode rapide : 10 XP par culture
     }
 
     public static void donnerRecompensePecheur(
@@ -126,6 +130,7 @@ public class RecompenseUtil {
             );
         }
         afficherProgression(joueur, ps, JobType.PECHEUR, xp, jetons);
+        Missions.avancer(joueur, TypeMission.PECHEUR, 1);
     }
 
     public static void donnerRecompenseAgriculteur(Player joueur, PlayerServer ps, int xp) {
@@ -153,6 +158,7 @@ public class RecompenseUtil {
                 nouveauNiveau
         );
         afficherProgression(joueur, ps, JobType.AGRICULTEUR, xp, jeton);
+        Missions.avancer(joueur, TypeMission.AGRICULTEUR, 1);
     }
 
     public static void donnerRecompenseTueur(Player joueur, PlayerServer ps, int xp) {
@@ -180,6 +186,7 @@ public class RecompenseUtil {
         int jeton = tirerJetonsArme(nouveauNiveau);
         ps.addJetonTueur(jeton);
         afficherProgression(joueur, ps, JobType.TUEUR, xp, jeton);
+        Missions.avancer(joueur, TypeMission.TUEUR, 1);
     }
 
     /**

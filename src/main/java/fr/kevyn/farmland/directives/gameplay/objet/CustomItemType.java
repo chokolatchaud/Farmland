@@ -32,6 +32,7 @@ public enum CustomItemType {
     // Guide des joueurs (icônes provisoires du resource pack, textures_2d/guide*.png).
     // Le matériau de base s'affiche si le joueur n'a pas le pack.
     GUIDE("custom:guide", "Guide FarmLand", Material.BOOK),
+    GUIDE_MISSIONS("custom:guide_missions", "Missions du jour", Material.WRITABLE_BOOK),
     GUIDE_PLOT("custom:guide_plot", "Ton plot", Material.GRASS_BLOCK),
     GUIDE_METIERS("custom:guide_metiers", "Les métiers", Material.IRON_PICKAXE),
     GUIDE_VENDRE("custom:guide_vendre", "Vendre", Material.GOLD_NUGGET),

@@ -35,6 +35,10 @@ public final class GuideCommand implements CommandExecutor {
             }
             return true;
         }
+        if (args.length >= 1 && args[0].equalsIgnoreCase("missions")) {
+            GuideMenuListener.ouvrir(plugin, joueur, GuideMenu.Page.MISSIONS, false);
+            return true;
+        }
         GuideMenuListener.ouvrir(plugin, joueur, GuideMenu.Page.ACCUEIL, false);
         return true;
     }

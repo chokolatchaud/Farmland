@@ -71,3 +71,12 @@ journal:
   regroupement-minutes: 5
   # les archives evenements-AAAA-MM-JJ.log plus vieilles sont supprimees
   retention-jours: 30
+
+# Missions du jour : 3 par joueur et par jour (facile, moyenne, difficile), renouvelees a minuit
+# Montants en $FB verses des qu une mission est faite, bonus quand les 3 sont faites
+missions:
+  recompenses:
+    facile: 100
+    moyen: 200
+    difficile: 350
+    bonus: 250

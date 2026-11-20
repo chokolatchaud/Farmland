@@ -99,6 +99,7 @@ public class MenuListenerFarm implements Listener {
 		player.sendMessage("§aVendu : " + quantite + "x Jeton " + nom + " pour " + gain + " $FB §7(prix moyen " + PRIX_FORMAT.format(vente.prixMoyen()) + " $FB/unité)");
 		player.sendMessage("§7Le prix du jeton " + nom + " passe de §f" + PRIX_FORMAT.format(vente.prixAvant()) + " $FB §7à §e" + PRIX_FORMAT.format(vente.prixApres()) + " $FB");
 		player.playSound(player.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.8f, 1.4f); // son de vente
+		fr.kevyn.farmland.directives.gameplay.missions.Missions.avancer(player, fr.kevyn.farmland.directives.gameplay.missions.TypeMission.MARCHE, quantite);
 
 		// Reste du stock : on rouvre le menu à jour (nouveaux prix), sinon retour au sac.
 		int reste = stock - quantite;

@@ -39,6 +39,7 @@ public final class ModuleLoader {
 
             loadMetier(plugin);
             loadGuide(plugin);
+            loadMissions(plugin);
         }, LOAD_DELAY_TICKS);
     }
 
@@ -76,5 +77,9 @@ public final class ModuleLoader {
 
     private static void loadGuide(FarmlandMain plugin) {
         new fr.kevyn.farmland.modules.gameplay.GuideModule(plugin).register();
+    }
+
+    private static void loadMissions(FarmlandMain plugin) {
+        new fr.kevyn.farmland.modules.gameplay.MissionsModule(plugin).register();
     }
 }

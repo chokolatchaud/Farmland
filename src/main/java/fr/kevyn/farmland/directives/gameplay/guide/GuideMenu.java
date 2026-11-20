@@ -1,6 +1,11 @@
 package fr.kevyn.farmland.directives.gameplay.guide;
 
 import fr.kevyn.farmland.directives.gameplay.menus.Outils;
+import fr.kevyn.farmland.directives.gameplay.missions.Missions;
+import fr.kevyn.farmland.directives.gameplay.missions.MissionsCalc;
+import fr.kevyn.farmland.directives.gameplay.missions.ProgressionJour;
+import fr.kevyn.farmland.directives.gameplay.missions.TypeMission;
+import fr.kevyn.farmland.directives.infrastructure.Glyphes;
 import fr.kevyn.farmland.directives.gameplay.objet.CustomItemType;
 import fr.kevyn.farmland.directives.gameplay.recompense.RecompenseUtil;
 import fr.kevyn.farmland.directives.gameplay.scoreboard.CreativePlotScoreboard;
@@ -41,7 +46,7 @@ import java.util.Map;
  */
 public final class GuideMenu extends GameMenu {
 
-    public enum Page { ACCUEIL, PLOT, METIERS, VENDRE, DEPENSER, ACTIVITES, REGLES }
+    public enum Page { ACCUEIL, PLOT, METIERS, VENDRE, DEPENSER, ACTIVITES, REGLES, MISSIONS }
 
     private static final DecimalFormat PRIX = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.FRANCE));
     private static final int RETOUR = 31;
@@ -74,6 +79,7 @@ public final class GuideMenu extends GameMenu {
             case DEPENSER -> menu.depenser(ps);
             case ACTIVITES -> menu.activites();
             case REGLES -> menu.regles();
+            case MISSIONS -> menu.missions(joueur);
         }
         if (page != Page.ACCUEIL) {
             menu.bouton(RETOUR, CustomItemType.ARROW_PREV.create(), "§7← Retour au guide", List.of(), "page:ACCUEIL");
@@ -98,6 +104,7 @@ public final class GuideMenu extends GameMenu {
             case DEPENSER -> "§5Guide ▸ Dépenser";
             case ACTIVITES -> "§4Guide ▸ Activités";
             case REGLES -> "§8Guide ▸ Règles";
+            case MISSIONS -> "§eGuide ▸ Missions du jour";
         };
     }
 
@@ -146,6 +153,7 @@ public final class GuideMenu extends GameMenu {
         bouton(23, CustomItemType.GUIDE_VENDRE.create(), "§3§lVendre", List.of("§7Tes jetons et les prix du marché", "", "§eClic pour voir"), "page:VENDRE");
         bouton(25, CustomItemType.GUIDE_DEPENSER.create(), "§5§lDépenser", List.of("§7WorldEdit, cosmétiques, plot", "", "§eClic pour voir"), "page:DEPENSER");
         bouton(30, CustomItemType.GUIDE_ACTIVITES.create(), "§4§lActivités", List.of("§7Course, vote, calcul, classement", "", "§eClic pour voir"), "page:ACTIVITES");
+        bouton(31, CustomItemType.GUIDE_MISSIONS.create(), "§e§lMissions du jour", resumeMissions(joueur), "page:MISSIONS");
         bouton(32, CustomItemType.GUIDE_REGLES.create(), "§8§lRègles", List.of("§7À lire une fois", "", "§eClic pour voir"), "page:REGLES");
         bouton(40, new ItemStack(Material.BARRIER), "§cFermer", List.of(), "fermer");
     }
@@ -261,6 +269,56 @@ public final class GuideMenu extends GameMenu {
                 "§7Chaque vote : §f1 h de WorldEdit gratuit§7.", "", "§eClic : liens de vote"), "cmd:vote");
         bouton(24, new ItemStack(Material.GOLD_INGOT), "§c§lClassements", List.of(
                 "§7Les meilleurs joueurs.", "", "§eClic : voir"), "cmd:classement");
+    }
+
+    private static List<String> resumeMissions(Player joueur) {
+        if (!Missions.actif()) return List.of("§7Bientôt disponible");
+        ProgressionJour p = Missions.progressionDuJour(joueur.getUniqueId());
+        int faites = p.nombreFaites();
+        return List.of(
+                "§7Faites : " + (faites >= MissionsCalc.NB_MISSIONS ? "§a" : "§f") + faites + "/" + MissionsCalc.NB_MISSIONS,
+                "§7Jusqu'à " + Glyphes.argent(Missions.getRecompenses().totalMaximum(), "§6") + " §7par jour",
+                "",
+                "§eClic pour voir");
+    }
+
+    private void missions(Player joueur) {
+        if (!Missions.actif()) {
+            bouton(4, CustomItemType.GUIDE_MISSIONS.create(), "§e§lMissions du jour", List.of("§7Bientôt disponible"), null);
+            return;
+        }
+        MissionsCalc.Recompenses r = Missions.getRecompenses();
+        List<MissionsCalc.Mission> liste = Missions.missionsDuJour(joueur.getUniqueId());
+        ProgressionJour p = Missions.progressionDuJour(joueur.getUniqueId());
+        bouton(4, CustomItemType.GUIDE_MISSIONS.create(), "§e§lMissions du jour", List.of(
+                "§7Chaque jour, 3 nouvelles missions.",
+                "§7Récompense versée dès qu'une mission est faite.",
+                "",
+                "§7Faites : §f" + p.nombreFaites() + "/" + MissionsCalc.NB_MISSIONS,
+                "§7Bonus des 3 missions : " + (p.bonusDonne() ? "§a✔ reçu" : "§6+" + r.bonus() + " $FB"),
+                "§7Nouvelles missions dans §f" + Missions.tempsAvantNouvellesMissions()
+        ), null);
+        int[] slots = {20, 22, 24};
+        for (int i = 0; i < liste.size() && i < slots.length; i++) {
+            MissionsCalc.Mission m = liste.get(i);
+            boolean faite = p.estFaite(i);
+            List<String> lore = new ArrayList<>(List.of(
+                    "§7" + barre(p.getProgression(i), m.objectif()) + " §f" + p.getProgression(i) + "/" + m.objectif(),
+                    "§7Récompense : §6" + r.de(m.difficulte()) + " $FB",
+                    ""));
+            lore.add(faite ? "§a✔ Terminée" : "§eClic : " + aideMission(m.type()));
+            ItemStack icone = new ItemStack(faite ? Material.LIME_DYE : m.type().getIcone());
+            bouton(slots[i], icone, m.difficulte().getCouleur() + "§l" + m.difficulte().getNom() + " §7— §f" + m.description(),
+                    lore, faite ? null : "cmd:" + m.type().getCommande());
+        }
+    }
+
+    private static String aideMission(TypeMission type) {
+        return switch (type) {
+            case MARCHE -> "ouvrir ton sac";
+            case COURSE -> "rejoindre la course";
+            default -> "recevoir ton outil";
+        };
     }
 
     private void regles() {
